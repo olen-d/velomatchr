@@ -25,7 +25,7 @@ function BasicExample() {
               <Link to="/messages">Messages</Link>
             </li>
             <li>
-              <Link to="/messages">Settings</Link>
+              <Link to="/settings">Settings</Link>
             </li>  
           </ul>
         </div>
@@ -87,4 +87,3 @@ function Topic({ match }) {
 }
 
 export default BasicExample;
-

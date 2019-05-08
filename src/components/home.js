@@ -44,7 +44,7 @@ const Home = () => {
                                     Find a riding buddy fast
                                 </h5>
                                 <p class="light">
-                                    Our ten question survey designed to be filled out in five minutes or less, so you can quickly find a buddy and ride. We refined our survey through rigourous testing to identify questions with the highest information density to save you time while providing the highest quality matches.
+                                    Our ten question survey is designed to be filled out in five minutes or less, so you can quickly find a buddy and ride. We refined our survey through rigourous testing to identify questions with the highest information density to save you time while providing the highest quality matches.
                                 </p>
                             </div>
                         </div>
