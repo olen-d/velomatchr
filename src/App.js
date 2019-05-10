@@ -5,42 +5,37 @@ import "./materialize.css";
 import "./style.css";
 
 import Home from "./components/home";
+import Survey from "./components/survey";
+import Footer from "./components/footer";
 
 function BasicExample() {
   return (
-    <Router>
-      <nav class="red accent-4" role="navigation">
-        <div class="nav-wrapper container"><a id="logo-container" href="/home" class="brand-logo"><i class="fas fa-bicycle"></i></a>
-          <ul class="right hide-on-med-and-down">
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/survey">Survey</Link>
-            </li>
-            <li>
-              <Link to="/buddies">Buddies</Link>
-            </li>
-            <li>
-              <Link to="/messages">Messages</Link>
-            </li>
-            <li>
-              <Link to="/settings">Settings</Link>
-            </li>  
-          </ul>
-        </div>
-      </nav>
-      <div>
-        <a href="https://github.com/olen-d/veloMatchr">Github Repo</a>
-      </div>
-
-
-        <hr />
-
-        <Route exact path="/" component={Home} />
-        <Route path="/about" component={About} />
-        <Route path="/topics" component={Topics} />
-    </Router>
+    <>
+      <Router>
+        <nav className="red accent-4" role="navigation">
+          <div className="nav-wrapper container"><Link to="/"><i className="fas fa-bicycle"></i></Link>
+            <ul className="right hide-on-med-and-down">
+              <li>
+                <Link to="/survey">Survey</Link>
+              </li>
+              <li>
+                <Link to="/buddies">Buddies</Link>
+              </li>
+              <li>
+                <Link to="/messages">Messages</Link>
+              </li>
+              <li>
+                <Link to="/settings">Settings</Link>
+              </li>  
+            </ul>
+          </div>
+        </nav>
+          <Route exact path="/" component={Home} />
+          <Route path="/survey" component={Survey} />
+          <Route path="/topics" component={Topics} />
+      </Router>
+      <Footer />
+    </>
   );
 }
 
