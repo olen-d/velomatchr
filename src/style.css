@@ -1,0 +1,19 @@
+@import url("https://use.fontawesome.com/releases/v5.7.2/css/all.css");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+.nbs {
+    margin-bottom:0px;
+    padding-bottom:0px;
+}
+
+.extra-space {
+    padding-top:4rem;
+}
+
+.bold {
+    font-weight:600;
+}
+
+.xtra {
+    font-size:120%;
+}
