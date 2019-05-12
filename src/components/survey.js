@@ -1,6 +1,12 @@
-import React from "react"
+import React, { Component } from "react"
+// import M from "../materialize.js";
 
-const Survey = () => {
+class Survey extends Component {
+    // componentDidMount() {
+    //     M.AutoInit();
+    // }
+
+    render () {
     return(
         <div className="container">
             <div className="row">
@@ -307,8 +313,8 @@ const Survey = () => {
             </div>
         </form>
             </div>
-
     );
+}
 }
     
 export default Survey;

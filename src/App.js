@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import "./materialize.css";
+import M from "./materialize";
 import "./style.css";
 
 import Home from "./components/home";
