@@ -1,6 +1,7 @@
 import React from "react"
 
 const Home = () => {
+    let ctrTxt = {"text-align": "center"}
     return(
         <>
             <div className="container">
@@ -32,53 +33,53 @@ const Home = () => {
                     </div>
                 </div>      
             </div>
-            <div className="container">
-                <div className="section">
-                    <div className="row">
-                        <div className="col s12 m4">
-                            <div className="icon-block">
-                                <h2 className="center red-text text-darken-3">
+            
+                
+                    <div className="ui three column stackable grid container">
+                        <div className="column">
+                            
+                                <h2 className="" style={ctrTxt}>
                                     <i className="material-icons">flash_on</i>
                                 </h2>
-                                <h5 className="center">
+                                <h5 className="" style={ctrTxt}>
                                     Find a riding buddy fast
                                 </h5>
                                 <p className="light">
                                     Our ten question survey is designed to be filled out in five minutes or less, so you can quickly find a buddy and ride. We refined our survey through rigourous testing to identify questions with the highest information density to save you time while providing the highest quality matches.
                                 </p>
-                            </div>
+                            
                         </div>
-                        <div className="col s12 m4">
-                            <div className="icon-block">
-                                <h2 className="center red-text text-darken-3">
+                        <div className="column">
+                            
+                                <h2 className="" style={ctrTxt}>
                                     <i className="material-icons">group</i>
                                 </h2>
-                                <h5 className="center">
+                                <h5 className="" style={ctrTxt}>
                                     Compatibility focused
                                 </h5>
                                 <p className="light">
                                     No one wants to ride with the person who is always surging when it's their turn at the front of the paceline. Or that person who natters on incessantly about the latest gear. Our proprietary algorithm uses a unique framework to provide you with the most compatible riding buddy.
                                 </p>
-                            </div>
+                            
                         </div>
-                        <div className="col s12 m4">
-                            <div className="icon-block">
-                                <h2 className="center red-text text-darken-3">
+                        <div className="column">
+                    
+                                <h2 className="" style={ctrTxt}>
                                     <i className="material-icons">settings</i>
                                 </h2>
-                                <h5 className="center">
+                                <h5 className="" style={ctrTxt}>
                                     Easy to use
                                 </h5>
                                 <p className="light">
                                     We kept VeloMatchr simple and intuitive so that you can focus on what's important - riding with a buddy. Just click the "Get Started" button, fill out the survey, and get matched with a riding buddy.
                                 </p>
-                            </div>
+                           
                         </div>
                     </div>
-                </div>
+                
                 <br />
                 <br />
-            </div>
+            
         </>
     );
 }

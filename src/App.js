@@ -1,8 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-import "./materialize.css";
-import M from "./materialize";
 import "./style.css";
 
 import Home from "./components/home";
@@ -11,32 +9,25 @@ import Footer from "./components/footer";
 
 function BasicExample() {
   return (
-    <>
+    <div className="ui page grid">
       <Router>
-        <nav className="red accent-4" role="navigation">
-          <div className="nav-wrapper container"><Link to="/"><i className="fas fa-bicycle"></i></Link>
-            <ul className="right hide-on-med-and-down">
-              <li>
-                <Link to="/survey">Survey</Link>
-              </li>
-              <li>
-                <Link to="/buddies">Buddies</Link>
-              </li>
-              <li>
-                <Link to="/messages">Messages</Link>
-              </li>
-              <li>
-                <Link to="/settings">Settings</Link>
-              </li>  
-            </ul>
+        <div class="computer tablet only row">
+          <div className="ui inverted menu navbar">
+            <Link to="/" className="item"><i className="fas fa-bicycle"></i></Link>
+            <div className="right menu">
+              <Link to="/survey" className="item">Survey</Link>
+              <Link to="/buddies" className="item">Buddies</Link>
+              <Link to="/messages" className="item">Messages</Link>
+              <Link to="/settings" className="item">Settings</Link>
+            </div>
           </div>
-        </nav>
+        </div>
           <Route exact path="/" component={Home} />
           <Route path="/survey" component={Survey} />
-          <Route path="/topics" component={Topics} />
+          <Route path="/topics" component={Topics} /> 
       </Router>
       <Footer />
-    </>
+    </div>
   );
 }
 
