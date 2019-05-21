@@ -1,5 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import {
+  Container,
+  Menu 
+} from 'semantic-ui-react';
 
 import "./style.css";
 
@@ -9,25 +13,34 @@ import Footer from "./components/footer";
 
 function BasicExample() {
   return (
-    <div className="ui page grid">
+    <Container>
       <Router>
-        <div class="computer tablet only row">
-          <div className="ui inverted menu navbar">
-            <Link to="/" className="item"><i className="fas fa-bicycle"></i></Link>
-            <div className="right menu">
-              <Link to="/survey" className="item">Survey</Link>
-              <Link to="/buddies" className="item">Buddies</Link>
-              <Link to="/messages" className="item">Messages</Link>
-              <Link to="/settings" className="item">Settings</Link>
-            </div>
-          </div>
-        </div>
-          <Route exact path="/" component={Home} />
-          <Route path="/survey" component={Survey} />
-          <Route path="/topics" component={Topics} /> 
+        <Menu color="inverted red">
+          <Menu.Item 
+              as={ Link } to="/" name="home">
+            <i className="fas fa-bicycle"></i>
+          </Menu.Item>
+          <Menu.Menu position="right">
+              <Menu.Item as={ Link } to="/survey">
+                  Survey
+              </Menu.Item>
+              <Menu.Item as={ Link } to="/buddies">
+                  Buddies
+              </Menu.Item>
+              <Menu.Item as={ Link } to="/messages">
+                  Messages
+              </Menu.Item>
+              <Menu.Item as={ Link } to="/settings">
+                  Settings
+              </Menu.Item>
+          </Menu.Menu>
+        </Menu>
+        <Route exact path="/" component={Home} />
+        <Route path="/survey" component={Survey} />
+        <Route path="/topics" component={Topics} /> 
       </Router>
       <Footer />
-    </div>
+    </Container>
   );
 }
 
