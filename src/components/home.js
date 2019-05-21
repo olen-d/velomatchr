@@ -1,7 +1,8 @@
 import React from "react"
 import {
-    Grid, 
+    Grid,
     Header,
+    Icon
  } from "semantic-ui-react"
 
 import LoginForm from "./loginForm";
@@ -9,6 +10,9 @@ import LoginForm from "./loginForm";
 const Headers = () => (
     <>
         <Header as="h1"></Header>
+        <Header as="h1" icon>
+            <Icon name="bolt"></Icon>
+        </Header>
         <Header as="h2"></Header>
         <Header as="h3"></Header>
     </>
@@ -41,8 +45,8 @@ const Home = () => {
             </div>          
             <div className="ui three column stackable grid container">
                 <div className="column">
-                    <h1 className="ui header red" style={ctrTxt}>
-                        <i className="material-icons">flash_on</i>
+                    <h1 className="ui icon header red" style={ctrTxt}>
+                        <i class="bolt icon"></i>
                     </h1>
                     <h3 className="ui header grey" style={ctrTxt}>
                         Find a riding buddy fast
