@@ -13,34 +13,36 @@ import Footer from "./components/footer";
 
 function BasicExample() {
   return (
-    <Container>
-      <Router>
-        <Menu color="inverted red">
-          <Menu.Item 
-              as={ Link } to="/" name="home">
-            <i className="fas fa-bicycle"></i>
-          </Menu.Item>
-          <Menu.Menu position="right">
-              <Menu.Item as={ Link } to="/survey">
-                  Survey
-              </Menu.Item>
-              <Menu.Item as={ Link } to="/buddies">
-                  Buddies
-              </Menu.Item>
-              <Menu.Item as={ Link } to="/messages">
-                  Messages
-              </Menu.Item>
-              <Menu.Item as={ Link } to="/settings">
-                  Settings
-              </Menu.Item>
-          </Menu.Menu>
-        </Menu>
-        <Route exact path="/" component={Home} />
-        <Route path="/survey" component={Survey} />
-        <Route path="/topics" component={Topics} /> 
-      </Router>
-      <Footer />
-    </Container>
+    <>
+      <Container>
+        <Router>
+          <Menu color="inverted red">
+            <Menu.Item 
+                as={ Link } to="/" name="home">
+              <i className="fas fa-bicycle"></i>
+            </Menu.Item>
+            <Menu.Menu position="right">
+                <Menu.Item as={ Link } to="/survey">
+                    Survey
+                </Menu.Item>
+                <Menu.Item as={ Link } to="/buddies">
+                    Buddies
+                </Menu.Item>
+                <Menu.Item as={ Link } to="/messages">
+                    Messages
+                </Menu.Item>
+                <Menu.Item as={ Link } to="/settings">
+                    Settings
+                </Menu.Item>
+            </Menu.Menu>
+          </Menu>
+          <Route exact path="/" component={Home} />
+          <Route path="/survey" component={Survey} />
+          <Route path="/topics" component={Topics} /> 
+        </Router>
+        </Container>
+        <Footer />
+      </>
   );
 }
 
