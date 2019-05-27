@@ -1,4 +1,9 @@
 import React from "react"
+
+import { 
+    Link 
+  } from "react-router-dom";
+
 import {
     Button,
     Form,
@@ -45,7 +50,7 @@ export default () => (
             <p>
                 Don't have an account yet?
             </p>
-            <a href="survey">
+            <Link to="/survey">
                 <Button
                     color="red"
                     size="large"
@@ -54,7 +59,7 @@ export default () => (
                     labelPosition="left"
                 >
                 </Button>
-            </a>
+            </Link>
         </Message>
     </Grid.Column>
 );
