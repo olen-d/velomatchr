@@ -3,17 +3,17 @@ import React from "react";
 
 function SurveyQuestion(props) {
   return (
-    <div className="card">
-      <div className="question">
+    <div className="survey-card">
+      <div className="survey-question">
             <p>
               Statement&nbsp;{props.number}
             </p>
             <p>
-                {props.text}
+              {props.text}
             </p>
       </div>
-      <div className="options">
-          
+      <div className="survey-options">
+        {props.children}
       </div>
     </div>
   );

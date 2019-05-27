@@ -1,7 +1,10 @@
 import React, { Component } from "react"
 
 import SurveyQuestion from "./surveyquestion"
+import LikertItem from "./likertitem"
+
 import questions from "../models/questions.json"
+import likertItems from "../models/likertItems.json"
 
 import {
     Container,
@@ -12,7 +15,8 @@ import {
 
 class Survey extends Component {
     state = {
-        questions
+        questions,
+        likertItems
     }
 
 
@@ -76,241 +80,30 @@ class Survey extends Component {
                 </div>
             </div>
             <div className="row">
-                {this.state.questions.map(question => (
-                <div className="App-character-card">
-                    <SurveyQuestion
-                    id={question.id}
-                    number={question.number}
-                    text={question.text}
-                    />
-                </div>
-                ))}
-            </div>
-
-            <div className="row">
                 <div className="col s12 m6">
                     <p>
                         Rate the following statements on a scale of one to five, with one indicating you strongly disagree, three indicating neither agreement or disagreement, and five indicating strong agreement.
                     </p>
                 </div>
             </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 1
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        Family does not come first, the bike does.
-                    </p>
-                </div>
-            </div>
             <div className="row">
-                <div className="input-field col s8 m5 l4">
-                    <select id="sl1">
-                        <option value="" disabled selected>Select an Option</option>
-                        <option value="1">1 (Strongly Disagree)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5 (Strongly Agree)</option>
-                    </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
-                </div>                   
+                {this.state.questions.map(question => (
+                    <SurveyQuestion
+                        id={question.id}
+                        number={question.number}
+                        text={question.text}
+                    >
+                        {this.state.likertItems.map(likertItem => (
+                            <LikertItem 
+                                id={likertItem.id}
+                                number={likertItem.number}
+                                text={likertItem.text}
+                            />
+                        ))}  
+                    </SurveyQuestion>
+                ))}
             </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 2
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        Shorts should be black.
-                    </p>
-                </div>
-            </div>
-            <div className="row">
-                <div className="input-field col s8 m5 l4">
-                    <select id="sl2">
-                        <option value="" disabled selected>Select an Option</option>
-                        <option value="1">1 (Strongly Disagree)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5 (Strongly Agree)</option>
-                    </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
-                </div>                   
-            </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 3
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        Brakes are death.
-                    </p>
-                </div>
-            </div>
-            <div className="row">
-                <div className="input-field col s8 m5 l4">
-                    <select id="sl3">
-                        <option value="" disabled selected>Select an Option</option>
-                        <option value="1">1 (Strongly Disagree)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5 (Strongly Agree)</option>
-                    </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
-                </div>                   
-            </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 4
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        Speeds and distances should always be referred to and measured in kilometers.
-                    </p>
-                </div>
-            </div>
-            <div className="row">
-                <div className="input-field col s8 m5 l4">
-                    <select id="sl4">
-                        <option value="" disabled selected>Select an Option</option>
-                        <option value="1">1 (Strongly Disagree)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5 (Strongly Agree)</option>
-                    </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
-                </div>                   
-            </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 5
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        The bicycles on top of your car should be worth more than your car.
-                    </p>
-                </div>
-            </div>
-            <div className="row">
-                <div className="input-field col s8 m5 l4">
-                    <select id="sl5">
-                        <option value="" disabled selected>Select an Option</option>
-                        <option value="1">1 (Strongly Disagree)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5 (Strongly Agree)</option>
-                    </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
-                </div>                   
-            </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 6
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        Socks can be any color you like.
-                    </p>
-                </div>
-            </div>
-            <div className="row">
-                <div className="input-field col s8 m5 l4">
-                    <select id="sl6">
-                        <option value="" disabled selected>Select an Option</option>
-                        <option value="1">1 (Strongly Disagree)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5 (Strongly Agree)</option>
-                    </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
-                </div>                   
-            </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 7
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        Spare tubes, multi-tools and repair kits should be stored in jersey pockets only.
-                    </p>
-                </div>
-            </div>
-            <div className="row">
-                <div className="input-field col s8 m5 l4">
-                    <select id="sl7">
-                        <option value="" disabled selected>Select an Option</option>
-                        <option value="1">1 (Strongly Disagree)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5 (Strongly Agree)</option>
-                    </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
-                </div>                   
-            </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 8
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        Tires are to be mounted with the label centered over the valve stem.
-                    </p>
-                </div>
-            </div>
-            <div className="row">
-                <div className="input-field col s8 m5 l4">
-                    <select id="sl8">
-                        <option value="" disabled selected>Select an Option</option>
-                        <option value="1">1 (Strongly Disagree)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5 (Strongly Agree)</option>
-                    </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
-                </div>                   
-            </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 9
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        Saddles, bars, and tires shall be carefully matched.
-                    </p>
-                </div>
-            </div>
-            <div className="row">
-                <div className="input-field col s8 m5 l4">
-                    <select id="sl9"> 
-                        <option value="" disabled selected>Select an Option</option>
-                        <option value="1">1 (Strongly Disagree)</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5 (Strongly Agree)</option>
-                    </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
-                </div>                   
-            </div>
-            <div className="row nbs">
-                <div className="col s10">
-                    <h6 className="header bold xtra">
-                        Statement 10
-                    </h6>
-                    <p className="grey-text text-darken-2 xtra nbs">
-                        Support your local bike shop.
-                    </p>
-                </div>
-            </div>
+
             <div className="row">
                 <div className="input-field col s8 m5 l4">
                     <select id="sl10">
@@ -321,7 +114,6 @@ class Survey extends Component {
                         <option value="4">4</option>
                         <option value="5">5 (Strongly Agree)</option>
                     </select>
-                    {/* <!-- <label>Materialize Select</label> --> */}
                 </div>                   
             </div>
             <div className="row center">
