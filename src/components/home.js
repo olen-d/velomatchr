@@ -10,7 +10,7 @@ import {
 import LoginForm from "./loginForm";
 
 const Home = () => {
-    let ctrTxt = {"text-align": "center"}
+    let ctrTxt = {"textAlign": "center"}
 
     return(
         <Container>

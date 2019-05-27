@@ -13,7 +13,18 @@ function SurveyQuestion(props) {
             </p>
       </div>
       <div className="survey-options">
-        {props.children}
+        <select 
+          id={"sl" + props.number}
+          defaultValue={"default"}
+        >
+          <option 
+            value="default" 
+            disabled
+          >
+            Select an Option
+          </option>
+          {props.children}
+        </select>
       </div>
     </div>
   );

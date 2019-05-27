@@ -23,7 +23,7 @@ function BasicExample() {
     <>
       <Container>
         <Router>
-          <Menu color="inverted red">
+          <Menu inverted color="red">
             <Menu.Item 
                 as={ Link } to="/" name="home">
               <i className="fas fa-bicycle"></i>

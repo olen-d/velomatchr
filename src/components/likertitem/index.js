@@ -3,11 +3,12 @@ import React from "react";
 
 function LikertItem(props) {
   return (
-    <div className="likert-item">
-        <p>
-            {props.number}&nbsp;{props.text}
-        </p>
-    </div>
+    <option 
+        key={props.id} 
+        value={props.number}
+    >
+        {props.number + ". " + props.text}
+    </option>
   );
 }
 
