@@ -1,14 +1,24 @@
 import React, { Component } from "react"
-// import M from "../materialize.js";
+
+import SurveyQuestion from "./surveyquestion"
+import questions from "../models/questions.json"
+
+import {
+    Container,
+    Grid,
+    Header,
+    Icon
+ } from "semantic-ui-react"
 
 class Survey extends Component {
-    // componentDidMount() {
-    //     M.AutoInit();
-    // }
+    state = {
+        questions
+    }
+
 
     render () {
     return(
-        <div className="container">
+        <Container>
             <div className="row">
                <div className="col s12">
                    <h4 className="header orange-text text-darken-2">Survey Questions</h4>
@@ -65,6 +75,18 @@ class Survey extends Component {
                     </h5>
                 </div>
             </div>
+            <div className="row">
+                {this.state.questions.map(question => (
+                <div className="App-character-card">
+                    <SurveyQuestion
+                    id={question.id}
+                    number={question.number}
+                    text={question.text}
+                    />
+                </div>
+                ))}
+            </div>
+
             <div className="row">
                 <div className="col s12 m6">
                     <p>
@@ -312,7 +334,7 @@ class Survey extends Component {
                 </button>
             </div>
         </form>
-            </div>
+            </Container>
     );
 }
 }
