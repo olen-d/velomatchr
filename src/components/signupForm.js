@@ -33,39 +33,39 @@ class SignupForm extends Component {
                             fluid
                             icon="user"
                             iconPosition="left"
-                            placeholder="Your First Name"
+                            placeholder="First Name"
                         />
                         <Form.Input
                             fluid
                             icon="user"
                             iconPosition="left"
-                            placeholder="Your Last Name"
+                            placeholder="Last Name"
                         />
                         <Form.Input
                             fluid
                             icon="envelope"
                             iconPosition="left"
-                            placeholder="Your Email Address"
+                            placeholder="Email Address"
                             type="email"
                         />
                         <Form.Input
                             fluid
                             icon="phone"
                             iconPosition="left"
-                            placeholder="Your Telephone Number"
+                            placeholder="Telephone Number"
                             type="tel"
                         />
                         <Form.Input
                             fluid
                             icon="image"
                             iconPosition="left"
-                            placeholder="Your Photograph"
+                            placeholder="Profile Photograph"
                         />
                         <Form.Input
                             fluid
                             icon="lock"
                             iconPosition="left"
-                            placeholder="Your Password"
+                            placeholder="Password"
                             type="password"
                         />
                         <Button 

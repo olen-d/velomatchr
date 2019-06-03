@@ -35,7 +35,7 @@ const Home = () => {
             </Grid>
             <Grid stackable>
                 <SignupForm
-                    colWidth="8"
+                    colWidth="6"
                     formTitle="Sign Up Today"
                 />
                 <LoginForm 
