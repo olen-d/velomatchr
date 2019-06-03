@@ -8,6 +8,7 @@ import {
  } from "semantic-ui-react"
 
 import LoginForm from "./loginForm";
+import SignupForm from "./signupForm";
 
 const Home = () => {
     let ctrTxt = {"textAlign": "center"}
@@ -15,20 +16,32 @@ const Home = () => {
     return(
         <Container>
             <Grid>
-                <Grid.Column width={16} textAlign="center">
-                    <h1 className="ui header orange">
+                <Grid.Column width={16} >
+                    <Header
+                        as="h1" 
+                        textAlign="center"
+                        color="orange"
+                    >
                         VeloMatchr
-                    </h1>
-                    <h2 className="ui header grey">
+                    </Header>
+                    <Header
+                        as="h2"
+                        textAlign="center" 
+                        color="grey"
+                    >
                         Find the riding buddy of your dreams.
-                    </h2>
+                    </Header>
                 </Grid.Column>
             </Grid>
             <Grid stackable>
-                <Grid.Column width={8}>
-                    &nbsp;
-                </Grid.Column>
-                <LoginForm />
+                <SignupForm
+                    colWidth="8"
+                    formTitle="Sign Up Today"
+                />
+                <LoginForm 
+                    colWidth="8"
+                    formTitle="Sign In"
+                />
             </Grid>          
             <Grid stackable columns="equal">
                 <Grid.Column>
