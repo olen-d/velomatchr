@@ -1,7 +1,7 @@
 import React from "react";
 // import "./styles.css";
 
-function SurveyQuestion(props) {
+const SurveyQuestion = props => {
   return (
     <div className="survey-card">
       <div className="survey-question">

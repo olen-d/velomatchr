@@ -1,10 +1,9 @@
 import React from "react";
 // import "./styles.css";
 
-function LikertItem(props) {
+const LikertItem = props => {
   return (
-    <option 
-        key={props.id} 
+    <option
         value={props.number}
     >
         {props.number + ". " + props.text}

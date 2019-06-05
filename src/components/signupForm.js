@@ -2,7 +2,10 @@ import React, { Component } from "react"
 
 import { 
     Link 
-  } from "react-router-dom";
+} from "react-router-dom";
+
+import GenderChoices from "./genderchoices"
+import genderChoices from "../models/genderChoices"
 
 import {
     Button,
@@ -15,6 +18,7 @@ import {
 
 class SignupForm extends Component {
     state = {
+        genderChoices
     }
 
     render() {
@@ -68,6 +72,26 @@ class SignupForm extends Component {
                             placeholder="Password"
                             type="password"
                         />
+                        <Form.Input
+                            fluid
+                            control="select"
+                            defaultValue="default"
+                        >  
+                            <option
+                                key="-1"
+                                value="default"
+                                disabled
+                            >
+                                Select Your Gender
+                            </option>
+                            {this.state.genderChoices.map(genderChoice => (
+                                <GenderChoices 
+                                    key={genderChoice.id}
+                                    value={genderChoice.value}
+                                    text={genderChoice.text}
+                                />
+                            ))}
+                        </Form.Input>
                         <Button 
                             color="red"
                             fluid
@@ -83,15 +107,3 @@ class SignupForm extends Component {
 }
 
 export default SignupForm;
-
-/*
-<div className="input-field col s8 m5 l4">
-    <select id="gender" defaultValue={"default"}>
-        <option value="default" disabled>Select Your Gender</option>
-        <option value="F">Female</option>
-        <option value="M">Male</option>
-        <option value="NB">Non-binary</option>
-        <option value="NS">Prefer not to say</option>
-    </select>
-</div>                                    
-*/

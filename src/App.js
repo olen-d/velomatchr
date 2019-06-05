@@ -16,6 +16,8 @@ import "./style.css";
 
 import Home from "./components/home";
 import Survey from "./components/survey";
+import Login from "./components/login";
+
 import Footer from "./components/footer";
 
 function BasicExample() {
@@ -30,22 +32,25 @@ function BasicExample() {
             </Menu.Item>
             <Menu.Menu position="right">
                 <Menu.Item as={ NavLink } to="/survey">
-                    Survey
+                  Survey
                 </Menu.Item>
                 <Menu.Item as={ NavLink } to="/buddies">
-                    Buddies
+                  Buddies
                 </Menu.Item>
                 <Menu.Item as={ NavLink } to="/messages">
-                    Messages
+                  Messages
                 </Menu.Item>
                 <Menu.Item as={ NavLink } to="/settings">
-                    Settings
+                  Settings
+                </Menu.Item>
+                <Menu.Item as={ NavLink } to="/login">
+                  Sign In
                 </Menu.Item>
             </Menu.Menu>
           </Menu>
           <Route exact path="/" component={Home} />
           <Route path="/survey" component={Survey} />
-          <Route path="/topics" component={Topics} /> 
+          <Route path="/login" component={Login} /> 
         </Router>
         </Container>
         <Footer />

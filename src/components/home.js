@@ -38,10 +38,6 @@ const Home = () => {
                     colWidth="6"
                     formTitle="Sign Up Today"
                 />
-                <LoginForm 
-                    colWidth="8"
-                    formTitle="Sign In"
-                />
             </Grid>          
             <Grid stackable columns="equal">
                 <Grid.Column>
