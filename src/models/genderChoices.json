@@ -1,0 +1,23 @@
+[
+    {
+        "id" : 0, 
+        "value" : "NB", 
+        "icon" : "transgender alternate",
+        "text" : "Non-Binary"},
+    {
+        "id" : 1, 
+        "value" : "F", 
+        "icon" : "venus",
+        "text" : "Female"},
+    {
+        "id" : 2, 
+        "value" : "M",
+        "icon" : "mars", 
+        "text" : "Male"},
+    {
+        "id" : 3,
+        "value" : "NS",  
+        "icon" : "genderless",
+        "text" : "Prefer Not To Say "
+    }
+]

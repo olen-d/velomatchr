@@ -1,42 +1,60 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-import "./materialize.css";
-import M from "./materialize";
+import { 
+  BrowserRouter as Router, 
+  Route,
+  NavLink, 
+  Link 
+} from "react-router-dom";
+
+import {
+  Container,
+  Menu 
+} from 'semantic-ui-react';
+
 import "./style.css";
 
-import Home from "./components/home";
-import Survey from "./components/survey";
+import Home from "./pages/home";
+import Survey from "./pages/survey";
+import Login from "./pages/login";
+
 import Footer from "./components/footer";
 
 function BasicExample() {
   return (
     <>
-      <Router>
-        <nav className="red accent-4" role="navigation">
-          <div className="nav-wrapper container"><Link to="/"><i className="fas fa-bicycle"></i></Link>
-            <ul className="right hide-on-med-and-down">
-              <li>
-                <Link to="/survey">Survey</Link>
-              </li>
-              <li>
-                <Link to="/buddies">Buddies</Link>
-              </li>
-              <li>
-                <Link to="/messages">Messages</Link>
-              </li>
-              <li>
-                <Link to="/settings">Settings</Link>
-              </li>  
-            </ul>
-          </div>
-        </nav>
+      <Container>
+        <Router>
+          <Menu inverted color="red">
+            <Menu.Item 
+                as={ Link } to="/" name="home">
+              <i className="fas fa-bicycle"></i>
+            </Menu.Item>
+            <Menu.Menu position="right">
+                <Menu.Item as={ NavLink } to="/survey">
+                  Survey
+                </Menu.Item>
+                <Menu.Item as={ NavLink } to="/buddies">
+                  Buddies
+                </Menu.Item>
+                <Menu.Item as={ NavLink } to="/messages">
+                  Messages
+                </Menu.Item>
+                <Menu.Item as={ NavLink } to="/settings">
+                  Settings
+                </Menu.Item>
+                <Menu.Item as={ NavLink } to="/login">
+                  Sign In
+                </Menu.Item>
+            </Menu.Menu>
+          </Menu>
           <Route exact path="/" component={Home} />
           <Route path="/survey" component={Survey} />
-          <Route path="/topics" component={Topics} />
-      </Router>
-      <Footer />
-    </>
+          <Route path="/login" component={Login} /> 
+        </Router>
+        </Container>
+        <Footer />
+      </>
   );
 }
 
