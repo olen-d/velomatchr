@@ -7,7 +7,7 @@ import {
     Icon
  } from "semantic-ui-react"
 
-import LoginForm from "./loginForm";
+import LoginForm from "../components/loginForm";
 
 const Login = () => {
     return(

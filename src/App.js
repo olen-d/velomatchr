@@ -14,9 +14,9 @@ import {
 
 import "./style.css";
 
-import Home from "./components/home";
-import Survey from "./components/survey";
-import Login from "./components/login";
+import Home from "./pages/home";
+import Survey from "./pages/survey";
+import Login from "./pages/login";
 
 import Footer from "./components/footer";
 

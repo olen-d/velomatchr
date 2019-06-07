@@ -7,8 +7,8 @@ import {
     Icon
  } from "semantic-ui-react"
 
-import LoginForm from "./loginForm";
-import SignupForm from "./signupForm";
+import LoginForm from "../components/loginForm";
+import SignupForm from "../components/signupForm";
 
 const Home = () => {
     let ctrTxt = {"textAlign": "center"}

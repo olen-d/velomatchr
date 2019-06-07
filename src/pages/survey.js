@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 
-import SurveyForm from "./surveyForm"
+import SurveyForm from "../components/surveyForm"
 
 import {
   Container,
