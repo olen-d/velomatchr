@@ -17,7 +17,7 @@ app.use(express.json());
 app.get("/api/express_backend", (req, res) => {
     res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
   });
-// const apiRoutes = require("./app/routing/apiRoutes")(app);
+const apiRoutes = require("./app/routing/apiRoutes")(app);
 // const htmlRoutes = require("./app/routing/htmlRoutes")(app);
 
 app.listen(port, () => console.log(`VeloMatchr API is listening on port ${port}!`));
