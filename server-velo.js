@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const port =  process.env.PORT || 5000;
 
-// TODO: Get rid of below in production...
-app.use(function(req, res, next) {
+// TODO: consider using CORS instead...
+app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
