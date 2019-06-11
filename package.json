@@ -3,13 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "multer": "^1.4.1",
+    "mysql2": "^1.6.5",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.0",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^0.87.1"
+    "semantic-ui-react": "^0.87.1",
+    "sequelize": "^5.8.8"
   },
   "scripts": {
     "start": "react-scripts start",
