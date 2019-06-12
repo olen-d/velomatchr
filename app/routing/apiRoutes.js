@@ -46,6 +46,8 @@ module.exports = (app) => {
           phone: formData.telephoneNumber,
           photoLink: req.file.path,
           gender: formData.gender,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
           city: "blank",
           state: "blank",
           stateCode: "blank",
