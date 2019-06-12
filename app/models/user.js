@@ -41,6 +41,22 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    latitude: {
+      type: DataTypes.DECIMAL(10,8),
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: -90, max: 90
+      }
+    },
+    longitude: {
+      type: DataTypes.DECIMAL(11,8),
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: -180, max: 180
+      },
+    },
     city: {
         type: DataTypes.STRING,
         allowNull: false,
