@@ -14,22 +14,22 @@ class Home extends Component {
         data: null
     };
 
-    componentDidMount() {
-        // Call our fetch function below once the component mounts
-      this.callBackendAPI()
-        .then(res => this.setState({ data: res.express }))
-        .catch(err => console.log(err));
-    }
-      // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
-    callBackendAPI = async () => {
-      const response = await fetch('http://localhost:5000/api/express_backend');
-      const body = await response.json();
+    // componentDidMount() {
+    //     // Call our fetch function below once the component mounts
+    //   this.callBackendAPI()
+    //     .then(res => this.setState({ data: res.express }))
+    //     .catch(err => console.log(err));
+    // }
+    //   // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
+    // callBackendAPI = async () => {
+    //   const response = await fetch('http://localhost:5000/api/express_backend');
+    //   const body = await response.json();
   
-      if (response.status !== 200) {
-        throw Error(body.message) 
-      }
-      return body;
-    };
+    //   if (response.status !== 200) {
+    //     throw Error(body.message) 
+    //   }
+    //   return body;
+    // };
 
     render() {
         let ctrTxt = {"textAlign": "center"};   // TODO: Fix this to use Header as... syntax
@@ -51,7 +51,7 @@ class Home extends Component {
                         >
                             Find the riding buddy of your dreams.
                         </Header>
-                        <p>Status: {this.state.data}</p>
+                        {/* <p>Status: {this.state.data}</p> */}
                     </Grid.Column>
                 </Grid>
                 <Grid stackable>
