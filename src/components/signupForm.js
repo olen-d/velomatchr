@@ -22,8 +22,48 @@ class SignupForm extends Component {
       emailAddress: "",
       telephoneNumber: "",
       password: "",
-      gender: "default"
+      gender: "default",
+      latitude: 0.0,
+      longitude: 0.0
     }
+  }
+  
+  componentDidMount() {
+    this.locater().then(locaterRes => {
+      if (locaterRes.status === 200) {
+        // console.log(locaterRes.latitude, locaterRes.longitude);
+        this.setState({ latitude : locaterRes.latitude });
+        this.setState({ longitude : locaterRes.longitude });
+      }
+    });    
+  }
+
+  locater = () => {
+    return new Promise((res, rej) => {
+      try {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            // console.log(position.coords.latitude, position.coords.longitude);
+            res({
+              status: 200,
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            });
+            // Return the number of nearby matches (within 5 miles)
+          });
+        } else {
+          /* geolocation IS NOT available */
+          // Ask for a city and state
+          // Then hit (probably) MapQuest to generate a lat/long
+          // In the database note that it was city/state and not accurate
+        }
+      } catch (err) {
+        rej({
+          status: 500,
+          error: "Internal server error. Failed to get latitude and longitude of user."
+        });
+      }
+    });
   }
 
   onChange = (e) => {
@@ -44,6 +84,8 @@ class SignupForm extends Component {
       telephoneNumber,
       password,
       gender,
+      latitude,
+      longitude
     } = this.state;
 
     const formInputs = { 
@@ -52,7 +94,10 @@ class SignupForm extends Component {
       emailAddress, 
       telephoneNumber, 
       password, 
-      gender };
+      gender,
+      latitude,
+      longitude
+    };
       
     const entries = Object.entries(formInputs);
     const profilePhotographFile = this.state.profilePhotographFile;
