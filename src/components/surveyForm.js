@@ -7,11 +7,13 @@ import questions from "../models/questions.json"
 import likertItems from "../models/likertItems.json"
 
 import {
+  Button,
   Container,
   Form,
   Grid,
   Header,
-  Icon
+  Icon,
+  Segment
 } from "semantic-ui-react"
 
 class SurveyForm extends Component {
@@ -22,25 +24,64 @@ class SurveyForm extends Component {
 
   render() {
     return(
-        <div className="surveyForm">
-            {this.state.questions.map(question => (
+      <>
+        <Grid.Row>
+          <Grid.Column width={this.props.colWidth}>
+            <Header
+              as="h2"
+              color="orange"
+            >
+              {this.props.formTitle}
+            </Header>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={this.props.colWidth}>
+            <p>
+              {this.props.formInstructions}
+            </p>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={this.props.colWidth}>
+            <Form
+              size="large"
+            >
+              {this.state.questions.map(question => (
                 <SurveyQuestion
-                    key={question.id}
-                    id={question.id}
-                    number={question.number}
-                    text={question.text}
+                  key={question.id}
+                  id={question.id}
+                  number={question.number}
+                  text={question.text}
                 >
-                    {this.state.likertItems.map(likertItem => (
-                        <LikertItem 
-                            key={likertItem.id}
-                            id={likertItem.id}
-                            number={likertItem.number}
-                            text={likertItem.text}
-                        />
-                    ))}  
+                  {this.state.likertItems.map(likertItem => (
+                    <LikertItem 
+                      key={likertItem.id}
+                      id={likertItem.id}
+                      number={likertItem.number}
+                      text={likertItem.text}
+                    />
+                  ))}  
                 </SurveyQuestion>
-            ))}
-        </div>
+              ))}
+            </Form>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={this.props.colWidth}>
+            <Button
+                fluid
+                type="submit"
+                color="red"
+                size="large"
+                icon="check circle"
+                labelPosition="left"
+                content={this.props.submitContent}
+              >
+              </Button>
+          </Grid.Column>
+        </Grid.Row>
+      </>
     );
   }
 }
