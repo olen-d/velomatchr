@@ -30,6 +30,7 @@ const SurveyQuestion = props => {
           <select 
             id={"sl" + props.number}
             defaultValue={"default"}
+            onChange={this.onChange}
           >
             <option 
               value="default" 

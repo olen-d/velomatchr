@@ -16,7 +16,13 @@ import {
 class SurveyForm extends Component {
   state = {
     questions,
-    likertItems
+    likertItems,
+    answers: []
+  }
+
+  onChange = (e) => {
+    // Do the mapping thing (See clicky game)
+    this.setState({ [e.target.name] : e.target.value });
   }
 
   render() {
