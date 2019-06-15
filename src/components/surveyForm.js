@@ -8,12 +8,9 @@ import likertItems from "../models/likertItems.json"
 
 import {
   Button,
-  Container,
   Form,
   Grid,
   Header,
-  Icon,
-  Segment
 } from "semantic-ui-react"
 
 class SurveyForm extends Component {
@@ -54,13 +51,13 @@ class SurveyForm extends Component {
                   number={question.number}
                   text={question.text}
                 >
-                  {this.state.likertItems.map(likertItem => (
-                    <LikertItem 
-                      key={likertItem.id}
-                      id={likertItem.id}
-                      number={likertItem.number}
-                      text={likertItem.text}
-                    />
+                {this.state.likertItems.map(likertItem => (
+                  <LikertItem 
+                    key={likertItem.id}
+                    id={likertItem.id}
+                    number={likertItem.number}
+                    text={likertItem.text}
+                  />
                   ))}  
                 </SurveyQuestion>
               ))}
@@ -70,15 +67,15 @@ class SurveyForm extends Component {
         <Grid.Row>
           <Grid.Column width={this.props.colWidth}>
             <Button
-                fluid
-                type="submit"
-                color="red"
-                size="large"
-                icon="check circle"
-                labelPosition="left"
-                content={this.props.submitContent}
-              >
-              </Button>
+              fluid
+              type="submit"
+              color="red"
+              size="large"
+              icon="check circle"
+              labelPosition="left"
+              content={this.props.submitContent}
+            >
+            </Button>
           </Grid.Column>
         </Grid.Row>
       </>

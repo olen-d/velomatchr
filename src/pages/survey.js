@@ -39,7 +39,7 @@ class Survey extends Component {
             </Grid.Column>
           </Grid.Row>
             <SurveyForm 
-              colWidth="12"
+              colWidth="8"
               formTitle="Your Cycling Preferences"
               formInstructions="Rate the following statements on a scale of one to five, with one indicating you strongly disagree, three indicating neither agreement or disagreement, and five indicating strong agreement."
               submitContent="Find My Buddy"
