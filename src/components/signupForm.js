@@ -31,7 +31,6 @@ class SignupForm extends Component {
   componentDidMount() {
     this.locater().then(locaterRes => {
       if (locaterRes.status === 200) {
-        // console.log(locaterRes.latitude, locaterRes.longitude);
         this.setState({ latitude : locaterRes.latitude });
         this.setState({ longitude : locaterRes.longitude });
       }
@@ -43,7 +42,6 @@ class SignupForm extends Component {
       try {
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition((position) => {
-            // console.log(position.coords.latitude, position.coords.longitude);
             res({
               status: 200,
               latitude: position.coords.latitude,
@@ -141,7 +139,6 @@ class SignupForm extends Component {
         </Header>
         <Segment>
           <Form
-            // enctype="multipart/form-data"
             size="large"
             onSubmit={this.onSubmit}
           >

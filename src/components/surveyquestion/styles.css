@@ -1,0 +1,12 @@
+.grey {
+    color: #767676;
+}
+
+.survey-question {
+    padding-bottom: 1rem;
+    font-size: 110%;
+}
+
+.survey-response {
+    padding-bottom: 3rem;
+}

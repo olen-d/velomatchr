@@ -1,32 +1,47 @@
 import React from "react";
-// import "./styles.css";
+import "./styles.css";
+
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemExtra,
+  ItemHeader,
+} from "semantic-ui-react"
 
 const SurveyQuestion = props => {
   return (
-    <div className="survey-card">
-      <div className="survey-question">
-            <p>
-              Statement&nbsp;{props.number}
-            </p>
-            <p>
-              {props.text}
-            </p>
-      </div>
-      <div className="survey-options">
-        <select 
-          id={"sl" + props.number}
-          defaultValue={"default"}
+    <Item>
+      <ItemContent>
+        <ItemHeader
+          as="h3"
+          className="grey"
         >
-          <option 
-            value="default" 
-            disabled
+          Statement&nbsp;{props.number}
+        </ItemHeader>
+        <ItemDescription>
+          <p className="survey-question">
+            {props.text}
+          </p>
+        </ItemDescription>
+        <ItemExtra 
+          className="survey-response"
+        >
+          <select 
+            id={"sl" + props.number}
+            defaultValue={"default"}
           >
-            Select an Option
-          </option>
-          {props.children}
-        </select>
-      </div>
-    </div>
+            <option 
+              value="default" 
+              disabled
+            >
+              Select an Option
+            </option>
+            {props.children}
+          </select>
+        </ItemExtra>
+      </ItemContent>
+    </Item>
   );
 }
 

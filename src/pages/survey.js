@@ -38,44 +38,13 @@ class Survey extends Component {
               </Header>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <Form>
-
-              </Form>
-            </Grid.Column>
-          </Grid.Row>
+            <SurveyForm 
+              colWidth="8"
+              formTitle="Your Cycling Preferences"
+              formInstructions="Rate the following statements on a scale of one to five, with one indicating you strongly disagree, three indicating neither agreement or disagreement, and five indicating strong agreement."
+              submitContent="Find My Buddy"
+            />
         </Grid>
-
-
-      <form id="survey">
-          <div className="row">
-              <div className="col s12">
-                  <h5 className="orange-text text-darken-2">
-                      Your Cycling Preferences
-                  </h5>
-              </div>
-          </div>
-          <div className="row">
-              <div className="col s12 m6">
-                  <p>
-                      Rate the following statements on a scale of one to five, with one indicating you strongly disagree, three indicating neither agreement or disagreement, and five indicating strong agreement.
-                  </p>
-              </div>
-          </div>
-          <div className="row">
-            <SurveyForm />
-          </div>
-          <div className="row center">
-              <button type="submit" 
-                  value="submit" 
-                  id="survey-btn" 
-                  className="btn-large waves-effect waves-light red accent-4"
-                  >   
-                  <i className="fas fa-check-circle"></i> Find My Buddy
-              </button>
-          </div>
-      </form>
       </Container>
     );
   }
