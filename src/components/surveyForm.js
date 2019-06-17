@@ -13,16 +13,20 @@ import {
   Header,
 } from "semantic-ui-react"
 
+// Add the selectedVal attribute to the questions so we can keep track of which answer is selected in the state
+questions.forEach(i => {
+  i["selectedVal"] = null;
+});
+
 class SurveyForm extends Component {
   state = {
     questions,
     likertItems,
-    answers: []
   }
 
-  onChange = (e) => {
-    // Do the mapping thing (See clicky game)
-    this.setState({ [e.target.name] : e.target.value });
+  setAnswerState = e => {
+    const questions = this.state.questions.map(question => question.id === parseInt(e.target.name) ? {...question, ...{selectedVal: parseInt(e.target.value)}} : question)
+    this.setState({questions : questions});
   }
 
   render() {
@@ -56,6 +60,7 @@ class SurveyForm extends Component {
                   id={question.id}
                   number={question.number}
                   text={question.text}
+                  onChange={this.setAnswerState.bind(this)}
                 >
                 {this.state.likertItems.map(likertItem => (
                   <LikertItem 

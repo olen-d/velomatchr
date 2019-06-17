@@ -1,49 +1,50 @@
 [
-    {
-        "id" : 0, 
-        "number" : 1, 
-        "text" : "Family does not come first, the bike does. "},
-    {
-        "id" : 1, 
-        "number" : 2, 
-        "text" : "Shorts should be black. "},
-    {
-        "id" : 2, 
-        "number" : 3, 
-        "text" : "Brakes are death. "},
-    {
-        "id" : 3, 
-        "number" : 4, 
-        "text" : "Speeds and distances should always be referred to and measured in kilometers. "
-    },
-    {
-        "id" : 4, 
-        "number" : 5, 
-        "text" : "The bicycles on top of your car should be worth more than your car. "
-    },
-    {
-        "id" : 5, 
-        "number" : 6, 
-        "text" : "Socks can be any color you like. "
-    },
-    {
-        "id" : 6, 
-        "number" : 7, 
-        "text" : "Spare tubes, multi-tools and repair kits should be stored in jersey pockets only. "
-    },
-    {
-        "id" : 7, 
-        "number" : 8, 
-        "text" : "Tires are to be mounted with the label centered over the valve stem. "
-    },
-    {
-        "id" : 8, 
-        "number" : 9, 
-        "text" : "Saddles, bars, and tires shall be carefully matched. "
-    },
-    {
-        "id" : 9, 
-        "number" : 10, 
-        "text" : "Support your local bike shop. "
-    }
+  {
+    "id" : 0, 
+    "number" : 1, 
+    "text" : "Family does not come first, the bike does. "
+  },
+  {
+    "id" : 1, 
+    "number" : 2, 
+    "text" : "Shorts should be black. "},
+  {
+    "id" : 2, 
+    "number" : 3, 
+    "text" : "Brakes are death. "},
+  {
+    "id" : 3, 
+    "number" : 4, 
+    "text" : "Speeds and distances should always be referred to and measured in kilometers. "
+  },
+  {
+    "id" : 4, 
+    "number" : 5, 
+    "text" : "The bicycles on top of your car should be worth more than your car. "
+  },
+  {
+    "id" : 5, 
+    "number" : 6, 
+    "text" : "Socks can be any color you like. "
+  },
+  {
+    "id" : 6, 
+    "number" : 7, 
+    "text" : "Spare tubes, multi-tools and repair kits should be stored in jersey pockets only. "
+  },
+  {
+    "id" : 7, 
+    "number" : 8, 
+    "text" : "Tires are to be mounted with the label centered over the valve stem. "
+  },
+  {
+    "id" : 8, 
+    "number" : 9, 
+    "text" : "Saddles, bars, and tires shall be carefully matched. "
+  },
+  {
+    "id" : 9, 
+    "number" : 10, 
+    "text" : "Support your local bike shop. "
+  }
 ]
