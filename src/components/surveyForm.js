@@ -19,6 +19,7 @@ questions.forEach(i => {
 });
 
 class SurveyForm extends Component {
+  // this.onSubmit = this.onSubmit.bind(this);
   state = {
     questions,
     likertItems,
@@ -27,6 +28,31 @@ class SurveyForm extends Component {
   setAnswerState = e => {
     const questions = this.state.questions.map(question => question.id === parseInt(e.target.name) ? {...question, ...{selectedVal: parseInt(e.target.value)}} : question)
     this.setState({questions : questions});
+  }
+
+  onSubmit = e => {
+    e.preventDefault();
+      console.log("xyzzy");
+    const entries = this.state.questions;
+    const formData = new FormData();
+
+    entries.forEach(entry => {
+      console.log(entry.id,entry.selectedVal);
+      formData.append(entry.id, entry.selectedVal);
+    });
+    for (const key of formData.entries()) {
+      console.log(key[0] + " " + key[1])
+    }
+    
+
+    // fetch("http://localhost:5000/api/signup", {
+    //   method: "post",
+    //   body: formData
+    // }).then(response => {
+    //   return response.json();
+    // }).then(data => {
+    //   console.log("Ninjas", data);
+    // });
   }
 
   render() {
@@ -53,6 +79,7 @@ class SurveyForm extends Component {
           <Grid.Column width={this.props.colWidth}>
             <Form
               size="large"
+              onSubmit={this.onSubmit}
             >
               {this.state.questions.map(question => (
                 <SurveyQuestion
@@ -72,21 +99,17 @@ class SurveyForm extends Component {
                   ))}  
                 </SurveyQuestion>
               ))}
+              <Button
+                fluid
+                type="submit"
+                color="red"
+                size="large"
+                icon="check circle"
+                labelPosition="left"
+                content={this.props.submitContent}
+              >
+              </Button>
             </Form>
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column width={this.props.colWidth}>
-            <Button
-              fluid
-              type="submit"
-              color="red"
-              size="large"
-              icon="check circle"
-              labelPosition="left"
-              content={this.props.submitContent}
-            >
-            </Button>
           </Grid.Column>
         </Grid.Row>
       </>

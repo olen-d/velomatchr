@@ -64,15 +64,15 @@ class SignupForm extends Component {
     });
   }
 
-  onChange = (e) => {
+  onChange = e => {
     this.setState({ [e.target.name] : e.target.value });
   }
 
-  uploadFile = (e) => {
+  uploadFile = e => {
     this.setState({ profilePhotographFile : e.target.files[0] });
   }
 
-  onSubmit = (e) => {
+  onSubmit = e => {
     e.preventDefault();
 
     const {

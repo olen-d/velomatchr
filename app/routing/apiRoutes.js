@@ -18,23 +18,16 @@ module.exports = (app) => {
   const upload = multer({ storage: storage })
 
   app.post("/api/signup", upload.single("profilePhotographFile"), (req, res) => {
-    // console.log("*********\n", req);
-    // console.log("+++++++++\n", req.body);
-    // console.log("=========\n", req.file);
-      
-  if (!req.file) {
-    console.log("No file received");
-    return res.send({
-      success: false
-    });
+    if (!req.file) {
+      return res.send({
+        success: false,
+        errorCode: 404,
+        errorMsg: "No file was uploaded"
+      });
 
     } else {
-      console.log('file received');
-      console.log("b\n",req.body);
-      console.log("f\n",req.file);
       const formData = req.body;
-    
-      // console.log("Roman\n", formData);
+
       bcrypt.newPass(formData.password).then(function(pwdRes) {
       if(pwdRes.status === 200) {
         db.User.create({
@@ -54,16 +47,20 @@ module.exports = (app) => {
           country: "blank",
           countryCode: "bla"
         }).then(newUser => {
-          res.json(newUser);
+          // res.json(newUser);
+          return res.send({
+            success: true,
+            login: true,
+            userId: newUser.id,
+          });
         });
         } else {
-          throw error;
+          return res.send({
+            errorCode: 500,
+            errorMsg: "Internal Server Error"
+          });
         }
       });
-      return res.send({
-        success: true,
-        data: req.body
-      })
     }
   });
 
