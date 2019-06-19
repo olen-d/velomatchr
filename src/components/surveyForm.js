@@ -13,10 +13,54 @@ import {
   Header,
 } from "semantic-ui-react"
 
+// Add the selectedVal attribute to the questions so we can keep track of which answer is selected in the state
+questions.forEach(i => {
+  i["selectedVal"] = null;
+});
+
 class SurveyForm extends Component {
+  // this.onSubmit = this.onSubmit.bind(this);
   state = {
     questions,
-    likertItems
+    likertItems,
+  }
+
+  setAnswerState = e => {
+    const questions = this.state.questions.map(question => question.id === parseInt(e.target.name) ? {...question, ...{selectedVal: parseInt(e.target.value)}} : question)
+    this.setState({questions : questions});
+  }
+
+  onSubmit = e => {
+    e.preventDefault();
+
+    const entries = this.state.questions;
+    const formData = {};
+
+    entries.forEach(entry => {
+      formData[entry.id] = entry.selectedVal;
+    });
+    // for (const key of formData.entries()) {
+    //   console.log(key[0] + " " + key[1])
+    // }
+    console.log(formData);
+
+    fetch("http://localhost:5000/api/survey/submit", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+      console.log("Doritos\n", data);
+    }).catch(error => {
+      return ({
+        errorCode: 500,
+        errorMsg: "Internal Server Error",
+        errorDetail: error
+      })
+    });;
   }
 
   render() {
@@ -43,6 +87,7 @@ class SurveyForm extends Component {
           <Grid.Column width={this.props.colWidth}>
             <Form
               size="large"
+              onSubmit={this.onSubmit}
             >
               {this.state.questions.map(question => (
                 <SurveyQuestion
@@ -50,6 +95,7 @@ class SurveyForm extends Component {
                   id={question.id}
                   number={question.number}
                   text={question.text}
+                  onChange={this.setAnswerState.bind(this)}
                 >
                 {this.state.likertItems.map(likertItem => (
                   <LikertItem 
@@ -61,21 +107,17 @@ class SurveyForm extends Component {
                   ))}  
                 </SurveyQuestion>
               ))}
+              <Button
+                fluid
+                type="submit"
+                color="red"
+                size="large"
+                icon="check circle"
+                labelPosition="left"
+                content={this.props.submitContent}
+              >
+              </Button>
             </Form>
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column width={this.props.colWidth}>
-            <Button
-              fluid
-              type="submit"
-              color="red"
-              size="large"
-              icon="check circle"
-              labelPosition="left"
-              content={this.props.submitContent}
-            >
-            </Button>
           </Grid.Column>
         </Grid.Row>
       </>

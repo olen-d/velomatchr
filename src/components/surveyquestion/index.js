@@ -6,8 +6,8 @@ import {
   ItemContent,
   ItemDescription,
   ItemExtra,
-  ItemHeader,
-} from "semantic-ui-react"
+  ItemHeader
+} from "semantic-ui-react";
 
 const SurveyQuestion = props => {
   return (
@@ -28,8 +28,10 @@ const SurveyQuestion = props => {
           className="survey-response"
         >
           <select 
-            id={"sl" + props.number}
+            id={"st" + props.id}
+            name={props.id}
             defaultValue={"default"}
+            onChange={props.onChange}
           >
             <option 
               value="default" 

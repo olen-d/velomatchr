@@ -64,15 +64,15 @@ class SignupForm extends Component {
     });
   }
 
-  onChange = (e) => {
+  onChange = e => {
     this.setState({ [e.target.name] : e.target.value });
   }
 
-  uploadFile = (e) => {
+  uploadFile = e => {
     this.setState({ profilePhotographFile : e.target.files[0] });
   }
 
-  onSubmit = (e) => {
+  onSubmit = e => {
     e.preventDefault();
 
     const {
@@ -114,6 +114,8 @@ class SignupForm extends Component {
     }).then(response => {
       return response.json();
     }).then(data => {
+      // TODO:  Do something useful with the data
+      //        Like log the user in and issue a jsonwebtoken
       console.log("Ninjas", data);
     });
   }
