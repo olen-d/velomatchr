@@ -32,27 +32,35 @@ class SurveyForm extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-      console.log("xyzzy");
+
     const entries = this.state.questions;
-    const formData = new FormData();
+    const formData = {};
 
     entries.forEach(entry => {
-      console.log(entry.id,entry.selectedVal);
-      formData.append(entry.id, entry.selectedVal);
+      formData[entry.id] = entry.selectedVal;
     });
-    for (const key of formData.entries()) {
-      console.log(key[0] + " " + key[1])
-    }
-    
+    // for (const key of formData.entries()) {
+    //   console.log(key[0] + " " + key[1])
+    // }
+    console.log(formData);
 
-    // fetch("http://localhost:5000/api/signup", {
-    //   method: "post",
-    //   body: formData
-    // }).then(response => {
-    //   return response.json();
-    // }).then(data => {
-    //   console.log("Ninjas", data);
-    // });
+    fetch("http://localhost:5000/api/survey/submit", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+      console.log("Doritos\n", data);
+    }).catch(error => {
+      return ({
+        errorCode: 500,
+        errorMsg: "Internal Server Error",
+        errorDetail: error
+      })
+    });;
   }
 
   render() {

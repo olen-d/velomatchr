@@ -114,6 +114,8 @@ class SignupForm extends Component {
     }).then(response => {
       return response.json();
     }).then(data => {
+      // TODO:  Do something useful with the data
+      //        Like log the user in and issue a jsonwebtoken
       console.log("Ninjas", data);
     });
   }
