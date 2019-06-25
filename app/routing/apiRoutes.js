@@ -2,6 +2,7 @@ module.exports = (app) => {
 
   const multer = require("multer");
   const jwt = require("jsonwebtoken");
+  const config = require("./../../config")
 
   const bcrypt = require("./../helpers/bcrypt-module");
 
@@ -97,17 +98,13 @@ module.exports = (app) => {
       bcrypt
         .checkPass(formData.pass, user.password)
         .then(response => {
-          if (response.status === 200) {
-            jwt.sign({ user }, "secretkey", (err, token) => {
+          if (response.status === 200 && response.login === true) {
+            jwt.sign({ user: user.id }, config.secret, { expiresIn: "24h" }, (err, token) => {
               return res
                 .status(200)
-                .json({
-                  token,
-                  "login": response.login
-                  })
-                .redirect("/");
+                .json({ token })
+                // .redirect("/"); // Since this project is using React, the redirect will be handled on the client side
             });
-            //TODO write code for storing and checking cookies
           } else {
             return res
               .status(response.status)

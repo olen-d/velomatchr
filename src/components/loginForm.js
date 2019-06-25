@@ -45,7 +45,11 @@ class LoginForm extends Component {
     }).then(response => {
       return response.json();
     }).then(data => {
-      console.log("ChickenPotPie\n", data);
+      if(data.token) {
+        localStorage.setItem("user_token", data.token);
+      } else {
+        localStorage.removeItem("user_token");
+      }
     }).catch(error => {
       return ({
         errorCode: 500,
