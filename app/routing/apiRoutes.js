@@ -1,8 +1,11 @@
 module.exports = (app) => {
 
   const multer = require("multer");
+  const jwt = require("jsonwebtoken");
+  const config = require("./../../config")
 
   const bcrypt = require("./../helpers/bcrypt-module");
+
   const db = require("./../models");
 
   // Set Storage
@@ -83,4 +86,42 @@ module.exports = (app) => {
       })
     });
   });
+
+  app.post("/api/login/submit", (req, res) => {
+    const formData = req.body;
+
+    db.User.findOne({
+      where: {
+        email: formData.user
+      }
+    }).then(user => {
+      bcrypt
+        .checkPass(formData.pass, user.password)
+        .then(response => {
+          if (response.status === 200 && response.login === true) {
+            jwt.sign({ user: user.id }, config.secret, { expiresIn: "24h" }, (err, token) => {
+              return res
+                .status(200)
+                .json({ token })
+                // .redirect("/"); // Since this project is using React, the redirect will be handled on the client side
+            });
+          } else {
+            return res
+              .status(response.status)
+              .json({ "login": response.login });
+          }
+        })
+        .catch(error => {
+          //TODO: fix this to actually return valid JSON and/or something useful
+          res.json(error);
+        });
+    }).catch (error => {
+      return res
+        .status(404)
+        .json({
+          "ErrorMsg": "No record was found associated with that email address",
+          "Error": error
+        });
+    });
+  });  
 }
