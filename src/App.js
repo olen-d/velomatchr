@@ -1,23 +1,19 @@
 import React, { Component } from "react";
+import Auth from "./components/auth"
 
 import "./style.css";
 
-import NavBar from "./components/navbar"
-import Footer from "./components/footer"
+import AuthApp from "./AuthApp"
+import UnAuthApp from "./UnAuthApp"
 
-class Template extends Component {
-  state = {
-    // isAuthenticated: null
-  };
+class App extends Component {
 
   render () {
+    const isAuth = Auth.isAuthenticated();
     return (
-      <>
-        <NavBar />
-        <Footer />
-        </>
+      isAuth ? <AuthApp /> : <UnAuthApp />      
     );
   }
 }
 
-export default Template;
+export default App;
