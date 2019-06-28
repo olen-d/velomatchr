@@ -1,16 +1,20 @@
 import React, { Component } from "react";
+import auth from "./auth";
 
 import { 
   BrowserRouter as Router, 
+
   Link, 
-  NavLink, 
+  NavLink,
+  Redirect, 
   Route,
   Switch
 } from "react-router-dom";
 
 import {
   Container,
-  Menu 
+  Menu, 
+  Button
 } from 'semantic-ui-react';
 
 import Home from "./../pages/home";
@@ -18,18 +22,39 @@ import Survey from "./../pages/survey";
 import Login from "./../pages/login";
 
 class NavBar extends Component {
-  state = {
-    userToken: ""
-  };
-  
-  componentDidMount() {
-    if (localStorage.getItem("user_token") != null) {
-      const userToken = localStorage.getItem("user_token");
-      this.setState({ userToken: userToken });
-    } else {
-      this.setState({ userToken: "" })
+  constructor(props) {
+    super(props)
+    this.state = {
+      userToken: "",
+      authenticated: false
     }
   }
+
+  setStateAuth = (authData) => {
+    // this.setState({ authenticated: "doritos and pie"});
+    // this.setState({ userToken: authData.token})
+    // this.setState({ authenticated: authData.authenticated })
+  }
+
+
+
+
+  logout = () => {
+    auth.logout();
+    // this.setState({ authenticated: false });
+  }
+
+  // componentDidUpdate() {
+  //   if (localStorage.getItem("user_token") != null) {
+  //     const userToken = localStorage.getItem("user_token");
+  //     this.setState({ userToken: userToken });
+  //     this.setState({ authenticated: true });
+  //   } else {
+  //     this.setState({ userToken: "" })
+  //     this.setState({ authenticated: false });
+  //   }
+  //   console.log("&&&&&&&&\n",this.state);
+  // }
 
   render() {
     return(
@@ -55,16 +80,18 @@ class NavBar extends Component {
                 <Menu.Item as={ NavLink } to="/settings">
                   Settings
                 </Menu.Item>
-                <Menu.Item as={ NavLink } to="/login">
-                  Sign In
+                <Menu.Item as={ NavLink } to="/" onClick={this.logout} >
+                  Sign Out
                 </Menu.Item>
               </Menu.Menu>
             </Menu>
             <Switch>
               <Route exact path="/" component={Home} />
+              <Route exact path="/home" component={Home} />
               <Route exact path="/survey" component={Survey} />
-              <Route exact path="/login" component={Login} /> 
-              <Route path="*" component={ () => "404 NOT FOUND" } />
+              <Route exact path="/login" component ={Login} />
+              <Route exact path="/logout" render={ () => "LOGGED OUT"}/>
+              <Route path="*" render={ () => "404 NOT FOUND" } />
             </Switch>
           </Router>
         </Container>
@@ -73,5 +100,5 @@ class NavBar extends Component {
   }
 }
   
-  export default NavBar;
+export default NavBar;
   

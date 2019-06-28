@@ -5,16 +5,20 @@ class Auth {
 
   login(cb) {
     this.authenticated = true;
-    cb()
+    cb();
   }
 
   logout(cb) {
+    localStorage.removeItem("user_token");
     this.authenticated = false;
     cb();
   }
 
   isAuthenticated() {
-    return this.authenticated();
+    if (localStorage.getItem("user_token") != null) {
+      this.authenticated = true;
+    } 
+    return this.authenticated;
   }
 }
 
