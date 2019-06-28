@@ -102,14 +102,10 @@ module.exports = (app) => {
             jwt.sign({ user: user.id }, config.secret, { expiresIn: "24h" }, (err, token) => {
               return res
                 .status(200)
-<<<<<<< HEAD
                 .json({ 
                   token,
                   authenticated: true 
                 })
-=======
-                .json({ token })
->>>>>>> d997552e5ef099ed130742ff1b7e77b89ffb73d5
                 // .redirect("/"); // Since this project is using React, the redirect will be handled on the client side
             });
           } else {
