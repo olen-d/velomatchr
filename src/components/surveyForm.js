@@ -19,7 +19,6 @@ questions.forEach(i => {
 });
 
 class SurveyForm extends Component {
-  // this.onSubmit = this.onSubmit.bind(this);
   state = {
     questions,
     likertItems,
@@ -39,10 +38,6 @@ class SurveyForm extends Component {
     entries.forEach(entry => {
       formData[entry.id] = entry.selectedVal;
     });
-    // for (const key of formData.entries()) {
-    //   console.log(key[0] + " " + key[1])
-    // }
-    console.log(formData);
 
     fetch("http://localhost:5000/api/survey/submit", {
       method: "post",
@@ -60,7 +55,7 @@ class SurveyForm extends Component {
         errorMsg: "Internal Server Error",
         errorDetail: error
       })
-    });;
+    });
   }
 
   render() {
