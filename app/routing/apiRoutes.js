@@ -49,13 +49,22 @@ module.exports = (app) => {
           stateCode: "blank",
           country: "blank",
           countryCode: "bla"
-        }).then(newUser => {
+        }).then(user => {
           // res.json(newUser);
-          return res.send({
-            success: true,
-            login: true,
-            userId: newUser.id,
+          jwt.sign({ user: user.id }, config.secret, { expiresIn: "24h" }, (err, token) => {
+            return res
+              .status(200)
+              .json({ 
+                token,
+                authenticated: true
+              })
+              // .redirect("/"); // Since this project is using React, the redirect will be handled on the client side
           });
+          // return res.send({
+          //   success: true,
+          //   login: true,
+          //   userId: newUser.id,
+          // });
         });
         } else {
           return res.send({

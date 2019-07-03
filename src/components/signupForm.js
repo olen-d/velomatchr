@@ -1,5 +1,10 @@
 import React, { Component } from "react"
 
+import { 
+  Link,
+  Redirect
+} from "react-router-dom";
+
 import GenderChoices from "./genderchoices"
 import genderChoices from "../models/genderChoices"
 
@@ -24,7 +29,10 @@ class SignupForm extends Component {
       password: "",
       gender: "default",
       latitude: 0.0,
-      longitude: 0.0
+      longitude: 0.0,
+      userToken: "",
+      authenticated: false,
+      toSurvey: false
     }
   }
   
@@ -114,13 +122,21 @@ class SignupForm extends Component {
     }).then(response => {
       return response.json();
     }).then(data => {
-      // TODO:  Do something useful with the data
-      //        Like log the user in and issue a jsonwebtoken
-      console.log("Ninjas", data);
+      if(data.token) {
+        localStorage.setItem("user_token", data.token);
+        console.log("---------\nSignup Form\n",localStorage.getItem("user_token"));
+        console.log("xxxxxxxxx\n", data);
+        this.setState({ userToken: data.token, authenticated: data.authenticated, toSurvey: true });
+        // console.log("Ninjas", data);
+      }
     });
   }
 
   render() {
+    if (this.state.toSurvey === true)
+    {
+      return <Redirect to="/survey" />
+    }
     const {
       firstName,
       lastName,
