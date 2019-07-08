@@ -28,7 +28,6 @@ class SurveyForm extends Component {
   }
 
   componentDidMount() {
-    // const userId = "";
     const token = auth.getToken();
     const userInfo = auth.getUserInfo(token);
     if (userInfo) {

@@ -5,7 +5,7 @@ import {
   Redirect
 } from "react-router-dom";
 
-import GenderChoices from "./genderchoices"
+import DropdownItems from "./dropdownItems/dropdownItems"
 import genderChoices from "../models/genderChoices"
 
 import {
@@ -239,7 +239,7 @@ class SignupForm extends Component {
                 Select Your Gender
               </option>
               {this.state.genderChoices.map(genderChoice => (
-                <GenderChoices 
+                <DropdownItems 
                   key={genderChoice.id}
                   value={genderChoice.value}
                   text={genderChoice.text}

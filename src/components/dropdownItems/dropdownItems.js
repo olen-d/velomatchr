@@ -1,7 +1,7 @@
 import React from "react";
 // import "./styles.css";
 
-const GenderChoices = props => {
+const dropdownItems = props => {
   return (
     <option
         value={props.value}
@@ -11,4 +11,4 @@ const GenderChoices = props => {
   );
 }
 
-export default GenderChoices;
+export default dropdownItems;

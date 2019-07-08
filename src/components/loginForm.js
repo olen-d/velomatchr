@@ -49,8 +49,6 @@ class LoginForm extends Component {
     }).then(data => {
       if(data.token) {
         localStorage.setItem("user_token", data.token);
-        console.log("---------",localStorage.getItem("user_token"));
-        console.log("nnnnnnnnnnnn\n", data);
         this.setState({ userToken: data.token, authenticated: data.authenticated, toDashboard: true });
         window.location.reload();
         
