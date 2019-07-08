@@ -124,10 +124,7 @@ class SignupForm extends Component {
     }).then(data => {
       if(data.token) {
         localStorage.setItem("user_token", data.token);
-        console.log("---------\nSignup Form\n",localStorage.getItem("user_token"));
-        console.log("xxxxxxxxx\n", data);
         this.setState({ userToken: data.token, authenticated: data.authenticated, toSurvey: true });
-        // console.log("Ninjas", data);
       }
     });
   }

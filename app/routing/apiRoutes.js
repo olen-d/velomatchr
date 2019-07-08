@@ -51,7 +51,7 @@ module.exports = (app) => {
           countryCode: "bla"
         }).then(user => {
           // res.json(newUser);
-          jwt.sign({ user: user.id }, config.secret, { expiresIn: "24h" }, (err, token) => {
+          jwt.sign({ userId: user.id }, config.secret, { expiresIn: "24h" }, (err, token) => {
             return res
               .status(200)
               .json({ 
@@ -78,12 +78,14 @@ module.exports = (app) => {
 
   app.post("/api/survey/submit", (req, res) => {
     const formData = req.body;
+    const userId = formData.userId;
+
+    delete formData.userId;
 
     const answers = Object.values(formData);
 
     db.Answer.create({
-      // TODO: Update the userId to use the userId of the actual logged in user
-      userId: 99,
+      userId: userId,
       answers: answers.join()
     }).then(newAnswer => {
       return res.json(newAnswer);

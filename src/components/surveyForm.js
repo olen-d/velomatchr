@@ -1,5 +1,7 @@
 import React, { Component } from "react"
 
+import auth from "./auth";
+
 import SurveyQuestion from "./surveyquestion"
 import LikertItem from "./likertitem"
 
@@ -22,6 +24,16 @@ class SurveyForm extends Component {
   state = {
     questions,
     likertItems,
+    userId: ""
+  }
+
+  componentDidMount() {
+    // const userId = "";
+    const token = auth.getToken();
+    const userInfo = auth.getUserInfo(token);
+    if (userInfo) {
+      this.setState({userId: userInfo.userId}); 
+    }   
   }
 
   setAnswerState = e => {
@@ -33,7 +45,7 @@ class SurveyForm extends Component {
     e.preventDefault();
 
     const entries = this.state.questions;
-    const formData = {};
+    const formData = {userId: this.state.userId};
 
     entries.forEach(entry => {
       formData[entry.id] = entry.selectedVal;
