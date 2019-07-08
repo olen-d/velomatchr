@@ -19,7 +19,6 @@ import {
 } from 'semantic-ui-react';
 
 import Home from "./../pages/home";
-import Survey from "./../pages/survey";
 import Login from "./../pages/login";
 
 class LoginBar extends Component {
@@ -55,7 +54,7 @@ class LoginBar extends Component {
             <Switch>
               <Route exact path="/" component={Home} />
               <Route exact path="/home" component={Home} />
-              <Route exact path="/login" component ={Login} />
+              <Route exact path="/login" component={Login} />
               <Route path="*" render={ () => "404 NOT FOUND" } />
             </Switch>
           </Router>

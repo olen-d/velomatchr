@@ -41,7 +41,7 @@ class Survey extends Component {
             <SurveyForm 
               colWidth="8"
               formTitle="Your Cycling Preferences"
-              formInstructions="Rate the following statements on a scale of one to five, with one indicating you strongly disagree, three indicating neither agreement or disagreement, and five indicating strong agreement."
+              formInstructions="Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement."
               submitContent="Find My Buddy"
             />
         </Grid>
