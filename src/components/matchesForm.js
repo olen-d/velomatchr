@@ -5,25 +5,36 @@ import {
   Redirect
 } from "react-router-dom";
 
+import auth from "./auth";
+
 import DropdownItems from "./dropdownItems/dropdownItems"
 import matchDistances from "../models/matchDistances"
+import matchGenders from "../models/matchGenders"
 
 import {
   Button,
   Form,
   Grid, 
   Header,
-  Message,
   Segment
 } from "semantic-ui-react"
 
 class MatchesForm extends Component {
   state = {
     matchDistances,
+    matchGenders,
     distance: "default",
-    user: "",
-    pass: "",
-    toDashboard: false
+    gender: "default",
+    userId: "",
+    toRedirect: false
+  }
+
+  componentDidMount() {
+    const token = auth.getToken();
+    const userInfo = auth.getUserInfo(token);
+    if (userInfo) {
+      this.setState({userId: userInfo.userId}); 
+    }   
   }
 
   onChange = e => {
@@ -34,13 +45,13 @@ class MatchesForm extends Component {
     e.preventDefault();
 
     const {
-      user,
-      pass
+      distance,
+      gender
     } = this.state;
 
     const formData = { 
-      user,
-      pass
+      distance,
+      gender
     };
 
     // fetch("http://localhost:5000/api/login/submit", {
@@ -54,7 +65,7 @@ class MatchesForm extends Component {
     // }).then(data => {
     //   if(data.token) {
     //     localStorage.setItem("user_token", data.token);
-    //     this.setState({ userToken: data.token, authenticated: data.authenticated, toDashboard: true });
+    //     this.setState({ userToken: data.token, authenticated: data.authenticated, toRedirect: true });
     //     window.location.reload();
         
     //   } else {
@@ -70,13 +81,13 @@ class MatchesForm extends Component {
   }
 
   render() {
-    if (this.state.toDashboard === true)
+    if (this.state.toRedirect === true)
       {
-        return <Redirect to="/home" />
+        return <Redirect to="/survey" />
       }
     const {
       distance,
-      pass
+      gender,
     } = this.state;
 
     return(
@@ -84,7 +95,7 @@ class MatchesForm extends Component {
         <Header 
           as="h2" 
           textAlign="center"
-          color="grey"
+          color="orange"
         >
           {this.props.formTitle}
         </Header>
@@ -115,23 +126,40 @@ class MatchesForm extends Component {
                 />
               ))}
             </Form.Input>
-          </Form>
-        </Segment>
-        <Message>
-          <p>
-            Don't have an account yet?
-          </p>
-          <Link to="/survey">
+            <Form.Input
+              fluid
+              control="select"
+              name="gender"
+              value={gender}
+              onChange={this.onChange}
+            >  
+              <option
+                key="-1"
+                value="default"
+                disabled
+              >
+                Select Genders to Match With
+              </option>
+              {this.state.matchGenders.map(matchGender => (
+                <DropdownItems 
+                  key={matchGender.id}
+                  value={matchGender.value}
+                  text={matchGender.text}
+                />
+              ))}
+            </Form.Input>
             <Button
+              fluid
+              type="submit"
               color="red"
               size="large"
-              content="Get Started"
-              icon="list alternate"
+              icon="check circle"
               labelPosition="left"
+              content={this.props.submitContent}
             >
             </Button>
-          </Link>
-        </Message>
+          </Form>
+        </Segment>
       </Grid.Column>
     );
   }

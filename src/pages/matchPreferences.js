@@ -10,7 +10,7 @@ import {
   Icon
 } from "semantic-ui-react"
 
-class Survey extends Component {
+class MatchPreferences extends Component {
   state = {
   }
 
@@ -32,7 +32,7 @@ class Survey extends Component {
               colWidth="8"
               formTitle="Your Match Characteristics"
               formInstructions="Please tell us your preferences regarding who you'd like to match with."
-              submitContent="Submit"
+              submitContent="Take the Survey"
             />
         </Grid>
       </Container>
@@ -40,4 +40,4 @@ class Survey extends Component {
   }
 }
     
-export default Survey;
+export default MatchPreferences;

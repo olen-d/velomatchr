@@ -32,7 +32,7 @@ class SignupForm extends Component {
       longitude: 0.0,
       userToken: "",
       authenticated: false,
-      toSurvey: false
+      toRedirect: false
     }
   }
   
@@ -124,15 +124,15 @@ class SignupForm extends Component {
     }).then(data => {
       if(data.token) {
         localStorage.setItem("user_token", data.token);
-        this.setState({ userToken: data.token, authenticated: data.authenticated, toSurvey: true });
+        this.setState({ userToken: data.token, authenticated: data.authenticated, toRedirect: true });
       }
     });
   }
 
   render() {
-    if (this.state.toSurvey === true)
+    if (this.state.toRedirect === true)
     {
-      return <Redirect to="/survey" />
+      return <Redirect to="/matches/preferences" />
     }
     const {
       firstName,
