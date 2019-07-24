@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 
-import MatchesForm from "../components/matchesForm"
+import MatchesForm from "../components/matchPreferencesForm"
 
 import {
   Container,

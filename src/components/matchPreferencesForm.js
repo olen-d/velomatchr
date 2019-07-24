@@ -50,34 +50,29 @@ class MatchesForm extends Component {
     } = this.state;
 
     const formData = { 
+      userId: this.state.userId,
       distance,
       gender
     };
 
-    // fetch("http://localhost:5000/api/login/submit", {
-    //   method: "post",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify(formData)
-    // }).then(response => {
-    //   return response.json();
-    // }).then(data => {
-    //   if(data.token) {
-    //     localStorage.setItem("user_token", data.token);
-    //     this.setState({ userToken: data.token, authenticated: data.authenticated, toRedirect: true });
-    //     window.location.reload();
-        
-    //   } else {
-    //     localStorage.removeItem("user_token");
-    //   }
-    // }).catch(error => {
-    //   return ({
-    //     errorCode: 500,
-    //     errorMsg: "Internal Server Error",
-    //     errorDetail: error
-    //   })
-    // });
+    fetch("http://localhost:5000/api/matches/preferences/submit", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+        this.setState({ toRedirect: true });
+      console.log("Cheetos\n", data);
+    }).catch(error => {
+      return ({
+        errorCode: 500,
+        errorMsg: "Internal Server Error",
+        errorDetail: error
+      })
+    });
   }
 
   render() {
