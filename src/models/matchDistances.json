@@ -1,0 +1,32 @@
+[
+  {
+    "id" : 0, 
+    "value" : "3", 
+    "icon" : "",
+    "text" : "3 miles"
+  },
+  {
+    "id" : 1, 
+    "value" : "6", 
+    "icon" : "",
+    "text" : "6 miles"
+  },
+  {
+    "id" : 2, 
+    "value" : "9",
+    "icon" : "", 
+    "text" : "9 miles"
+  },
+  {
+    "id" : 3,
+    "value" : "12",  
+    "icon" : "",
+    "text" : "12 miles"
+  },
+  {
+    "id" : 4,
+    "value" : "15",  
+    "icon" : "",
+    "text" : "15 miles"
+  }
+]

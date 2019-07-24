@@ -5,7 +5,7 @@ import {
   Redirect
 } from "react-router-dom";
 
-import GenderChoices from "./genderchoices"
+import DropdownItems from "./dropdownItems/dropdownItems"
 import genderChoices from "../models/genderChoices"
 
 import {
@@ -32,7 +32,7 @@ class SignupForm extends Component {
       longitude: 0.0,
       userToken: "",
       authenticated: false,
-      toSurvey: false
+      toRedirect: false
     }
   }
   
@@ -124,15 +124,15 @@ class SignupForm extends Component {
     }).then(data => {
       if(data.token) {
         localStorage.setItem("user_token", data.token);
-        this.setState({ userToken: data.token, authenticated: data.authenticated, toSurvey: true });
+        this.setState({ userToken: data.token, authenticated: data.authenticated, toRedirect: true });
       }
     });
   }
 
   render() {
-    if (this.state.toSurvey === true)
+    if (this.state.toRedirect === true)
     {
-      return <Redirect to="/survey" />
+      return <Redirect to="/matches/preferences" />
     }
     const {
       firstName,
@@ -239,7 +239,7 @@ class SignupForm extends Component {
                 Select Your Gender
               </option>
               {this.state.genderChoices.map(genderChoice => (
-                <GenderChoices 
+                <DropdownItems 
                   key={genderChoice.id}
                   value={genderChoice.value}
                   text={genderChoice.text}

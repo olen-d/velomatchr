@@ -20,6 +20,7 @@ import {
 import Home from "./../pages/home";
 import Survey from "./../pages/survey";
 import Login from "./../pages/login";
+import MatchPreferences from "./../pages/matchPreferences"
 
 class NavBar extends Component {
   constructor(props) {
@@ -89,8 +90,9 @@ class NavBar extends Component {
               <Route exact path="/" component={Home} />
               <Route exact path="/home" component={Home} />
               <Route exact path="/survey" component={Survey} />
-              <Route exact path="/login" component ={Login} />
+              <Route exact path="/login" component={Login} />
               <Route exact path="/logout" render={ () => "LOGGED OUT"}/>
+              <Route exact path="/matches/preferences" component={MatchPreferences} />
               <Route path="*" render={ () => "404 NOT FOUND" } />
             </Switch>
           </Router>

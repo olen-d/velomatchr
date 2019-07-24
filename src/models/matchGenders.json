@@ -1,0 +1,14 @@
+[
+    {
+      "id" : 0, 
+      "value" : "any", 
+      "icon" : "",
+      "text" : "Any Gender"
+    },
+    {
+      "id" : 1, 
+      "value" : "same", 
+      "icon" : "",
+      "text" : "The Same Gender Only"
+    }
+  ]

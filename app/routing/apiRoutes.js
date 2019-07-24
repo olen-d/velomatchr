@@ -98,6 +98,24 @@ module.exports = (app) => {
     });
   });
 
+  app.post("/api/matches/preferences/submit", (req, res) => {
+    const formData = req.body;
+
+    db.MatchPreference.create({
+      userId: formData.userId,
+      distance: formData.distance,
+      gender: formData.gender
+    }).then(newMatchPreferences => {
+      return res.json(newMatchPreferences);
+    }).catch(error => {
+      res.send({
+        errorCode: 500,
+        errorMsg: "Internal Server Error",
+        errorDetail: error
+      })
+    });
+  });
+
   app.post("/api/login/submit", (req, res) => {
     const formData = req.body;
 
