@@ -101,7 +101,7 @@ module.exports = (app) => {
   app.post("/api/matches/preferences/submit", (req, res) => {
     const formData = req.body;
 
-    db.MatchPreference.create({
+    db.MatchPref.create({
       userId: formData.userId,
       distance: formData.distance,
       gender: formData.gender
