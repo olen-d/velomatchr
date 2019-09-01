@@ -92,7 +92,21 @@ module.exports = (app) => {
       // Run the matching algorithm here, rather than in the survey component so the
       // survey form can be re-used for any type of likert scale survey
 
+      // Get the match preferences
+      db.MatchPref.findOne({
+        where: {userId: userId},
+        attributes: ["distance", "gender"]
+      }).then(matchPrefs => {
+        console.log("PPPPPPP\n", matchPrefs.distance,"\nZZZZZZZZ\n",matchPrefs.gender);
+      }); // TODO: Remember to catch problems
+
+      // Get the distance
+
+      // Deal with gender preference
+
+
       // Retrieve userid and answers from the data
+
       const Op = Sequelize.Op;
 
       db.Answer.findAll({
