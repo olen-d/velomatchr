@@ -9,6 +9,10 @@ module.exports = (app) => {
   const Sequelize = require("sequelize");
   const db = require("./../models");
 
+  // Relations
+  db.User.hasOne(db.MatchPref);
+  db.MatchPref.belongsTo(db.User);
+
   // Set Storage
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -90,19 +94,36 @@ module.exports = (app) => {
       answers: answers.join()
     }).then(newAnswer => {
       // Run the matching algorithm here, rather than in the survey component so the
-      // survey form can be re-used for any type of likert scale survey
+      // survey form can be re-used for any type of Likert scale survey
 
-      // Get the match preferences
-      db.MatchPref.findOne({
-        where: {userId: userId},
-        attributes: ["distance", "gender"]
-      }).then(matchPrefs => {
-        console.log("PPPPPPP\n", matchPrefs.distance,"\nZZZZZZZZ\n",matchPrefs.gender);
-      }); // TODO: Remember to catch problems
+      // Get the user's home location
+      // Also pull match distance and gender preferences
+      db.User.findOne({
+        include: [
+          {
+            model: db.MatchPref
+          }
+        ],
+        where: {id: userId},
+        attributes: ["latitude", "longitude", "MatchPref.distance", "MatchPref.gender"]
+      }).then(userInfo => {
+        // console.log("//////////\n", userInfo);
+        console.log("AAAAAAA\nLat: ", userInfo.latitude, "\nBBBBBBB\n", userInfo.longitude);
+        console.log("CCCCC\nDistance:", userInfo.MatchPref.distance, "\nDDDDDD\nGender: ", userInfo.MatchPref.gender);
+      }).catch({
+        // TODO: provide an intelligent error message about how the user couldn't be found
+        // or whatever else went wrong...
+      })
 
-      // Get the distance
-
-      // Deal with gender preference
+      // Get the match preferences (distance and gender)
+      // db.MatchPref.findOne({
+      //   where: {userId: userId},
+      //   attributes: ["distance", "gender"]
+      // }).then(matchPrefs => {
+      //   console.log("PPPPPPP\n", matchPrefs.distance,"\nZZZZZZZZ\n",matchPrefs.gender);
+        
+        
+      // }); // TODO: Remember to catch problems
 
 
       // Retrieve userid and answers from the data
@@ -124,7 +145,7 @@ module.exports = (app) => {
           let thisAnswers = a.answers.split(",");
           let diffs = newAnswers.map((w, i) => {
             let r = Math.abs(w - thisAnswers[i]);
-            console.log(thisAnswers[i]);
+            // console.log(thisAnswers[i]);
             return r;
           });
 
@@ -144,6 +165,7 @@ module.exports = (app) => {
       // console.log("Answers\n", data.answers);
       // console.log("API Answers \n",newAnswer.answers);
       // Run the matching algorithm
+      // Lower scores are better
       // Redirect to the matches page
       // Remember to finish the matches page
       return res.json(newAnswer);
