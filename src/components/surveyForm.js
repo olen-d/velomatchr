@@ -60,6 +60,7 @@ class SurveyForm extends Component {
       return response.json();
     }).then(data => {
       console.log("Doritos\n", data);
+      // Redirect to the matches page
     }).catch(error => {
       return ({
         errorCode: 500,

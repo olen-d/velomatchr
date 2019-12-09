@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const MatchPreference = sequelize.define("MatchPreference", {
+    const MatchPref = sequelize.define("MatchPref", {
       userId: {
         type: DataTypes.BIGINT,
         allowNull: false,
@@ -22,6 +22,6 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     });
-    return MatchPreference;
+    return MatchPref;
   };
   
