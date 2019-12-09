@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
 
@@ -23,8 +25,10 @@ app.use(express.json());
 app.get("/api/express_backend", (req, res) => {
     res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
   });
-const apiRoutes = require("./app/routing/apiRoutes")(app);
+// const apiRoutes = require("./app/routing/apiRoutes")(app);
 // const htmlRoutes = require("./app/routing/htmlRoutes")(app);
+app.use("/api", require("./app/routes/survey"));
+app.use("/api", require("./app/routes/users"));
 
 // db.sequelize.sync({ force: true }).then(function() {
 //   db.sequelize.sync({ force: true }).then(function() {

@@ -16,7 +16,7 @@ import {
 
 class LoginForm extends Component {
   state = {
-    user: "",
+    username: "",
     pass: "",
     toDashboard: false
   }
@@ -29,16 +29,16 @@ class LoginForm extends Component {
     e.preventDefault();
 
     const {
-      user,
+      username,
       pass
     } = this.state;
 
     const formData = { 
-      user,
+      username,
       pass
     };
 
-    fetch("http://localhost:5000/api/login/submit", {
+    fetch("http://localhost:5000/api/users/login", {
       method: "post",
       headers: {
         "Content-Type": "application/json"
@@ -46,12 +46,11 @@ class LoginForm extends Component {
       body: JSON.stringify(formData)
     }).then(response => {
       return response.json();
-    }).then(data => {
+    }).then(data => { console.log("DATA\n",data)
       if(data.token) {
         localStorage.setItem("user_token", data.token);
         this.setState({ userToken: data.token, authenticated: data.authenticated, toDashboard: true });
         window.location.reload();
-        
       } else {
         localStorage.removeItem("user_token");
       }
@@ -70,7 +69,7 @@ class LoginForm extends Component {
         return <Redirect to="/home" />
       }
     const {
-      user,
+      username,
       pass
     } = this.state;
 
@@ -92,8 +91,8 @@ class LoginForm extends Component {
               fluid
               icon="envelope"
               iconPosition="left"
-              name="user"
-              value={user}
+              name="username"
+              value={username}
               placeholder="Your Email Address"
               onChange={this.onChange}
             />
