@@ -20,7 +20,7 @@ import {
 import Home from "./../pages/home";
 import Survey from "./../pages/survey";
 import Login from "./../pages/login";
-import MatchPreferences from "./../pages/matchPreferences"
+import MatchPreferences from "./../pages/matchPreferences";
 
 class NavBar extends Component {
   constructor(props) {

@@ -31,7 +31,7 @@ class SurveyForm extends Component {
     const token = auth.getToken();
     const userInfo = auth.getUserInfo(token);
     if (userInfo) {
-      this.setState({userId: userInfo.userId}); 
+      this.setState({userId: userInfo.user}); 
     }   
   }
 

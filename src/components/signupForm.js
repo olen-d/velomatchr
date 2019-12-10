@@ -24,8 +24,8 @@ class SignupForm extends Component {
       profilePhotographFile: "",
       firstName: "",
       lastName: "",
-      emailAddress: "",
-      telephoneNumber: "",
+      email: "",
+      phone: "",
       password: "",
       gender: "default",
       latitude: 0.0,
@@ -86,8 +86,8 @@ class SignupForm extends Component {
     const {
       firstName,
       lastName,
-      emailAddress,
-      telephoneNumber,
+      email,
+      phone,
       password,
       gender,
       latitude,
@@ -97,8 +97,8 @@ class SignupForm extends Component {
     const formInputs = { 
       firstName, 
       lastName, 
-      emailAddress, 
-      telephoneNumber, 
+      email, 
+      phone, 
       password, 
       gender,
       latitude,
@@ -116,7 +116,7 @@ class SignupForm extends Component {
 
     formData.append("profilePhotographFile", profilePhotographFile);
 
-    fetch("http://localhost:5000/api/signup", {
+    fetch("http://localhost:5000/api/users/create", {
       method: "post",
       body: formData
     }).then(response => {
@@ -137,8 +137,8 @@ class SignupForm extends Component {
     const {
       firstName,
       lastName,
-      emailAddress,
-      telephoneNumber,
+      email,
+      phone,
       password,
       gender
     } = this.state;
@@ -179,8 +179,8 @@ class SignupForm extends Component {
               fluid
               icon="envelope"
               iconPosition="left"
-              name="emailAddress"
-              value={emailAddress}
+              name="email"
+              value={email}
               placeholder="Email Address"
               type="email"
               onChange={this.onChange}
@@ -189,8 +189,8 @@ class SignupForm extends Component {
               fluid
               icon="phone"
               iconPosition="left"
-              name="telephoneNumber"
-              value={telephoneNumber}
+              name="phone"
+              value={phone}
               placeholder="Telephone Number"
               type="tel"
               onChange={this.onChange}
