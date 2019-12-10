@@ -26,24 +26,7 @@ module.exports = (app) => {
   const upload = multer({ storage: storage })
 
  
-// api/matches/preferences/submit
-  app.post("/api/matches/preferences/submit", (req, res) => {
-    const formData = req.body;
 
-    db.MatchPref.create({
-      userId: formData.userId,
-      distance: formData.distance,
-      gender: formData.gender
-    }).then(newMatchPreferences => {
-      return res.json(newMatchPreferences);
-    }).catch(error => {
-      res.send({
-        errorCode: 500,
-        errorMsg: "Internal Server Error",
-        errorDetail: error
-      })
-    });
-  });
   
 
 app.post("/api/survey/submit", (req, res) => {

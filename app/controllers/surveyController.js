@@ -1,5 +1,5 @@
 // Models
-const createSurveyResponse = require("../models/createSurveyResponse");
+const { Answer } = require("../models");
 
 exports.create_survey_response = (req, res) => {
   const formData = req.body;
@@ -9,7 +9,7 @@ exports.create_survey_response = (req, res) => {
 
   const answers = Object.values(formData);
 
-  createSurveyResponse.create({
+  Answer.create({
     userId: userId,
     answers: answers.join()
   }).then(newAnswer => {

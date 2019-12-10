@@ -22,11 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Set up the routes
-app.get("/api/express_backend", (req, res) => {
-    res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
-  });
+// app.get("/api/express_backend", (req, res) => {
+//     res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
+//   });
 // const apiRoutes = require("./app/routing/apiRoutes")(app);
 // const htmlRoutes = require("./app/routing/htmlRoutes")(app);
+app.use("/api", require("./app/routes/matches"));
 app.use("/api", require("./app/routes/survey"));
 app.use("/api", require("./app/routes/users"));
 
