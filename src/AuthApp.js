@@ -3,18 +3,19 @@ import React, { Component } from "react";
 import { 
   BrowserRouter as Router,  
   Route,
-  Switch
+  Switch,
+  useRouteMatch
 } from "react-router-dom";
 
 import "./style.css";
 
-import NavBar from "./components/navbar"
 import Footer from "./components/footer"
+import NavBar from "./components/navbar"
 
 import Home from "./pages/home";
-import Survey from "./pages/survey";
 import Login from "./pages/login";
-import MatchPreferences from "./pages/matchPreferences";
+import Matches from "./pages/matches";
+import Survey from "./pages/survey";
 
 class Template extends Component {
   render () {
@@ -24,10 +25,10 @@ class Template extends Component {
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/home" component={Home} />
-            <Route exact path="/survey" component={Survey} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/logout" render={ () => "LOGGED OUT"}/>
-            <Route exact path="/matches/preferences" component={MatchPreferences} />
+            <Route path="/matches" component={Matches} />
+            <Route exact path="/survey" component={Survey} />
             <Route path="*" render={ () => "404 NOT FOUND" } />
           </Switch>
         <Footer />

@@ -16,8 +16,7 @@ class MatchPreferences extends Component {
 
   render () {
     return(
-      <Container>
-        <Grid stackable>
+<>
           <Grid.Row>
             <Grid.Column width={16}>
               <Header 
@@ -34,8 +33,7 @@ class MatchPreferences extends Component {
               formInstructions="Please tell us your preferences regarding who you'd like to match with."
               submitContent="Take the Survey"
             />
-        </Grid>
-      </Container>
+</>
     );
   }
 }
