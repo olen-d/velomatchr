@@ -2,13 +2,7 @@ import React, { Component } from "react";
 import auth from "./auth";
 
 import { 
-  BrowserRouter as Router, 
-
   Link, 
-  NavLink,
-  Redirect, 
-  Route,
-  Switch
 } from "react-router-dom";
 
 import {
@@ -17,9 +11,6 @@ import {
   Menu, 
   Button
 } from 'semantic-ui-react';
-
-import Home from "./../pages/home";
-import Login from "./../pages/login";
 
 class LoginBar extends Component {
   constructor(props) {
@@ -35,31 +26,21 @@ class LoginBar extends Component {
 
   render() {
     return(
-      <>
-        <Container>
-          <Router>
-            <Menu secondary>
-              <Menu.Item as={Link} to="/" name="home">
-                <i className="fas fa-bicycle"></i>
-              </Menu.Item>
-              <Menu.Menu position="right">
-                <Menu.Item>
-                  <Button as={Link} to="/login" color="red">
-                    Sign In
-                  </Button>
-                </Menu.Item>
-              </Menu.Menu>
-            </Menu>
-            <hr />
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/home" component={Home} />
-              <Route exact path="/login" component={Login} />
-              <Route path="*" render={ () => "404 NOT FOUND" } />
-            </Switch>
-          </Router>
-        </Container>
-      </>
+      <Container>
+        <Menu secondary>
+          <Menu.Item as={Link} to="/" name="home">
+            <i className="fas fa-bicycle"></i>
+          </Menu.Item>
+          <Menu.Menu position="right">
+            <Menu.Item>
+              <Button as={Link} to="/login" color="red">
+                Sign In
+              </Button>
+            </Menu.Item>
+          </Menu.Menu>
+        </Menu>
+        <hr />
+      </Container>
     );
   }
 }
