@@ -32,12 +32,13 @@ Object.keys(db).forEach(function(modelName) {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-sequelize
-  .authenticate()
-  .then(err => {
-    console.log("Sequelize connection successfully established.");
-  })
-  .catch(err => {
-    console.log("Connection fail. ", err);
-  });
+// sequelize
+//   .authenticate()
+//   .then(err => {
+//     console.log("Sequelize connection successfully established.");
+//   })
+//   .catch(err => {
+//     console.log("Connection fail. ", err);
+//   });
+
 module.exports = db;
