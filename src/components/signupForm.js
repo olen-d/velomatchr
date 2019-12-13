@@ -116,7 +116,7 @@ class SignupForm extends Component {
 
     formData.append("profilePhotographFile", profilePhotographFile);
 
-    fetch("http://localhost:5000/api/users/create", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
       method: "post",
       body: formData
     }).then(response => {
