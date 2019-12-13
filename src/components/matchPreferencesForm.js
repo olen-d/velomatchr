@@ -55,7 +55,7 @@ class MatchesForm extends Component {
       gender
     };
 
-    fetch("http://localhost:5000/api/matches/preferences/submit", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/submit`, {
       method: "post",
       headers: {
         "Content-Type": "application/json"

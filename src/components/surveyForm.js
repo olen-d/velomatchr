@@ -50,7 +50,7 @@ class SurveyForm extends Component {
       formData[entry.id] = entry.selectedVal;
     });
 
-    fetch("http://localhost:5000/api/survey/submit", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/survey/submit`, {
       method: "post",
       headers: {
         "Content-Type": "application/json"
