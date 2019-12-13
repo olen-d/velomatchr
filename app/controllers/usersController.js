@@ -33,6 +33,8 @@ exports.create_user = (req, res) => {
         country: "blank",
         countryCode: "bla"
       }).then(user => {
+        console.log("USER RESULT\n",user);
+        console.log("ID\n", user.id);
         jwt.sign(
           {user: user.id},
           process.env.SECRET,

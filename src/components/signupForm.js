@@ -42,7 +42,8 @@ class SignupForm extends Component {
         this.setState({ latitude : locaterRes.latitude });
         this.setState({ longitude : locaterRes.longitude });
       }
-    });    
+    });
+    console.log("API URL:\n", process.env.REACT_APP_API_URL);    
   }
 
   locater = () => {
