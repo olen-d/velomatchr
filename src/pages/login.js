@@ -13,7 +13,7 @@ class Login extends Component {
   render() {
     return(
       <Container>
-        <Grid>
+        <Grid stackable>
           <LoginForm 
             colWidth="6"
             formTitle="Sign In"
