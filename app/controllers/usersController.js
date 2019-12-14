@@ -1,4 +1,5 @@
 // Models
+console.log("usersController");
 const { User } = require("../models");
 
 // Packages
@@ -10,7 +11,7 @@ const bcrypt = require("../helpers/bcrypt-module");
 
 exports.create_user = (req, res) => {
   const { firstName, lastName, email, phone, password, gender, latitude, longitude } = req.body;
-
+  console.log("REQ BODY:\n", req.body);
   bcrypt.newPass(password).then(pwdRes => {
     if(pwdRes.status === 200) {
       console.log("usersController, pwdRes.status: Bcrypt Successful");
