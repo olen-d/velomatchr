@@ -61,6 +61,8 @@ exports.read_one_user = (req, res) => {
     }
   })
   .then(resolve => {
+    delete resolve.password;
+    
     let userObj = {
       user: resolve
     };
