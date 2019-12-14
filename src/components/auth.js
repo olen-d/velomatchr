@@ -10,10 +10,10 @@ class Auth {
     cb();
   }
 
-  logout(cb) {
+  logout() {
     localStorage.removeItem("user_token");
     this.authenticated = false;
-    cb();
+    return this.authenticated;
   }
 
   isAuthenticated() {
