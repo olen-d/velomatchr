@@ -52,9 +52,7 @@ class NavBar extends Component {
       <>
         <Container>
           <Menu inverted color="red">
-            <Menu.Item 
-              as={ Link } to="/" name="home"
-            >
+            <Menu.Item as={ Link } to="/">
               <i className="fas fa-bicycle"></i>
             </Menu.Item>
             <Menu.Menu position="right">
