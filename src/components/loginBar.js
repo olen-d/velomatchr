@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import auth from "./auth";
 
-import { 
+import {
   Link, 
+  useLocation,
+  useHistory,
+  useRouteMatch
 } from "react-router-dom";
 
 import {
@@ -11,6 +14,38 @@ import {
   Menu, 
   Button
 } from 'semantic-ui-react';
+
+const LoginButton = props => {
+  return (
+    <Button as={Link} to="/login" color="red">
+      Sign In
+    </Button>
+  );
+}
+
+const Home = () => {
+  const location = useLocation();
+  const history = useHistory();
+  const match = useRouteMatch("/login");
+  console.log("MATCH\n",match)
+  let cheese;
+  if (match.isExact) {
+    cheese = "DORITOS";
+  } else {
+    cheese = "CHICKENPOTPIE";
+  }
+
+  return (
+    <div>
+    <h3>
+      LOC PATH: {location.pathname}
+    </h3>
+    <h3>
+      MATCH: {match.path} {cheese}
+    </h3>
+    </div>
+  )
+}
 
 class LoginBar extends Component {
   constructor(props) {
@@ -24,7 +59,14 @@ class LoginBar extends Component {
     auth.logout();
   }
 
+
+
+
+
   render() {
+    let button;
+
+    button = <LoginButton />;
     return(
       <Container>
         <Menu secondary>
@@ -33,13 +75,12 @@ class LoginBar extends Component {
           </Menu.Item>
           <Menu.Menu position="right">
             <Menu.Item>
-              <Button as={Link} to="/login" color="red">
-                Sign In
-              </Button>
+              {button}
             </Menu.Item>
           </Menu.Menu>
         </Menu>
         <hr />
+        <Home />
       </Container>
     );
   }
