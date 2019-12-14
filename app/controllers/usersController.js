@@ -58,15 +58,13 @@ exports.read_one_user = (req, res) => {
   User.findOne({
     where: {
       name: userName
-    }
+    },
+    attributes: { exclude: ["password"]}
   })
   .then(resolve => {
-    delete resolve.password;
-    
     let userObj = {
       user: resolve
     };
-    delete userObj.user.password;
     res.send(userObj);
   })
   .catch(err => {
