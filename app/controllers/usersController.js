@@ -60,7 +60,7 @@ exports.create_user = (req, res) => {
 
 exports.read_one_user = (req, res) => {
   const userName = req.params.username;
-  res.json({userName});
+  res.json({cheese: "burger"});
   console.log("userName:\n", userName);
 
   User.findOne({
