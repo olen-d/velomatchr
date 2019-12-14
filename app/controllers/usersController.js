@@ -33,8 +33,6 @@ exports.create_user = (req, res) => {
         country: "blank",
         countryCode: "bla"
       }).then(user => {
-        console.log("USER RESULT\n",user);
-        console.log("ID\n", user.id);
         jwt.sign(
           {user: user.id},
           process.env.SECRET,
@@ -60,13 +58,13 @@ exports.read_one_user = (req, res) => {
   User.findOne({
     where: {
       name: userName
-    }
+    },
+    attributes: { exclude: ["password"]}
   })
   .then(resolve => {
     let userObj = {
       user: resolve
     };
-    delete userObj.user.password;
     res.send(userObj);
   })
   .catch(err => {

@@ -43,7 +43,6 @@ class SignupForm extends Component {
         this.setState({ longitude : locaterRes.longitude });
       }
     });
-    console.log("API URL:\n", process.env.REACT_APP_API_URL);    
   }
 
   locater = () => {
@@ -116,7 +115,7 @@ class SignupForm extends Component {
     }
 
     formData.append("profilePhotographFile", profilePhotographFile);
-
+    
     fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
       method: "post",
       body: formData
