@@ -91,12 +91,10 @@ exports.read_login = (req, response) => {
               process.env.SECRET,
               { expiresIn: "1h" },
               (err, token) => {
-                  return response.status(200).json({
-                    authenticated: true,
-                    token,
-                    user: user.id
-                  });
-                }
+                return response.status(200).json({
+                  authenticated: true,
+                  token
+                });
               }
             );
           } else {
