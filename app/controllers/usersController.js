@@ -13,6 +13,7 @@ exports.create_user = (req, res) => {
 
   bcrypt.newPass(password).then(pwdRes => {
     if(pwdRes.status === 200) {
+      console.log("usersController, pwdRes.status: Bcrypt Successful");
       const name = firstName + "." + lastName.slice(0,1);
       const photoLink = req.file.path;
 
