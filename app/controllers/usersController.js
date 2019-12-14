@@ -59,8 +59,9 @@ exports.create_user = (req, res) => {
 };
 
 exports.read_one_user = (req, res) => {
+  res.send("XYZZY");
   const userName = req.params.username;
-  res.json({cheese: "burger"});
+  // res.json({cheese: "burger"});
   console.log("userName:\n", userName);
 
   User.findOne({
