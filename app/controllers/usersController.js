@@ -1,5 +1,4 @@
 // Models
-console.log("usersController");
 const { User } = require("../models");
 
 // Packages
@@ -11,10 +10,9 @@ const bcrypt = require("../helpers/bcrypt-module");
 
 exports.create_user = (req, res) => {
   const { firstName, lastName, email, phone, password, gender, latitude, longitude } = req.body;
-  console.log("REQ BODY:\n", req.body);
+
   bcrypt.newPass(password).then(pwdRes => {
     if(pwdRes.status === 200) {
-      console.log("usersController, pwdRes.status: Bcrypt Successful");
       const name = firstName + "." + lastName.slice(0,1);
       const photoLink = req.file.path;
 
@@ -35,8 +33,6 @@ exports.create_user = (req, res) => {
         country: "blank",
         countryCode: "bla"
       }).then(user => {
-        console.log("USER RESULT\n",user);
-        console.log("ID\n", user.id);
         jwt.sign(
           {user: user.id},
           process.env.SECRET,
@@ -48,21 +44,16 @@ exports.create_user = (req, res) => {
             });
           });
       }).catch(err => {
-        console.log("usersController, User.create, error:\n", err);
         res.status(500).json({ error: err });
       });
     } else {
-      console.log("usersController, bcrypt.newPass, error:\n", "No Password Created");
       res.status(500).json({ error: "userController 107" });
     }
   });
 };
 
 exports.read_one_user = (req, res) => {
-  res.send("XYZZY");
   const userName = req.params.username;
-  // res.json({cheese: "burger"});
-  console.log("userName:\n", userName);
 
   User.findOne({
     where: {
