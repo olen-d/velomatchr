@@ -86,8 +86,6 @@ exports.read_login = (req, response) => {
         .checkPass(pass, user.password)
         .then(res => {
           if (res.status === 200 && res.login) {
-            delete user.password;
-
             jwt.sign(
               {user: user.id},
               process.env.SECRET,
@@ -95,6 +93,7 @@ exports.read_login = (req, response) => {
               (err, token) => {
                 return response.status(200).json({
                   authenticated: true,
+                  cheese: process.env.SECRET,
                   token
                 });
               }
