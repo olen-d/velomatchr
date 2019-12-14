@@ -92,7 +92,7 @@ exports.read_login = (req, response) => {
               { expiresIn: "1h" },
               (err, token) => {
                 if (err) {
-                  return response.json({ error: err });
+                  return response.send(err);
                 } else {
                   return response.status(200).json({
                     authenticated: true,
