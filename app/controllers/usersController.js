@@ -46,9 +46,11 @@ exports.create_user = (req, res) => {
             });
           });
       }).catch(err => {
+        console.log("usersController, User.create, error:\n", err);
         res.status(500).json({ error: err });
       });
     } else {
+      console.log("usersController, bcrypt.newPass, error:\n", "No Password Created");
       res.status(500).json({ error: "userController 107" });
     }
   });

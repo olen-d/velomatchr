@@ -12,7 +12,7 @@ if (config.use_env_variable) {
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
-console.log("SEQUELIZE\n", sequelize);
+// console.log("SEQUELIZE\n", sequelize);
 fs
   .readdirSync(__dirname)
   .filter(function(file) {
