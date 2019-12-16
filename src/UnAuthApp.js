@@ -12,6 +12,7 @@ import Footer from "./components/footer"
 
 import Home from "./pages/home";
 import Login from "./pages/login";
+import Signup from "./pages/signup";
 
 class UnAuthApp extends Component {
 
@@ -23,6 +24,7 @@ class UnAuthApp extends Component {
           <Route exact path="/" component={Home} />
           <Route exact path="/home" component={Home} />
           <Route exact path="/login" component={Login} />
+          <Route path="/signup" component={Signup} />
           <Route path="*" render={ () => "404 NOT FOUND" } />
         </Switch>
         <Footer />
