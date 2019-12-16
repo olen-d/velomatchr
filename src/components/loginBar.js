@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import auth from "./auth";
 
-import { 
+import {
   Link, 
+  useRouteMatch
 } from "react-router-dom";
 
 import {
@@ -12,16 +12,34 @@ import {
   Button
 } from 'semantic-ui-react';
 
+const LoginButton = props => {
+  return (
+    <Button as={Link} to="/login" color="red">
+      Sign In
+    </Button>
+  );
+}
+
+const SignUpButton = props => {
+  return (
+    <Button as={Link} to="/signup" color="red">
+      Sign Up
+    </Button>
+  );
+}
+
+const LoginControl = () => {
+  const match = useRouteMatch("/login");
+  const button = (match && match.isExact) ? <SignUpButton /> : <LoginButton />;
+  return button;
+}
+
 class LoginBar extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      // State goes here...
+      onLoginPage: false
     }
-  }
-
-  logout = () => {
-    auth.logout();
   }
 
   render() {
@@ -33,9 +51,7 @@ class LoginBar extends Component {
           </Menu.Item>
           <Menu.Menu position="right">
             <Menu.Item>
-              <Button as={Link} to="/login" color="red">
-                Sign In
-              </Button>
+              <LoginControl />
             </Menu.Item>
           </Menu.Menu>
         </Menu>
