@@ -1,10 +1,7 @@
 import React, { Component } from "react";
-import auth from "./auth";
 
 import {
   Link, 
-  useLocation,
-  useHistory,
   useRouteMatch
 } from "react-router-dom";
 
@@ -23,50 +20,29 @@ const LoginButton = props => {
   );
 }
 
-const Home = () => {
-  const location = useLocation();
-  const history = useHistory();
-  const match = useRouteMatch("/login");
-  console.log("MATCH\n",match)
-  let cheese;
-  if (match.isExact) {
-    cheese = "DORITOS";
-  } else {
-    cheese = "CHICKENPOTPIE";
-  }
-
+const SignUpButton = props => {
   return (
-    <div>
-    <h3>
-      LOC PATH: {location.pathname}
-    </h3>
-    <h3>
-      MATCH: {match.path} {cheese}
-    </h3>
-    </div>
-  )
+    <Button as={Link} to="/signup" color="red">
+      Sign Up
+    </Button>
+  );
+}
+
+const LoginControl = () => {
+  const match = useRouteMatch("/login");
+  const button = (match && match.isExact) ? <SignUpButton /> : <LoginButton />;
+  return button;
 }
 
 class LoginBar extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      // State goes here...
+      onLoginPage: false
     }
   }
 
-  logout = () => {
-    auth.logout();
-  }
-
-
-
-
-
   render() {
-    let button;
-
-    button = <LoginButton />;
     return(
       <Container>
         <Menu secondary>
@@ -75,12 +51,11 @@ class LoginBar extends Component {
           </Menu.Item>
           <Menu.Menu position="right">
             <Menu.Item>
-              {button}
+              <LoginControl />
             </Menu.Item>
           </Menu.Menu>
         </Menu>
         <hr />
-        <Home />
       </Container>
     );
   }
