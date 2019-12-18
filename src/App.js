@@ -1,19 +1,34 @@
-import React, { Component } from "react";
-import Auth from "./components/auth"
+import React, { Suspense, useState } from "react";
 
 import "./style.css";
 
-import AuthApp from "./AuthApp"
-import UnAuthApp from "./UnAuthApp"
+import LoadingSpinner from "./components/loadingSpinner";
 
-class App extends Component {
+import { AuthContext } from "./context/authContext";
 
-  render () {
-    const isAuth = Auth.isAuthenticated();
-    return (
-      isAuth ? <AuthApp /> : <UnAuthApp />      
-    );
+const AuthApp = React.lazy (() => import("./AuthApp"));
+const UnAuthApp = React.lazy (() => import("./UnAuthApp"));
+
+const App = (props) => {
+  const [isAuth, setIsAuth] = useState(false);
+  const [authTokens, setAuthTokens] = useState();
+  
+  const setTokens = data => {
+    localStorage.setItem("user_token", JSON.stringify(data));
+    setAuthTokens(data);
+    setIsAuth(true);
   }
-}
+
+
+  return(
+    <AuthContext.Provider value={{isAuth, authTokens, setAuthTokens: setTokens}}>
+      <AuthContext.Consumer>
+        {({ isAuth }) => (
+          isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
+        )}
+      </AuthContext.Consumer>
+    </AuthContext.Provider>
+  );
+};
 
 export default App;
