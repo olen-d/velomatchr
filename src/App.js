@@ -20,7 +20,7 @@ const App = (props) => {
   }
 
   return(
-  <AuthContext.Provider value={{isAuth, authTokens, setAuthTokens: setTokens}}>
+  <AuthContext.Provider value={{isAuth, setIsAuth, authTokens, setAuthTokens: setTokens}}>
     <AuthContext.Consumer>
       {({ isAuth }) => (
         isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
