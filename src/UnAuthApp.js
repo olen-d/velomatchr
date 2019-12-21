@@ -23,7 +23,7 @@ class UnAuthApp extends Component {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/home" component={Home} />
-          <Route exact path="/login" component={Login} />
+          <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
           <Route path="*" render={ () => "404 NOT FOUND" } />
         </Switch>
