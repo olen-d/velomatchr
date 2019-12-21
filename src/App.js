@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 
 import "./style.css";
 
@@ -6,8 +6,8 @@ import LoadingSpinner from "./components/loadingSpinner";
 
 import { AuthContext } from "./context/authContext";
 
-const AuthApp = React.lazy (() => import("./AuthApp"));
-const UnAuthApp = React.lazy (() => import("./UnAuthApp"));
+const AuthApp = lazy(() => import("./AuthApp"));
+const UnAuthApp = lazy(() => import("./UnAuthApp"));
 
 const App = (props) => {
   const [isAuth, setIsAuth] = useState(false);
@@ -19,15 +19,14 @@ const App = (props) => {
     setIsAuth(true);
   }
 
-
   return(
-    <AuthContext.Provider value={{isAuth, authTokens, setAuthTokens: setTokens}}>
-      <AuthContext.Consumer>
-        {({ isAuth }) => (
-          isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
-        )}
-      </AuthContext.Consumer>
-    </AuthContext.Provider>
+  <AuthContext.Provider value={{isAuth, authTokens, setAuthTokens: setTokens}}>
+    <AuthContext.Consumer>
+      {({ isAuth }) => (
+        isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
+      )}
+    </AuthContext.Consumer>
+  </AuthContext.Provider>
   );
 };
 

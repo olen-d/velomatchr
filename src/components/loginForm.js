@@ -1,8 +1,7 @@
 import React, { useState } from "react"
 
 import { 
-  Link,
-  Redirect
+  Link
 } from "react-router-dom";
 
 import { useAuth } from "../context/authContext";
@@ -18,15 +17,13 @@ import {
 
 const LoginForm = props => {
   // Set up the state
-  const [toDashboard, setToDashboard] = useState(false);
   const [isError, setIsError] = useState(false);
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
 
   const { setAuthTokens } = useAuth();
 
-  const postLogin = () => {
-
+  const postLogin = e => {
     const formData = { 
       username,
       pass
@@ -43,18 +40,13 @@ const LoginForm = props => {
     }).then(data => {
       if(data.token) {
         setAuthTokens(data.token);
-        setToDashboard("ChainsawDeath");
       } else {
-        // localStorage.removeItem("user_token");
+        localStorage.removeItem("user_token");
         setIsError(true);
       }
     }).catch(error => {
         setIsError(true);
     });
-  }
-
-  if(toDashboard) {
-    return <Redirect to="/" />;
   }
 
   // And now we make the JSX...
@@ -70,7 +62,6 @@ const LoginForm = props => {
       <Segment>
         <Form 
           size="large"
-          // onSubmit={this.onSubmit}
         >
           <Form.Input
             fluid
@@ -97,7 +88,7 @@ const LoginForm = props => {
           />
           <Button 
             fluid
-            type="submit"
+            type="button"
             color="red"
             size="large"
             onClick={postLogin}
@@ -124,6 +115,5 @@ const LoginForm = props => {
     </Grid.Column>
   );
 }
-
 
 export default LoginForm;
