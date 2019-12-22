@@ -15,6 +15,17 @@ import {
   Segment
 } from "semantic-ui-react"
 
+// TODO: Split the error container into its oqn file
+const ErrorContainer = props => {
+  return(
+    <Message negative>
+      <Message.Header>
+        Unable to Sign Im
+      </Message.Header>
+    </Message>
+  );
+}
+
 const LoginForm = props => {
   // Set up the state
   const [isError, setIsError] = useState(false);
@@ -59,6 +70,9 @@ const LoginForm = props => {
       >
         {props.formTitle}
       </Header>
+      {({ isError }) => (
+        isError ? <ErrorContainer /> : null
+      )}
       <Segment>
         <Form 
           size="large"

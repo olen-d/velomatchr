@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 import {
   Link, 
@@ -34,32 +34,22 @@ const LoginControl = () => {
   return button;
 }
 
-class LoginBar extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      onLoginPage: false
-    }
-  }
-
-  render() {
-    return(
-      <Container>
-        <Menu secondary>
-          <Menu.Item as={Link} to="/" name="home">
-            <i className="fas fa-bicycle"></i>
+const LoginBar = () => {
+  return(
+    <Container>
+      <Menu secondary>
+        <Menu.Item as={Link} to="/" name="home">
+          <i className="fas fa-bicycle"></i>
+        </Menu.Item>
+        <Menu.Menu position="right">
+          <Menu.Item>
+            <LoginControl />
           </Menu.Item>
-          <Menu.Menu position="right">
-            <Menu.Item>
-              <LoginControl />
-            </Menu.Item>
-          </Menu.Menu>
-        </Menu>
-        <hr />
-      </Container>
-    );
-  }
+        </Menu.Menu>
+      </Menu>
+      <hr />
+    </Container>
+  );
 }
-  
+
 export default LoginBar;
-  
