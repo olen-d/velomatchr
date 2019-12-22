@@ -61,6 +61,7 @@ const LoginForm = props => {
       } else {
         localStorage.removeItem("user_token");
         setIsError(true);
+        setPass("");
       }
     }).catch(error => {
         setIsError(true);
