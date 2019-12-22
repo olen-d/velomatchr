@@ -93,7 +93,6 @@ exports.read_login = (req, response) => {
               (err, token) => {
                 return response.status(200).json({
                   authenticated: true,
-                  cheese: process.env.SECRET,
                   token
                 });
               }

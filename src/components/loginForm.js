@@ -15,9 +15,27 @@ import {
   Segment
 } from "semantic-ui-react"
 
+// TODO: Split the error container into its own file
+const ErrorContainer = props => {
+  if(props.show) {
+    return(
+      <Message negative>
+        <Message.Header>
+          Unable to Sign In
+        </Message.Header>
+        <p>
+          Please check your email address and password and try again. 
+        </p>
+      </Message>
+    );
+  } else {
+    return(null);
+  }
+}
+
 const LoginForm = props => {
   // Set up the state
-  const [isError, setIsError] = useState(false);
+  const [isError, setIsError] = useState("");
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
 
@@ -52,13 +70,14 @@ const LoginForm = props => {
   // And now we make the JSX...
   return(
     <Grid.Column width={props.colWidth}>
-      <Header 
-        as="h2" 
+      <Header
+        as="h2"
         textAlign="center"
         color="grey"
       >
         {props.formTitle}
       </Header>
+      <ErrorContainer show={isError} />
       <Segment>
         <Form 
           size="large"
