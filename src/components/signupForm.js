@@ -24,7 +24,7 @@ const SignupForm = props => {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState("0.0");
 
-  const { setAuthTokens } = useAuth();
+  const { setAuthTokens, setRedirect } = useAuth();
 
   useEffect(() => {
     locater().then(locaterRes => {
@@ -66,9 +66,8 @@ const SignupForm = props => {
     setProfilePhotographFile(e.target.files[0]);
   }
 
-  const postSignup = e => {
-    e.preventDefault();
-    e.stopPropagation();
+  const postSignup = () => {
+
     const formInputs = { 
       firstName, 
       lastName, 
@@ -95,7 +94,9 @@ const SignupForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
+      console.log("DATA\n",data);
       if(data.token) {
+        setRedirect("/dashboard");
         setAuthTokens(data.token);
       } else {
         return(null);
