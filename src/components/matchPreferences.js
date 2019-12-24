@@ -1,6 +1,8 @@
-import React, { Component } from "react"
+import React, { useEffect } from "react"
 
 import MatchesForm from "../components/matchPreferencesForm"
+
+import { useAuth } from "../context/authContext";
 
 import {
   Container,
@@ -10,32 +12,30 @@ import {
   Icon
 } from "semantic-ui-react"
 
-class MatchPreferences extends Component {
-  state = {
-  }
+const MatchPreferences = () => {
+  const { setToMatchPrefs } = useAuth();
+  useEffect(() => setToMatchPrefs(false), [setToMatchPrefs]);
 
-  render () {
-    return(
-<>
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <Header 
-                as="h1"
-                color="orange"
-              >
-                About Your Matches
-              </Header>
-            </Grid.Column>
-          </Grid.Row>
-            <MatchesForm 
-              colWidth="8"
-              formTitle="Your Match Characteristics"
-              formInstructions="Please tell us your preferences regarding who you'd like to match with."
-              submitContent="Take the Survey"
-            />
-</>
-    );
-  }
+  return(
+    <>
+      <Grid.Row>
+        <Grid.Column width={16}>
+          <Header 
+            as="h1"
+            color="orange"
+          >
+            About Your Matches
+          </Header>
+        </Grid.Column>
+      </Grid.Row>
+      <MatchesForm 
+        colWidth="8"
+        formTitle="Your Match Characteristics"
+        formInstructions="Please tell us your preferences regarding who you'd like to match with."
+        submitContent="Take the Survey"
+      />
+    </>
+  );
 }
     
 export default MatchPreferences;

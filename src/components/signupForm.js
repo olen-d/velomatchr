@@ -24,7 +24,7 @@ const SignupForm = props => {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState("0.0");
 
-  const { setToDashboard, setAuthTokens } = useAuth();
+  const { setToMatchPrefs, setAuthTokens } = useAuth();
 
   useEffect(() => {
     locater().then(locaterRes => {
@@ -95,12 +95,14 @@ const SignupForm = props => {
       return response.json();
     }).then(data => {
       console.log("A slight delay...", Date.now());
-      if(data.token) {
-        setToDashboard(true);
-        setAuthTokens(data.token);
-      } else {
-        return(null);
-      }
+      setTimeout(() => {
+        if(data.token) {
+          setToMatchPrefs(true);
+          setAuthTokens(data.token);
+        } else {
+          return(null);
+        }
+      }, 2500);
     });
   }
 
