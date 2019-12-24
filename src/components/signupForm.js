@@ -24,7 +24,7 @@ const SignupForm = props => {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState("0.0");
 
-  const { setAuthTokens, setRedirect } = useAuth();
+  const { setToDashboard, setAuthTokens } = useAuth();
 
   useEffect(() => {
     locater().then(locaterRes => {
@@ -94,9 +94,9 @@ const SignupForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      console.log("DATA\n",data);
+      console.log("A slight delay...", Date.now());
       if(data.token) {
-        setRedirect("/dashboard");
+        setToDashboard(true);
         setAuthTokens(data.token);
       } else {
         return(null);
