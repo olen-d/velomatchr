@@ -17,6 +17,7 @@ const App = (props) => {
   const [isAuth, setIsAuth] = useState(false);
   const [authTokens, setAuthTokens] = useState();
   const [toDashboard, setToDashboard] = useState(false);
+  const [toMatchPrefs, setToMatchPrefs] = useState(false);
   
   const setTokens = data => {
     localStorage.setItem("user_token", JSON.stringify(data));
@@ -26,7 +27,7 @@ const App = (props) => {
   
   return(
     <Router>
-      <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, authTokens, setAuthTokens: setTokens}}>
+      <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, toMatchPrefs, setToMatchPrefs, authTokens, setAuthTokens: setTokens}}>
         <AuthContext.Consumer>
           {({ isAuth }) => (
             isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
