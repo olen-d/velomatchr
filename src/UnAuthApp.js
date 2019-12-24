@@ -1,6 +1,6 @@
 import React, { Component } from "react";
+
 import { 
-  BrowserRouter as Router, 
   Route,
   Switch
 } from "react-router-dom";
@@ -18,7 +18,7 @@ class UnAuthApp extends Component {
 
   render () {
     return (
-      <Router>
+      <>
         <LoginBar />
         <Switch>
           <Route exact path="/" component={Home} />
@@ -28,7 +28,7 @@ class UnAuthApp extends Component {
           <Route path="*" render={ () => "404 NOT FOUND" } />
         </Switch>
         <Footer />
-      </Router>
+      </>
     );
   }
 }

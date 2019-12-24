@@ -1,5 +1,9 @@
 import React, { lazy, Suspense, useState } from "react";
 
+import { 
+  BrowserRouter as Router
+} from "react-router-dom";
+
 import "./style.css";
 
 import LoadingSpinner from "./components/loadingSpinner";
@@ -12,21 +16,24 @@ const UnAuthApp = lazy(() => import("./UnAuthApp"));
 const App = (props) => {
   const [isAuth, setIsAuth] = useState(false);
   const [authTokens, setAuthTokens] = useState();
+  const [toDashboard, setToDashboard] = useState(false);
   
   const setTokens = data => {
     localStorage.setItem("user_token", JSON.stringify(data));
     setAuthTokens(data);
-    setIsAuth(true);
+    setIsAuth(true); // TODO: Move this to the login and signin Form components
   }
-
+  
   return(
-  <AuthContext.Provider value={{isAuth, setIsAuth, authTokens, setAuthTokens: setTokens}}>
-    <AuthContext.Consumer>
-      {({ isAuth }) => (
-        isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
-      )}
-    </AuthContext.Consumer>
-  </AuthContext.Provider>
+    <Router>
+      <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, authTokens, setAuthTokens: setTokens}}>
+        <AuthContext.Consumer>
+          {({ isAuth }) => (
+            isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
+          )}
+        </AuthContext.Consumer>
+      </AuthContext.Provider>
+    </Router>
   );
 };
 

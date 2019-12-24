@@ -39,7 +39,7 @@ const LoginForm = props => {
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
 
-  const { setAuthTokens } = useAuth();
+  const { setToDashboard, setAuthTokens } = useAuth();
 
   const postLogin = e => {
     const formData = { 
@@ -57,6 +57,7 @@ const LoginForm = props => {
       return response.json();
     }).then(data => {
       if(data.token) {
+        setToDashboard(true);
         setAuthTokens(data.token);
       } else {
         localStorage.removeItem("user_token");

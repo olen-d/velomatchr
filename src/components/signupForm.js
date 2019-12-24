@@ -1,12 +1,9 @@
-import React, { Component } from "react"
-
-import { 
-  Link,
-  Redirect
-} from "react-router-dom";
+import React, { useState, useEffect } from "react"
 
 import DropdownItems from "./dropdownItems/dropdownItems"
 import genderChoices from "../models/genderChoices"
+
+import { useAuth } from "../context/authContext";
 
 import {
   Button,
@@ -16,36 +13,29 @@ import {
   Segment
 } from "semantic-ui-react"
 
-class SignupForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      genderChoices,
-      profilePhotographFile: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      password: "",
-      gender: "default",
-      latitude: 0.0,
-      longitude: 0.0,
-      userToken: "",
-      authenticated: false,
-      toRedirect: false
-    }
-  }
-  
-  componentDidMount() {
-    this.locater().then(locaterRes => {
+const SignupForm = props => {
+  const [profilePhotographFile, setProfilePhotographFile] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [gender, setGender] = useState("default");
+  const [latitude, setLatitude] = useState(0.0);
+  const [longitude, setLongitude] = useState("0.0");
+
+  const { setToDashboard, setAuthTokens } = useAuth();
+
+  useEffect(() => {
+    locater().then(locaterRes => {
       if (locaterRes.status === 200) {
-        this.setState({ latitude : locaterRes.latitude });
-        this.setState({ longitude : locaterRes.longitude });
+        setLatitude(locaterRes.latitude);
+        setLongitude(locaterRes.longitude);
       }
     });
-  }
+  }, []);
 
-  locater = () => {
+  const locater = () => {
     return new Promise((res, rej) => {
       try {
         if ("geolocation" in navigator) {
@@ -72,27 +62,11 @@ class SignupForm extends Component {
     });
   }
 
-  onChange = e => {
-    this.setState({ [e.target.name] : e.target.value });
+  const uploadFile = e => {
+    setProfilePhotographFile(e.target.files[0]);
   }
 
-  uploadFile = e => {
-    this.setState({ profilePhotographFile : e.target.files[0] });
-  }
-
-  onSubmit = e => {
-    e.preventDefault();
-
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      password,
-      gender,
-      latitude,
-      longitude
-    } = this.state;
+  const postSignup = () => {
 
     const formInputs = { 
       firstName, 
@@ -106,8 +80,6 @@ class SignupForm extends Component {
     };
       
     const entries = Object.entries(formInputs);
-    const profilePhotographFile = this.state.profilePhotographFile;
-
     const formData = new FormData();
 
     for (const [key, value] of entries) {
@@ -122,145 +94,145 @@ class SignupForm extends Component {
     }).then(response => {
       return response.json();
     }).then(data => {
+      console.log("A slight delay...", Date.now());
       if(data.token) {
-        localStorage.setItem("user_token", data.token);
-        this.setState({ userToken: data.token, authenticated: data.authenticated, toRedirect: true });
+        setToDashboard(true);
+        setAuthTokens(data.token);
+      } else {
+        return(null);
       }
     });
   }
 
-  render() {
-    if (this.state.toRedirect === true)
-    {
-      return <Redirect to="/matches/preferences" />
-    }
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      password,
-      gender
-    } = this.state;
-
-    return(
-      <Grid.Column width={this.props.colWidth}>
-        <Header 
-          as="h2" 
-          textAlign="center"
-          color="grey"
+  return(
+    <Grid.Column width={props.colWidth}>
+      <Header 
+        as="h2" 
+        textAlign="center"
+        color="grey"
+      >
+        {props.formTitle}
+      </Header>
+      <Segment>
+        <Form
+          size="large"
         >
-          {this.props.formTitle}
-        </Header>
-        <Segment>
-          <Form
+          <Form.Input
+            fluid
+            icon="user"
+            iconPosition="left"
+            name="firstName"
+            value={firstName}
+            placeholder="First Name"
+            onChange={e => {
+              setFirstName(e.target.value)
+            }}
+          />
+          <Form.Input
+            fluid
+            icon="user"
+            iconPosition="left"
+            name="lastName"
+            value={lastName}
+            placeholder="Last Name"
+            onChange={e => {
+              setLastName(e.target.value)
+            }}
+          />
+          <Form.Input
+            fluid
+            icon="envelope"
+            iconPosition="left"
+            name="email"
+            value={email}
+            placeholder="Email Address"
+            type="email"
+            onChange={e => {
+              setEmail(e.target.value)
+            }}
+          />
+          <Form.Input
+            fluid
+            icon="phone"
+            iconPosition="left"
+            name="phone"
+            value={phone}
+            placeholder="Telephone Number"
+            type="tel"
+            onChange={e => {
+              setPhone(e.target.value)
+            }}
+          />
+          <Button
+            as="label"
+            htmlFor="profilePhotographFile"
+            fluid
+            type="button"
+            color="grey"
             size="large"
-            onSubmit={this.onSubmit}
+            icon="image"
+            labelPosition="left"
+            content="Profile Photograph"
           >
-            <Form.Input
-              fluid
-              icon="user"
-              iconPosition="left"
-              name="firstName"
-              value={firstName}
-              placeholder="First Name"
-              onChange={this.onChange}
-            />
-            <Form.Input
-              fluid
-              icon="user"
-              iconPosition="left"
-              name="lastName"
-              value={lastName}
-              placeholder="Last Name"
-              onChange={this.onChange}
-            />
-            <Form.Input
-              fluid
-              icon="envelope"
-              iconPosition="left"
-              name="email"
-              value={email}
-              placeholder="Email Address"
-              type="email"
-              onChange={this.onChange}
-            />
-            <Form.Input
-              fluid
-              icon="phone"
-              iconPosition="left"
-              name="phone"
-              value={phone}
-              placeholder="Telephone Number"
-              type="tel"
-              onChange={this.onChange}
-            />
-            <Button
-              as="label"
-              htmlFor="profilePhotographFile"
-              fluid
-              type="button"
-              color="grey"
-              size="large"
-              icon="image"
-              labelPosition="left"
-              content="Profile Photograph"
+          </Button>
+          <input
+            type="file"
+            id="profilePhotographFile"
+            name="profilePhotographFile"
+            style={{ display: "none" }}
+            onChange={uploadFile}
+          />
+          <Form.Input
+            fluid
+            icon="lock"
+            iconPosition="left"
+            name="password"
+            value={password}
+            placeholder="Password"
+            type="password"
+            onChange={e => {
+              setPassword(e.target.value)
+            }}
+          />
+          <Form.Input
+            fluid
+            control="select"
+            name="gender"
+            value={gender}
+            onChange={e => {
+              setGender(e.target.value)
+            }}
+          >  
+            <option
+              key="-1"
+              value="default"
+              disabled
             >
-            </Button>
-            <input
-              type="file"
-              id="profilePhotographFile"
-              name="profilePhotographFile"
-              style={{ display: "none" }}
-              onChange={this.uploadFile}
-            />
-            <Form.Input
-              fluid
-              icon="lock"
-              iconPosition="left"
-              name="password"
-              value={password}
-              placeholder="Password"
-              type="password"
-              onChange={this.onChange}
-            />
-            <Form.Input
-              fluid
-              control="select"
-              name="gender"
-              value={gender}
-              onChange={this.onChange}
-            >  
-              <option
-                key="-1"
-                value="default"
-                disabled
-              >
-                Select Your Gender
-              </option>
-              {this.state.genderChoices.map(genderChoice => (
-                <DropdownItems 
-                  key={genderChoice.id}
-                  value={genderChoice.value}
-                  text={genderChoice.text}
-                />
-              ))}
-            </Form.Input>
-            <Button
-              fluid
-              type="submit"
-              color="red"
-              size="large"
-              icon="check circle"
-              labelPosition="left"
-              content="Sign Up"
-            >
-            </Button>
-          </Form>
-        </Segment>
-      </Grid.Column>
-    );
-  }
+              Select Your Gender
+            </option>
+            {genderChoices.map(genderChoice => (
+              <DropdownItems 
+                key={genderChoice.id}
+                value={genderChoice.value}
+                text={genderChoice.text}
+              />
+            ))}
+          </Form.Input>
+          <Button
+            fluid
+            type="button"
+            color="red"
+            size="large"
+            icon="check circle"
+            labelPosition="left"
+            content="Sign Up"
+            onClick={postSignup}
+          >
+          </Button>
+        </Form>
+      </Segment>
+    </Grid.Column>
+  );
 }
 
 export default SignupForm;
