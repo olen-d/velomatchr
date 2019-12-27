@@ -94,15 +94,16 @@ const SignupForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      console.log("A slight delay...", Date.now());
-      setTimeout(() => {
-        if(data.token) {
-          setToMatchPrefs(true);
-          setAuthTokens(data.token);
-        } else {
-          return(null);
-        }
-      }, 2500);
+      if(data.token) {
+        setToMatchPrefs(true);
+        setAuthTokens(data.token);
+        return(null);
+      } else {
+        return(null);
+      }
+    }).catch(error => {
+      // Set isError to true
+      console.log("signupForm.js 105 - ERROR:\n", error);
     });
   }
 
