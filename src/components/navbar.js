@@ -14,11 +14,12 @@ import {
 } from 'semantic-ui-react';
 
 const NavBar = props => {
-  const { setIsAuth } = useAuth();
+  const { setIsAuth, setAuthTokens } = useAuth();
 
   const logout = () => {
     const newAuthStatus = auth.logout();
     setIsAuth(newAuthStatus);
+    setAuthTokens("");
   }
 
   return(
