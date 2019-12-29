@@ -19,15 +19,16 @@ const App = (props) => {
   const [toDashboard, setToDashboard] = useState(false);
   const [toMatchPrefs, setToMatchPrefs] = useState(false);
   
-  const setTokens = data => {
-    localStorage.setItem("user_token", JSON.stringify(data));
-    setAuthTokens(data);
-    setIsAuth(true); // TODO: Move this to the login and signin Form components
-  }
+  // const setTokens = data => {
+  //   console.log("App.js - 23 DATA:\n", data);
+  //   localStorage.setItem("user_token", JSON.stringify(data));
+  //   debugger;
+  //   setAuthTokens(data);
+  // }
   
   return(
     <Router>
-      <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, toMatchPrefs, setToMatchPrefs, authTokens, setAuthTokens: setTokens}}>
+      <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, toMatchPrefs, setToMatchPrefs, authTokens, setAuthTokens}}>
         <AuthContext.Consumer>
           {({ isAuth }) => (
             isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>

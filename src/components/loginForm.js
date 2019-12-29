@@ -39,9 +39,9 @@ const LoginForm = props => {
   const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
 
-  const { setToDashboard, setAuthTokens } = useAuth();
+  const { setIsAuth, setAuthTokens, setToDashboard } = useAuth();
 
-  const postLogin = e => {
+  const postLogin = () => {
     const formData = { 
       username,
       pass
@@ -57,8 +57,10 @@ const LoginForm = props => {
       return response.json();
     }).then(data => {
       if(data.token) {
-        setToDashboard(true);
+        localStorage.setItem("user_token", JSON.stringify(data.token));
+        setIsAuth(data.authenticated);
         setAuthTokens(data.token);
+        setToDashboard(true);
       } else {
         localStorage.removeItem("user_token");
         setIsError(true);

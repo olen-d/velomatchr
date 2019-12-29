@@ -2,9 +2,9 @@ import React from "react";
 
 import { 
   // BrowserRouter as Router,
+  Redirect,
   Route,
-  Switch,
-  useHistory
+  Switch
 } from "react-router-dom";
 
 import "./style.css";
@@ -20,19 +20,17 @@ import Survey from "./pages/survey";
 import { AuthContext } from "./context/authContext";
 
 const Template = () => {
-  let history = useHistory();
 
   return (
-    // <Router>
     <>
       <NavBar />
       <AuthContext.Consumer>
         {
           ({toDashboard, toMatchPrefs}) => {
             if (toDashboard) {
-              history.push("/dashboard")
+              return <Redirect to="/dashboard" />
             } else if (toMatchPrefs) {
-              history.push("/matches/preferences")
+              return <Redirect to="/matches/preferences" />
             }
           }
         }
@@ -47,8 +45,7 @@ const Template = () => {
           <Route path="*" render={ () => "404 NOT FOUND" } />
         </Switch>
       <Footer />
-      </>
-    // </Router>
+    </>
   );
 }
 

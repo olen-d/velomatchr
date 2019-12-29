@@ -24,7 +24,7 @@ const SignupForm = props => {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState("0.0");
 
-  const { setToMatchPrefs, setAuthTokens } = useAuth();
+  const { setIsAuth, setAuthTokens, setToMatchPrefs } = useAuth();
 
   useEffect(() => {
     locater().then(locaterRes => {
@@ -95,15 +95,20 @@ const SignupForm = props => {
       return response.json();
     }).then(data => {
       if(data.token) {
-        setToMatchPrefs(true);
+        localStorage.setItem("user_token", JSON.stringify(data.token));
+        setIsAuth(data.authenticated);
         setAuthTokens(data.token);
-        return(null);
+        setToMatchPrefs(true);
       } else {
-        return(null);
+        setIsAuth(false);
+        setAuthTokens("");
+        console.log("signupForm.js 105 - ERROR");
       }
     }).catch(error => {
       // Set isError to true
-      console.log("signupForm.js 105 - ERROR:\n", error);
+      setIsAuth(false);
+      setAuthTokens("");
+      console.log("signupForm.js 111 - ERROR:\n", error);
     });
   }
 
