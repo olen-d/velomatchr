@@ -1,18 +1,18 @@
-.socializeList {
+.madeWithList, .socializeList {
   list-style: none;
   padding-left: 0rem;
   font-size: 1.1rem;
   line-height: 2rem;
 }
 
-.socializeList a:link {
+.madeWithList a:link, .socializeList a:link {
   color: #bbbbbb;
 }
 
-.socializeList a:visited {
+.madeWithList a:visited, .socializeList a:visited {
   color: #bbbbbb;
 }
 
-.socializeList a:hover {
+.madeWithList a:hover, .socializeList a:hover {
   color: #cc0000;
 }

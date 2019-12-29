@@ -34,10 +34,12 @@ const Footer = () => {
               <h3>
                 Made With
               </h3>
-              <ul>
-                <li><a className="white-text" href="http://www.fontawesome.com">Font Awesome</a></li>
-                <li><a className="white-text" href="http://jquery.com">jQuery</a></li>
-                <li><a className="white-text" href="http://materializecss.com">Materialize</a></li>
+              <ul className="madeWithList">
+                <li><a href="https://fontawesome.com/"><i className="fab fa-font-awesome-flag"></i> Font Awesome</a></li>
+                <li><a href="https://react.semantic-ui.com/"><i class="fas fa-grip-horizontal"></i> Semantic UI React</a></li>
+                <li><a href="https://reactjs.org/"><i class="fab fa-react"></i> React</a></li>
+                <li><a href="https://nodejs.org/"><i class="fab fa-node-js"></i> Node</a></li>
+                <li><a href="https://www.mysql.com/"><i class="fas fa-database"></i> MySql</a></li>
               </ul>
             </Grid.Column>
             <Grid.Column width={4}>
