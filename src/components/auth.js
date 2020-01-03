@@ -26,14 +26,11 @@ class Auth {
     return this.authenticated;
   }
 
-  getUserInfo() {
-    if (this.tokenExists()) {
-      const token = this.getToken();
-      if (this.tokenActive(token)) {
-        return this.decodeToken(token);
-      } else {
-        return false;
-      }
+  getUserInfo(token) {
+    if (this.tokenActive(token)) {
+      return this.decodeToken(token);
+    } else {
+      return false;
     }
   }
 

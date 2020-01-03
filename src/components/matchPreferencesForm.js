@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { useContext, useEffect, useState } from "react"
 
 import { 
   Link,
@@ -19,38 +19,22 @@ import {
   Segment
 } from "semantic-ui-react"
 
-class MatchesForm extends Component {
-  state = {
-    matchDistances,
-    matchGenders,
-    distance: "default",
-    gender: "default",
-    userId: "",
-    toRedirect: false
-  }
+import { AuthContext } from "../context/authContext";
 
-  componentDidMount() {
-    const token = auth.getToken();
-    const userInfo = auth.getUserInfo(token);
-    if (userInfo) {
-      this.setState({userId: userInfo.user}); 
-    }   
-  }
+const MatchPreferencesForm = props => {
+  const [userId, setUserId] = useState(null);
+  const [distance, setDistance] = useState("default");
+  const [gender, setGender] = useState("default");
 
-  onChange = e => {
-    this.setState({ [e.target.name] : e.target.value });
-  }
+  const context = useContext(AuthContext);
+  const token = context.authTokens;
+  const setToSurvey = context.setToSurvey;
 
-  onSubmit = e => {
-    e.preventDefault();
+  const userInfo = auth.getUserInfo(token);
 
-    const {
-      distance,
-      gender
-    } = this.state;
-
+  const postMatchPreferences = () => {
     const formData = { 
-      userId: this.state.userId,
+      userId,
       distance,
       gender
     };
@@ -64,7 +48,7 @@ class MatchesForm extends Component {
     }).then(response => {
       return response.json();
     }).then(data => {
-        this.setState({ toRedirect: true });
+      setToSurvey(true);
       console.log("Cheetos\n", data);
     }).catch(error => {
       return ({
@@ -75,89 +59,85 @@ class MatchesForm extends Component {
     });
   }
 
-  render() {
-    if (this.state.toRedirect === true)
-      {
-        return <Redirect to="/survey" />
-      }
-    const {
-      distance,
-      gender,
-    } = this.state;
+  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
 
-    return(
-      <Grid.Column width={this.props.colWidth}>
-        <Header 
-          as="h2" 
-          textAlign="center"
-          color="orange"
+  return(
+    <Grid.Column width={props.colWidth}>
+      <Header 
+        as="h2" 
+        textAlign="center"
+        color="orange"
+      >
+        {props.formTitle}
+      </Header>
+      <Segment>
+        <Form 
+          size="large"
         >
-          {this.props.formTitle}
-        </Header>
-        <Segment>
-          <Form 
-            size="large"
-            onSubmit={this.onSubmit}
-          >
-            <Form.Input
-              fluid
-              control="select"
-              name="distance"
-              value={distance}
-              onChange={this.onChange}
-            >  
-              <option
-                key="-1"
-                value="default"
-                disabled
-              >
-                Select Match Proximity
-              </option>
-              {this.state.matchDistances.map(matchDistance => (
-                <DropdownItems 
-                  key={matchDistance.id}
-                  value={matchDistance.value}
-                  text={matchDistance.text}
-                />
-              ))}
-            </Form.Input>
-            <Form.Input
-              fluid
-              control="select"
-              name="gender"
-              value={gender}
-              onChange={this.onChange}
-            >  
-              <option
-                key="-1"
-                value="default"
-                disabled
-              >
-                Select Genders to Match With
-              </option>
-              {this.state.matchGenders.map(matchGender => (
-                <DropdownItems 
-                  key={matchGender.id}
-                  value={matchGender.value}
-                  text={matchGender.text}
-                />
-              ))}
-            </Form.Input>
-            <Button
-              fluid
-              type="submit"
-              color="red"
-              size="large"
-              icon="check circle"
-              labelPosition="left"
-              content={this.props.submitContent}
+          <Form.Input
+            fluid
+            control="select"
+            name="distance"
+            value={distance}
+            onChange={e => {
+              setDistance(e.target.value)
+            }}
+          >  
+            <option
+              key="-1"
+              value="default"
+              disabled
             >
-            </Button>
-          </Form>
-        </Segment>
-      </Grid.Column>
-    );
-  }
+              Select Match Proximity
+            </option>
+            {matchDistances.map(matchDistance => (
+              <DropdownItems 
+                key={matchDistance.id}
+                value={matchDistance.value}
+                text={matchDistance.text}
+              />
+            ))}
+          </Form.Input>
+          <Form.Input
+            fluid
+            control="select"
+            name="gender"
+            value={gender}
+            onChange={e => {
+              setGender(e.target.value)
+            }}
+          >  
+            <option
+              key="-1"
+              value="default"
+              disabled
+            >
+              Select Genders to Match With
+            </option>
+            {matchGenders.map(matchGender => (
+              <DropdownItems 
+                key={matchGender.id}
+                value={matchGender.value}
+                text={matchGender.text}
+              />
+            ))}
+          </Form.Input>
+          <Button
+            fluid
+            type="button"
+            color="red"
+            size="large"
+            icon="check circle"
+            labelPosition="left"
+            content={props.submitContent}
+            onClick={postMatchPreferences}
+          >
+          </Button>
+        </Form>
+      </Segment>
+    </Grid.Column>
+  );
+  // }
 }
 
-export default MatchesForm;
+export default MatchPreferencesForm;

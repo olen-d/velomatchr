@@ -26,11 +26,13 @@ const Template = () => {
       <NavBar />
       <AuthContext.Consumer>
         {
-          ({toDashboard, toMatchPrefs}) => {
+          ({toDashboard, toMatchPrefs, toSurvey}) => {
             if (toDashboard) {
               return <Redirect to="/dashboard" />
             } else if (toMatchPrefs) {
               return <Redirect to="/matches/preferences" />
+            } else if (toSurvey) {
+              return <Redirect to="/survey" />
             }
           }
         }

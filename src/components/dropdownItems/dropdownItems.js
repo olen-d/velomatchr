@@ -2,11 +2,12 @@ import React from "react";
 // import "./styles.css";
 
 const dropdownItems = props => {
+  const { value, text } = props;
   return (
     <option
-        value={props.value}
+        value={value}
     >
-        {props.text}
+        {text}
     </option>
   );
 }
