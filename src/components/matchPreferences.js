@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 
-import MatchesForm from "../components/matchPreferencesForm"
+import MatchPreferencesForm from "../components/matchPreferencesForm"
 
 import { useAuth } from "../context/authContext";
 
@@ -28,7 +28,7 @@ const MatchPreferences = () => {
           </Header>
         </Grid.Column>
       </Grid.Row>
-      <MatchesForm 
+      <MatchPreferencesForm 
         colWidth="8"
         formTitle="Your Match Characteristics"
         formInstructions="Please tell us your preferences regarding who you'd like to match with."
