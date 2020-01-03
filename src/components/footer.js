@@ -34,25 +34,65 @@ const Footer = () => {
               <h3>
                 Made With
               </h3>
-              <ul className="madeWithList">
-                <li><a href="https://fontawesome.com/"><i className="fab fa-font-awesome-flag"></i> Font Awesome</a></li>
-                <li><a href="https://react.semantic-ui.com/"><i class="fas fa-grip-horizontal"></i> Semantic UI React</a></li>
-                <li><a href="https://reactjs.org/"><i class="fab fa-react"></i> React</a></li>
-                <li><a href="https://nodejs.org/"><i class="fab fa-node-js"></i> Node</a></li>
-                <li><a href="https://www.mysql.com/"><i class="fas fa-database"></i> MySql</a></li>
-              </ul>
+              <List relaxed className="madeWithList">
+                <List.Item>
+                  <List.Content>
+                    <a href="https://fontawesome.com/"><i className="fab fa-font-awesome-flag"></i> Font Awesome</a>
+                  </List.Content>
+                </List.Item>
+                <List.Item>
+                  <List.Content>
+                    <a href="https://react.semantic-ui.com/"><i className="fas fa-grip-horizontal"></i> Semantic UI React</a>
+                  </List.Content>
+                </List.Item>
+                <List.Item>
+                  <List.Content>
+                    <a href="https://reactjs.org/"><i className="fab fa-react"></i> React</a>
+                  </List.Content>
+                </List.Item>
+                <List.Item>
+                  <List.Content>
+                    <a href="https://nodejs.org/"><i className="fab fa-node-js"></i> Node</a>
+                  </List.Content>
+                </List.Item>
+                <List.Item>
+                  <List.Content>
+                    <a href="https://www.mysql.com/"><i className="fas fa-database"></i> MySql</a>
+                  </List.Content>
+                </List.Item>
+              </List>
             </Grid.Column>
             <Grid.Column width={4}>
               <h3>
                 Socialize
               </h3>
-              <ul className="socializeList">
-                <li><a href="#!"><i className="fab fa-facebook-f"></i> Facebook</a></li>
-                <li><a href="https://github.com/olen-d/velomatchr"><i className="fab fa-github"></i> Github</a></li>
-                <li><a href="#!"><i className="fab fa-instagram"></i> Instagram</a></li>
-                <li><a href="#!"><i className="fab fa-twitter"></i> Twitter</a></li>
-                <li><a href="#!"><i className="fab fa-youtube"></i> Youtube</a></li>
-              </ul>
+              <List relaxed className="socializeList">
+                <List.Item>
+                  <List.Content>
+                    <a href="#!"><i className="fab fa-facebook-f"></i> Facebook</a>
+                  </List.Content>
+                </List.Item>
+                <List.Item>
+                  <List.Content>
+                    <a href="https://github.com/olen-d/velomatchr"><i className="fab fa-github"></i> Github</a>
+                  </List.Content>
+                </List.Item>
+                <List.Item>
+                  <List.Content>
+                    <a href="#!"><i className="fab fa-instagram"></i> Instagram</a>
+                  </List.Content>
+                </List.Item>
+                <List.Item>
+                  <List.Content>
+                    <a href="#!"><i className="fab fa-twitter"></i> Twitter</a>
+                  </List.Content>
+                </List.Item>
+                <List.Item>
+                  <List.Content>
+                    <a href="#!"><i className="fab fa-youtube"></i> Youtube</a>
+                  </List.Content>
+                </List.Item>
+              </List>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
