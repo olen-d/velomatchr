@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 
 import auth from "./auth";
 
@@ -15,27 +15,21 @@ import {
   Header,
 } from "semantic-ui-react"
 
+import { AuthContext } from "../context/authContext";
+
 // Add the selectedVal attribute to the questions so we can keep track of which answer is selected in the state
 questions.forEach(i => {
   i["selectedVal"] = null;
 });
 
 const SurveyForm = props => {
+  const [userId, setUserId] = useState(null);
   const [answers, SetAnswers] = useState(questions);
-// class SurveyForm extends Component {
-//   state = {
-//     questions,
-//     likertItems,
-//     userId: ""
-//   }
 
-//   componentDidMount() {
-//     const token = auth.getToken();
-//     const userInfo = auth.getUserInfo(token);
-//     if (userInfo) {
-//       this.setState({userId: userInfo.user}); 
-//     }   
-//   }
+  const context = useContext(AuthContext);
+  const token = context.authTokens;
+
+  const userInfo = auth.getUserInfo(token);
 
   const setAnswerState = e => {
     const updatedAnswer = answers.map(answer => answer.id === parseInt(e.target.name) ? {...answer, ...{selectedVal: parseInt(e.target.value)}} : answer)
@@ -44,8 +38,8 @@ const SurveyForm = props => {
 
   const postSurveyAnswers = () => {
 
-    const entries = this.state.questions;
-    const formData = {userId: this.state.userId};
+    const entries = answers;
+    const formData = {userId: userId};
 
     entries.forEach(entry => {
       formData[entry.id] = entry.selectedVal;
@@ -60,7 +54,7 @@ const SurveyForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      console.log("Doritos\n", data);
+      // Run the matching algorithm...
       // Redirect to the matches page
     }).catch(error => {
       return ({
@@ -70,6 +64,8 @@ const SurveyForm = props => {
       })
     });
   }
+
+  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
 
   return(
     <>
@@ -114,7 +110,7 @@ const SurveyForm = props => {
               </SurveyQuestion>
             ))}
             <Button
-              fluid
+              className="fluid"
               type="button"
               color="red"
               size="large"
