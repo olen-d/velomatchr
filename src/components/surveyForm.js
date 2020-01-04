@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { useState } from "react"
 
 import auth from "./auth";
 
@@ -20,28 +20,29 @@ questions.forEach(i => {
   i["selectedVal"] = null;
 });
 
-class SurveyForm extends Component {
-  state = {
-    questions,
-    likertItems,
-    userId: ""
+const SurveyForm = props => {
+  const [answers, SetAnswers] = useState(questions);
+// class SurveyForm extends Component {
+//   state = {
+//     questions,
+//     likertItems,
+//     userId: ""
+//   }
+
+//   componentDidMount() {
+//     const token = auth.getToken();
+//     const userInfo = auth.getUserInfo(token);
+//     if (userInfo) {
+//       this.setState({userId: userInfo.user}); 
+//     }   
+//   }
+
+  const setAnswerState = e => {
+    const updatedAnswer = answers.map(answer => answer.id === parseInt(e.target.name) ? {...answer, ...{selectedVal: parseInt(e.target.value)}} : answer)
+    SetAnswers(updatedAnswer);
   }
 
-  componentDidMount() {
-    const token = auth.getToken();
-    const userInfo = auth.getUserInfo(token);
-    if (userInfo) {
-      this.setState({userId: userInfo.user}); 
-    }   
-  }
-
-  setAnswerState = e => {
-    const questions = this.state.questions.map(question => question.id === parseInt(e.target.name) ? {...question, ...{selectedVal: parseInt(e.target.value)}} : question)
-    this.setState({questions : questions});
-  }
-
-  onSubmit = e => {
-    e.preventDefault();
+  const postSurveyAnswers = () => {
 
     const entries = this.state.questions;
     const formData = {userId: this.state.userId};
@@ -70,66 +71,64 @@ class SurveyForm extends Component {
     });
   }
 
-  render() {
-    return(
-      <>
-        <Grid.Row>
-          <Grid.Column width={this.props.colWidth}>
-            <Header
-              as="h2"
-              color="orange"
-            >
-              {this.props.formTitle}
-            </Header>
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column width={this.props.colWidth}>
-            <p>
-              {this.props.formInstructions}
-            </p>
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column width={this.props.colWidth}>
-            <Form
-              size="large"
-              onSubmit={this.onSubmit}
-            >
-              {this.state.questions.map(question => (
-                <SurveyQuestion
-                  key={question.id}
-                  id={question.id}
-                  number={question.number}
-                  text={question.text}
-                  onChange={this.setAnswerState.bind(this)}
-                >
-                {this.state.likertItems.map(likertItem => (
-                  <LikertItem 
-                    key={likertItem.id}
-                    id={likertItem.id}
-                    number={likertItem.number}
-                    text={likertItem.text}
-                  />
-                  ))}  
-                </SurveyQuestion>
-              ))}
-              <Button
-                fluid
-                type="submit"
-                color="red"
-                size="large"
-                icon="check circle"
-                labelPosition="left"
-                content={this.props.submitContent}
+  return(
+    <>
+      <Grid.Row>
+        <Grid.Column width={props.colWidth}>
+          <Header
+            as="h2"
+            color="orange"
+          >
+            {props.formTitle}
+          </Header>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column width={props.colWidth}>
+          <p>
+            {props.formInstructions}
+          </p>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column width={props.colWidth}>
+          <Form
+            size="large"
+          >
+            {questions.map(question => (
+              <SurveyQuestion
+                key={question.id}
+                id={question.id}
+                number={question.number}
+                text={question.text}
+                onChange={setAnswerState.bind(this)}
               >
-              </Button>
-            </Form>
-          </Grid.Column>
-        </Grid.Row>
-      </>
-    );
-  }
+              {likertItems.map(likertItem => (
+                <LikertItem 
+                  key={likertItem.id}
+                  id={likertItem.id}
+                  number={likertItem.number}
+                  text={likertItem.text}
+                />
+                ))}  
+              </SurveyQuestion>
+            ))}
+            <Button
+              fluid
+              type="button"
+              color="red"
+              size="large"
+              icon="check circle"
+              labelPosition="left"
+              content={props.submitContent}
+              onClick={postSurveyAnswers}
+            >
+            </Button>
+          </Form>
+        </Grid.Column>
+      </Grid.Row>
+    </>
+  );
 }
 
 export default SurveyForm
