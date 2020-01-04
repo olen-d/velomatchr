@@ -71,7 +71,6 @@ const SurveyForm = props => {
     });
   }
 
-  // render() {
   return(
     <>
       <Grid.Row>
@@ -130,7 +129,6 @@ const SurveyForm = props => {
       </Grid.Row>
     </>
   );
-  // }
 }
 
 export default SurveyForm
