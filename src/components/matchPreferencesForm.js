@@ -1,10 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
 
-import { 
-  Link,
-  Redirect
-} from "react-router-dom";
-
 import auth from "./auth";
 
 import DropdownItems from "./dropdownItems/dropdownItems"
@@ -49,7 +44,6 @@ const MatchPreferencesForm = props => {
       return response.json();
     }).then(data => {
       setToSurvey(true);
-      console.log("Cheetos\n", data);
     }).catch(error => {
       return ({
         errorCode: 500,
@@ -75,7 +69,7 @@ const MatchPreferencesForm = props => {
           size="large"
         >
           <Form.Input
-            fluid
+            className="fluid"
             control="select"
             name="distance"
             value={distance}
@@ -99,7 +93,7 @@ const MatchPreferencesForm = props => {
             ))}
           </Form.Input>
           <Form.Input
-            fluid
+            className="fluid"
             control="select"
             name="gender"
             value={gender}
@@ -123,7 +117,7 @@ const MatchPreferencesForm = props => {
             ))}
           </Form.Input>
           <Button
-            fluid
+            className="fluid"
             type="button"
             color="red"
             size="large"

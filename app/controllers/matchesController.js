@@ -4,7 +4,7 @@ const { MatchPref } = require("../models");
 exports.create_match_preferences = (req, res) => {
 
   const { userId, distance, gender } = req.body;
-  MatchPref.create({
+  MatchPref.upsert({
     userId,
     distance,
     gender

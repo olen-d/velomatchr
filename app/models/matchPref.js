@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
       userId: {
         type: DataTypes.BIGINT,
         allowNull: false,
+        unique: true,
         validate: {
             len: [1]
         }

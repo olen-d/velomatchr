@@ -126,7 +126,7 @@ const SignupForm = props => {
           size="large"
         >
           <Form.Input
-            fluid
+            className="fluid"
             icon="user"
             iconPosition="left"
             name="firstName"
@@ -137,7 +137,7 @@ const SignupForm = props => {
             }}
           />
           <Form.Input
-            fluid
+            className="fluid"
             icon="user"
             iconPosition="left"
             name="lastName"
@@ -148,7 +148,7 @@ const SignupForm = props => {
             }}
           />
           <Form.Input
-            fluid
+            className="fluid"
             icon="envelope"
             iconPosition="left"
             name="email"
@@ -160,7 +160,7 @@ const SignupForm = props => {
             }}
           />
           <Form.Input
-            fluid
+            className="fluid"
             icon="phone"
             iconPosition="left"
             name="phone"
@@ -174,7 +174,7 @@ const SignupForm = props => {
           <Button
             as="label"
             htmlFor="profilePhotographFile"
-            fluid
+            className="fluid"
             type="button"
             color="grey"
             size="large"
@@ -191,7 +191,7 @@ const SignupForm = props => {
             onChange={uploadFile}
           />
           <Form.Input
-            fluid
+            className="fluid"
             icon="lock"
             iconPosition="left"
             name="password"
@@ -203,7 +203,7 @@ const SignupForm = props => {
             }}
           />
           <Form.Input
-            fluid
+            className="fluid"
             control="select"
             name="gender"
             value={gender}
@@ -227,7 +227,7 @@ const SignupForm = props => {
             ))}
           </Form.Input>
           <Button
-            fluid
+            className="fluid"
             type="button"
             color="red"
             size="large"

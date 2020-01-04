@@ -87,7 +87,7 @@ const LoginForm = props => {
           size="large"
         >
           <Form.Input
-            fluid
+            className="fluid"
             icon="envelope"
             iconPosition="left"
             name="username"
@@ -98,7 +98,7 @@ const LoginForm = props => {
             }}
           />
           <Form.Input
-            fluid
+            className="fluid"
             icon="lock"
             iconPosition="left"
             name="pass"
@@ -110,7 +110,7 @@ const LoginForm = props => {
             }}
           />
           <Button 
-            fluid
+            className="fluid"
             type="button"
             color="red"
             size="large"
@@ -126,6 +126,7 @@ const LoginForm = props => {
         </p>
         <Link to="/survey">
           <Button
+            type="button"
             color="red"
             size="large"
             content="Get Started"
