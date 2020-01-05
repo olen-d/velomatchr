@@ -8,10 +8,8 @@ import {
 
 import {
   Container,
-  Form,
   Grid,
   Header,
-  Icon
 } from "semantic-ui-react"
 
 import MatchPreferences from "./../components/matchPreferences";
@@ -28,10 +26,12 @@ const Matches = ({ match }) => {
             >
               Matches
             </Header>
-            <Link to={`${match.url}/preferences`}>LINKY</Link>
+            <Link to={`${match.url}/preferences`}>LINKY</Link><br />
+            <Link to={`${match.url}/preferences/signup`}>SIGNUP</Link>
           </Grid.Column>
         </Grid.Row>
           <Switch>
+            <Route path={`${match.url}/preferences/:flow`} component={MatchPreferences} />
             <Route path={`${match.url}/preferences`} component={MatchPreferences} />
           </Switch>
       </Grid>
