@@ -43,7 +43,9 @@ const MatchPreferencesForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      setToSurvey(true);
+      if(props.toSurvey) {
+        setToSurvey(true);
+      }
     }).catch(error => {
       return ({
         errorCode: 500,
