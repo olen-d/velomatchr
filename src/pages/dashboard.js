@@ -1,11 +1,9 @@
-import React, { useEffect } from "react"
+import React, { useEffect } from "react";
 
 import {
   Container,
-  Grid,
-  Header,
-  Icon
- } from "semantic-ui-react"
+  Grid
+ } from "semantic-ui-react";
 
 import LoginForm from "../components/loginForm";
 
@@ -18,10 +16,15 @@ const Dashboard = () => {
   return(
     <Container>
       <Grid stackable>
-        <LoginForm 
-          colWidth="6"
-          formTitle="Sign In"
-        />
+        <Grid.Column width="4">
+          &nbsp;
+        </Grid.Column>
+        <Grid.Column width="8">
+          DORITOS
+        </Grid.Column>
+        <Grid.Column width="4">
+          &nbsp;
+        </Grid.Column>
       </Grid>
     </Container>
   );
