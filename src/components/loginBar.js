@@ -47,7 +47,7 @@ const LoginBar = () => {
           </Menu.Item>
         </Menu.Menu>
       </Menu>
-      <hr />
+      <Divider />
     </Container>
   );
 }

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react";
 
-import DropdownItems from "./dropdownItems/dropdownItems"
-import genderChoices from "../models/genderChoices"
+import DropdownItems from "./dropdownItems/dropdownItems";
+import genderChoices from "../models/genderChoices";
 
 import { useAuth } from "../context/authContext";
 
@@ -11,7 +11,7 @@ import {
   Grid, 
   Header,
   Segment
-} from "semantic-ui-react"
+} from "semantic-ui-react";
 
 const SignupForm = props => {
   const [profilePhotographFile, setProfilePhotographFile] = useState("");
