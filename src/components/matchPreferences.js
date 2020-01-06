@@ -13,16 +13,22 @@ import {
 } from "semantic-ui-react"
 
 const MatchPreferences = () => {
-  const [ submitContent, setSubmitContent ] = useState("Update Match Preferences");
+  const btnContentUpdate = "Update Match Preferences";
+  const btnContentSurvey = "Take the Survey";
+  
+  const [ submitContent, setSubmitContent ] = useState(btnContentUpdate);
   const [ toSurvey, setToSurvey ] = useState(false);
 
   const { flow } = useParams();
 
   const { setToMatchPrefs } = useAuth();
 
-  if (flow === "signup" && submitContent !=="Take the Survey") {
-    setSubmitContent("Take the Survey");
+  if (flow === "signup" && submitContent !== btnContentSurvey) {
+    setSubmitContent(btnContentSurvey);
     setToSurvey(true);
+  } else if (!flow && submitContent !== btnContentUpdate) {
+    setSubmitContent(btnContentUpdate);
+    setToSurvey(false);
   }
 
   useEffect(() => setToMatchPrefs(false), [setToMatchPrefs]);
