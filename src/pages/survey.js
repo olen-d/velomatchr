@@ -1,53 +1,46 @@
-import React, { Component } from "react"
+import React from "react";
 
-import SurveyForm from "../components/surveyForm"
+import SurveyForm from "../components/surveyForm";
 
 import {
   Container,
-  Form,
   Grid,
-  Header,
-  Icon
-} from "semantic-ui-react"
+  Header
+} from "semantic-ui-react";
 
-class Survey extends Component {
-  state = {
-  }
-
-  render () {
-    return(
-      <Container>
-        <Grid stackable>
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <Header 
-                as="h1"
+const Survey = () => {
+  return(
+    <Container>
+      <Grid stackable>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Header 
+              as="h1"
+              color="orange"
+            >
+              Survey Questions
+            </Header>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Header 
+                as="h2"
                 color="orange"
-              >
-                Survey Questions
-              </Header>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <Header 
-                  as="h2"
-                  color="orange"
-              >
-                  About Yourself
-              </Header>
-            </Grid.Column>
-          </Grid.Row>
-            <SurveyForm 
-              colWidth="8"
-              formTitle="Your Cycling Preferences"
-              formInstructions="Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement."
-              submitContent="Find My Buddy"
-            />
-        </Grid>
-      </Container>
-    );
-  }
+            >
+                About Yourself
+            </Header>
+          </Grid.Column>
+        </Grid.Row>
+          <SurveyForm 
+            colWidth="8"
+            formTitle="Your Cycling Preferences"
+            formInstructions="Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement."
+            submitContent="Find My Buddy"
+          />
+      </Grid>
+    </Container>
+  );
 }
     
 export default Survey;

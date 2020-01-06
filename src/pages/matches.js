@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 import { 
   Link,
@@ -10,7 +10,7 @@ import {
   Container,
   Grid,
   Header,
-} from "semantic-ui-react"
+} from "semantic-ui-react";
 
 import MatchPreferences from "./../components/matchPreferences";
 
