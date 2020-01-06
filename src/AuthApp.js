@@ -30,7 +30,7 @@ const Template = () => {
             if (toDashboard) {
               return <Redirect to="/dashboard" />
             } else if (toMatchPrefs) {
-              return <Redirect to="/matches/preferences/:flow" />
+              return <Redirect to="/matches/preferences/signup" />
             } else if (toSurvey) {
               return <Redirect to="/survey" />
             }
