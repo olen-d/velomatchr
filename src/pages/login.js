@@ -1,11 +1,9 @@
-import React from "react"
+import React from "react";
 
 import {
   Container,
-  Grid,
-  Header,
-  Icon
- } from "semantic-ui-react"
+  Grid
+ } from "semantic-ui-react";
 
 import LoginForm from "../components/loginForm";
 

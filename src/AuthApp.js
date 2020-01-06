@@ -9,8 +9,8 @@ import {
 
 import "./style.css";
 
-import Footer from "./components/footer"
-import NavBar from "./components/navbar"
+import Footer from "./components/footer";
+import NavBar from "./components/navbar";
 
 import Dashboard from "./pages/dashboard";
 import Home from "./pages/home";
