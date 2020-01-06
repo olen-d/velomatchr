@@ -6,7 +6,7 @@ const app = express();
 const port =  process.env.PORT || 5000;
 
 // Comment out when syncing not needed.
-const db = require("./app/models");
+// const db = require("./app/models");
 
 // TODO: consider using CORS instead...
 app.use((req, res, next) => {
@@ -30,9 +30,9 @@ app.use("/api", require("./app/routes/survey"));
 app.use("/api", require("./app/routes/users"));
 
 // db.sequelize.sync({ force: true }).then(function() {
-  db.sequelize.sync().then(function() {
-    app.listen(port, () => console.log(`VeloMatchr API is listening on port ${port}!`));
-  });
+  // db.sequelize.sync().then(function() {
+  //   app.listen(port, () => console.log(`VeloMatchr API is listening on port ${port}!`));
+  // });
 // });
 
-// app.listen(port, () => console.log(`VeloMatchr API is listening on port ${port}!`));
+app.listen(port, () => console.log(`VeloMatchr API is listening on port ${port}!`));
