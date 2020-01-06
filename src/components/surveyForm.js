@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react";
 
 import auth from "./auth";
 
-import SurveyQuestion from "./surveyquestion"
-import LikertItem from "./likertitem"
+import SurveyQuestion from "./surveyquestion";
+import LikertItem from "./likertitem";
 
-import questions from "../models/questions.json"
-import likertItems from "../models/likertItems.json"
+import questions from "../models/questions.json";
+import likertItems from "../models/likertItems.json";
 
 import {
   Button,

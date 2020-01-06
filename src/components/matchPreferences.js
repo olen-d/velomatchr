@@ -10,7 +10,7 @@ import { useAuth } from "../context/authContext";
 import {
   Grid,
   Header,
-} from "semantic-ui-react"
+} from "semantic-ui-react";
 
 const MatchPreferences = () => {
   const btnContentUpdate = "Update Match Preferences";

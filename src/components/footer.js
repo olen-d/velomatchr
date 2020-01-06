@@ -1,13 +1,12 @@
-import React from "react"
+import React from "react";
 
 import {
   Container,
   Grid,
-  Icon,
   List
-} from "semantic-ui-react"
+} from "semantic-ui-react";
 
-import "./footer.css"
+import "./footer.css";
 
 const Footer = () => {
   let dark = {
