@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { 
   // BrowserRouter as Router,
@@ -20,7 +20,10 @@ import Survey from "./pages/survey";
 import { AuthContext } from "./context/authContext";
 
 const Template = () => {
-
+  const ctx = useContext(AuthContext);
+  let { toMatchPrefs } = ctx;
+  console.log("AuthApp.js - 21 - toMatchPrefs: \n", toMatchPrefs);
+  
   return (
     <>
       <NavBar />
@@ -29,9 +32,11 @@ const Template = () => {
           ({toDashboard, toMatchPrefs, toSurvey}) => {
             if (toDashboard) {
               return <Redirect to="/dashboard" />
-            } else if (toMatchPrefs) {
+            }
+            if (toMatchPrefs) {
               return <Redirect to="/matches/preferences/signup" />
-            } else if (toSurvey) {
+            }
+            if (toSurvey) {
               return <Redirect to="/survey" />
             }
           }
