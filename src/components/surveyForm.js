@@ -54,6 +54,26 @@ const SurveyForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
+      console.log("survyForm.js - 57 - DATA:\n", data);
+      const { id, userId, answers } = data;
+      // Get the other answers...
+      fetch(`${process.env.REACT_APP_API_URL}/api/survey/except/${userId}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Network response was not ok. Unable to fetch. ");
+        }
+      })
+      .then(json => {
+        console.log("surveyForm.js - 69 - JSON:\n",json);
+        // this.loading = false;
+        // this.profile = json.profile;
+      })
+      .catch(err => {
+        // [state].loading = false;
+        // [state].error = err.toString();
+      });
       // Run the matching algorithm...
       // Redirect to the matches page
     }).catch(error => {
