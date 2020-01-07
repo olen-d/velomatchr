@@ -20,9 +20,9 @@ import Survey from "./pages/survey";
 import { AuthContext } from "./context/authContext";
 
 const Template = () => {
-  const ctx = useContext(AuthContext);
-  let { toMatchPrefs } = ctx;
-  console.log("AuthApp.js - 25 - toMatchPrefs: \n", toMatchPrefs);
+  // const ctx = useContext(AuthContext);
+  // let { toMatchPrefs } = ctx;
+  // console.log("AuthApp.js - 25 - toMatchPrefs: \n", toMatchPrefs);
 
   return (
     <>
@@ -30,14 +30,15 @@ const Template = () => {
       <AuthContext.Consumer>
         {
           ({toDashboard, toMatchPrefs, toSurvey}) => {
+            console.log ("AuthContext.Consumer toMatchPrefs:\n", toMatchPrefs);
             if (toDashboard) {
-              return <Redirect push to="/dashboard" />
+              return <Redirect to="/dashboard" />
             }
             if (toMatchPrefs) {
-              return <Redirect push to="/matches/preferences/signup" />
+              return <Redirect to="/matches/preferences/signup" />
             }
             if (toSurvey) {
-              return <Redirect push to="/survey" />
+              return <Redirect to="/survey" />
             }
           }
         }
