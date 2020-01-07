@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { Redirect } from "react-router-dom";
+
 import DropdownItems from "./dropdownItems/dropdownItems";
 import genderChoices from "../models/genderChoices";
 
@@ -101,7 +103,8 @@ const SignupForm = props => {
         localStorage.setItem("user_token", JSON.stringify(data.token));
         setIsAuth(data.authenticated);
         setAuthTokens(data.token);
-        setToMatchPrefs(true);
+        //setToMatchPrefs(true);
+        return(<Redirect to="Doritos" />);
       } else {
         setIsAuth(false);
         setAuthTokens("");
