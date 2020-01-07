@@ -1,9 +1,5 @@
 import React, { lazy, Suspense, useState } from "react";
 
-import { 
-  BrowserRouter as Router
-} from "react-router-dom";
-
 import "./style.css";
 
 import LoadingSpinner from "./components/loadingSpinner";
@@ -27,15 +23,13 @@ const App = (props) => {
   // }
   
   return(
-    <Router>
-      <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, toMatchPrefs, setToMatchPrefs, toSurvey, setToSurvey, authTokens, setAuthTokens}}>
-        <AuthContext.Consumer>
-          {({ isAuth }) => (
-            isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
-          )}
-        </AuthContext.Consumer>
-      </AuthContext.Provider>
-    </Router>
+    <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, toMatchPrefs, setToMatchPrefs, toSurvey, setToSurvey, authTokens, setAuthTokens}}>
+      <AuthContext.Consumer>
+        {({ isAuth }) => (
+          isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
+        )}
+      </AuthContext.Consumer>
+    </AuthContext.Provider>
   );
 };
 

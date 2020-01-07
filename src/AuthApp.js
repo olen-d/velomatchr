@@ -1,7 +1,6 @@
 import React from "react";
 
 import { 
-  // BrowserRouter as Router,
   Redirect,
   Route,
   Switch
@@ -29,17 +28,18 @@ const Template = () => {
           ({toDashboard, toMatchPrefs, toSurvey}) => {
             if (toDashboard) {
               return <Redirect to="/dashboard" />
-            } else if (toMatchPrefs) {
+            }
+            if (toMatchPrefs) {
               return <Redirect to="/matches/preferences/signup" />
-            } else if (toSurvey) {
+            }
+            if (toSurvey) {
               return <Redirect to="/survey" />
             }
           }
         }
       </AuthContext.Consumer>
         <Switch>
-          {/* <Route exact path="/" render={ () => (<Redirect from="/" to="/dashboard" />) } /> */}
-          <Redirect exact from="/" to="/dashboard" />
+          <Route exact path="/" render={ () => ""} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/home" component={Home} />
           <Route path="/logout" render={ () => "LOGGED OUT"}/>
