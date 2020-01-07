@@ -104,7 +104,7 @@ const SignupForm = props => {
         setIsAuth(data.authenticated);
         setAuthTokens(data.token);
         //setToMatchPrefs(true);
-        return(<Redirect to="Doritos" />);
+        return(<Redirect to="/Doritos" />);
       } else {
         setIsAuth(false);
         setAuthTokens("");
