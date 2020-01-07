@@ -103,8 +103,7 @@ const SignupForm = props => {
         localStorage.setItem("user_token", JSON.stringify(data.token));
         setIsAuth(data.authenticated);
         setAuthTokens(data.token);
-        //setToMatchPrefs(true);
-        return(<Redirect to="/Doritos" />);
+        setToMatchPrefs(true);
       } else {
         setIsAuth(false);
         setAuthTokens("");
