@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import { Redirect } from "react-router-dom";
-
 import DropdownItems from "./dropdownItems/dropdownItems";
 import genderChoices from "../models/genderChoices";
 

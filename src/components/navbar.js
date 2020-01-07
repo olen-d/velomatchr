@@ -28,7 +28,7 @@ const NavBar = props => {
   return(
     <Container>
       <Menu inverted color="red">
-        <Menu.Item as={ Link } to="/">
+        <Menu.Item as={ Link } to="/dashboard">
           <i className="fas fa-bicycle"></i>
         </Menu.Item>
         <Menu.Menu position="right">

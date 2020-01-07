@@ -1,7 +1,6 @@
-import React, { useContext } from "react";
+import React from "react";
 
 import { 
-  // BrowserRouter as Router,
   Redirect,
   Route,
   Switch
@@ -20,9 +19,6 @@ import Survey from "./pages/survey";
 import { AuthContext } from "./context/authContext";
 
 const Template = () => {
-  // const ctx = useContext(AuthContext);
-  // let { toMatchPrefs } = ctx;
-  // console.log("AuthApp.js - 25 - toMatchPrefs: \n", toMatchPrefs);
 
   return (
     <>
@@ -30,7 +26,6 @@ const Template = () => {
       <AuthContext.Consumer>
         {
           ({toDashboard, toMatchPrefs, toSurvey}) => {
-            console.log ("AuthContext.Consumer toMatchPrefs:\n", toMatchPrefs);
             if (toDashboard) {
               return <Redirect to="/dashboard" />
             }
@@ -44,9 +39,7 @@ const Template = () => {
         }
       </AuthContext.Consumer>
         <Switch>
-          {/* <Route exact path="/" render={ () => (<Redirect from="/" to="/dashboard" />) } /> */}
-          {/* <Redirect exact from="/" to="/dashboard" /> */}
-          <Route exact path="/" render={ () => "Chicken Pot Pie"} />
+          <Route exact path="/" render={ () => ""} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/home" component={Home} />
           <Route path="/logout" render={ () => "LOGGED OUT"}/>
