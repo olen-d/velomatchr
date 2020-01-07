@@ -22,8 +22,8 @@ import { AuthContext } from "./context/authContext";
 const Template = () => {
   const ctx = useContext(AuthContext);
   let { toMatchPrefs } = ctx;
-  console.log("AuthApp.js - 21 - toMatchPrefs: \n", toMatchPrefs);
-  
+  console.log("AuthApp.js - 25 - toMatchPrefs: \n", toMatchPrefs);
+
   return (
     <>
       <NavBar />
@@ -31,13 +31,13 @@ const Template = () => {
         {
           ({toDashboard, toMatchPrefs, toSurvey}) => {
             if (toDashboard) {
-              return <Redirect to="/dashboard" />
+              return <Redirect push to="/dashboard" />
             }
             if (toMatchPrefs) {
-              return <Redirect to="/matches/preferences/signup" />
+              return <Redirect push to="/matches/preferences/signup" />
             }
             if (toSurvey) {
-              return <Redirect to="/survey" />
+              return <Redirect push to="/survey" />
             }
           }
         }
