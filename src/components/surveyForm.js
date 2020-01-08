@@ -55,7 +55,11 @@ const SurveyForm = props => {
       return response.json();
     }).then(data => {
       console.log("survyForm.js - 57 - DATA:\n", data);
-      const { id, userId, answers } = data;
+      // const { id, userId, answers } = data;
+      // Update the survey controller to enter the form data as an upsert
+      // Then redirect to matches/calculate page useing the following:
+      // Pass this off to the matches/calculate/:userid route...
+      // Get the other answers...
       // Get the other answers...
       fetch(`${process.env.REACT_APP_API_URL}/api/survey/except/${userId}`)
       .then(response => {
