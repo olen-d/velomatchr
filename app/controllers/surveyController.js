@@ -5,7 +5,7 @@ const { Answer } = require("../models");
 
 const Op = Sequelize.Op;
 
-exports.create_survey_response = (req, res) => {
+exports.update_survey_response = (req, res) => {
   const formData = req.body;
   const userId = formData.userId;
 
@@ -13,7 +13,7 @@ exports.create_survey_response = (req, res) => {
 
   const answers = Object.values(formData);
 
-  Answer.create({
+  Answer.upsert({
     userId: userId,
     answers: answers.join()
   }).then(newAnswer => {
