@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { 
   Redirect,
@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 
 import "./style.css";
+
+import auth from "./components/auth";
 
 import Footer from "./components/footer";
 import NavBar from "./components/navbar";
@@ -19,15 +21,26 @@ import Survey from "./pages/survey";
 import { AuthContext } from "./context/authContext";
 
 const Template = () => {
+  const [userId, setUserId] = useState(null);
+
+  const context = useContext(AuthContext);
+  const token = context.authTokens;
+
+  const userInfo = auth.getUserInfo(token);
+
+  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
 
   return (
     <>
       <NavBar />
       <AuthContext.Consumer>
         {
-          ({toDashboard, toMatchPrefs, toSurvey}) => {
+          ({toDashboard, toMatchCalcs, toMatchPrefs, toSurvey}) => {
             if (toDashboard) {
               return <Redirect to="/dashboard" />
+            }
+            if (toMatchCalcs) {
+              return <Redirect to={`/matches/calculate/${userId}`} />
             }
             if (toMatchPrefs) {
               return <Redirect to="/matches/preferences/signup" />

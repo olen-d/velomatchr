@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import auth from "./auth";
 
@@ -15,7 +15,7 @@ import {
   Header,
 } from "semantic-ui-react"
 
-import { AuthContext } from "../context/authContext";
+import { useAuth } from "../context/authContext";
 
 // Add the selectedVal attribute to the questions so we can keep track of which answer is selected in the state
 questions.forEach(i => {
@@ -26,10 +26,9 @@ const SurveyForm = props => {
   const [userId, setUserId] = useState(null);
   const [answers, SetAnswers] = useState(questions);
 
-  const context = useContext(AuthContext);
-  const token = context.authTokens;
+  const { authTokens, setToMatchCalcs } = useAuth();
 
-  const userInfo = auth.getUserInfo(token);
+  const userInfo = auth.getUserInfo(authTokens);
 
   const setAnswerState = e => {
     const updatedAnswer = answers.map(answer => answer.id === parseInt(e.target.name) ? {...answer, ...{selectedVal: parseInt(e.target.value)}} : answer)
@@ -54,32 +53,7 @@ const SurveyForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      console.log("survyForm.js - 57 - DATA:\n", data);
-      // const { id, userId, answers } = data;
-      // Update the survey controller to enter the form data as an upsert
-      // Then redirect to matches/calculate page useing the following:
-      // Pass this off to the matches/calculate/:userid route...
-      // Get the other answers...
-      // Get the other answers...
-      fetch(`${process.env.REACT_APP_API_URL}/api/survey/except/${userId}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Network response was not ok. Unable to fetch. ");
-        }
-      })
-      .then(json => {
-        console.log("surveyForm.js - 69 - JSON:\n",json);
-        // this.loading = false;
-        // this.profile = json.profile;
-      })
-      .catch(err => {
-        // [state].loading = false;
-        // [state].error = err.toString();
-      });
-      // Run the matching algorithm...
-      // Redirect to the matches page
+      setToMatchCalcs(true);
     }).catch(error => {
       return ({
         errorCode: 500,
