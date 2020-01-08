@@ -24,6 +24,21 @@ exports.update_survey_response = (req, res) => {
   });
 };
 
+exports.read_survey_response = (req, res) => {
+  const userId = req.params.userid;
+
+  Answer.findOne({
+    where: {
+      userId: userId
+    }
+  }).then(userAnswers => {
+    res.json(userAnswers);
+  })
+  .catch(err => {
+    res.status(500).json({error: err})
+  });
+};
+
 exports.read_survey_response_except = (req, res) => {
   const userId = req.params.userid;
 
@@ -38,4 +53,4 @@ exports.read_survey_response_except = (req, res) => {
   .catch(err => {
     res.status(500).json({error: err});
   });
-}
+};
