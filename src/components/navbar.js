@@ -14,16 +14,16 @@ import {
 } from 'semantic-ui-react';
 
 const NavBar = props => {
-  const { setIsAuth, setAuthTokens, setToDashboard, setToMatchCalcs, setToMatchPrefs, setToSurvey } = useAuth();
+  const { setIsAuth, setAuthTokens, setToDashboard, setUpdatedSurvey, setToMatchPrefs, setToSurvey } = useAuth();
 
   const logout = () => {
     const newAuthStatus = auth.logout();
     setIsAuth(newAuthStatus);
     setAuthTokens(null);
     setToDashboard(false);
-    setToMatchCalcs(false);
     setToMatchPrefs(false);
     setToSurvey(false);
+    setUpdatedSurvey(false);
   }
 
   return(
