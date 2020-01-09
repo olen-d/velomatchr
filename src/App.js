@@ -11,7 +11,7 @@ const UnAuthApp = lazy(() => import("./UnAuthApp"));
 
 const App = (props) => {
   const [isAuth, setIsAuth] = useState(false);
-  const [authTokens, setAuthTokens] = useState();
+  const [authTokens, setAuthTokens] = useState(null);
   const [toDashboard, setToDashboard] = useState(false);
   const [toMatchCalcs, setToMatchCalcs] = useState(false);
   const [toMatchPrefs, setToMatchPrefs] = useState(false);
