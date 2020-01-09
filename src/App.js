@@ -13,9 +13,9 @@ const App = (props) => {
   const [isAuth, setIsAuth] = useState(false);
   const [authTokens, setAuthTokens] = useState(null);
   const [toDashboard, setToDashboard] = useState(false);
-  const [toMatchCalcs, setToMatchCalcs] = useState(false);
   const [toMatchPrefs, setToMatchPrefs] = useState(false);
   const [toSurvey, setToSurvey] = useState(false);
+  const [updatedSurvey, setUpdatedSurvey] = useState(false);
   // const setTokens = data => {
   //   console.log("App.js - 23 DATA:\n", data);
   //   localStorage.setItem("user_token", JSON.stringify(data));
@@ -24,7 +24,7 @@ const App = (props) => {
   // }
   
   return(
-    <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, toMatchCalcs, setToMatchCalcs, toMatchPrefs, setToMatchPrefs, toSurvey, setToSurvey, authTokens, setAuthTokens}}>
+    <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, toMatchPrefs, setToMatchPrefs, toSurvey, setToSurvey, updatedSurvey, setUpdatedSurvey, authTokens, setAuthTokens}}>
       <AuthContext.Consumer>
         {({ isAuth }) => (
           isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>

@@ -35,18 +35,34 @@ const Template = () => {
       <NavBar />
       <AuthContext.Consumer>
         {
-          ({toDashboard, toMatchCalcs, toMatchPrefs, toSurvey}) => {
+          ({toDashboard, toMatchPrefs, toSurvey, updatedSurvey}) => {
             if (toDashboard) {
               return <Redirect to="/dashboard" />
-            }
-            if (toMatchCalcs) {
-              return <Redirect to={`/matches/calculate/${userId}`} />
             }
             if (toMatchPrefs) {
               return <Redirect to="/matches/preferences/signup" />
             }
             if (toSurvey) {
               return <Redirect to="/survey" />
+            }
+            if (updatedSurvey) {
+              // Hit the API route to calculate matches...
+              fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
+                method: "post",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ userId })
+              }).then(response => {
+                return response.json();
+              }).then(data => {
+                console.log("AuthApp.js - 59 DATA:\n", data);
+                // setMatches()
+              }).catch(err => {
+                console.log("AuthApp.js - 61 Error:\n", err);
+                // Do something about the err
+              });
+              return <Redirect to={`/matches`} />
             }
           }
         }

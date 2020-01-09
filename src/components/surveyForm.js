@@ -26,7 +26,7 @@ const SurveyForm = props => {
   const [userId, setUserId] = useState(null);
   const [answers, SetAnswers] = useState(questions);
 
-  const { authTokens, setToMatchCalcs } = useAuth();
+  const { authTokens, setUpdatedSurvey } = useAuth();
 
   const userInfo = auth.getUserInfo(authTokens);
 
@@ -53,7 +53,7 @@ const SurveyForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      setToMatchCalcs(true);
+      setUpdatedSurvey(true);
     }).catch(error => {
       return ({
         errorCode: 500,
