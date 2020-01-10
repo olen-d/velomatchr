@@ -64,10 +64,27 @@ exports.calculate_user_matches = (req, res) => {
         scores.set(a.userId, score);
         // console.log("/// Testing: ", a.userId, " ", a.answers);
       }
+
+      return scores;
       // console.log("-------------\nScores: ", scores);
+    
       // Apply the cut-off score
       // Return the list of potential matches
       // The list gets passed to the relationship controller to insert with an initial state of zero
-    });
+    })
+    .then(scores => {
+      // console.log("SCOREZ:\n--------------------\n", scores);
+      const matches = [...scores];
+      fetch(`${process.env.REACT_APP_API_URL}/api/relationships/create`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ matches, userId })
+      })
+      .then(response => {
+       console.log(response.body);
+      });
+    })
     // TODO: Add catch block to handle errors
 }
