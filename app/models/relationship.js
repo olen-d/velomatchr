@@ -16,6 +16,13 @@ module.exports = (sequelize, DataTypes) => {
           len: [1]
       }
     },
+    matchScore: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      validate: {
+        lent: [1]
+      }
+    },
     status: {
       type: DataTypes.STRING,
       allowNull: false,
