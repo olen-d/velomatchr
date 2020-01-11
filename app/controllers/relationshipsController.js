@@ -1,3 +1,6 @@
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
+
 const { Relationship, User } = require("../models");
 
 exports.update_user_relationships = (req, res) => {
@@ -30,9 +33,14 @@ exports.read_user_relationships = (req, res) => {
 
   Relationship.findAll({
     where: {
-      requesterId: userid
+      requesterId: userid,
+      status: {[Op.not]: 3 }
     },
-    include: { model: User, as: "addressee" },
+    include: [{ 
+      model: User, 
+      as: "addressee",
+      attributes: { exclude: ["password"]}
+    }],
     order: [
       ["matchScore", "ASC"],
       ["updatedAt", "DESC"]

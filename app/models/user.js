@@ -87,6 +87,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "requesterId",
       onDelete: "cascade"
     });
+    // Associate the addressee with the user data
     User.hasMany(models.Relationship, {
       as: "addressee",
       foreignKey: "addresseeId",
