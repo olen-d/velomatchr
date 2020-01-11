@@ -38,20 +38,15 @@ exports.calculate_user_matches = (req, res) => {
       console.log("ERROR:\n", err);
     })
     )).then(data => {
-      // console.log("DATA:\n", data[1]);
-      // Do the calculations
       let scores = new Map();
 
-
       const newAnswers = data[0].answers.split(",");
-      // console.log("||||| newAnswers: ", newAnswers);
-      // console.log("---------\nOther Answers:\n", otherAnswers);
       const otherAnswers = data[1];
+
       for (let a of otherAnswers) {
         let thisAnswers = a.answers.split(",");
         let diffs = newAnswers.map((w, i) => {
           let r = Math.abs(w - thisAnswers[i]);
-          // console.log(thisAnswers[i]);
           return r;
         });
 
@@ -60,21 +55,14 @@ exports.calculate_user_matches = (req, res) => {
           let s = a + c;
           return s;
         });
-      
         scores.set(a.userId, score);
-        // console.log("/// Testing: ", a.userId, " ", a.answers);
       }
 
       return scores;
-      // console.log("-------------\nScores: ", scores);
-    
-      // Apply the cut-off score
-      // Return the list of potential matches
-      // The list gets passed to the relationship controller to insert with an initial state of zero
     })
     .then(scores => {
-      // console.log("SCOREZ:\n--------------------\n", scores);
       const matches = [...scores];
+
       fetch(`${process.env.REACT_APP_API_URL}/api/relationships/create`, {
       method: "post",
       headers: {
@@ -83,8 +71,13 @@ exports.calculate_user_matches = (req, res) => {
       body: JSON.stringify({ matches, userId })
       })
       .then(response => {
-      //  console.log(response.body);
+        // TODO: Fix the relationship controller to actually return the new matches
+      })
+      .catch(err =>{
+        res.status(500).json({error: err});
       });
     })
-    // TODO: Add catch block to handle errors
+    .catch(err => {
+      res.status(500).json({error: err});
+    });
 }
