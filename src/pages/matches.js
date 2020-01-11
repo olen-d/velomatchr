@@ -14,6 +14,7 @@ import {
   Header,
 } from "semantic-ui-react";
 
+import MatchesList from "./../components/matchesList";
 import MatchPreferences from "./../components/matchPreferences";
 
 const Matches = ({ match }) => {
@@ -36,6 +37,7 @@ const Matches = ({ match }) => {
           </Grid.Column>
         </Grid.Row>
           <Switch>
+            <Route exact path={`${match.url}/`} render={() => <MatchesList status={0} />} />
             <Route path={`${match.url}/preferences/:flow`} component={MatchPreferences} />
             <Route path={`${match.url}/preferences`} component={MatchPreferences} />
           </Switch>
