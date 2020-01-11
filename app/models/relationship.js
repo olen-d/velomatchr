@@ -1,15 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
   const Relationship = sequelize.define("Relationship", {
-    pair: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      unique: true,
-      validate: {
-        len: [1]
-      }
-    },
+    // pair: {
+    //   type: DataTypes.BIGINT,
+    //   allowNull: false,
+    //   unique: true,
+    //   validate: {
+    //     len: [1]
+    //   }
+    // },
     requesterId: {
       type: DataTypes.BIGINT,
+      unique: "pairIndex",
       allowNull: false,
       validate: {
           len: [1]
@@ -17,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     addresseeId: {
       type: DataTypes.BIGINT,
+      unique: "pairIndex",
       allowNull: false,
       validate: {
           len: [1]
