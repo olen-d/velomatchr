@@ -83,7 +83,7 @@ exports.calculate_user_matches = (req, res) => {
       body: JSON.stringify({ matches, userId })
       })
       .then(response => {
-       console.log(response.body);
+      //  console.log(response.body);
       });
     })
     // TODO: Add catch block to handle errors
