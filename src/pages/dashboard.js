@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 
 import {
   Container,
-  Grid
+  Grid,
+  Header
  } from "semantic-ui-react";
 
 import MatchesList from "../components/matchesList";
@@ -20,6 +21,12 @@ const Dashboard = () => {
           &nbsp;
         </Grid.Column>
         <Grid.Column width="8">
+          <Header 
+            as="h2"
+            color="orange"
+          >
+            You Have New Matches!
+          </Header>
           <MatchesList status="0" />
         </Grid.Column>
         <Grid.Column width="4">

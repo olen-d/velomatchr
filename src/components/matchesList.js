@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import auth from "./auth";
 
@@ -10,6 +10,8 @@ import {
  } from "semantic-ui-react";
 
  import { useAuth } from "../context/authContext";
+
+ import MatchCard from "./matchCard";
 
  const MatchesList = props => {
   const [userId, setUserId] = useState(null);
@@ -42,13 +44,26 @@ import {
         match => match.status === status
       );
       setMatchesFilterdByStatus(filteredMatches);
-    }
+    };
 }, [matches, props.status]);
 
    return(
      <div className="matches-list">
       <div>CheeseBurgerZ: {userId}</div>
       <div>STATUS: {props.status}</div>
+      {matchesFilterdByStatus.map(match => (
+        <div className="match-card" key={match.id}>
+          <MatchCard
+            id={match.id}
+            firstName={match.addressee.firstName}
+            lastName={match.addressee.lastName}
+            photoLink={match.addressee.photoLink}
+            city={match.addressee.city}
+            state={match.addressee.state}
+            createdAt={match.addressee.createdAt}
+          />
+        </div>
+      ))}
      </div>
    )
  }
