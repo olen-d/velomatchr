@@ -5,7 +5,7 @@ import {
   Grid
  } from "semantic-ui-react";
 
-import LoginForm from "../components/loginForm";
+import MatchesList from "../components/matchesList";
 
 import { useAuth } from "../context/authContext";
 
@@ -20,7 +20,7 @@ const Dashboard = () => {
           &nbsp;
         </Grid.Column>
         <Grid.Column width="8">
-          DORITOS
+          <MatchesList status="0" />
         </Grid.Column>
         <Grid.Column width="4">
           &nbsp;
