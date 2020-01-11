@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { 
   Link,
   Route,
   Switch
 } from "react-router-dom";
+
+import { useAuth } from "../context/authContext";
 
 import {
   Container,
@@ -15,6 +17,9 @@ import {
 import MatchPreferences from "./../components/matchPreferences";
 
 const Matches = ({ match }) => {
+  const { setUpdatedSurvey } = useAuth();
+  useEffect(() => setUpdatedSurvey(false), [setUpdatedSurvey]);
+
   return(
     <Container>
       <Grid stackable>
