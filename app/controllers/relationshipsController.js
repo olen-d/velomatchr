@@ -1,14 +1,14 @@
-const { Relationship } = require("../models");
+const { Relationship, User } = require("../models");
 
-exports.update_relationships = (req, res) => {
+exports.update_user_relationships = (req, res) => {
   const relationships = [];
   const { matches, userId } = req.body;
-  console.log(matches);
+
   const scores = new Map(matches);
 
   scores.forEach((value, key) => {
-    relationships.push({ pair: `${userId}${key}`, requesterId: userId, addresseeId: key, matchScore: value, status: 0, actionUserId: userId });
-    relationships.push({ pair: `${key}${userId}`, requesterId: key, addresseeId: userId, matchScore: value, status: 0, actionUserId: userId });
+    relationships.push({ requesterId: userId, addresseeId: key, matchScore: value, status: 0, actionUserId: userId });
+    relationships.push({ requesterId: key, addresseeId: userId, matchScore: value, status: 0, actionUserId: userId });
   });
   Relationship.bulkCreate(
     relationships,
@@ -22,5 +22,26 @@ exports.update_relationships = (req, res) => {
   })
   .catch(err => {
     res.status(500).send(err);
+  });
+};
+
+exports.read_user_relationships = (req, res) => {
+  const userid = req.params.userid;
+
+  Relationship.findAll({
+    where: {
+      requesterId: userid
+    },
+    include: { model: User, as: "addressee" },
+    order: [
+      ["matchScore", "ASC"],
+      ["updatedAt", "DESC"]
+    ]
+  })
+  .then(data => {
+    res.json(data);
+  })
+  .catch(err => {
+    res.send(err);
   });
 };

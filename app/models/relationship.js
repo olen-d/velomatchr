@@ -1,15 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Relationship = sequelize.define("Relationship", {
-    // pair: {
-    //   type: DataTypes.BIGINT,
-    //   allowNull: false,
-    //   unique: true,
-    //   validate: {
-    //     len: [1]
-    //   }
-    // },
     requesterId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       unique: "pairIndex",
       allowNull: false,
       validate: {
@@ -17,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     addresseeId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       unique: "pairIndex",
       allowNull: false,
       validate: {
@@ -39,13 +31,26 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     actionUserId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
           len: [1]
       }
     }
   });
+
+  Relationship.associate = models => {
+    // A Relationship can't be created without an User due to the foreign key constraint
+    Relationship.belongsTo(models.User, {
+      as: "requester",
+      foreignKey: "requesterId"
+    });
+    Relationship.belongsTo(models.User, {
+      as: "addressee",
+      foreignKey: "addresseeId"
+    });
+  };
+
   return Relationship;
 };
   

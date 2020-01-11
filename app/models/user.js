@@ -78,5 +78,21 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     }
   });
+
+  User.associate = models => {
+    // Associating User with Relationships
+    // When an User is deleted, also delete any associated Relationships
+    User.hasMany(models.Relationship, {
+      as: "requester",
+      foreignKey: "requesterId",
+      onDelete: "cascade"
+    });
+    User.hasMany(models.Relationship, {
+      as: "addressee",
+      foreignKey: "addresseeId",
+      onDelete: "cascade"
+    });
+  };
+
   return User;
 };
