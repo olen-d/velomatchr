@@ -53,3 +53,19 @@ exports.read_user_relationships = (req, res) => {
     res.send(err);
   });
 };
+
+exports.update_user_relationship_status = (req, res) => {
+  console.log(req.body);
+  const { requesterId, addresseeId, status, actionUserId } = req.body;
+
+  Relationship.update(
+    { status, actionUserId },
+    { returning: true, where: {[Op.or]: [{[Op.and]: [{requesterId}, {addresseeId}]}, {[Op.and]: [{addresseeId: requesterId}, {requesterId: addresseeId}]}]}}
+  )
+  .then(data => {
+    res.json(data);
+  })
+  .catch(err => {
+    console.log("relationshipsController.js - ERROR:\n", err);
+  })
+};
