@@ -49,18 +49,19 @@ import {
 
    return(
      <div className="matches-list">
-      <div>CheeseBurgerZ: {userId}</div>
-      <div>STATUS: {props.status}</div>
       {matchesFilterdByStatus.map(match => (
         <div className="match-card" key={match.id}>
           <MatchCard
-            id={match.id}
+            requesterId={userId}
+            addresseeId={match.addressee.id}
             firstName={match.addressee.firstName}
             lastName={match.addressee.lastName}
             photoLink={match.addressee.photoLink}
             city={match.addressee.city}
             state={match.addressee.state}
             createdAt={match.addressee.createdAt}
+            positiveStatus="1"
+            negativeStatus="3"
           />
         </div>
       ))}

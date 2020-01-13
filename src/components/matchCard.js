@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 
 import {
   Button,
@@ -7,18 +7,39 @@ import {
   Icon
  } from "semantic-ui-react";
 
- const matchesCard = props => {
-  const { id, firstName, lastName, photoLink, city, state, createdAt } = props;
+ const MatchCard = props => {
+  const { requesterId, addresseeId, firstName, lastName, photoLink, city, state, createdAt, positiveStatus, negativeStatus } = props;
   const pla = photoLink.split("\\");
   pla.shift();
   const pl = pla.join("/");
+  const [isError, setIsError] = useState(false);
 
-  const postAdd = () => {
-    //
-  }
+  const postAction = (status) => {
+    status = parseInt(status);
+    // TODO: Need to update context...
+    const actionData = {
+      requesterId,
+      addresseeId,
+      status,
+      actionUserId: requesterId,
+    }
 
-  const postDecline = () => {
-    //
+    fetch(`${process.env.REACT_APP_API_URL}/api/relationships/status/update`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(actionData)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+      if(data[1] !== 2)
+        {
+          //Something went horribly wrong
+        }
+    }).catch(error => {
+        setIsError(true);
+    });
   }
 
   return(
@@ -42,7 +63,7 @@ import {
             size="small"
             icon="user plus"
             content="Add Buddy"
-            onClick={postAdd}
+            onClick={() => postAction(positiveStatus)}
           >
           </Button>
           <Button
@@ -50,7 +71,7 @@ import {
             size="small"
             icon="ban"
             content="Decline"
-            onClick={postDecline}
+            onClick={() => postAction(negativeStatus)}
           >
           </Button>
         </Button.Group>
@@ -60,5 +81,5 @@ import {
 
  }
 
- export default matchesCard;
+ export default MatchCard;
 
