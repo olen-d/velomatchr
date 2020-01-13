@@ -1,7 +1,7 @@
 import React from "react"
 
 import {
-  Container,
+  Button,
   Grid,
   Header,
   Icon
@@ -13,6 +13,13 @@ import {
   pla.shift();
   const pl = pla.join("/");
 
+  const postAdd = () => {
+    //
+  }
+
+  const postDecline = () => {
+    //
+  }
 
   return(
     <>
@@ -27,6 +34,26 @@ import {
       </div>
       <div className="match-card-joined">
         Member Since: {createdAt}
+      </div>
+      <div className='match-card-actions'>
+        <Button.Group widths="2" color="yellow">
+          <Button
+            type="button"
+            size="small"
+            icon="user plus"
+            content="Add Buddy"
+            onClick={postAdd}
+          >
+          </Button>
+          <Button
+            type="button"
+            size="small"
+            icon="ban"
+            content="Decline"
+            onClick={postDecline}
+          >
+          </Button>
+        </Button.Group>
       </div>
     </>
   )
