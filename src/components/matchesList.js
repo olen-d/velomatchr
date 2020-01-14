@@ -10,6 +10,7 @@ import {
  } from "semantic-ui-react";
 
  import { useAuth } from "../context/authContext";
+ import { MatchesContext } from "../context/matchesContext";
 
  import MatchCard from "./matchCard";
 
@@ -45,27 +46,29 @@ import {
       );
       setMatchesFilterdByStatus(filteredMatches);
     };
-}, [matches, props.status]);
+});
 
    return(
-     <div className="matches-list">
-      {matchesFilterdByStatus.map(match => (
-        <div className="match-card" key={match.id}>
-          <MatchCard
-            requesterId={userId}
-            addresseeId={match.addressee.id}
-            firstName={match.addressee.firstName}
-            lastName={match.addressee.lastName}
-            photoLink={match.addressee.photoLink}
-            city={match.addressee.city}
-            state={match.addressee.state}
-            createdAt={match.addressee.createdAt}
-            positiveStatus="1"
-            negativeStatus="3"
-          />
-        </div>
-      ))}
-     </div>
+     <MatchesContext.Provider value={{matches, setMatches}}>
+      <div className="matches-list">
+        {matchesFilterdByStatus.map(match => (
+          <div className="match-card" key={match.id}>
+            <MatchCard
+              requesterId={userId}
+              addresseeId={match.addressee.id}
+              firstName={match.addressee.firstName}
+              lastName={match.addressee.lastName}
+              photoLink={match.addressee.photoLink}
+              city={match.addressee.city}
+              state={match.addressee.state}
+              createdAt={match.addressee.createdAt}
+              positiveStatus="1"
+              negativeStatus="3"
+            />
+          </div>
+        ))}
+      </div>
+     </MatchesContext.Provider>
    )
  }
 

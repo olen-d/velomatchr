@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 
 import {
   Button,
@@ -7,8 +7,12 @@ import {
   Icon
  } from "semantic-ui-react";
 
+ import { useMatches } from "../context/matchesContext";
+
  const MatchCard = props => {
   const { requesterId, addresseeId, firstName, lastName, photoLink, city, state, createdAt, positiveStatus, negativeStatus } = props;
+  const { matches, setMatches } = useMatches();
+
   const pla = photoLink.split("\\");
   pla.shift();
   const pl = pla.join("/");
@@ -35,7 +39,14 @@ import {
     }).then(data => {
       if(data[1] !== 2)
         {
-          //Something went horribly wrong
+          // Something went horribly wrong
+        } else {
+          // Find the addressee in the list of matches
+          const addresseeIndex = matches.map(item => {return item.addresseeId}).indexOf(addresseeId);
+          console.log("matchCard.js - INDEX:\n", addresseeIndex);
+          // Change the status as appropriate
+          matches[addresseeIndex].status = status
+          setMatches(matches);
         }
     }).catch(error => {
         setIsError(true);
