@@ -41,9 +41,17 @@ import {
   useEffect(() => {
     if(Array.isArray(matches) && matches.length) {
       let status = parseInt(props.status);
-      let filteredMatches = matches.filter(
-        match => match.status === status
-      );
+      let filteredMatches;
+
+      if(status === 0 || status === 2) {
+        filteredMatches = matches.filter(
+          match => match.status === status
+        );
+      } else if(status === 1) {
+        filteredMatches = matches.filter(
+          match => match.status === status && match.actionUserId !== userId
+        );
+      }
       setMatchesFilterdByStatus(filteredMatches);
     };
 });
@@ -62,7 +70,7 @@ import {
               city={match.addressee.city}
               state={match.addressee.state}
               createdAt={match.addressee.createdAt}
-              positiveStatus="1"
+              positiveStatus={match.status + 1}
               negativeStatus="3"
             />
           </div>
