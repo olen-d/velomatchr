@@ -25,9 +25,9 @@ const Dashboard = () => {
             as="h2"
             color="orange"
           >
-            You Have New Matches!
+            New Buddy Requests
           </Header>
-          <MatchesList status="0" />
+          <MatchesList status="1" />
         </Grid.Column>
         <Grid.Column width="4">
           &nbsp;
