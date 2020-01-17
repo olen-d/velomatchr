@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 
 // Models
-const { MatchPref } = require("../models");
+const { MatchPref, Relationship, User } = require("../models");
 
 exports.update_match_preferences = (req, res) => {
   const { userId, distance, gender } = req.body;
@@ -14,6 +14,32 @@ exports.update_match_preferences = (req, res) => {
   })
   .catch(err => {
     res.status(500).json({error: err});
+  });
+};
+
+exports.read_user_matches = (req, res) => {
+  const userid = req.params.userid;
+
+  Relationship.findAll({
+    where: {
+      requesterId: userid,
+      status: 2
+    },
+    include: [{ 
+      model: User, 
+      as: "addressee",
+      attributes: { exclude: ["password"]}
+    }],
+    order: [
+      ["matchScore", "ASC"],
+      ["updatedAt", "DESC"]
+    ]
+  })
+  .then(data => {
+    res.json(data);
+  })
+  .catch(err => {
+    res.send(err);
   });
 };
 

@@ -7,18 +7,24 @@ import {
   Icon
  } from "semantic-ui-react";
 
- import { useMatches } from "../context/matchesContext";
+ import { useMatched } from "../context/matchedContext";
 
- const MatchCard = props => {
-  const { requesterId, addresseeId, firstName, lastName, photoLink, city, state, createdAt, positiveStatus, negativeStatus } = props;
-  const { matches, setMatches } = useMatches();
+ const MatchedCard = props => {
+  const { requesterId, addresseeId, firstName, lastName, photoLink, city, state, createdAt, negativeStatus } = props;
+  const { matches, setMatches } = useMatched();
 
   const pla = photoLink.split("\\");
   pla.shift();
   const pl = pla.join("/");
   const [isError, setIsError] = useState(false);
 
-  const postAction = status => {
+  const composeEmail = recipient => {
+      //
+      console.log("matchedCard.js - ComposeEmail", recipient, negativeStatus);
+  }
+
+  const postAction = (status) => {
+
     status = parseInt(status);
     // TODO: Need to update context based on status...
     const actionData = {
@@ -27,7 +33,7 @@ import {
       status,
       actionUserId: requesterId,
     }
-
+    
     fetch(`${process.env.REACT_APP_API_URL}/api/relationships/status/update`, {
       method: "put",
       headers: {
@@ -71,16 +77,16 @@ import {
           <Button
             type="button"
             size="small"
-            icon="user plus"
-            content="Add Buddy"
-            onClick={() => postAction(positiveStatus)}
+            icon="envelope"
+            content="Email Buddy"
+            onClick={() => composeEmail(addresseeId)}
           >
           </Button>
           <Button
             type="button"
             size="small"
-            icon="ban"
-            content="Decline"
+            icon="minus circle"
+            content="Unfriend"
             onClick={() => postAction(negativeStatus)}
           >
           </Button>
@@ -88,7 +94,6 @@ import {
       </div>
     </>
   )
-
  }
 
- export default MatchCard;
+ export default MatchedCard;

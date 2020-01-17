@@ -57,7 +57,8 @@ import {
       }
       setMatchesFilteredByStatus(filteredMatches);
     };
-});
+  });
+
   if(matchesFilteredByStatus.length === 0)
   {
     return(
