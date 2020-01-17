@@ -17,7 +17,8 @@ import {
  const MatchesList = props => {
   const [userId, setUserId] = useState(null);
   const [matches, setMatches] = useState([]);
-  const [matchesFilterdByStatus, setMatchesFilterdByStatus] = useState([]);
+  const [matchesFilteredByStatus, setMatchesFilteredByStatus] = useState([]);
+  const [noMatches, setNoMatches] = useState(null);
 
   const { authTokens } = useAuth();
 
@@ -47,19 +48,28 @@ import {
         filteredMatches = matches.filter(
           match => match.status === status
         );
+        setNoMatches("No potential matches were found. ");
       } else if(status === 1) {
         filteredMatches = matches.filter(
           match => match.status === status && match.actionUserId !== userId
         );
+        setNoMatches("No buddy requests were found. ");
       }
-      setMatchesFilterdByStatus(filteredMatches);
+      setMatchesFilteredByStatus(filteredMatches);
     };
 });
-
-   return(
+  if(matchesFilteredByStatus.length === 0)
+  {
+    return(
+      <div className="no-matches-found">
+        {noMatches}
+      </div>
+    )
+  } else {
+    return(
      <MatchesContext.Provider value={{matches, setMatches}}>
       <div className="matches-list">
-        {matchesFilterdByStatus.map(match => (
+        {matchesFilteredByStatus.map(match => (
           <div className="match-card" key={match.id}>
             <MatchCard
               requesterId={userId}
@@ -77,8 +87,9 @@ import {
         ))}
       </div>
      </MatchesContext.Provider>
-   )
- }
+    )
+  }
+}
 
  export default MatchesList;
 
