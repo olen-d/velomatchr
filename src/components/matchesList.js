@@ -75,7 +75,7 @@ import {
     .catch(err => {
       return err;
     });
-  }, [userId]);
+  }, [setMatches, userId]);
 
   useEffect(() => {
     if(Array.isArray(matches) && matches.length) {
