@@ -9,20 +9,58 @@ import {
   Icon
  } from "semantic-ui-react";
 
+ import { useMatches } from "../context/matchesContext";
  import { useAuth } from "../context/authContext";
- import { MatchesContext } from "../context/matchesContext";
 
  import MatchCard from "./matchCard";
 
  const MatchesList = props => {
   const [userId, setUserId] = useState(null);
-  const [matches, setMatches] = useState([]);
   const [matchesFilteredByStatus, setMatchesFilteredByStatus] = useState([]);
   const [noMatches, setNoMatches] = useState(null);
 
+  // Get items from context
   const { authTokens } = useAuth();
+  const { matches, setMatches } = useMatches();
 
   const userInfo = auth.getUserInfo(authTokens);
+
+  let status = parseInt(props.status);
+
+  // Set up the action buttons
+  let leftBtnIcon = "";
+  let leftBtnContent = "";
+  let leftBtnAction = "";
+  let leftBtnValue = 0;
+  let rightBtnIcon = "";
+  let rightBtnContent = "";
+  let rightBtnAction = "";
+  let rightBtnValue = 0;
+
+  switch(status) {
+    case 0:
+    case 1:
+      leftBtnIcon = "user plus";
+      leftBtnContent = "Add Buddy";
+      leftBtnAction = "updateStatus";
+      leftBtnValue = status + 1;
+      rightBtnIcon = "ban";
+      rightBtnContent = "Decline";
+      rightBtnAction = "updateStatus";
+      rightBtnValue = 3;
+      break;
+    case 2:
+      leftBtnIcon = "envelope";
+      leftBtnContent = "Email Buddy";
+      leftBtnAction = "composeEmail"
+      leftBtnValue = 99;
+      rightBtnIcon = "minus circle";
+      rightBtnContent = "Unfriend";
+      rightBtnAction = "updateStatus";
+      rightBtnValue = 3;
+      break;
+    default:
+  }
 
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
 
@@ -41,7 +79,6 @@ import {
 
   useEffect(() => {
     if(Array.isArray(matches) && matches.length) {
-      let status = parseInt(props.status);
       let filteredMatches;
 
       if(status === 0 || status === 2) {
@@ -68,7 +105,7 @@ import {
     )
   } else {
     return(
-     <MatchesContext.Provider value={{matches, setMatches}}>
+
       <div className="matches-list">
         {matchesFilteredByStatus.map(match => (
           <div className="match-card" key={match.id}>
@@ -81,13 +118,19 @@ import {
               city={match.addressee.city}
               state={match.addressee.state}
               createdAt={match.addressee.createdAt}
-              positiveStatus={match.status + 1}
-              negativeStatus="3"
+              leftBtnIcon={leftBtnIcon}
+              leftBtnContent={leftBtnContent}
+              leftBtnAction={leftBtnAction}
+              leftBtnValue={leftBtnValue}
+              rightBtnIcon={rightBtnIcon}
+              rightBtnContent={rightBtnContent}
+              rightBtnAction={rightBtnAction}
+              rightBtnValue={rightBtnValue}
             />
           </div>
         ))}
       </div>
-     </MatchesContext.Provider>
+
     )
   }
 }
