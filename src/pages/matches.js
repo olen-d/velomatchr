@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { 
   Link,
@@ -6,6 +6,7 @@ import {
   Switch
 } from "react-router-dom";
 
+import { MatchesContext } from "../context/matchesContext";
 import { useAuth } from "../context/authContext";
 
 import {
@@ -14,12 +15,22 @@ import {
   Header,
 } from "semantic-ui-react";
 
-import MatchedList from "./../components/matchedList";
 import MatchesList from "./../components/matchesList";
 import MatchPreferences from "./../components/matchPreferences";
 
 const Matches = ({ match }) => {
   const { setUpdatedSurvey } = useAuth();
+
+  const MatchLists = () => {
+    const [matches, setMatches] = useState([]);
+    return(
+      <MatchesContext.Provider value={{matches, setMatches}}>
+        <MatchesList status={2} />
+        <MatchesList status={0} />
+      </MatchesContext.Provider>
+    );
+  }
+
   useEffect(() => setUpdatedSurvey(false), [setUpdatedSurvey]);
 
   return(
@@ -38,7 +49,7 @@ const Matches = ({ match }) => {
           </Grid.Column>
         </Grid.Row>
           <Switch>
-            <Route exact path={`${match.url}/`} render={() => <><MatchedList /><MatchesList status={0} /></>} />
+            <Route exact path={`${match.url}/`} component={MatchLists} />
             <Route path={`${match.url}/preferences/:flow`} component={MatchPreferences} />
             <Route path={`${match.url}/preferences`} component={MatchPreferences} />
           </Switch>

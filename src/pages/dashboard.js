@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Container,
@@ -8,10 +8,14 @@ import {
 
 import MatchesList from "../components/matchesList";
 
+import { MatchesContext } from "../context/matchesContext";
 import { useAuth } from "../context/authContext";
 
 const Dashboard = () => {
   const { setToDashboard } = useAuth();
+
+  const [matches, setMatches] = useState([]);
+
   useEffect(() => setToDashboard(false), [setToDashboard]);
   
   return(
@@ -27,7 +31,9 @@ const Dashboard = () => {
           >
             New Buddy Requests
           </Header>
-          <MatchesList status="1" />
+          <MatchesContext.Provider value={{matches, setMatches}}>
+            <MatchesList status="1" />
+          </MatchesContext.Provider>
         </Grid.Column>
         <Grid.Column width="4">
           &nbsp;
