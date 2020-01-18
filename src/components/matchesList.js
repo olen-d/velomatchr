@@ -85,12 +85,25 @@ import {
         filteredMatches = matches.filter(
           match => match.status === status
         );
-        setNoMatches("No potential matches were found. ");
       } else if(status === 1) {
         filteredMatches = matches.filter(
           match => match.status === status && match.actionUserId !== userId
         );
         setNoMatches("No buddy requests were found. ");
+      }
+      switch(status) {
+        case 0:
+          setNoMatches("No potential matches were found. ");
+          break;
+        case 1:
+          setNoMatches("No buddy requests were found. ");
+          break;
+        case 2:
+          setNoMatches("No buddies were found. "); 
+          break;
+        default:
+          setNoMatches("No potential matches were found. ");
+          break;
       }
       setMatchesFilteredByStatus(filteredMatches);
     };

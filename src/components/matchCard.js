@@ -71,24 +71,24 @@ import {
         Member Since: {createdAt}
       </div>
       <div className='match-card-actions'>
-        <Button.Group widths="2" color="yellow">
-          <Button
-            type="button"
-            size="small"
-            icon={leftBtnIcon}
-            content={leftBtnContent}
-            onClick={() => postAction(leftBtnAction, leftBtnValue)}
-          >
-          </Button>
-          <Button
-            type="button"
-            size="small"
-            icon={rightBtnIcon}
-            content={rightBtnContent}
-            onClick={() => postAction(rightBtnAction, rightBtnValue)}
-          >
-          </Button>
-        </Button.Group>
+        <Button
+          type="button"
+          size="tiny"
+          color="yellow"
+          icon={leftBtnIcon}
+          content={leftBtnContent}
+          onClick={() => postAction(leftBtnAction, leftBtnValue)}
+        >
+        </Button>
+        <Button
+          type="button"
+          size="tiny"
+          color="yellow"
+          icon={rightBtnIcon}
+          content={rightBtnContent}
+          onClick={() => postAction(rightBtnAction, rightBtnValue)}
+        >
+        </Button>
       </div>
     </>
   )
