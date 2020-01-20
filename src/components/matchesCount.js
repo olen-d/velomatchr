@@ -22,7 +22,6 @@ const MatchesCount = () => {
       return response.ok ? response.json() : new Error(response.statusText); 
     })
     .then(json => {
-      console.log("JSON 0:\n",json[0]);
       setTotalMatches(json[0].totalMatches);
     })
     .catch(err => {
