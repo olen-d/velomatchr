@@ -6,6 +6,7 @@ import {
   Header
  } from "semantic-ui-react";
 
+import MatchesCount from "../components/matchesCount";
 import MatchesList from "../components/matchesList";
 
 import { MatchesContext } from "../context/matchesContext";
@@ -22,7 +23,7 @@ const Dashboard = () => {
     <Container>
       <Grid stackable>
         <Grid.Column width="4">
-          &nbsp;
+          <MatchesCount />
         </Grid.Column>
         <Grid.Column width="8">
           <Header 

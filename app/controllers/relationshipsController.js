@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+// const fn = sequelize.fn;
 const Op = Sequelize.Op;
 
 const { Relationship, User } = require("../models");
@@ -51,6 +52,24 @@ exports.read_user_relationships = (req, res) => {
   })
   .catch(err => {
     res.send(err);
+  });
+};
+
+exports.read_user_matched_count = (req, res) => {
+  const userid = req.params.userid;
+
+  Relationship.findAll({
+    attributes: [[Relationship.sequelize.fn("COUNT", Relationship.sequelize.col("status")), "totalMatches"]],
+    where: {
+      requesterId: userid,
+      status: 2
+    }
+  })
+  .then(data => {
+    res.json(data)
+  })
+  .catch(err => {
+    res.send(err)
   });
 };
 
