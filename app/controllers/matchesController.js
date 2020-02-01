@@ -3,6 +3,7 @@ const fetch = require("node-fetch");
 // Models
 const { MatchPref, Relationship, User } = require("../models");
 
+// Create or update match preferences
 exports.update_match_preferences = (req, res) => {
   const { userId, distance, gender } = req.body;
   MatchPref.upsert({
@@ -17,32 +18,7 @@ exports.update_match_preferences = (req, res) => {
   });
 };
 
-exports.read_user_matches = (req, res) => {
-  const userid = req.params.userid;
-
-  Relationship.findAll({
-    where: {
-      requesterId: userid,
-      status: 2
-    },
-    include: [{ 
-      model: User, 
-      as: "addressee",
-      attributes: { exclude: ["password"]}
-    }],
-    order: [
-      ["matchScore", "ASC"],
-      ["updatedAt", "DESC"]
-    ]
-  })
-  .then(data => {
-    res.json(data);
-  })
-  .catch(err => {
-    res.send(err);
-  });
-};
-
+// Calculate user matches and create relationships
 exports.calculate_user_matches = (req, res) => {
   const { userId } = req.body;
 
@@ -107,3 +83,48 @@ exports.calculate_user_matches = (req, res) => {
       res.status(500).json({error: err});
     });
 }
+
+// Get the user's matches
+exports.read_user_matches = (req, res) => {
+  const userid = req.params.userid;
+
+  Relationship.findAll({
+    where: {
+      requesterId: userid,
+      status: 2
+    },
+    include: [{ 
+      model: User, 
+      as: "addressee",
+      attributes: { exclude: ["password"]}
+    }],
+    order: [
+      ["matchScore", "ASC"],
+      ["updatedAt", "DESC"]
+    ]
+  })
+  .then(data => {
+    res.json(data);
+  })
+  .catch(err => {
+    res.send(err);
+  });
+};
+
+// Get the user's match preferences
+exports.read_user_matches_preferences = (req, res) => {
+  const userid = req.params.userid;
+
+  MatchPref.findOne({
+    where: {
+      userId: userid
+    },
+    attributes: ["distance", "gender"]
+  })
+  .then(data => {
+    res.json(data);
+  })
+  .catch(err => {
+    res.send(err);
+  });
+};
