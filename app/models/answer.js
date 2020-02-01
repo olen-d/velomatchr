@@ -16,6 +16,19 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     });
+
+    Answer.associate = models => {
+      Answer.belongsTo(models.User, {
+        as: "matchCharacteristics",
+        foreignKey: "userId"
+      });
+      Answer.belongsTo(models.MatchPref, {
+        as: "matchPrefs",
+        foreignKey: "userId",
+        targetKey: "userId" // Overrides the default of id on the MatchPref table
+      });
+    };
+
     return Answer;
   };
   
