@@ -23,6 +23,15 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     });
+
+    MatchPref.associate = models => {
+      // Associate the User with the survey answers, used with match preferences and gender
+      MatchPref.hasOne(models.Answer, {
+        as: "matchPrefs",
+        foreignKey: "userId"
+      });
+    };    
+
     return MatchPref;
   };
   

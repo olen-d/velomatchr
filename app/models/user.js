@@ -93,6 +93,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "addresseeId",
       onDelete: "cascade"
     });
+    // Associate the User with the survey answers, used with match preferences and gender
+    User.hasOne(models.Answer, {
+      as: "matchCharacteristics",
+      foreignKey: "userId"
+    });
   };
 
   return User;

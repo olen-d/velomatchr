@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 
 // Models
-const { Answer } = require("../models");
+const { Answer, MatchPref, User } = require("../models");
 
 const Op = Sequelize.Op;
 
@@ -42,11 +42,36 @@ exports.read_survey_response = (req, res) => {
 exports.read_survey_response_except = (req, res) => {
   const userId = req.params.userid;
 
+  // Need the match preference of the user
+
+  // Match preference of user is same
+  // Need gender of user
+  // Need gender of matches
+  // Match only other users with the same gender
+
+  
+  // Match preference of user is any
+  // Match other users with preference of any
+
+  // Need the match preference of the potential matches
+
   Answer.findAll({
     where: {
       [Op.not]: [{userId}]
     },
-    attributes: ["userId", "answers"]
+    attributes: ["userId", "answers"],
+    include: [
+      {
+        model: User,
+        as: "matchCharacteristics",
+        attributes: ["gender", "latitude", "longitude"]
+      },
+      {
+        model: MatchPref,
+        as: "matchPrefs",
+        attributes: ["distance", "gender"]
+      }
+    ]
   }).then(otherAnswers => {
     res.json(otherAnswers);
   })
