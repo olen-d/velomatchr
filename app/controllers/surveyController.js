@@ -48,36 +48,33 @@ exports.read_survey_response_except = (req, res) => {
     return response.ok ? response.json() : new Error(response.statusText); 
   })
   .then(json => {
-    const { user: { gender, userMatchPrefs: { distance, gender: matchGenderPref }, }, } = json; // Nested destructuring. Returns distance and gender. Pretty dope.
-
-    console.log("DISTANCE:\n", distance, "\nGENDER PREF\n", matchGenderPref, "\nuserGender\n", gender);
-    // if(gender === "any") {
-    //   const whereClause = `[Op.or]: [{"$matchPrefs.gender$": "any"}, {"$matchPrefs.gender$": "same". }]`;
-    //   readAnswersByPrefs(distance, gender);
-    // }
+    const { user: { gender, userMatchPrefs: { distance, gender: matchGenderPref }, }, } = json; // Nested destructuring. Returns gender, distance and gender. Pretty dope.
+    readAnswersByPrefs(gender, distance, matchGenderPref);
   })
   .catch(err => {
     // TODO: do something about the error
-    console.log("surveyController.js ~59 - Error:", err);
+    console.log("surveyController.js ~56 - Error:", err);
   })
 
-  // Match preference of user is same
-  // Need gender of user
-  // Need gender of matches
-  // Match only other users with the same gender
+  const readAnswersByPrefs = (gender, distance, matchGenderPref) => {
+    let where;
+    const whereInit = {
+      [Op.not]: [{userId}]
+    };
 
-  
-  // Match preference of user is any
-  // Match other users with preference of any or preference of same && user gender === match gender
-
-  // Need the match preference of the potential matches
-  const readAnswersByPrefs = (distance, gender) => {
-    const genderMatch = gender;
+    // Dynamically build the where clause based on preferences
+    if(matchGenderPref === "any") {
+      const filter = {[Op.or]: [{"$matchPrefs.gender$": "any"}, {"$matchPrefs.gender$": "same", "$matchCharacteristics.gender$": gender }]};
+      where = {...whereInit, ...filter};
+    } else if(matchGenderPref === "same") {
+      const filter = {"$matchPrefs.gender$": "same", "$matchCharacteristics.gender$": gender };
+      where = {...whereInit, ...filter};
+    } else {
+      where = whereInit;
+    }
 
     Answer.findAll({
-      where: {
-        [Op.not]: [{userId}]
-      },
+      where,
       attributes: ["userId", "answers"],
       include: [
         {
