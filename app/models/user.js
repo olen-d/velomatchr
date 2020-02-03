@@ -80,6 +80,16 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.associate = models => {
+    // Associate the User with the survey answers, used with match preferences and gender
+    User.hasOne(models.Answer, {
+      as: "matchCharacteristics",
+      foreignKey: "userId"
+    });
+    // Associate the User with their match preferences
+    User.hasOne(models.MatchPref, {
+      as: "userMatchPrefs",
+      foreignKey: "userId"
+    });
     // Associating User with Relationships
     // When an User is deleted, also delete any associated Relationships
     User.hasMany(models.Relationship, {
@@ -93,11 +103,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "addresseeId",
       onDelete: "cascade"
     });
-    // Associate the User with the survey answers, used with match preferences and gender
-    User.hasOne(models.Answer, {
-      as: "matchCharacteristics",
-      foreignKey: "userId"
-    });
+
   };
 
   return User;

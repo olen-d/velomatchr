@@ -59,7 +59,6 @@ exports.calculate_user_matches = (req, res) => {
         });
         scores.set(a.userId, score);
       }
-
       return scores;
     })
     .then(scores => {

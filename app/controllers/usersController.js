@@ -1,5 +1,5 @@
 // Models
-const { User } = require("../models");
+const { MatchPref, User } = require("../models");
 
 // Packages
 const jwt = require("jsonwebtoken");
@@ -62,6 +62,52 @@ exports.read_one_user = (req, res) => {
     attributes: { exclude: ["password"]}
   })
   .then(resolve => {
+    let userObj = {
+      user: resolve
+    };
+    res.send(userObj);
+  })
+  .catch(err => {
+    res.json(err);
+  });
+};
+
+exports.read_one_user_by_id = (req, res) => {
+  const userId = req.params.userId;
+
+  User.findOne({
+    where: {
+      id: userId
+    },
+    attributes: { exclude: ["password"]}
+  })
+  .then(resolve => {
+    let userObj = {
+      user: resolve
+    };
+    res.send(userObj);
+  })
+  .catch(err => {
+    res.json(err);
+  });
+};
+
+// Get the user's information and match preferences
+exports.read_one_user_and_matches_preferences = (req, res) => {
+  const userId = req.params.userId;
+
+  User.findOne({
+    where: {
+      id: userId
+    },
+    attributes: { exclude: ["password"]},
+    include: [{
+      model: MatchPref,
+      as: "userMatchPrefs",
+      attributes: ["distance", "gender"]
+    }]
+  })
+  .then(resolve =>{
     let userObj = {
       user: resolve
     };

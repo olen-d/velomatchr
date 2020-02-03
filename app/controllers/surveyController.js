@@ -1,3 +1,4 @@
+const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
 
 // Models
@@ -42,40 +43,56 @@ exports.read_survey_response = (req, res) => {
 exports.read_survey_response_except = (req, res) => {
   const userId = req.params.userid;
 
-  // Need the match preference of the user
-
-  // Match preference of user is same
-  // Need gender of user
-  // Need gender of matches
-  // Match only other users with the same gender
-
-  
-  // Match preference of user is any
-  // Match other users with preference of any
-
-  // Need the match preference of the potential matches
-
-  Answer.findAll({
-    where: {
-      [Op.not]: [{userId}]
-    },
-    attributes: ["userId", "answers"],
-    include: [
-      {
-        model: User,
-        as: "matchCharacteristics",
-        attributes: ["gender", "latitude", "longitude"]
-      },
-      {
-        model: MatchPref,
-        as: "matchPrefs",
-        attributes: ["distance", "gender"]
-      }
-    ]
-  }).then(otherAnswers => {
-    res.json(otherAnswers);
+  fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`)
+  .then(response => {
+    return response.ok ? response.json() : new Error(response.statusText); 
+  })
+  .then(json => {
+    const { user: { gender, userMatchPrefs: { distance, gender: matchGenderPref }, }, } = json; // Nested destructuring. Returns gender, distance and gender. Pretty dope.
+    readAnswersByPrefs(gender, distance, matchGenderPref);
   })
   .catch(err => {
-    res.status(500).json({error: err});
-  });
+    // TODO: do something about the error
+    console.log("surveyController.js ~56 - Error:", err);
+  })
+
+  const readAnswersByPrefs = (gender, distance, matchGenderPref) => {
+    let where;
+    const whereInit = {
+      [Op.not]: [{userId}]
+    };
+
+    // Dynamically build the where clause based on preferences
+    if(matchGenderPref === "any") {
+      const filter = {[Op.or]: [{"$matchPrefs.gender$": "any"}, {"$matchPrefs.gender$": "same", "$matchCharacteristics.gender$": gender }]};
+      where = {...whereInit, ...filter};
+    } else if(matchGenderPref === "same") {
+      const filter = {"$matchPrefs.gender$": "same", "$matchCharacteristics.gender$": gender };
+      where = {...whereInit, ...filter};
+    } else {
+      where = whereInit;
+    }
+
+    Answer.findAll({
+      where,
+      attributes: ["userId", "answers"],
+      include: [
+        {
+          model: User,
+          as: "matchCharacteristics",
+          attributes: ["gender", "latitude", "longitude"]
+        },
+        {
+          model: MatchPref,
+          as: "matchPrefs",
+          attributes: ["distance", "gender"]
+        }
+      ]
+    }).then(otherAnswers => {
+      res.json(otherAnswers);
+    })
+    .catch(err => {
+      res.status(500).json({error: err});
+    });
+  }
 };

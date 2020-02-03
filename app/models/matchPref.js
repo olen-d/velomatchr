@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         as: "matchPrefs",
         foreignKey: "userId"
       });
+      MatchPref.belongsTo(models.User, {
+        as: "userMatchPrefs",
+        foreignKey: "userId"
+      });
     };    
 
     return MatchPref;
