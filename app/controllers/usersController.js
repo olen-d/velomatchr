@@ -1,3 +1,5 @@
+const Sequelize = require("sequelize");
+
 // Models
 const { MatchPref, User } = require("../models");
 
@@ -100,7 +102,15 @@ exports.read_one_user_and_matches_preferences = (req, res) => {
     where: {
       id: userId
     },
-    attributes: { exclude: ["password"]},
+    attributes: {
+      include: [
+        [Sequelize.literal("latitude - (15.0 / 69.0)"), "latMinus"],
+        [Sequelize.literal("latitude + (15.0 / 69.0)"), "latPlus"],
+        [Sequelize.literal("longitude - (15.0 / (69.0 * COS(RADIANS(latitude))))"), "longMinus"],
+        [Sequelize.literal("longitude + (15.0 / (69.0 * COS(RADIANS(latitude))))"), "longPlus"]
+      ],
+      exclude: ["password"]
+    },
     include: [{
       model: MatchPref,
       as: "userMatchPrefs",

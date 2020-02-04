@@ -62,6 +62,23 @@ exports.read_survey_response_except = (req, res) => {
       [Op.not]: [{userId}]
     };
 
+    // const maxDistance = process.env.MATCH_MAX_DISTANCE;
+    // const distanceFilter = {
+
+    //   maxDistance
+    // }
+  //   attributes: [
+  //     [Sequelize.literal('ListPrice * 1.15'), 'NewPrice'],
+  // ]
+
+
+// [Op.between]: [latMinus, latPlus], [Op.between]: [longMinus, longPlus]
+    // latitude BETWEEN latpoint - (50.0 / 111.045)
+    // AND latpoint + (50.0 / 111.045)
+
+    // longitude BETWEEN longpoint - (50.0 / (111.045 * COS(RADIANS(latpoint))))
+    //           AND longpoint + (50.0 / (111.045 * COS(RADIANS(latpoint))))
+
     // Dynamically build the where clause based on preferences
     if(matchGenderPref === "any") {
       const filter = {[Op.or]: [{"$matchPrefs.gender$": "any"}, {"$matchPrefs.gender$": "same", "$matchCharacteristics.gender$": gender }]};
@@ -72,6 +89,7 @@ exports.read_survey_response_except = (req, res) => {
     } else {
       where = whereInit;
     }
+
 
     Answer.findAll({
       where,
