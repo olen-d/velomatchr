@@ -48,36 +48,21 @@ exports.read_survey_response_except = (req, res) => {
     return response.ok ? response.json() : new Error(response.statusText); 
   })
   .then(json => {
-    const { user: { gender, userMatchPrefs: { distance, gender: matchGenderPref }, }, } = json; // Nested destructuring. Returns gender, distance and gender. Pretty dope.
-    readAnswersByPrefs(gender, distance, matchGenderPref);
+    const { user: { gender, latMinus, latPlus, longMinus, longPlus, userMatchPrefs: { distance, gender: matchGenderPref }, }, } = json; // Nested destructuring. Returns gender, distance and gender. Pretty dope.
+    readAnswersByPrefs(gender, latMinus, latPlus, longMinus, longPlus, distance, matchGenderPref);
   })
   .catch(err => {
     // TODO: do something about the error
     console.log("surveyController.js ~56 - Error:", err);
   })
 
-  const readAnswersByPrefs = (gender, distance, matchGenderPref) => {
+  const readAnswersByPrefs = (gender, latMinus, latPlus, longMinus, longPlus, distance, matchGenderPref) => {
     let where;
     const whereInit = {
-      [Op.not]: [{userId}]
+      [Op.not]: [{userId}],
+      "$matchCharacteristics.latitude$": {[Op.between]: [latMinus, latPlus]}, 
+      "$matchCharacteristics.longitude$": {[Op.between]: [longMinus, longPlus]}
     };
-
-    // const maxDistance = process.env.MATCH_MAX_DISTANCE;
-    // const distanceFilter = {
-
-    //   maxDistance
-    // }
-  //   attributes: [
-  //     [Sequelize.literal('ListPrice * 1.15'), 'NewPrice'],
-  // ]
-
-
-// [Op.between]: [latMinus, latPlus], [Op.between]: [longMinus, longPlus]
-    // latitude BETWEEN latpoint - (50.0 / 111.045)
-    // AND latpoint + (50.0 / 111.045)
-
-    // longitude BETWEEN longpoint - (50.0 / (111.045 * COS(RADIANS(latpoint))))
-    //           AND longpoint + (50.0 / (111.045 * COS(RADIANS(latpoint))))
 
     // Dynamically build the where clause based on preferences
     if(matchGenderPref === "any") {
@@ -89,7 +74,6 @@ exports.read_survey_response_except = (req, res) => {
     } else {
       where = whereInit;
     }
-
 
     Answer.findAll({
       where,
