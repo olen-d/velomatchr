@@ -9,48 +9,60 @@ const jwt = require("jsonwebtoken");
 // Helpers
 // const auth = require("../helpers/auth-module");
 const bcrypt = require("../helpers/bcrypt-module");
+const reverseGeocode = require("../helpers/reverse-geocode");
 
 exports.create_user = (req, res) => {
   const { firstName, lastName, email, phone, password, gender, latitude, longitude } = req.body;
 
-  bcrypt.newPass(password).then(pwdRes => {
-    if(pwdRes.status === 200) {
-      const name = firstName + "." + lastName.slice(0,1);
-      const photoLink = req.file.path;
+  reverseGeocode.reverseGeocode(latitude, longitude).then(locationRes => {
+    locationRes.json().then(locationRes => {
+      const location = locationRes.results[0].locations[0];
+      const { adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK"} = location;
 
-      User.create({
-        name,
-        password: pwdRes.passwordHash,
-        firstName,
-        lastName,
-        email,
-        phone,
-        photoLink,
-        gender,
-        latitude,
-        longitude,
-        city: "blank",
-        state: "blank",
-        stateCode: "blank",
-        country: "blank",
-        countryCode: "bla"
-      }).then(user => {
-        jwt.sign(
-          {user: user.id},
-          process.env.SECRET,
-          { expiresIn: "1h" },
-          (err, token) => {
-            return res.status(200).json({
-              authenticated: true,
-              token
-            });
+      bcrypt.newPass(password).then(pwdRes => {
+        if(pwdRes.status === 200) {
+          const name = firstName + "." + lastName.slice(0,1);
+          const photoLink = req.file.path;
+  
+          User.create({
+            name,
+            password: pwdRes.passwordHash,
+            firstName,
+            lastName,
+            email,
+            phone,
+            photoLink,
+            gender,
+            latitude,
+            longitude,
+            city,
+            state: "blank",
+            stateCode,
+            country: "blank",
+            countryCode
+          }).then(user => {
+            jwt.sign(
+              {user: user.id},
+              process.env.SECRET,
+              { expiresIn: "1h" },
+              (err, token) => {
+                return res.status(200).json({
+                  authenticated: true,
+                  token
+                });
+              });
+          }).catch(err => {
+            res.status(500).json({ error: err });
           });
-      }).catch(err => {
-        res.status(500).json({ error: err });
+        } else {
+          res.status(500).json({ error: "userController 107" });
+        }
       });
-    } else {
-      res.status(500).json({ error: "userController 107" });
-    }
+    })
+  })
+  .catch(err => {
+    // TODO: do something with the error
+    console.log("ERROR - usersController.js ~ 64", err);
   });
 };
 
