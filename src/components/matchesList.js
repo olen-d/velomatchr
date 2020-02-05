@@ -129,7 +129,7 @@ import {
               lastName={match.addressee.lastName}
               photoLink={match.addressee.photoLink}
               city={match.addressee.city}
-              state={match.addressee.state}
+              stateCode={match.addressee.stateCode}
               createdAt={match.addressee.createdAt}
               leftBtnIcon={leftBtnIcon}
               leftBtnContent={leftBtnContent}
