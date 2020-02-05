@@ -10,7 +10,7 @@ import {
  import { useMatches } from "../context/matchesContext";
 
  const MatchCard = props => {
-  const { requesterId, addresseeId, firstName, lastName, photoLink, city, state, createdAt, leftBtnIcon, leftBtnContent, leftBtnAction, leftBtnValue, rightBtnIcon, rightBtnContent, rightBtnAction, rightBtnValue } = props;
+  const { requesterId, addresseeId, firstName, lastName, photoLink, city, stateCode, createdAt, leftBtnIcon, leftBtnContent, leftBtnAction, leftBtnValue, rightBtnIcon, rightBtnContent, rightBtnAction, rightBtnValue } = props;
   const { matches, setMatches } = useMatches();
 
   const pla = photoLink.split("\\");
@@ -65,7 +65,7 @@ import {
         {firstName} {lastName}
       </div>
       <div className="match-card-address">
-        {city}, {state}
+        {city}, {stateCode}
       </div>
       <div className="match-card-joined">
         Member Since: {createdAt}
