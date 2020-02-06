@@ -16,6 +16,7 @@ import NavBar from "./components/navbar";
 import Dashboard from "./pages/dashboard";
 import Home from "./pages/home";
 import Matches from "./pages/matches";
+import Settings from "./pages/settings";
 import Survey from "./pages/survey";
 
 import { AuthContext } from "./context/authContext";
@@ -73,6 +74,7 @@ const Template = () => {
           <Route path="/home" component={Home} />
           <Route path="/logout" render={ () => "LOGGED OUT"}/>
           <Route path="/matches" component={Matches} />
+          <Route path="/settings" component={Settings} />
           <Route path="/survey" component={Survey} />
           <Route path="*" render={ () => "404 NOT FOUND" } />
         </Switch>
