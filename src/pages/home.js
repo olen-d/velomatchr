@@ -6,7 +6,7 @@ import {
   Header
  } from "semantic-ui-react"
 
-import SignupForm from "../components/signupForm";
+import SignupRequiredForm from "../components/signupRequiredForm";
 
 class Home extends Component {
   state = {
@@ -53,7 +53,7 @@ class Home extends Component {
           </Grid.Column>
         </Grid>
         <Grid stackable>
-          <SignupForm
+          <SignupRequiredForm
             colWidth="6"
             formTitle="Sign Up Today"
           />

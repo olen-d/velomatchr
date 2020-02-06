@@ -5,13 +5,13 @@ import {
   Grid
  } from "semantic-ui-react";
 
-import SignupForm from "../components/signupForm";
+import SignupRequiredForm from "../components/signupRequiredForm";
 
 const Signup = () => {
   return(
     <Container>
       <Grid stackable>
-        <SignupForm 
+      <SignupRequiredForm 
           colWidth="6"
           formTitle="Sign Up"
         />
