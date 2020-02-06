@@ -69,7 +69,7 @@ exports.read_survey_response_except = (req, res) => {
       const filter = {[Op.or]: [{"$matchPrefs.gender$": "any"}, {"$matchPrefs.gender$": "same", "$matchCharacteristics.gender$": gender }]};
       where = {...whereInit, ...filter};
     } else if(matchGenderPref === "same") {
-      const filter = {"$matchPrefs.gender$": "same", "$matchCharacteristics.gender$": gender };
+      const filter = {"$matchCharacteristics.gender$": gender };
       where = {...whereInit, ...filter};
     } else {
       where = whereInit;
