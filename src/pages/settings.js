@@ -5,13 +5,16 @@ import {
   Grid
  } from "semantic-ui-react";
 
-// import SignupRequiredForm from "../components/signupRequiredForm";
+import ProfileRequiredForm from "../components/profileRequiredForm";
 
 const Settings = () => {
   return(
     <Container>
       <Grid stackable>
-        Placeholder
+      <ProfileRequiredForm
+          colWidth="6"
+          formTitle="Create Profile"
+        />
       </Grid>
     </Container>
   );
