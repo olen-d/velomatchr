@@ -31,15 +31,15 @@ module.exports = (sequelize, DataTypes) => {
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     photoLink: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     gender: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     latitude: {
       type: DataTypes.DECIMAL(10,8),

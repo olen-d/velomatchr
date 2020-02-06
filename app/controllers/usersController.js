@@ -12,7 +12,7 @@ const bcrypt = require("../helpers/bcrypt-module");
 const reverseGeocode = require("../helpers/reverse-geocode");
 
 exports.create_user = (req, res) => {
-  const { firstName, lastName, email, phone, password, gender, latitude, longitude } = req.body;
+  const { email, password, latitude, longitude } = req.body;
 
   reverseGeocode.reverseGeocode(latitude, longitude).then(locationRes => {
     locationRes.json().then(locationRes => {
@@ -21,18 +21,13 @@ exports.create_user = (req, res) => {
 
       bcrypt.newPass(password).then(pwdRes => {
         if(pwdRes.status === 200) {
-          const name = firstName + "." + lastName.slice(0,1);
-          const photoLink = req.file.path;
+          const emailParts = email.split("@");
+          const name = emailParts[0];
   
           User.create({
             name,
             password: pwdRes.passwordHash,
-            firstName,
-            lastName,
             email,
-            phone,
-            photoLink,
-            gender,
             latitude,
             longitude,
             city,
@@ -52,17 +47,18 @@ exports.create_user = (req, res) => {
                 });
               });
           }).catch(err => {
+            console.log("usersController.js ERROR:\n",err);
             res.status(500).json({ error: err });
           });
         } else {
-          res.status(500).json({ error: "userController 107" });
+          res.status(500).json({ error: "userController ~53" });
         }
       });
     })
   })
   .catch(err => {
     // TODO: do something with the error
-    console.log("ERROR - usersController.js ~ 64", err);
+    console.log("ERROR - usersController.js ~ 60", err);
   });
 };
 
