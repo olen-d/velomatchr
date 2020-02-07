@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
+
+import auth from "./auth";
 
 import DropdownItems from "./dropdownItems/dropdownItems";
 import genderChoices from "../models/genderChoices";
-
-import { useAuth } from "../context/authContext";
 
 import {
   Button,
@@ -13,28 +13,29 @@ import {
   Segment
 } from "semantic-ui-react";
 
-const SignupForm = props => {
+import { AuthContext } from "../context/authContext";
+
+const ProfileRequiredForm = props => {
+  const [userId, setUserId] = useState(null);
   const [fullName, setFullName] = useState("");
   const [gender, setGender] = useState("default");
 
-  const { setIsAuth, setAuthTokens, setToMatchPrefs } = useAuth();
+  const context = useContext(AuthContext);
+  const token = context.authTokens;
+  const setToSurvey = context.setToSurvey;
 
-  const postSignup = () => {
+  const userInfo = auth.getUserInfo(token);
 
-    const formInputs = { 
+  const postProfileRequired = () => {
+
+    const formData = {
+      userId,
       fullName, 
       gender,
     };
-      
-    const entries = Object.entries(formInputs);
-    const formData = new FormData();
 
-    for (const [key, value] of entries) {
-      formData.append(key, value);
-    }
-
-    fetch(`${process.env.REACT_APP_API_URL}/api/user/profile/submit`, {
-      method: "post",
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/required/update`, {
+      method: "put",
       headers: {
         "Content-Type": "application/json"
       },
@@ -53,6 +54,8 @@ const SignupForm = props => {
       })
     });
   }
+
+  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
   return(
     <Grid.Column width={props.colWidth}>
@@ -110,7 +113,7 @@ const SignupForm = props => {
             icon="check circle"
             labelPosition="left"
             content="Sign Up"
-            onClick={postSignup}
+            onClick={postProfileRequired}
           >
           </Button>
         </Form>
@@ -119,4 +122,4 @@ const SignupForm = props => {
   );
 }
 
-export default SignupForm;
+export default ProfileRequiredForm;

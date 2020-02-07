@@ -17,4 +17,6 @@ router.get("/users/matches/preferences/:userId", users_controller.read_one_user_
 
 router.post("/users/login", users_controller.read_login);
 
+router.put("/users/profile/required/update", users_controller.update_profile_required);
+
 module.exports = router;

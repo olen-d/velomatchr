@@ -55,7 +55,7 @@ const MatchPreferencesForm = props => {
     });
   }
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
+  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
   return(
     <Grid.Column width={props.colWidth}>
