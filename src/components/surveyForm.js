@@ -114,7 +114,7 @@ const SurveyForm = props => {
               size="large"
               icon="check circle"
               labelPosition="left"
-              content={props.submitContent}
+              content={props.submitBtnContent}
               onClick={postSurveyAnswers}
             >
             </Button>

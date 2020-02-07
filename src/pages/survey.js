@@ -36,7 +36,7 @@ const Survey = () => {
             colWidth="8"
             formTitle="Your Cycling Preferences"
             formInstructions="Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement."
-            submitContent="Find My Buddy"
+            submitBtnContent="Find My Buddies"
           />
       </Grid>
     </Container>

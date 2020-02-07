@@ -13,9 +13,14 @@ import {
   const { requesterId, addresseeId, firstName, lastName, photoLink, city, stateCode, createdAt, leftBtnIcon, leftBtnContent, leftBtnAction, leftBtnValue, rightBtnIcon, rightBtnContent, rightBtnAction, rightBtnValue } = props;
   const { matches, setMatches } = useMatches();
 
-  const pla = photoLink.split("\\");
-  pla.shift();
-  const pl = pla.join("/");
+  let pl = null;
+
+  if(photoLink) {
+    const pla = photoLink.split("\\");
+    pla.shift();
+    pl = pla.join("/");
+  }
+
   const [isError, setIsError] = useState(false);
 
   const postAction = (action, value) => {
