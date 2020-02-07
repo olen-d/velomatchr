@@ -177,3 +177,20 @@ exports.read_login = (req, response) => {
     }
   });
 };
+
+exports.update_profile_required = (req, res) => {
+  const { userId: id, fullName, gender } = req.body;
+  const [ firstName, ...remainingNames ] = fullName.split(" ");
+  const lastName = remainingNames.join(" ");
+  console.log("\n" + id, firstName, lastName, gender);
+  User.update(
+    { firstName, lastName, gender },
+    { where: { id }}
+  )
+  .then(data => {
+    res.json(data);
+  })
+  .catch(err => {
+    res.status(500).json({error: err});
+  })
+};

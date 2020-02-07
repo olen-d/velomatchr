@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import auth from "./auth";
 
 import DropdownItems from "./dropdownItems/dropdownItems";
-import matchDistances from "../models/matchDistances";
-import matchGenders from "../models/matchGenders";
+import genderChoices from "../models/genderChoices";
 
 import {
   Button,
@@ -16,9 +15,9 @@ import {
 
 import { AuthContext } from "../context/authContext";
 
-const MatchPreferencesForm = props => {
+const ProfileRequiredForm = props => {
   const [userId, setUserId] = useState(null);
-  const [distance, setDistance] = useState("default");
+  const [fullName, setFullName] = useState("");
   const [gender, setGender] = useState("default");
 
   const context = useContext(AuthContext);
@@ -27,15 +26,16 @@ const MatchPreferencesForm = props => {
 
   const userInfo = auth.getUserInfo(token);
 
-  const postMatchPreferences = () => {
-    const formData = { 
+  const postProfileRequired = () => {
+
+    const formData = {
       userId,
-      distance,
-      gender
+      fullName, 
+      gender,
     };
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/submit`, {
-      method: "post",
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/required/update`, {
+      method: "put",
       headers: {
         "Content-Type": "application/json"
       },
@@ -62,38 +62,25 @@ const MatchPreferencesForm = props => {
       <Header 
         as="h2" 
         textAlign="center"
-        color="orange"
+        color="grey"
       >
         {props.formTitle}
       </Header>
       <Segment>
-        <Form 
+        <Form
           size="large"
         >
           <Form.Input
             className="fluid"
-            control="select"
-            name="distance"
-            value={distance}
+            icon="user"
+            iconPosition="left"
+            name="firstName"
+            value={fullName}
+            placeholder="First and Last Name"
             onChange={e => {
-              setDistance(e.target.value)
+              setFullName(e.target.value)
             }}
-          >  
-            <option
-              key="-1"
-              value="default"
-              disabled
-            >
-              Select Match Proximity
-            </option>
-            {matchDistances.map(matchDistance => (
-              <DropdownItems 
-                key={matchDistance.id}
-                value={matchDistance.value}
-                text={matchDistance.text}
-              />
-            ))}
-          </Form.Input>
+          />
           <Form.Input
             className="fluid"
             control="select"
@@ -108,13 +95,13 @@ const MatchPreferencesForm = props => {
               value="default"
               disabled
             >
-              Select Genders to Match With
+              Select Your Gender
             </option>
-            {matchGenders.map(matchGender => (
+            {genderChoices.map(genderChoice => (
               <DropdownItems 
-                key={matchGender.id}
-                value={matchGender.value}
-                text={matchGender.text}
+                key={genderChoice.id}
+                value={genderChoice.value}
+                text={genderChoice.text}
               />
             ))}
           </Form.Input>
@@ -125,15 +112,14 @@ const MatchPreferencesForm = props => {
             size="large"
             icon="check circle"
             labelPosition="left"
-            content={props.submitContent}
-            onClick={postMatchPreferences}
+            content="Sign Up"
+            onClick={postProfileRequired}
           >
           </Button>
         </Form>
       </Segment>
     </Grid.Column>
   );
-  // }
 }
 
-export default MatchPreferencesForm;
+export default ProfileRequiredForm;
