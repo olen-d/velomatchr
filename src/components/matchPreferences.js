@@ -50,7 +50,7 @@ const MatchPreferences = () => {
         colWidth="8"
         formTitle="Your Match Characteristics"
         formInstructions="Please tell us your preferences regarding who you'd like to match with."
-        submitContent={submitContent}
+        submitBtnContent={submitContent}
         toSurvey={toSurvey}
       />
     </>

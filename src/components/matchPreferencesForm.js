@@ -23,7 +23,8 @@ const MatchPreferencesForm = props => {
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
-  const setToSurvey = context.setToSurvey;
+  const setDoRedirect = context.setDoRedirect;
+  const setRedirectURL = context.setRedirectURL;
 
   const userInfo = auth.getUserInfo(token);
 
@@ -43,8 +44,9 @@ const MatchPreferencesForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      if(props.toSurvey) {
-        setToSurvey(true);
+      if(props.submitRedirect) {
+        setRedirectURL(props.submitRedirectURL);
+        setDoRedirect(true);
       }
     }).catch(error => {
       return ({
@@ -125,7 +127,7 @@ const MatchPreferencesForm = props => {
             size="large"
             icon="check circle"
             labelPosition="left"
-            content={props.submitContent}
+            content={props.submitBtnContent}
             onClick={postMatchPreferences}
           >
           </Button>

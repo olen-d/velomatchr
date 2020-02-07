@@ -14,9 +14,9 @@ const SignupRequiredForm = props => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [latitude, setLatitude] = useState(0.0);
-  const [longitude, setLongitude] = useState("0.0");
+  const [longitude, setLongitude] = useState(0.0);
 
-  const { setIsAuth, setAuthTokens, setToMatchPrefs } = useAuth();
+  const { setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
 
   useEffect(() => {
     locater().then(locaterRes => {
@@ -37,7 +37,7 @@ const SignupRequiredForm = props => {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude
             });
-            // Return the number of nearby matches (within 5 miles)
+            // TODO: Return the number of nearby matches (within 5 miles)
           });
         } else {
           /* geolocation IS NOT available */
@@ -55,26 +55,21 @@ const SignupRequiredForm = props => {
   }
 
   const postSignup = () => {
-    const formInputs = { 
+    const formData = { 
       email,
       password,
       latitude,
       longitude
     };
       
-    const entries = Object.entries(formInputs);
-    const formData = new FormData();
-
-    for (const [key, value] of entries) {
-      formData.append(key, value);
-    }
-    
     fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
       method: "post",
-      body: formData
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
     }).then(response => {
       if(!response.ok) {
-        console.log(response);
         throw new Error ("Network response was not ok.");
       }
       return response.json();
@@ -83,17 +78,18 @@ const SignupRequiredForm = props => {
         localStorage.setItem("user_token", JSON.stringify(data.token));
         setIsAuth(data.authenticated);
         setAuthTokens(data.token);
-        setToMatchPrefs(true);
+        setRedirectURL("/onboarding/profile")
+        setDoRedirect(true);
       } else {
         setIsAuth(false);
         setAuthTokens("");
-        console.log("signupRequiredForm.js 89 - ERROR");
+        console.log("signupRequiredForm.js 86 - ERROR");
       }
     }).catch(error => {
       // Set isError to true
       setIsAuth(false);
       setAuthTokens("");
-      console.log("signupRequiredForm.js 95 - ERROR:\n", error);
+      console.log("signupRequiredForm.js 92 - ERROR:\n", error);
     });
   }
 

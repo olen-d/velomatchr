@@ -16,6 +16,7 @@ import NavBar from "./components/navbar";
 import Dashboard from "./pages/dashboard";
 import Home from "./pages/home";
 import Matches from "./pages/matches";
+import Onboarding from "./pages/onboarding";
 import Settings from "./pages/settings";
 import Survey from "./pages/survey";
 
@@ -23,6 +24,7 @@ import { AuthContext } from "./context/authContext";
 
 const Template = () => {
   const [userId, setUserId] = useState(null);
+  const [doRedirect, setRedirect] = useState(false);
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
@@ -30,13 +32,17 @@ const Template = () => {
   const userInfo = auth.getUserInfo(token);
 
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
+  useEffect(() => { context.setDoRedirect(doRedirect)}, [context, doRedirect])
 
   return (
     <>
       <NavBar />
       <AuthContext.Consumer>
         {
-          ({toDashboard, toMatchPrefs, toSurvey, updatedSurvey}) => {
+          ({doRedirect, redirectURL, toDashboard, toMatchPrefs, toSurvey, updatedSurvey}) => {
+            if (doRedirect) {
+              return <Redirect to={`${redirectURL}`} />
+            }
             if (toDashboard) {
               return <Redirect to="/dashboard" />
             }
@@ -74,6 +80,7 @@ const Template = () => {
           <Route path="/home" component={Home} />
           <Route path="/logout" render={ () => "LOGGED OUT"}/>
           <Route path="/matches" component={Matches} />
+          <Route path="/onboarding" component={Onboarding} />
           <Route path="/settings" component={Settings} />
           <Route path="/survey" component={Survey} />
           <Route path="*" render={ () => "404 NOT FOUND" } />

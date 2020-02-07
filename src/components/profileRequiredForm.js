@@ -22,7 +22,8 @@ const ProfileRequiredForm = props => {
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
-  const setToSurvey = context.setToSurvey;
+  const setDoRedirect = context.setDoRedirect;
+  const setRedirectURL = context.setRedirectURL;
 
   const userInfo = auth.getUserInfo(token);
 
@@ -43,8 +44,9 @@ const ProfileRequiredForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      if(props.toSurvey) {
-        setToSurvey(true);
+      if(props.submitRedirect) {
+        setRedirectURL(props.submitRedirectURL);
+        setDoRedirect(true);
       }
     }).catch(error => {
       return ({
@@ -112,7 +114,7 @@ const ProfileRequiredForm = props => {
             size="large"
             icon="check circle"
             labelPosition="left"
-            content="Sign Up"
+            content={props.submitBtnContent}
             onClick={postProfileRequired}
           >
           </Button>

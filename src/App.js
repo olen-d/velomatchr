@@ -14,6 +14,8 @@ const App = (props) => {
   const [authTokens, setAuthTokens] = useState(null);
   const [toDashboard, setToDashboard] = useState(false);
   const [toMatchPrefs, setToMatchPrefs] = useState(false);
+  const [doRedirect, setDoRedirect] = useState(false);
+  const [redirectURL, setRedirectURL] = useState(null);
   const [toSurvey, setToSurvey] = useState(false);
   const [updatedSurvey, setUpdatedSurvey] = useState(false);
   // const setTokens = data => {
@@ -24,7 +26,7 @@ const App = (props) => {
   // }
   
   return(
-    <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, toMatchPrefs, setToMatchPrefs, toSurvey, setToSurvey, updatedSurvey, setUpdatedSurvey, authTokens, setAuthTokens}}>
+    <AuthContext.Provider value={{isAuth, setIsAuth, toDashboard, setToDashboard, toMatchPrefs, setToMatchPrefs, doRedirect, setDoRedirect, redirectURL, setRedirectURL, toSurvey, setToSurvey, updatedSurvey, setUpdatedSurvey, authTokens, setAuthTokens}}>
       <AuthContext.Consumer>
         {({ isAuth }) => (
           isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
