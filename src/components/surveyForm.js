@@ -16,7 +16,7 @@ import {
 } from "semantic-ui-react"
 
 import { useAuth } from "../context/authContext";
-
+// Important TODO: Check to make sure the user has match preferences and set them prior to running the survey! Maybe use a modal...
 // Add the selectedVal attribute to the questions so we can keep track of which answer is selected in the state
 questions.forEach(i => {
   i["selectedVal"] = null;
