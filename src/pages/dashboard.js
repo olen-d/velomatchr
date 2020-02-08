@@ -13,8 +13,8 @@ import { MatchesContext } from "../context/matchesContext";
 
 const Dashboard = () => {
   const [matches, setMatches] = useState([]);
+  const [matchesUpdated, setMatchesUpdated] = useState(false);
 
-  
   return(
     <Container>
       <Grid stackable>
@@ -28,7 +28,7 @@ const Dashboard = () => {
           >
             New Buddy Requests
           </Header>
-          <MatchesContext.Provider value={{matches, setMatches}}>
+          <MatchesContext.Provider value={{matches, setMatches, matchesUpdated, setMatchesUpdated}}>
             <MatchesList status="1" />
           </MatchesContext.Provider>
         </Grid.Column>
