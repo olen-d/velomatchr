@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   useParams
 } from "react-router-dom";
 
 import MatchPreferencesForm from "../components/matchPreferencesForm";
-
-import { useAuth } from "../context/authContext";
 
 import {
   Grid,
@@ -21,8 +19,6 @@ const MatchPreferences = () => {
 
   const { flow } = useParams();
 
-  const { setToMatchPrefs } = useAuth();
-
   if (flow === "signup" && submitContent !== btnContentSurvey) {
     setSubmitContent(btnContentSurvey);
     setToSurvey(true);
@@ -30,8 +26,6 @@ const MatchPreferences = () => {
     setSubmitContent(btnContentUpdate);
     setToSurvey(false);
   }
-
-  useEffect(() => setToMatchPrefs(false), [setToMatchPrefs]);
 
   return(
     <>

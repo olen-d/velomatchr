@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   Container,
@@ -10,14 +10,10 @@ import MatchesCount from "../components/matchesCount";
 import MatchesList from "../components/matchesList";
 
 import { MatchesContext } from "../context/matchesContext";
-import { useAuth } from "../context/authContext";
 
 const Dashboard = () => {
-  const { setToDashboard } = useAuth();
-
   const [matches, setMatches] = useState([]);
 
-  useEffect(() => setToDashboard(false), [setToDashboard]);
   
   return(
     <Container>
