@@ -20,7 +20,7 @@ exports.update_user_relationships = (req, res) => {
     updateOnDuplicate: ["matchScore", "actionUserId", "updatedAt"]
     }
   ).then(() => {
-    return Relationship.findAll();
+    return Relationship.findAll({ where: { requesterId: userId }});
   }).then (newRelationships => {
     res.json(newRelationships);
   })

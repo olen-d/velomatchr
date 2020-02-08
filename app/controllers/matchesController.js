@@ -22,6 +22,8 @@ exports.update_match_preferences = (req, res) => {
 exports.calculate_user_matches = (req, res) => {
   const { userId } = req.body;
 
+  const relationshipsRes = [];
+
   const urls = [
     `${process.env.REACT_APP_API_URL}/api/survey/user/${userId}`,
     `${process.env.REACT_APP_API_URL}/api/survey/except/${userId}`
@@ -37,7 +39,7 @@ exports.calculate_user_matches = (req, res) => {
     })
     .catch(err => {
       // Do something about the error
-      console.log("ERROR:\n", err);
+      console.log("matchesController.js ~ 42 - ERROR:\n", err);
     })
     )).then(data => {
       let scores = new Map();
@@ -72,7 +74,11 @@ exports.calculate_user_matches = (req, res) => {
       body: JSON.stringify({ matches, userId })
       })
       .then(response => {
+        return response.json();
         // TODO: Fix the relationship controller to actually return the new matches
+      })
+      .then(data => {
+        res.json(data);
       })
       .catch(err =>{
         res.status(500).json({error: err});
