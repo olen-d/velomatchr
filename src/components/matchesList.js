@@ -64,52 +64,60 @@ import auth from "./auth";
 
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
 
+  // Fetch Matches Hook
   useEffect(() => {
+    setMatches({isLoading: true});
+
     fetch(`${process.env.REACT_APP_API_URL}/api/relationships/user/${userId}`)
     .then(response => {
-      return response.ok ? response.json() : new Error(response.statusText); 
+      return response.ok ? response.json() : setMatches({ error: response.statusText, matchesResult: [], isLoading: false }); 
     })
     .then(json => {
-      setMatches(json);
+      setMatches({ matchesResult: json, isLoading: false });
     })
-    .catch(err => {
-      return err;
+    .catch(error => {
+      setMatches({ error, matchesResult: [], isLoading: false });;
     });
   }, [setMatches, userId]);
 
   useEffect(() => {
-    if(matchesUpdated) {
-      setMatchesUpdated(false);
-    }
-    if(Array.isArray(matches) && matches.length) {
-      let filteredMatches;
+    matchesUpdated ? setMatchesUpdated(false) : setMatchesUpdated(true);
 
-      if(status === 0 || status === 2) {
-        filteredMatches = matches.filter(
-          match => match.status === status
-        );
-      } else if(status === 1) {
-        filteredMatches = matches.filter(
-          match => match.status === status && match.actionUserId !== userId
-        );
-        setNoMatches("No buddy requests were found. ");
-      }
-      switch(status) {
-        case 0:
-          setNoMatches("No potential matches were found. ");
-          break;
-        case 1:
+    const { error, matchesResult } = matches;
+
+    if(error) {
+      // TODO: Do something about the error
+    } else {
+      if(Array.isArray(matchesResult) && matchesResult.length) {
+        let filteredMatches;
+  
+        if(status === 0 || status === 2) {
+          filteredMatches = matchesResult.filter(
+            match => match.status === status
+          );
+        } else if(status === 1) {
+          filteredMatches = matchesResult.filter(
+            match => match.status === status && match.actionUserId !== userId
+          );
           setNoMatches("No buddy requests were found. ");
-          break;
-        case 2:
-          setNoMatches("No buddies were found. "); 
-          break;
-        default:
-          setNoMatches("No potential matches were found. ");
-          break;
-      }
-      setMatchesFilteredByStatus(filteredMatches);
-    };
+        }
+        switch(status) {
+          case 0:
+            setNoMatches("No potential matches were found. ");
+            break;
+          case 1:
+            setNoMatches("No buddy requests were found. ");
+            break;
+          case 2:
+            setNoMatches("No buddies were found. "); 
+            break;
+          default:
+            setNoMatches("No potential matches were found. ");
+            break;
+        }
+        setMatchesFilteredByStatus(filteredMatches);
+      };
+    }
   }, [matches, matchesUpdated, setMatchesUpdated, status, userId]);
 
   if(matchesFilteredByStatus.length === 0)
@@ -120,34 +128,40 @@ import auth from "./auth";
       </div>
     )
   } else {
-    return(
-
-      <div className="matches-list">
-        {matchesFilteredByStatus.map(match => (
-          <div className="match-card" key={match.id}>
-            <MatchCard
-              requesterId={userId}
-              addresseeId={match.addressee.id}
-              firstName={match.addressee.firstName}
-              lastName={match.addressee.lastName}
-              photoLink={match.addressee.photoLink}
-              city={match.addressee.city}
-              stateCode={match.addressee.stateCode}
-              createdAt={match.addressee.createdAt}
-              leftBtnIcon={leftBtnIcon}
-              leftBtnContent={leftBtnContent}
-              leftBtnAction={leftBtnAction}
-              leftBtnValue={leftBtnValue}
-              rightBtnIcon={rightBtnIcon}
-              rightBtnContent={rightBtnContent}
-              rightBtnAction={rightBtnAction}
-              rightBtnValue={rightBtnValue}
-            />
-          </div>
-        ))}
-      </div>
-
-    )
+    if(matches.isLoading) {
+      return(
+        <div>
+          Loading matches..
+        </div>
+      )
+    } else {
+      return(
+        <div className="matches-list">
+          {matchesFilteredByStatus.map(match => (
+            <div className="match-card" key={match.id}>
+              <MatchCard
+                requesterId={userId}
+                addresseeId={match.addressee.id}
+                firstName={match.addressee.firstName}
+                lastName={match.addressee.lastName}
+                photoLink={match.addressee.photoLink}
+                city={match.addressee.city}
+                stateCode={match.addressee.stateCode}
+                createdAt={match.addressee.createdAt}
+                leftBtnIcon={leftBtnIcon}
+                leftBtnContent={leftBtnContent}
+                leftBtnAction={leftBtnAction}
+                leftBtnValue={leftBtnValue}
+                rightBtnIcon={rightBtnIcon}
+                rightBtnContent={rightBtnContent}
+                rightBtnAction={rightBtnAction}
+                rightBtnValue={rightBtnValue}
+              />
+            </div>
+          ))}
+        </div>
+      )
+    }
   }
 }
 
