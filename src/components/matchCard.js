@@ -1,10 +1,7 @@
-import React, { useContext, useState } from "react"
+import React, { useState } from "react"
 
 import {
-  Button,
-  Grid,
-  Header,
-  Icon
+  Button
  } from "semantic-ui-react";
 
  import { useMatches } from "../context/matchesContext";
@@ -57,7 +54,7 @@ import {
           setIsError(true);
       });
     } else if(action === "composeEmail") {
-      const addressee = parseInt(value);
+      // const addressee = parseInt(value);
     }
   }
 

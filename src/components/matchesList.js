@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react"
 
 import auth from "./auth";
 
-import {
-  Container,
-  Grid,
-  Header,
-  Icon
- } from "semantic-ui-react";
+// import {
+//   Container,
+//   Grid,
+//   Header,
+//   Icon
+//  } from "semantic-ui-react";
 
  import { useMatches } from "../context/matchesContext";
  import { useAuth } from "../context/authContext";
@@ -107,7 +107,7 @@ import {
       }
       setMatchesFilteredByStatus(filteredMatches);
     };
-  });
+  }, [matches, status, userId]);
 
   if(matchesFilteredByStatus.length === 0)
   {
