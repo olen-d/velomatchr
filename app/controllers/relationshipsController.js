@@ -74,7 +74,6 @@ exports.read_user_matched_count = (req, res) => {
 };
 
 exports.update_user_relationship_status = (req, res) => {
-  console.log(req.body);
   const { requesterId, addresseeId, status, actionUserId } = req.body;
 
   Relationship.update(
