@@ -21,7 +21,7 @@ import auth from "./auth";
 
   // Get items from context
   const { authTokens } = useAuth();
-  const { matches, setMatches } = useMatches();
+  const { matches, setMatches, matchesUpdated, setMatchesUpdated } = useMatches();
 
   const userInfo = auth.getUserInfo(authTokens);
 
@@ -78,6 +78,9 @@ import auth from "./auth";
   }, [setMatches, userId]);
 
   useEffect(() => {
+    if(matchesUpdated) {
+      setMatchesUpdated(false);
+    }
     if(Array.isArray(matches) && matches.length) {
       let filteredMatches;
 
@@ -107,7 +110,7 @@ import auth from "./auth";
       }
       setMatchesFilteredByStatus(filteredMatches);
     };
-  }, [matches, status, userId]);
+  }, [matches, matchesUpdated, setMatchesUpdated, status, userId]);
 
   if(matchesFilteredByStatus.length === 0)
   {
