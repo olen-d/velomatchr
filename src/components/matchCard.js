@@ -43,12 +43,14 @@ import {
         if(data[1] !== 2)
           {
             // Something went horribly wrong
+            // TODO: Deal with the error
           } else {
             // Find the addressee in the list of matches
-            const addresseeIndex = matches.map(item => {return item.addresseeId}).indexOf(addresseeId);
+            const { matchesResult } = matches;
+            const addresseeIndex = matchesResult.map(item => {return item.addresseeId}).indexOf(addresseeId);
             // Change the status as appropriate
-            matches[addresseeIndex].status = status
-            setMatches(matches);
+            matchesResult[addresseeIndex].status = status
+            setMatches({ matchesResult });
             setMatchesUpdated(!matchesUpdated); // Dirty hack to trigger a rerender, since React uses Object.is which doesn't work on the matches array
           }
       }).catch(error => {

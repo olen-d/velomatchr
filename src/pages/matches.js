@@ -22,7 +22,7 @@ const Matches = ({ match }) => {
   const { setUpdatedSurvey } = useAuth();
 
   const MatchLists = () => {
-    const [matches, setMatches] = useState([]);
+    const [matches, setMatches] = useState({ error: null, matchesResult: [], isLoading: false });
     const [matchesUpdated, setMatchesUpdated] = useState(false);
 
     return(
