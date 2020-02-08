@@ -1,7 +1,6 @@
 import React from "react";
 
-import { 
-  Link,
+import {
   Route,
   Switch
 } from "react-router-dom";

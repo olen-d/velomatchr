@@ -24,7 +24,7 @@ import { AuthContext } from "./context/authContext";
 
 const Template = () => {
   const [userId, setUserId] = useState(null);
-  const [doRedirect, setRedirect] = useState(false);
+  const [doRedirect, setDoRedirect] = useState(false);
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
@@ -41,6 +41,7 @@ const Template = () => {
         {
           ({doRedirect, redirectURL, toDashboard, toMatchPrefs, toSurvey, updatedSurvey}) => {
             if (doRedirect) {
+              setDoRedirect(false);
               return <Redirect to={`${redirectURL}`} />
             }
             if (toDashboard) {
