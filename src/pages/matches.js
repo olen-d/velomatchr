@@ -23,8 +23,10 @@ const Matches = ({ match }) => {
 
   const MatchLists = () => {
     const [matches, setMatches] = useState([]);
+    const [matchesUpdated, setMatchesUpdated] = useState(false);
+
     return(
-      <MatchesContext.Provider value={{matches, setMatches}}>
+      <MatchesContext.Provider value={{matches, setMatches, matchesUpdated, setMatchesUpdated}}>
         <Grid.Row>
           <Grid.Column width={4}>
             &nbsp;

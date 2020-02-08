@@ -8,7 +8,7 @@ import {
 
  const MatchCard = props => {
   const { requesterId, addresseeId, firstName, lastName, photoLink, city, stateCode, createdAt, leftBtnIcon, leftBtnContent, leftBtnAction, leftBtnValue, rightBtnIcon, rightBtnContent, rightBtnAction, rightBtnValue } = props;
-  const { matches, setMatches } = useMatches();
+  const { matches, setMatches, matchesUpdated, setMatchesUpdated } = useMatches();
 
   let pl = null;
 
@@ -49,6 +49,7 @@ import {
             // Change the status as appropriate
             matches[addresseeIndex].status = status
             setMatches(matches);
+            setMatchesUpdated(!matchesUpdated); // Dirty hack to trigger a rerender, since React uses Object.is which doesn't work on the matches array
           }
       }).catch(error => {
           setIsError(true);
