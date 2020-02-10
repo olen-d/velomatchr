@@ -7,7 +7,25 @@ import {
  import { useMatches } from "../context/matchesContext";
 
  const MatchCard = props => {
-  const { requesterId, addresseeId, firstName, lastName, photoLink, city, stateCode, createdAt, leftBtnIcon, leftBtnContent, leftBtnAction, leftBtnValue, rightBtnIcon, rightBtnContent, rightBtnAction, rightBtnValue } = props;
+  const {
+    requesterId,
+    addresseeId,
+    firstName,
+    lastName,
+    photoLink,
+    city,
+    stateCode,
+    createdAt,
+    leftBtnIcon,
+    leftBtnContent,
+    leftBtnAction,
+    leftBtnValue,
+    rightBtnIcon,
+    rightBtnContent,
+    rightBtnAction,
+    rightBtnValue
+  } = props;
+  
   const { matches, setMatches, matchesUpdated, setMatchesUpdated } = useMatches();
 
   let pl = null;
@@ -64,7 +82,7 @@ import {
   return(
     <>
       <div className="match-card-profile photo">
-        <img src={pl} width="100px" height="auto" alt="cheese" />
+        { photoLink ? ( <img src={pl} width="100px" height="auto" alt={firstName} /> ) : ( <i className="fas fa-user-circle"></i> ) }
       </div>
       <div className="match-card-full-name">
         {firstName} {lastName}
