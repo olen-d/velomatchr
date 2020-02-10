@@ -14,7 +14,6 @@ const App = (props) => {
   const [authTokens, setAuthTokens] = useState(null);
   const [doRedirect, setDoRedirect] = useState(false);
   const [redirectURL, setRedirectURL] = useState(null);
-  const [updatedSurvey, setUpdatedSurvey] = useState(false);
   // const setTokens = data => {
   //   console.log("App.js - 23 DATA:\n", data);
   //   localStorage.setItem("user_token", JSON.stringify(data));
@@ -23,7 +22,7 @@ const App = (props) => {
   // }
   
   return(
-    <AuthContext.Provider value={{isAuth, setIsAuth, doRedirect, setDoRedirect, redirectURL, setRedirectURL, updatedSurvey, setUpdatedSurvey, authTokens, setAuthTokens}}>
+    <AuthContext.Provider value={{isAuth, setIsAuth, doRedirect, setDoRedirect, redirectURL, setRedirectURL, authTokens, setAuthTokens}}>
       <AuthContext.Consumer>
         {({ isAuth }) => (
           isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>

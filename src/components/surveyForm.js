@@ -26,7 +26,7 @@ const SurveyForm = props => {
   const [userId, setUserId] = useState(null);
   const [answers, SetAnswers] = useState(questions);
 
-  const { authTokens, setUpdatedSurvey } = useAuth();
+  const { authTokens, setDoRedirect, setRedirectURL } = useAuth();
 
   const userInfo = auth.getUserInfo(authTokens);
 
@@ -53,7 +53,24 @@ const SurveyForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      setUpdatedSurvey(true);
+      // Hit the API route to calculate matches...
+      fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ userId })
+      }).then(response => {
+        return response.json();
+      }).then(data => {
+        if(data) {
+          setRedirectURL("/matches");
+          setDoRedirect(true);
+        }
+      }).catch(err => {
+        console.log("AuthApp.js ~ 70 Error:\n", err);
+        // Do something about the err
+      });
     }).catch(error => {
       return ({
         errorCode: 500,

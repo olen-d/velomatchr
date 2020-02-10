@@ -8,8 +8,6 @@ import {
 
 import "./style.css";
 
-import auth from "./components/auth";
-
 import Footer from "./components/footer";
 import NavBar from "./components/navbar";
 
@@ -23,15 +21,10 @@ import Survey from "./pages/survey";
 import { AuthContext } from "./context/authContext";
 
 const Template = () => {
-  const [userId, setUserId] = useState(null);
   const [doRedirect, setDoRedirect] = useState(false);
 
   const context = useContext(AuthContext);
-  const token = context.authTokens;
 
-  const userInfo = auth.getUserInfo(token);
-
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
   useEffect(() => { context.setDoRedirect(doRedirect)}, [context, doRedirect])
 
   return (
@@ -39,30 +32,10 @@ const Template = () => {
       <NavBar />
       <AuthContext.Consumer>
         {
-          ({doRedirect, redirectURL, updatedSurvey}) => {
+          ({doRedirect, redirectURL}) => {
             if (doRedirect) {
               setDoRedirect(false);
               return <Redirect to={`${redirectURL}`} />
-            }
-            if (updatedSurvey) {
-              // Hit the API route to calculate matches...
-              fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
-                method: "post",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ userId })
-              }).then(response => {
-                return response.json();
-              }).then(data => {
-                if(data) {
-                  context.setRedirectURL("/matches");
-                  context.setDoRedirect(true);
-                }
-              }).catch(err => {
-                console.log("AuthApp.js ~ 70 Error:\n", err);
-                // Do something about the err
-              });
             }
           }
         }
