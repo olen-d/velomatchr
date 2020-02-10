@@ -23,6 +23,15 @@ questions.forEach(i => {
 });
 
 const SurveyForm = props => {
+  const {
+    colWidth,
+    formTitle,
+    formInstructions,
+    submitBtnContent,
+    submitRedirect,
+    submitRedirectURL
+  } = props;
+
   const [userId, setUserId] = useState(null);
   const [answers, SetAnswers] = useState(questions);
 
@@ -63,8 +72,8 @@ const SurveyForm = props => {
       }).then(response => {
         return response.json();
       }).then(data => {
-        if(data) {
-          setRedirectURL("/matches");
+        if(data && submitRedirect) {
+          setRedirectURL(submitRedirectURL);
           setDoRedirect(true);
         }
       }).catch(err => {
@@ -85,24 +94,24 @@ const SurveyForm = props => {
   return(
     <>
       <Grid.Row>
-        <Grid.Column width={props.colWidth}>
+        <Grid.Column width={colWidth}>
           <Header
             as="h2"
             color="orange"
           >
-            {props.formTitle}
+            {formTitle}
           </Header>
         </Grid.Column>
       </Grid.Row>
       <Grid.Row>
-        <Grid.Column width={props.colWidth}>
+        <Grid.Column width={colWidth}>
           <p>
-            {props.formInstructions}
+            {formInstructions}
           </p>
         </Grid.Column>
       </Grid.Row>
       <Grid.Row>
-        <Grid.Column width={props.colWidth}>
+        <Grid.Column width={colWidth}>
           <Form
             size="large"
           >
@@ -131,7 +140,7 @@ const SurveyForm = props => {
               size="large"
               icon="check circle"
               labelPosition="left"
-              content={props.submitBtnContent}
+              content={submitBtnContent}
               onClick={postSurveyAnswers}
             >
             </Button>
