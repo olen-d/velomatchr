@@ -60,8 +60,8 @@ const LoginForm = props => {
         localStorage.setItem("user_token", JSON.stringify(data.token));
         setIsAuth(data.authenticated);
         setAuthTokens(data.token);
-        setDoRedirect(true);
         setRedirectURL("/dashboard");
+        setDoRedirect(true);
       } else {
         localStorage.removeItem("user_token");
         setIsError(true);
