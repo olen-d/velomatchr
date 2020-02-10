@@ -16,6 +16,7 @@ import {
 import { AuthContext } from "../context/authContext";
 
 const ProfileRequiredForm = props => {
+  const { colWidth, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
   const [userId, setUserId] = useState(null);
   const [fullName, setFullName] = useState("");
   const [gender, setGender] = useState("default");
@@ -44,8 +45,8 @@ const ProfileRequiredForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      if(props.submitRedirect) {
-        setRedirectURL(props.submitRedirectURL);
+      if(submitRedirect) {
+        setRedirectURL(submitRedirectURL);
         setDoRedirect(true);
       }
     }).catch(error => {
@@ -60,13 +61,13 @@ const ProfileRequiredForm = props => {
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
   return(
-    <Grid.Column width={props.colWidth}>
+    <Grid.Column width={colWidth}>
       <Header 
         as="h2" 
         textAlign="center"
         color="grey"
       >
-        {props.formTitle}
+        {formTitle}
       </Header>
       <Segment>
         <Form
@@ -114,7 +115,7 @@ const ProfileRequiredForm = props => {
             size="large"
             icon="check circle"
             labelPosition="left"
-            content={props.submitBtnContent}
+            content={submitBtnContent}
             onClick={postProfileRequired}
           >
           </Button>

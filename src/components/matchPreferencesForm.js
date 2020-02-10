@@ -17,6 +17,7 @@ import {
 import { AuthContext } from "../context/authContext";
 
 const MatchPreferencesForm = props => {
+  const { colWidth, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
   const [userId, setUserId] = useState(null);
   const [distance, setDistance] = useState("default");
   const [gender, setGender] = useState("default");
@@ -44,8 +45,8 @@ const MatchPreferencesForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      if(props.submitRedirect) {
-        setRedirectURL(props.submitRedirectURL);
+      if(submitRedirect) {
+        setRedirectURL(submitRedirectURL);
         setDoRedirect(true);
       }
     }).catch(error => {
@@ -60,13 +61,13 @@ const MatchPreferencesForm = props => {
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
   return(
-    <Grid.Column width={props.colWidth}>
+    <Grid.Column width={colWidth}>
       <Header 
         as="h2" 
         textAlign="center"
         color="orange"
       >
-        {props.formTitle}
+        {formTitle}
       </Header>
       <Segment>
         <Form 
@@ -127,7 +128,7 @@ const MatchPreferencesForm = props => {
             size="large"
             icon="check circle"
             labelPosition="left"
-            content={props.submitBtnContent}
+            content={submitBtnContent}
             onClick={postMatchPreferences}
           >
           </Button>

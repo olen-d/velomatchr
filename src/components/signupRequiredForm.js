@@ -11,6 +11,8 @@ import {
 } from "semantic-ui-react";
 
 const SignupRequiredForm = props => {
+  const { colWidth, formTitle } = props;
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [latitude, setLatitude] = useState(0.0);
@@ -94,13 +96,13 @@ const SignupRequiredForm = props => {
   }
 
   return(
-    <Grid.Column width={props.colWidth}>
+    <Grid.Column width={colWidth}>
       <Header 
         as="h2" 
         textAlign="center"
         color="grey"
       >
-        {props.formTitle}
+        {formTitle}
       </Header>
       <Segment>
         <Form

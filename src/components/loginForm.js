@@ -17,7 +17,8 @@ import {
 
 // TODO: Split the error container into its own file
 const ErrorContainer = props => {
-  if(props.show) {
+  const { show } = props;
+  if(show) {
     return(
       <Message negative>
         <Message.Header>
@@ -34,6 +35,7 @@ const ErrorContainer = props => {
 }
 
 const LoginForm = props => {
+  const { colWidth, formTitle } = props;
   // Set up the state
   const [isError, setIsError] = useState("");
   const [username, setUsername] = useState("");
@@ -74,13 +76,13 @@ const LoginForm = props => {
 
   // And now we make the JSX...
   return(
-    <Grid.Column width={props.colWidth}>
+    <Grid.Column width={colWidth}>
       <Header
         as="h2"
         textAlign="center"
         color="grey"
       >
-        {props.formTitle}
+        {formTitle}
       </Header>
       <ErrorContainer show={isError} />
       <Segment>
