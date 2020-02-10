@@ -21,7 +21,7 @@ const NavBar = props => {
     setIsAuth(newAuthStatus);
     setAuthTokens(null);
     setDoRedirect(false);
-    setRedirectURL(false);
+    setRedirectURL(null);
   }
 
   return(
