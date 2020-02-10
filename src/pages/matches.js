@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 
 import { MatchesContext } from "../context/matchesContext";
-import { useAuth } from "../context/authContext";
 
 import {
   Container,
@@ -19,8 +18,6 @@ import MatchesList from "./../components/matchesList";
 import MatchPreferences from "./../components/matchPreferences";
 
 const Matches = ({ match }) => {
-  const { setUpdatedSurvey } = useAuth();
-
   const MatchLists = () => {
     const [matches, setMatches] = useState({ error: null, matchesResult: [], isLoading: false });
     const [matchesUpdated, setMatchesUpdated] = useState(false);
@@ -53,8 +50,6 @@ const Matches = ({ match }) => {
       </MatchesContext.Provider>
     );
   }
-
-  useEffect(() => setUpdatedSurvey(false), [setUpdatedSurvey]);
 
   return(
     <Container>
