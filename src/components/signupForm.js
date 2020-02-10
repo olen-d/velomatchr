@@ -14,6 +14,8 @@ import {
 } from "semantic-ui-react";
 
 const SignupForm = props => {
+  const { colWidth, formTitle } = props;
+
   const [profilePhotographFile, setProfilePhotographFile] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -116,13 +118,13 @@ const SignupForm = props => {
   }
 
   return(
-    <Grid.Column width={props.colWidth}>
+    <Grid.Column width={colWidth}>
       <Header 
         as="h2" 
         textAlign="center"
         color="grey"
       >
-        {props.formTitle}
+        {formTitle}
       </Header>
       <Segment>
         <Form
