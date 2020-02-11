@@ -1,3 +1,4 @@
+const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
 
 // Models
@@ -8,6 +9,7 @@ const jwt = require("jsonwebtoken");
 
 // Helpers
 // const auth = require("../helpers/auth-module");
+const adr = require ("../helpers/arbitrary-digit-random");
 const bcrypt = require("../helpers/bcrypt-module");
 const reverseGeocode = require("../helpers/reverse-geocode");
 
@@ -36,30 +38,58 @@ exports.create_user = (req, res) => {
             country: "blank",
             countryCode
           }).then(user => {
-            jwt.sign(
-              {user: user.id},
-              process.env.SECRET,
-              { expiresIn: "1h" },
-              (err, token) => {
-                return res.status(200).json({
-                  authenticated: true,
-                  token
+            const newCode = adr.newRandomCode(6);
+            const formData = {
+              fromAddress: "confirm@velomatchr.com", 
+              toAddress: email, 
+              subject: "Confirm Your Email Address", 
+              message: newCode
+            }
+              fetch(`${process.env.VUE_APP_API_BASE_URL}/api/mail/send`, {
+                method: "post",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                  body: JSON.stringify(formData)
+                }).then(response => {
+                  return response.json();
+                }).then(response => {
+                  if (!response.error) {
+                    jwt.sign(
+                      {user: user.id},
+                      process.env.SECRET,
+                      { expiresIn: "1h" },
+                      (err, token) => {
+                        return res.status(200).json({
+                          authenticated: true,
+                          token
+                        });
+                      });
+                  } else {
+                    console.log("\n\nusersController.js ~70 ERROR:", response);
+                    // TODO, parse response.error and provide a more useful error message
+                  }
+                }).catch(error => {
+                  return ({
+                    type: "error",
+                    message: "Internal server error.",
+                    error: error
+                  })
                 });
-              });
-          }).catch(err => {
-            console.log("usersController.js ERROR:\n",err);
-            res.status(500).json({ error: err });
-          });
-        } else {
-          res.status(500).json({ error: "userController ~53" });
-        }
-      });
+            }).catch(err => {
+              console.log("usersController.js ERROR:\n",err);
+              res.status(500).json({ error: err });
+            });
+          } else {
+            res.status(500).json({ error: "userController ~53" });
+          }
+        });
+      })
     })
-  })
-  .catch(err => {
-    // TODO: do something with the error
-    console.log("ERROR - usersController.js ~ 60", err);
-  });
+    .catch(err => {
+      // TODO: do something with the error
+      console.log("ERROR - usersController.js ~ 60", err);
+    });
 };
 
 exports.read_one_user = (req, res) => {
