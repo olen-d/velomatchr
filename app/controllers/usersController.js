@@ -39,13 +39,15 @@ exports.create_user = (req, res) => {
             countryCode
           }).then(user => {
             const newCode = adr.newRandomCode(6);
+            // TODO - add the new code and userId to the database
+            // TODO - if the coude isn't unique, generate a new one
             const formData = {
-              fromAddress: "confirm@velomatchr.com", 
+              fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
               toAddress: email, 
               subject: "Confirm Your Email Address", 
               message: newCode
             }
-              fetch(`${process.env.VUE_APP_API_BASE_URL}/api/mail/send`, {
+              fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
                 method: "post",
                 headers: {
                   "Content-Type": "application/json"
@@ -212,7 +214,7 @@ exports.update_profile_required = (req, res) => {
   const { userId: id, fullName, gender } = req.body;
   const [ firstName, ...remainingNames ] = fullName.split(" ");
   const lastName = remainingNames.join(" ");
-  console.log("\n" + id, firstName, lastName, gender);
+
   User.update(
     { firstName, lastName, gender },
     { where: { id }}
