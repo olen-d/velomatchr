@@ -40,8 +40,19 @@ exports.create_user = (req, res) => {
             countryCode
           }).then(user => {
             const newCode = adr.newRandomCode(6);
-            // TODO - add the new code and userId to the database
-            // TODO - if the coude isn't unique, generate a new one
+            // Add the new code and userId to the database
+            EmailVerification.create({
+              userId: user.id,
+              verificationCode: newCode,
+              attempts: 0
+            })
+            .then(data => {
+              // TODO -figure out what to do here
+            })
+            .catch(error => {
+              // TODO - return some sort of useful error
+            });
+            // TODO - if the code isn't unique, generate a new one
             const formData = {
               fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
               toAddress: email, 
