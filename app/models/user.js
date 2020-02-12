@@ -29,6 +29,14 @@ module.exports = (sequelize, DataTypes) => {
         len: [1]
       }
     },
+    isEmailVerified: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        len: [1]
+      }
+    },
     phone: {
       type: DataTypes.STRING,
       allowNull: true

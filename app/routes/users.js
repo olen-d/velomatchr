@@ -16,6 +16,8 @@ router.get("/users/id/:userId", users_controller.read_one_user_by_id);
 router.get("/users/matches/preferences/:userId", users_controller.read_one_user_and_matches_preferences);
 
 router.post("/users/login", users_controller.read_login);
+router.post("/users/email/verify", users_controller.read_one_email_verification);
+router.post("/users/verified/update", users_controller.update_is_email_verified);
 
 router.put("/users/profile/required/update", users_controller.update_profile_required);
 
