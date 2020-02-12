@@ -2,7 +2,7 @@ import React from "react";
 
 import {
   Route,
-  Switch
+  Switch,
 } from "react-router-dom";
 
 import {
@@ -14,6 +14,7 @@ import MatchesNewUser from "../components/matchesNewUser";
 import MatchPreferencesForm from "../components/matchPreferencesForm";
 import ProfileRequiredForm from "../components/profileRequiredForm";
 import SurveyForm from "../components/surveyForm";
+import VerifyEmail from "../components/verifyEmail";
 
 const Placeholder = () => {
   return(null);
@@ -28,7 +29,14 @@ const Onboarding = ({ match }) => {
             <Route exact path={`${match.url}/`} component={Placeholder} />
             <Route
               path={`${match.url}/matches`}
-              render={(props) => <MatchesNewUser {...props} submitBtnContent="Finished" submitRedirect={true} submitRedirectURL={"/dashboard"} />}
+              render={(props) => 
+                <MatchesNewUser 
+                  {...props}
+                  submitBtnContent="Finished"
+                  submitRedirect={true}
+                  submitRedirectURL={"/onboarding/verify-email"}
+                />
+              }
             />
             <Route
               path={`${match.url}/match-preferences`}
@@ -49,6 +57,18 @@ const Onboarding = ({ match }) => {
                   submitBtnContent={"Find My Buddies"}
                   submitRedirect={true}
                   submitRedirectURL={"/onboarding/matches"}
+                />
+              }
+            />
+            <Route
+              path={`${match.url}/verify-email`}
+              render={(props) => 
+                <VerifyEmail
+                  {...props}
+                  colWidth={"6"}
+                  submitRedirect={true}
+                  submitBtnContent="Verify Email"
+                  submitRedirectURL={"/dashboard"}
                 />
               }
             />

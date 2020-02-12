@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
 
 // Models
-const { MatchPref, User } = require("../models");
+const { EmailVerification, MatchPref, User } = require("../models");
 
 // Packages
 const jwt = require("jsonwebtoken");
@@ -30,6 +30,7 @@ exports.create_user = (req, res) => {
             name,
             password: pwdRes.passwordHash,
             email,
+            emailIsVerified: 0,
             latitude,
             longitude,
             city,
@@ -45,7 +46,7 @@ exports.create_user = (req, res) => {
               fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
               toAddress: email, 
               subject: "Confirm Your Email Address", 
-              message: newCode
+              message: `<p>Almost there! Please confirm your email address by entering the following code: <b>${newCode}</b></p>`
             }
               fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
                 method: "post",
@@ -92,6 +93,26 @@ exports.create_user = (req, res) => {
       // TODO: do something with the error
       console.log("ERROR - usersController.js ~ 60", err);
     });
+};
+
+exports.read_one_email_verification = (req, res) => {
+  const { userId, verificationCode } = req.body;
+
+  EmailVerification.findOne({
+    where: {
+      userId,
+      verificationCode
+    }
+  })
+  .then(data => {
+    // TODO: Increment and update the attempts field
+    res.send({ data });
+  })
+  .catch(error => {
+    // TODO: Deal with the error
+    res.send({ error });
+    // console.log(err);
+  });
 };
 
 exports.read_one_user = (req, res) => {
@@ -209,6 +230,21 @@ exports.read_login = (req, response) => {
     }
   });
 };
+
+exports.update_is_email_verified = (req, res) => {
+  const { id, isEmailVerified } = req.body;
+
+  User.update(
+    { isEmailVerified },
+    { where: { id }}
+  )
+  .then(data => {
+    res.json(data);
+  })
+  .catch(error => {
+    res.status(500).json({ error });
+  })
+}
 
 exports.update_profile_required = (req, res) => {
   const { userId: id, fullName, gender } = req.body;

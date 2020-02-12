@@ -20,8 +20,8 @@ exports.send_mail = (req, res) => {
   const mailOptions = {
     from: `${fromAddress}`,
     to: `${toAddress}`,
-    subject: `[VELOMATCHR.COM] ${subject}`,
-    text: `${message}`
+    subject: `[VELOMATCHR] ${subject}`,
+    html: `${message}`
   };
 
   transporter.sendMail(mailOptions, (err, success) => {
