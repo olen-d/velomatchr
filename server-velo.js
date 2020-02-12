@@ -23,6 +23,7 @@ app.use(express.json());
 //   });
 // const apiRoutes = require("./app/routing/apiRoutes")(app);
 // const htmlRoutes = require("./app/routing/htmlRoutes")(app);
+app.use("/api", require("./app/routes/mail"));
 app.use("/api", require("./app/routes/matches"));
 app.use("/api", require("./app/routes/relationships"));
 app.use("/api", require("./app/routes/survey"));

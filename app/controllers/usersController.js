@@ -1,3 +1,4 @@
+const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
 
 // Models
@@ -8,6 +9,7 @@ const jwt = require("jsonwebtoken");
 
 // Helpers
 // const auth = require("../helpers/auth-module");
+const adr = require ("../helpers/arbitrary-digit-random");
 const bcrypt = require("../helpers/bcrypt-module");
 const reverseGeocode = require("../helpers/reverse-geocode");
 
@@ -36,30 +38,60 @@ exports.create_user = (req, res) => {
             country: "blank",
             countryCode
           }).then(user => {
-            jwt.sign(
-              {user: user.id},
-              process.env.SECRET,
-              { expiresIn: "1h" },
-              (err, token) => {
-                return res.status(200).json({
-                  authenticated: true,
-                  token
+            const newCode = adr.newRandomCode(6);
+            // TODO - add the new code and userId to the database
+            // TODO - if the coude isn't unique, generate a new one
+            const formData = {
+              fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
+              toAddress: email, 
+              subject: "Confirm Your Email Address", 
+              message: newCode
+            }
+              fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+                method: "post",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                  body: JSON.stringify(formData)
+                }).then(response => {
+                  return response.json();
+                }).then(response => {
+                  if (!response.error) {
+                    jwt.sign(
+                      {user: user.id},
+                      process.env.SECRET,
+                      { expiresIn: "1h" },
+                      (err, token) => {
+                        return res.status(200).json({
+                          authenticated: true,
+                          token
+                        });
+                      });
+                  } else {
+                    console.log("\n\nusersController.js ~70 ERROR:", response);
+                    // TODO, parse response.error and provide a more useful error message
+                  }
+                }).catch(error => {
+                  return ({
+                    type: "error",
+                    message: "Internal server error.",
+                    error: error
+                  })
                 });
-              });
-          }).catch(err => {
-            console.log("usersController.js ERROR:\n",err);
-            res.status(500).json({ error: err });
-          });
-        } else {
-          res.status(500).json({ error: "userController ~53" });
-        }
-      });
+            }).catch(err => {
+              console.log("usersController.js ERROR:\n",err);
+              res.status(500).json({ error: err });
+            });
+          } else {
+            res.status(500).json({ error: "userController ~53" });
+          }
+        });
+      })
     })
-  })
-  .catch(err => {
-    // TODO: do something with the error
-    console.log("ERROR - usersController.js ~ 60", err);
-  });
+    .catch(err => {
+      // TODO: do something with the error
+      console.log("ERROR - usersController.js ~ 60", err);
+    });
 };
 
 exports.read_one_user = (req, res) => {
@@ -182,7 +214,7 @@ exports.update_profile_required = (req, res) => {
   const { userId: id, fullName, gender } = req.body;
   const [ firstName, ...remainingNames ] = fullName.split(" ");
   const lastName = remainingNames.join(" ");
-  console.log("\n" + id, firstName, lastName, gender);
+
   User.update(
     { firstName, lastName, gender },
     { where: { id }}
