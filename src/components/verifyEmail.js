@@ -43,13 +43,14 @@ const VerifyEmail = props => {
       if(data.error) {
         // Fail...
       } else {
+        // const id = data.userId;
         const formData = {
-          id: data.userId,
+          id: userId,
           isEmailVerified: 1
         }
 
         fetch(`${process.env.REACT_APP_API_URL}/api/users/verified/update`, {
-          method: "post",
+          method: "put",
           headers: {
             "Content-Type": "application/json"
           },
@@ -68,7 +69,7 @@ const VerifyEmail = props => {
       }
     }).catch(error => {
       // Set isError to true
-      console.log("verifyEmail.js ~35 - ERROR:\n", error);
+      console.log("verifyEmail.js ~72 - ERROR:\n", error);
     });
   }
 
