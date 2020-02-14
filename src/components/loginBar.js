@@ -22,7 +22,7 @@ const LoginButton = props => {
 
 const SignUpButton = props => {
   return (
-    <Button as={Link} to="/signup" color="red">
+    <Button as={Link} to="/signup" basic color="red">
       Sign Up
     </Button>
   );
