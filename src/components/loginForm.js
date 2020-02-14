@@ -17,15 +17,15 @@ import {
 
 // TODO: Split the error container into its own file
 const ErrorContainer = props => {
-  const { show } = props;
+  const { header, message, show } = props;
   if(show) {
     return(
       <Message negative>
         <Message.Header>
-          Unable to Sign In
+          {header}
         </Message.Header>
         <p>
-          Please check your email address and password and try again. 
+          {message} 
         </p>
       </Message>
     );
@@ -37,9 +37,13 @@ const ErrorContainer = props => {
 const LoginForm = props => {
   const { colWidth, formTitle } = props;
   // Set up the state
-  const [isError, setIsError] = useState("");
-  const [username, setUsername] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isPassError, setIsPassError] = useState(false);
+  const [isUsernameError, setIsUserNameError] = useState(false);
   const [pass, setPass] = useState("");
+  const [username, setUsername] = useState("");
 
   const { setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
 
@@ -48,6 +52,30 @@ const LoginForm = props => {
       username,
       pass
     };
+
+    // Form Validation
+    let formError = false;
+
+    if(pass.length < 6) {
+      setIsPassError(true);
+      formError = true;
+    } else {
+      setIsPassError(false);
+    }
+    if(username.length < 2) {
+      setIsUserNameError(true);
+      formError = true;
+    } else {
+      setIsUserNameError(false);
+    }
+
+    if(formError)
+      {
+        setIsErrorHeader("Unable to Sign In");
+        setIsErrorMessage("Please check the fields in red and try again.");
+        setIsError(true);
+        return;
+      }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/users/login`, {
       method: "post",
@@ -66,10 +94,14 @@ const LoginForm = props => {
         setDoRedirect(true);
       } else {
         localStorage.removeItem("user_token");
+        setIsErrorHeader("Unable to Sign In");
+        setIsErrorMessage("Please check your email address and password and try again.");
         setIsError(true);
         setPass("");
       }
     }).catch(error => {
+        setIsErrorHeader("Unable to Sign In");
+        setIsErrorMessage("Please check your email address and password and try again.");
         setIsError(true);
     });
   }
@@ -84,7 +116,11 @@ const LoginForm = props => {
       >
         {formTitle}
       </Header>
-      <ErrorContainer show={isError} />
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}
+      />
       <Segment>
         <Form 
           size="large"
@@ -95,7 +131,8 @@ const LoginForm = props => {
             iconPosition="left"
             name="username"
             value={username}
-            placeholder="Your Email Address"
+            placeholder="Email Address"
+            error={isUsernameError}
             onChange={e => {
               setUsername(e.target.value);
             }}
@@ -106,29 +143,35 @@ const LoginForm = props => {
             iconPosition="left"
             name="pass"
             value={pass}
-            placeholder="Your Password"
+            placeholder="Password"
             type="password"
+            error={isPassError}
             onChange={e => {
               setPass(e.target.value);
             }}
           />
-          <Button 
+          <Button
+            disabled={!pass || !username}
             className="fluid"
             type="button"
             color="red"
             size="large"
+            icon="check circle"
+            labelPosition="left"
+            content="Sign In"
             onClick={postLogin}
           >
-            Sign In
           </Button>
         </Form>
       </Segment>
-      <Message>
+      <Segment>
         <p>
           Don't have an account yet?
         </p>
-        <Link to="/survey">
+        <Link to="/signup">
           <Button
+            basic
+            className="fluid"
             type="button"
             color="red"
             size="large"
@@ -138,7 +181,7 @@ const LoginForm = props => {
           >
           </Button>
         </Link>
-      </Message>
+      </Segment>
     </Grid.Column>
   );
 }

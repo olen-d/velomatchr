@@ -43,7 +43,6 @@ const VerifyEmail = props => {
       if(data.error) {
         // Fail...
       } else {
-        // const id = data.userId;
         const formData = {
           id: userId,
           isEmailVerified: 1
