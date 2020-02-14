@@ -113,7 +113,8 @@ exports.read_one_email_verification = (req, res) => {
     where: {
       userId,
       verificationCode
-    }
+    },
+    attributes: { exclude: ["verificationCode"]}
   })
   .then(data => {
     // TODO: Increment and update the attempts field
@@ -246,16 +247,16 @@ exports.update_is_email_verified = (req, res) => {
   const { id, isEmailVerified } = req.body;
 
   User.update(
-    { isEmailVerified },
+    { isEmailVerified: isEmailVerified },
     { where: { id }}
   )
   .then(data => {
-    res.json(data);
+    res.status(200).json(data);
   })
   .catch(error => {
     res.status(500).json({ error });
   })
-}
+};
 
 exports.update_profile_required = (req, res) => {
   const { userId: id, fullName, gender } = req.body;
