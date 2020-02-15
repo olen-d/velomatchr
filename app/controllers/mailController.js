@@ -1,4 +1,5 @@
 // Packages
+const dnsPromises = require("dns").promises;
 const nodemailer = require("nodemailer");
 
 exports.send_mail = (req, res) => {
@@ -30,5 +31,41 @@ exports.send_mail = (req, res) => {
     } else {
       res.json(success);
     }
+  });
+};
+
+exports.check_mx = (req, res) => {
+  const { email } = req.params;
+  
+  const mxExists = emailAddress => {
+    return new Promise ((resolve, reject) => {
+      const hostname = emailAddress.split("@")[1];
+  
+      try {
+        dnsPromises.resolveMx(hostname).then(addresses => {
+          if (addresses && addresses.length > 0) {
+            addresses[0].exchange ? resolve(true) : resolve(false);
+          }
+        })
+        .catch(err => {
+          // TODO: Deal with the error
+          console.log("mailController.js - resolveMx ERROR:\n" + err);
+          resolve(false);        
+        });
+      } catch (err) {
+        // TODO: Deal with the error
+        console.log("mailController.js ERROR:\n" + err);
+        reject(false);
+      }
+    });
+  }
+
+  mxExists(email).then(result => {
+    res.json({mxExists: result});
+  })
+  .catch(err => {
+    // TODO: Deal with the error
+    console.log("mailController.js Error\n" + err);
+    res.json({mxExists: false});
   });
 };

@@ -79,7 +79,25 @@ const SignupRequiredForm = props => {
     // Basic regular expression email validation
     const expression = /.+@.+\..+/i;
     if(expression.test(String(email).toLowerCase())) {
-      setIsEmailError(false);
+      // Email is generally acceptable, now let's check and see if the server has an MX record
+      fetch(`${process.env.REACT_APP_API_URL}/api/mail/check-mx/${email}`).then(result => {
+        result.json().then(result => {
+          const { mxExists } = result;
+
+          if(mxExists) {
+            setIsEmailError(false);
+          } else {
+            setIsEmailError(true);
+            formError=true;
+          }
+        });
+      })
+      .catch(error => {
+        // TODO: Deal with the error
+        console.log("signupRequiredForm.js ~97 - ERROR:\n" + error);
+        setIsEmailError(true);
+        formError=true;
+      })
     } else {
       setIsEmailError(true);
       formError = true;
@@ -121,13 +139,13 @@ const SignupRequiredForm = props => {
       } else {
         setIsAuth(false);
         setAuthTokens("");
-        console.log("signupRequiredForm.js 86 - ERROR");
+        console.log("signupRequiredForm.js ~142 - ERROR");
       }
     }).catch(error => {
       // Set isError to true
       setIsAuth(false);
       setAuthTokens("");
-      console.log("signupRequiredForm.js 92 - ERROR:\n", error);
+      console.log("signupRequiredForm.js ~148 - ERROR:\n", error);
     });
   }
 
