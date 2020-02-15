@@ -11,28 +11,10 @@ import {
   Form,
   Grid, 
   Header,
-  Message,
   Segment
 } from "semantic-ui-react"
 
-// TODO: Split the error container into its own file
-const ErrorContainer = props => {
-  const { header, message, show } = props;
-  if(show) {
-    return(
-      <Message negative>
-        <Message.Header>
-          {header}
-        </Message.Header>
-        <p>
-          {message} 
-        </p>
-      </Message>
-    );
-  } else {
-    return(null);
-  }
-}
+import ErrorContainer from "./errorContainer";
 
 const LoginForm = props => {
   const { colWidth, formTitle } = props;
