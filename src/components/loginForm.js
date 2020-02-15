@@ -18,12 +18,14 @@ import ErrorContainer from "./errorContainer";
 
 const LoginForm = props => {
   const { colWidth, formTitle } = props;
-  // Set up the state
+
+  // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [isPassError, setIsPassError] = useState(false);
   const [isUsernameError, setIsUserNameError] = useState(false);
+  // ...Rest of the State
   const [pass, setPass] = useState("");
   const [username, setUsername] = useState("");
 

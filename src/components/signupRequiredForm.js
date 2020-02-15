@@ -10,9 +10,18 @@ import {
   Segment
 } from "semantic-ui-react";
 
+import ErrorContainer from "./errorContainer";
+
 const SignupRequiredForm = props => {
   const { colWidth, formTitle } = props;
   
+  // Set up the State for form error handling
+  const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isEmailError, setIsEmailError] = useState(false);
+  const [isPasswordError, setIsPasswordError] = useState(false);
+  // ...Rest of the State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [latitude, setLatitude] = useState(0.0);
@@ -63,7 +72,34 @@ const SignupRequiredForm = props => {
       latitude,
       longitude
     };
-      
+ 
+    // Form Validation
+    let formError = false;
+  
+    // Basic regular expression email validation
+    const expression = /.+@.+\..+/i;
+    if(expression.test(String(email).toLowerCase())) {
+      setIsEmailError(false);
+    } else {
+      setIsEmailError(true);
+      formError = true;
+    }
+  
+    if(password.length < 6) {
+      setIsPasswordError(true);
+      formError = true;
+    } else {
+      setIsPasswordError(false);
+    }
+
+    if(formError)
+      {
+        setIsErrorHeader("Unable to Sign Up");
+        setIsErrorMessage("Please check the fields in red and try again.");
+        setIsError(true);
+        return;
+      }
+
     fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
       method: "post",
       headers: {
@@ -104,6 +140,11 @@ const SignupRequiredForm = props => {
       >
         {formTitle}
       </Header>
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}
+      />
       <Segment>
         <Form
           size="large"
@@ -116,6 +157,7 @@ const SignupRequiredForm = props => {
             value={email}
             placeholder="Email Address"
             type="email"
+            error={isEmailError}
             onChange={e => {
               setEmail(e.target.value)
             }}
@@ -128,11 +170,13 @@ const SignupRequiredForm = props => {
             value={password}
             placeholder="Password"
             type="password"
+            error={isPasswordError}
             onChange={e => {
               setPassword(e.target.value)
             }}
           />
           <Button
+            disabled={!email || !password}
             className="fluid"
             type="button"
             color="red"
