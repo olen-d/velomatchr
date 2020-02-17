@@ -20,8 +20,8 @@ import ErrorContainer from "./errorContainer";
 
 const ProfileRequiredForm = props => {
   const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
-  // Set up the State for form error handling
   
+  // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
