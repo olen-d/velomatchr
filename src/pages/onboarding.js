@@ -81,10 +81,10 @@ const Onboarding = ({ match }) => {
               path={`${match.url}/survey`}
               render={(props) => 
                 <SurveyForm 
-                  {...props} 
-                  colWidth={"8"} 
-                  formTitle={"Your Cycling Preferences"} 
-                  formInstructions={"Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement."} 
+                  {...props}
+                  colWidth={"8"}
+                  formInstructions={"Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement."}
+                  formTitle={"Your Cycling Preferences"}
                   submitBtnContent={"Find My Buddies"}
                   submitRedirect={true}
                   submitRedirectURL={"/onboarding/matches"}
@@ -97,8 +97,10 @@ const Onboarding = ({ match }) => {
                 <VerifyEmail
                   {...props}
                   colWidth={"6"}
+                  formInstructions={"We sent a six digit code to your email address. Please enter it below to verify you have access to the account."}
+                  formTitle={"Verify Your Email Address"}
+                  submitBtnContent={"Verify Email"}
                   submitRedirect={true}
-                  submitBtnContent="Verify Email"
                   submitRedirectURL={"/dashboard"}
                 />
               }

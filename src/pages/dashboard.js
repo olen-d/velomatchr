@@ -35,6 +35,9 @@ const Dashboard = () => {
           <p>
           <Link to={"/onboarding/profile"}>LINKY</Link><br />
           <Link to={"/onboarding/match-preferences"}>LINKY2</Link><br />
+          <Link to={"/onboarding/survey"}>LINKY3</Link><br />
+          <Link to={"/onboarding/matches"}>LINKY4</Link><br />
+          <Link to={"/onboarding/verify-email"}>LINKY5</Link><br />
           </p>
           <MatchesContext.Provider value={{matches, setMatches, matchesUpdated, setMatchesUpdated}}>
             <MatchesList status="1" />

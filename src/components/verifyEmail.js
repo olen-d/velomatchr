@@ -9,12 +9,21 @@ import {
   Form,
   Grid, 
   Header,
+  Message,
   Segment
 } from "semantic-ui-react";
 
-const VerifyEmail = props => {
-  const { colWidth, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+import ErrorContainer from "./errorContainer";
 
+const VerifyEmail = props => {
+  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+
+  // Set up the State for form error handling
+  const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isVerificationCodeError, setIsVerificationCodeError] = useState(false);
+  // ...Rest of the State
   const [userId, setUserId] = useState(null);
   const [verificationCode, setVerificationCode] = useState(""); // React gets grumpy if the default is null
 
@@ -28,6 +37,24 @@ const VerifyEmail = props => {
       verificationCode
     }
 
+    // Form Validation
+    let formError = false;
+
+    if(verificationCode.length !== 6) {
+      setIsVerificationCodeError(true);
+      formError = true;
+    } else {
+      setIsVerificationCodeError(false);
+    }
+
+    if(formError)
+      {
+        setIsErrorHeader("Unable to verify your email address");
+        setIsErrorMessage("Please check the fields in red and try again.");
+        setIsError(true);
+        return;
+      }
+
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verify`, {
       method: "post",
       headers: {
@@ -40,8 +67,10 @@ const VerifyEmail = props => {
       }
       return response.json();
     }).then(data => {
-      if(data.error) {
-        // Fail...
+      if(!data.data || data.error) {
+        setIsErrorHeader("Unable to verify your email address");
+        setIsErrorMessage("Please make sure the code we sent you is entered correctly and try again.");
+        setIsError(true);
       } else {
         const formData = {
           id: userId,
@@ -83,6 +112,14 @@ const VerifyEmail = props => {
       >
         {formTitle}
       </Header>
+      <Message>
+        {formInstructions}
+      </Message>
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}
+      />
       <Segment>
         <Form
           size="large"
@@ -95,11 +132,13 @@ const VerifyEmail = props => {
             value={verificationCode}
             placeholder="Verification Code"
             type="text"
+            error={isVerificationCodeError}
             onChange={e => {
               setVerificationCode(e.target.value)
             }}
           />
           <Button
+            disabled={!verificationCode}
             className="fluid"
             type="button"
             color="red"
