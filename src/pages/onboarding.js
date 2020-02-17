@@ -7,7 +7,8 @@ import {
 
 import {
   Container,
-  Grid
+  Grid,
+  Header
  } from "semantic-ui-react";
 
 import MatchesNewUser from "../components/matchesNewUser";
@@ -24,6 +25,16 @@ const Onboarding = ({ match }) => {
   return(
     <Container>
       <Grid stackable>
+        <Grid.Row>
+          <Grid.Column width="16">
+            <Header
+              as="h1"
+              color="orange"
+            >
+              Welcome! Let's get started...
+            </Header>
+          </Grid.Column>
+        </Grid.Row>
         <Grid.Row>
           <Switch>
             <Route exact path={`${match.url}/`} component={Placeholder} />
@@ -44,7 +55,15 @@ const Onboarding = ({ match }) => {
             />
             <Route 
               path={`${match.url}/profile`} 
-              render={(props) => <ProfileRequiredForm {...props} colWidth={"6"} formTitle={"Create Profile"} submitBtnContent="Save and Continue" submitRedirect={true} submitRedirectURL={"/onboarding/match-preferences"} />}
+              render={(props) => 
+                <ProfileRequiredForm
+                  {...props} 
+                  colWidth={"6"} 
+                  formInstructions={"Set up your basic profile by telling us a few things about yourself. Only your first name and last initial will be displayed to other users. Your gender is never shown."}
+                  formTitle={"Create Your Profile"} 
+                  submitBtnContent="Save and Continue" 
+                  submitRedirect={true} 
+                  submitRedirectURL={"/onboarding/match-preferences"} />}
             />
             <Route
               path={`${match.url}/survey`}

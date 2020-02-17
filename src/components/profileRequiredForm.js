@@ -8,15 +8,26 @@ import genderChoices from "../models/genderChoices";
 import {
   Button,
   Form,
-  Grid, 
+  Grid,
   Header,
+  Message,
   Segment
 } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
+import ErrorContainer from "./errorContainer";
+
 const ProfileRequiredForm = props => {
-  const { colWidth, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+  // Set up the State for form error handling
+  
+  const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isFullNameError, setIsFullNameError] = useState(false);
+  const [isGenderError, setIsGenderError] = useState(false);
+  // ...Rest of the State
   const [userId, setUserId] = useState(null);
   const [fullName, setFullName] = useState("");
   const [gender, setGender] = useState("default");
@@ -35,6 +46,30 @@ const ProfileRequiredForm = props => {
       fullName, 
       gender,
     };
+
+    // Form Validation
+    let formError = false;
+
+    if(fullName.length < 1) {
+      setIsFullNameError(true);
+      formError = true;
+    } else {
+      setIsFullNameError(false);
+    }
+    if(gender === "default") {
+      setIsGenderError(true);
+      formError = true;
+    } else {
+      setIsGenderError(false);
+    }
+
+    if(formError)
+      {
+        setIsErrorHeader("Unable to save your profile");
+        setIsErrorMessage("Please check the fields in red and try again.");
+        setIsError(true);
+        return;
+      }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/required/update`, {
       method: "put",
@@ -69,6 +104,14 @@ const ProfileRequiredForm = props => {
       >
         {formTitle}
       </Header>
+      <Message>
+        {formInstructions}
+      </Message>
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}
+      />
       <Segment>
         <Form
           size="large"
@@ -80,6 +123,7 @@ const ProfileRequiredForm = props => {
             name="firstName"
             value={fullName}
             placeholder="First and Last Name"
+            error={isFullNameError}
             onChange={e => {
               setFullName(e.target.value)
             }}
@@ -89,6 +133,7 @@ const ProfileRequiredForm = props => {
             control="select"
             name="gender"
             value={gender}
+            error={isGenderError}
             onChange={e => {
               setGender(e.target.value)
             }}
@@ -109,6 +154,7 @@ const ProfileRequiredForm = props => {
             ))}
           </Form.Input>
           <Button
+            disabled={!fullName || gender ==="default"}
             className="fluid"
             type="button"
             color="red"
