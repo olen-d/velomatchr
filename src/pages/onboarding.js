@@ -51,7 +51,17 @@ const Onboarding = ({ match }) => {
             />
             <Route
               path={`${match.url}/match-preferences`}
-              render={(props) => <MatchPreferencesForm {...props} colWidth={"6"} formTitle={"Match Preferences"} submitBtnContent="Save and Continue" submitRedirect={true} submitRedirectURL={"/onboarding/survey"} />}
+              render={(props) => 
+                <MatchPreferencesForm 
+                  {...props}
+                  colWidth={"6"}
+                  formInstructions={"Tell us a bit about who you'd like to match with."}
+                  formTitle={"Match Preferences"}
+                  submitBtnContent="Save and Continue"
+                  submitRedirect={true}
+                  submitRedirectURL={"/onboarding/survey"}
+                />
+              }
             />
             <Route 
               path={`${match.url}/profile`} 
@@ -63,7 +73,9 @@ const Onboarding = ({ match }) => {
                   formTitle={"Create Your Profile"} 
                   submitBtnContent="Save and Continue" 
                   submitRedirect={true} 
-                  submitRedirectURL={"/onboarding/match-preferences"} />}
+                  submitRedirectURL={"/onboarding/match-preferences"} 
+                />
+              }
             />
             <Route
               path={`${match.url}/survey`}

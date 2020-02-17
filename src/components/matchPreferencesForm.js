@@ -11,13 +11,24 @@ import {
   Form,
   Grid, 
   Header,
+  Message,
   Segment
 } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
+import ErrorContainer from "./errorContainer";
+
 const MatchPreferencesForm = props => {
-  const { colWidth, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+
+  // Set up the State for form error handling
+  const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isDistanceError, setIsDistanceError] = useState(false);
+  const [isGenderError, setIsGenderError] = useState(false);
+  // ...Rest of the State
   const [userId, setUserId] = useState(null);
   const [distance, setDistance] = useState("default");
   const [gender, setGender] = useState("default");
@@ -35,6 +46,30 @@ const MatchPreferencesForm = props => {
       distance,
       gender
     };
+
+    // Form Validation
+    let formError = false;
+
+    if(distance === "default") {
+      setIsDistanceError(true);
+      formError = true;
+    } else {
+      setIsDistanceError(false);
+    }
+    if(gender === "default") {
+      setIsGenderError(true);
+      formError = true;
+    } else {
+      setIsGenderError(false);
+    }
+
+    if(formError)
+      {
+        setIsErrorHeader("Unable to save your match preferences");
+        setIsErrorMessage("Please check the fields in red and try again.");
+        setIsError(true);
+        return;
+      }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/submit`, {
       method: "post",
@@ -65,10 +100,18 @@ const MatchPreferencesForm = props => {
       <Header 
         as="h2" 
         textAlign="center"
-        color="orange"
+        color="grey"
       >
         {formTitle}
       </Header>
+      <Message>
+        {formInstructions}
+      </Message>
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}
+      />
       <Segment>
         <Form 
           size="large"
@@ -78,6 +121,7 @@ const MatchPreferencesForm = props => {
             control="select"
             name="distance"
             value={distance}
+            error={isDistanceError}
             onChange={e => {
               setDistance(e.target.value)
             }}
@@ -102,6 +146,7 @@ const MatchPreferencesForm = props => {
             control="select"
             name="gender"
             value={gender}
+            error={isGenderError}
             onChange={e => {
               setGender(e.target.value)
             }}
@@ -122,6 +167,7 @@ const MatchPreferencesForm = props => {
             ))}
           </Form.Input>
           <Button
+            disabled={distance ==="default" || gender ==="default"}
             className="fluid"
             type="button"
             color="red"
