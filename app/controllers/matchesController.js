@@ -1,7 +1,10 @@
 const fetch = require("node-fetch");
+const Sequelize = require("sequelize");
 
 // Models
 const { MatchPref, Relationship, User } = require("../models");
+
+const Op = Sequelize.Op;
 
 // Create or update match preferences
 exports.update_match_preferences = (req, res) => {
@@ -21,8 +24,6 @@ exports.update_match_preferences = (req, res) => {
 // Calculate user matches and create relationships
 exports.calculate_user_matches = (req, res) => {
   const { userId } = req.body;
-
-  const relationshipsRes = [];
 
   const urls = [
     `${process.env.REACT_APP_API_URL}/api/survey/user/${userId}`,
@@ -88,6 +89,35 @@ exports.calculate_user_matches = (req, res) => {
       res.status(500).json({error: err});
     });
 }
+
+// Get matches near the user
+exports.read_matches_nearby = (req, res) => {
+  const { lat, long } = req.params;
+
+  const latFloat = parseFloat(lat);
+  const longFloat = parseFloat(long);
+
+  const latMinus = latFloat - (15.0 / 69.0);
+  const latPlus = latFloat + (15.0 / 69.0);
+  const longDistance = (15.0 / (69.0 * Math.cos(latFloat * Math.PI / 180)));
+  const longMinus = longFloat - longDistance;
+  const longPlus = longFloat + longDistance;
+
+  User.findAll({
+    where: {
+      isEmailVerified: 1,
+      latitude: {[Op.between]: [latMinus, latPlus]}, 
+      longitude: {[Op.between]: [longMinus, longPlus]}
+    },
+    attributes: ["firstName"]
+  })
+  .then(data => {
+    res.json(data);
+  })
+  .catch(err => {
+    res.send(err);
+  });
+};
 
 // Get the user's matches
 exports.read_user_matches = (req, res) => {
