@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 
+import { 
+  Link
+} from "react-router-dom";
+
 import {
   Container,
   Grid,
@@ -28,6 +32,9 @@ const Dashboard = () => {
           >
             New Buddy Requests
           </Header>
+          <p>
+          <Link to={"/onboarding/profile"}>LINKY</Link><br />
+          </p>
           <MatchesContext.Provider value={{matches, setMatches, matchesUpdated, setMatchesUpdated}}>
             <MatchesList status="1" />
           </MatchesContext.Provider>
