@@ -11,6 +11,7 @@ import {
 } from "semantic-ui-react";
 
 import ErrorContainer from "./errorContainer";
+import MatchesNearMe from "./matchesNearMe";
 
 const SignupRequiredForm = props => {
   const { colWidth, formTitle } = props;
@@ -207,6 +208,11 @@ const SignupRequiredForm = props => {
           </Button>
         </Form>
       </Segment>
+      <MatchesNearMe
+        latitude={latitude}
+        longitude={longitude}
+        show={true}
+      />
     </Grid.Column>
   );
 }
