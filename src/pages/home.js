@@ -35,7 +35,7 @@ const Home = () => {
           colWidth="6"
           formTitle="Sign Up Today"
         />
-      </Grid>          
+      </Grid>
       <Grid stackable columns="equal">
         <Grid.Column>
           <Header
