@@ -12,7 +12,7 @@ const Login = () => {
     <Container>
       <Grid stackable>
         <LoginForm 
-          colWidth="6"
+          colWidth={6}
           formTitle="Sign In"
         />
       </Grid>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 import { 
   Link
@@ -168,6 +169,16 @@ const LoginForm = props => {
       </Segment>
     </Grid.Column>
   );
+}
+
+LoginForm.defaultProps = {
+  colWidth: 6,
+  formTitle: "Sign In"
+}
+
+LoginForm.propTypes = {
+  colWidth: PropTypes.number,
+  formTitle: PropTypes.string
 }
 
 export default LoginForm;
