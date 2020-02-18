@@ -13,6 +13,7 @@ const adr = require ("../helpers/arbitrary-digit-random");
 const bcrypt = require("../helpers/bcrypt-module");
 const reverseGeocode = require("../helpers/reverse-geocode");
 
+// Create and Create/Update Modules
 exports.create_user = (req, res) => {
   const { email, password, latitude, longitude } = req.body;
 
@@ -106,6 +107,7 @@ exports.create_user = (req, res) => {
     });
 };
 
+// Read Modules
 exports.read_one_email_verification = (req, res) => {
   const { userId, verificationCode } = req.body;
 
@@ -144,6 +146,30 @@ exports.read_one_user = (req, res) => {
   })
   .catch(err => {
     res.json(err);
+  });
+};
+
+exports.read_one_user_id_by_email = (req, res) => {
+  // Note: this does not require authentication
+  // Intended to be used with the reset password function
+
+  const email = req.params.email;
+
+  User.findOne({
+    where: {
+      email
+    },
+    attributes: ["id"]
+  })
+  .then(data => {
+    if(!data) {
+      res.json({ error: "No user was found."});
+    } else {
+      res.json({ data });
+    }
+  })
+  .catch(error => {
+    res.json({ error });
   });
 };
 
@@ -274,3 +300,10 @@ exports.update_profile_required = (req, res) => {
     res.status(500).json({error: err});
   })
 };
+
+// Non-CRUD Business Logic
+// Password Reset
+
+exports.reset_user_password = (req, res) => {
+  // Do some stuff
+}
