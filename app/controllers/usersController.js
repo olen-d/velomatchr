@@ -305,5 +305,41 @@ exports.update_profile_required = (req, res) => {
 // Password Reset
 
 exports.reset_user_password = (req, res) => {
-  // Do some stuff
+  const { email } = req.body;
+  // Check that the email exists
+  fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${email}`).then(data => {
+    data.json().then(json =>{
+      if (json.error) {
+        res.json({ error: json.error })
+      } else {
+        // Create the password reset link
+        const passwordResetLink = "www.velomatchr.com/testing";
+        // Create the email
+        const formData = {
+          fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
+          toAddress: email, 
+          subject: "Reset Your Email Password", 
+          message: `<p>Please reset your password useing the following link: <a href=${passwordResetLink}>${passwordResetLink}</a></p>`
+        }
+        // Send the email
+        fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json"
+          },
+            body: JSON.stringify(formData)
+          }).then(data => {
+            return data.json();
+          }).then(json => {
+            if (!json.error) {
+              res.json({ data: json });
+            }
+          }).catch(error => {
+            res.json({ error });
+          });
+      }
+    })
+  })
+  // Create the reset link
+  // Send the email
 }
