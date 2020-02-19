@@ -11,7 +11,7 @@ import LoginBar from "./components/loginBar"
 import Footer from "./components/footer"
 
 import Home from "./pages/home";
-import Login from "./pages/login";
+import LoginPage from "./pages/login";
 import Signup from "./pages/signup";
 
 const UnAuthApp = () => {
@@ -21,7 +21,7 @@ const UnAuthApp = () => {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/home" component={Home} />
-        <Route path="/login" component={Login} />
+        <Route path="/login" component={LoginPage} />
         <Route path="/signup" component={Signup} />
         <Route path="*" render={ () => "404 NOT FOUND" } />
       </Switch>

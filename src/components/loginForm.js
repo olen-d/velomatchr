@@ -17,6 +17,11 @@ import {
 
 import ErrorContainer from "./errorContainer";
 
+const forgotStyle = {
+  marginTop: "1.25rem",
+  marginBottom: "0.5rem"
+}
+
 const LoginForm = props => {
   const { colWidth, formTitle } = props;
 
@@ -148,6 +153,11 @@ const LoginForm = props => {
           >
           </Button>
         </Form>
+        <p style={forgotStyle}>
+          <Link to="/login/reset-password">
+            Forgot your password?
+          </Link>
+        </p>
       </Segment>
       <Segment>
         <p>
