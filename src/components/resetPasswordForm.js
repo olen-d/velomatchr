@@ -24,24 +24,48 @@ const ResetPasswordForm = props => {
   const [email, setEmail] = useState("");
 
   const postReset = () => {
-    // TODO: Fill this in...
-      // Form Validation
-      let formError = false;
+    const formData = { email }
 
-      if(email.length < 6) {
-        setIsEmailError(true);
-        formError = true;
+    // Form Validation
+    let formError = false;
+
+    if(email.length < 6) {
+      setIsEmailError(true);
+      formError = true;
+    } else {
+      setIsEmailError(false);
+    }
+
+    if(formError)
+      {
+        setIsErrorHeader("Unable to Reset Password");
+        setIsErrorMessage("Please check the fields in red and try again.");
+        setIsError(true);
+        return;
       } else {
-        setIsEmailError(false);
-      }
-  
-      if(formError)
-        {
-          setIsErrorHeader("Unable to Reset Password");
-          setIsErrorMessage("Please check the fields in red and try again.");
-          setIsError(true);
-          return;
-        }
+        fetch(`${process.env.REACT_APP_API_URL}/api/users/password/reset`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        }).then(response => {
+          return response.json();
+        }).then(data => {
+          if(data.data) {
+            // Set Great Success
+            console.log(data.data);
+          } else {
+            setIsErrorHeader("Unable to Reset Password");
+            setIsErrorMessage("No accounts with that eamil were found. Please check your email address and try again.");
+            setIsError(true);
+          }
+        }).catch(error => {
+            setIsErrorHeader("Unable to Reset Password");
+            setIsErrorMessage("Please check your email address and try again.");
+            setIsError(true);
+        });
+    }
   }
 
   return(
