@@ -159,7 +159,7 @@ exports.read_one_user_id_by_email = (req, res) => {
     where: {
       email
     },
-    attributes: ["id"]
+    attributes: ["id", "password", "createdAt"]
   })
   .then(data => {
     if(!data) {
@@ -191,6 +191,19 @@ exports.read_one_user_by_id = (req, res) => {
   .catch(err => {
     res.json(err);
   });
+};
+
+exports.read_one_user_by_id_reset = (req, res) => {
+  const { id, token } = req.params;
+  User.findOne({
+    where: {
+      id
+    },
+    attributes: ["password", "createdAt"]
+  })
+  .then(data => {
+   res.json({ data });
+  })
 };
 
 // Get the user's information and match preferences
@@ -301,6 +314,10 @@ exports.update_profile_required = (req, res) => {
   })
 };
 
+exports.reset_user_password_token = (req, res) => {
+  const { id, token } = req.body.params;
+
+}
 // Non-CRUD Business Logic
 // Password Reset
 
@@ -312,14 +329,27 @@ exports.reset_user_password = (req, res) => {
       if (json.error) {
         res.json({ error: json.error })
       } else {
+        const {id, password, createdAt } = json.data;
+        const payload = {
+          id,
+          email
+        };
+        const created = new Date(createdAt);
+        const secret = password + created.getTime();
+
+        const tempToken = jwt.sign(
+          {payload},
+          secret,
+          { expiresIn: "1h" },
+        );
         // Create the password reset link
-        const passwordResetLink = "www.velomatchr.com/testing";
+        const passwordResetLink = `www.velomatchr.com/api/users/password/reset/${id}/${tempToken}`;
         // Create the email
         const formData = {
           fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
           toAddress: email, 
           subject: "Reset Your Email Password", 
-          message: `<p>Please reset your password useing the following link: <a href=${passwordResetLink}>${passwordResetLink}</a></p>`
+          message: `<p>Please reset your password useing the following link: <a href=${passwordResetLink}>Reset Password</a></p>`
         }
         // Send the email
         fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {

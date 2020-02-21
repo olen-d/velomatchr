@@ -15,6 +15,7 @@ router.get("/users/:username", users_controller.read_one_user);
 router.get("/users/email/:email", users_controller.read_one_user_id_by_email);
 router.get("/users/id/:userId", users_controller.read_one_user_by_id);
 router.get("/users/matches/preferences/:userId", users_controller.read_one_user_and_matches_preferences);
+router.get("/users/password/reset/:id/:token", users_controller.read_one_user_by_id_reset);
 
 router.post("/users/login", users_controller.read_login);
 router.post("/users/email/verify", users_controller.read_one_email_verification);
