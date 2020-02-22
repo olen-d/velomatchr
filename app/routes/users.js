@@ -21,6 +21,7 @@ router.post("/users/login", users_controller.read_login);
 router.post("/users/email/verify", users_controller.read_one_email_verification);
 router.post("/users/password/reset", users_controller.reset_user_password);
 
+router.put("/users/password/update", users_controller.update_user_password);
 router.put("/users/profile/required/update", users_controller.update_profile_required);
 router.put("/users/verified/update", users_controller.update_is_email_verified);
 

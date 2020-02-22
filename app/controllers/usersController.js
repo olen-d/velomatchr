@@ -292,6 +292,7 @@ exports.read_login = (req, response) => {
   });
 };
 
+// Update modules
 exports.update_is_email_verified = (req, res) => {
   const { id, isEmailVerified } = req.body;
 
@@ -305,6 +306,29 @@ exports.update_is_email_verified = (req, res) => {
   .catch(error => {
     res.status(500).json({ error });
   })
+};
+
+exports.update_user_password = (req, res) => {
+  const { password, userId: id, } = req.body;
+
+  bcrypt.newPass(password).then(pwdRes => {
+    if(pwdRes.status === 200) {
+
+      User.update(
+        { password: pwdRes.passwordHash },
+        { where: {id }}
+      ).then(data => {
+        res.json({ data });
+        })
+        .catch(error => {
+          // TODO - return some sort of useful error
+          res.json({ error });
+        });
+    } else {
+      // TODO: Throw useful error. 
+      // Unable to hash password.
+    }
+  });
 };
 
 exports.update_profile_required = (req, res) => {
@@ -324,10 +348,6 @@ exports.update_profile_required = (req, res) => {
   })
 };
 
-exports.reset_user_password_token = (req, res) => {
-  const { id, token } = req.body.params;
-
-}
 // Non-CRUD Business Logic
 // Password Reset
 
@@ -352,15 +372,15 @@ exports.reset_user_password = (req, res) => {
           secret,
           { expiresIn: "1h" },
         );
+
         // Create the password reset link
-        // const passwordResetLink = `${process.env.REACT_APP_API_URL}/api/users/password/reset/${id}/${tempToken}`;
         const passwordResetLink = `${process.env.REACT_APP_URL}/login/reset-password/${id}/${tempToken}`;
         // Create the email
         const formData = {
           fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
           toAddress: email, 
-          subject: "Reset Your Email Password", 
-          message: `<p>Please reset your password useing the following link: <a href=${passwordResetLink}>Reset Password</a></p>`
+          subject: "Reset Your Password", 
+          message: `<p>Please reset your password using the following link: <a href=${passwordResetLink}>Reset Password</a></p>`
         }
         // Send the email
         fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
@@ -378,7 +398,13 @@ exports.reset_user_password = (req, res) => {
           }).catch(error => {
             res.json({ error });
           });
-      }
+        }
+      })
+      .catch(error => {
+        res.json({ error });
+      });
     })
-  })
-}
+    .catch(error => {
+      res.json({ error });
+    });
+};

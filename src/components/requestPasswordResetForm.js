@@ -28,7 +28,7 @@ const ResetPasswordForm = props => {
   // ...Rest of the State
   const [email, setEmail] = useState("");
 
-  const postReset = () => {
+  const postRequest = () => {
     const formData = { email }
 
     // Form Validation
@@ -124,7 +124,7 @@ const ResetPasswordForm = props => {
             icon="check circle"
             labelPosition="left"
             content="Request Password Reset"
-            onClick={postReset}
+            onClick={postRequest}
           >
           </Button>
         </Form>
