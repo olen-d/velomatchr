@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 import {
-  Link 
-} from "react-router-dom";
-
-import {
   Button,
   Form,
   Grid, 
@@ -18,7 +14,7 @@ import ErrorContainer from "./errorContainer";
 import SuccessContainer from "./successContainer";
 
 const ResetPasswordForm = props => {
-  const { colWidth, formTitle, userId } = props;
+  const { colWidth, formTitle, token, userId } = props;
 
   // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
@@ -33,7 +29,7 @@ const ResetPasswordForm = props => {
   const [password, setPassword] = useState("");
 
   const postReset = () => {
-    const formData = { password, userId }
+    const formData = { password, token, userId }
 
     // Form Validation
     let formError = false;
@@ -141,12 +137,14 @@ const ResetPasswordForm = props => {
 ResetPasswordForm.defaultProps = {
   colWidth: 6,
   formTitle: "Reset Password",
+  token: "Invalid",
   userId: "-99"
 }
 
 ResetPasswordForm.propTypes = {
   colWidth: PropTypes.number,
   formTitle: PropTypes.string,
+  token: PropTypes.string,
   userId: PropTypes.string
 }
 

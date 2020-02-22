@@ -57,6 +57,7 @@ const LoginPage = ({ match }) => {
         <ResetPasswordForm
           colWidth={6}
           formTitle="Reset Password"
+          token={token}
           userId={id}
         />
       )

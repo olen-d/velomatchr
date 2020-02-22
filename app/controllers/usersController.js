@@ -309,25 +309,46 @@ exports.update_is_email_verified = (req, res) => {
 };
 
 exports.update_user_password = (req, res) => {
-  const { password, userId: id, } = req.body;
+  const { password: newPassword, token, userId: id, } = req.body;
 
-  bcrypt.newPass(password).then(pwdRes => {
-    if(pwdRes.status === 200) {
+  User.findOne({
+    where: {
+      id
+    },
+    attributes: ["password", "createdAt"]
+  })
+  .then(data => {
+    const { password, createdAt } = data;
+    const created = new Date(createdAt);
+    const secret = password + created.getTime();
 
-      User.update(
-        { password: pwdRes.passwordHash },
-        { where: {id }}
-      ).then(data => {
-        res.json({ data });
-        })
-        .catch(error => {
-          // TODO - return some sort of useful error
-          res.json({ error });
+    jwt.verify(token, secret, (error, decoded) => {
+      if (error) {
+        res.json({ error });
+      } else if (decoded) {
+        bcrypt.newPass(newPassword).then(pwdRes => {
+          if(pwdRes.status === 200) {    
+            User.update(
+              { password: pwdRes.passwordHash },
+              { where: {id }}
+            ).then(data => {
+              res.json({ data });
+              })
+              .catch(error => {
+                // TODO - return some sort of useful error
+                res.json({ error });
+              });
+          } else {
+            // TODO: Throw useful error. 
+            // Unable to hash password.
+          }
         });
-    } else {
-      // TODO: Throw useful error. 
-      // Unable to hash password.
-    }
+      }
+    });
+  })
+  .catch(error => {
+    // TODOL Throw useful error.
+    // Couldn't find users
   });
 };
 
