@@ -37,7 +37,7 @@ const LoginPage = ({ match }) => {
          setJwt(json);
         })
       });
-    });
+    }, [id, token]);
 
     if(jwt && jwt.error) {
       return(
@@ -57,6 +57,7 @@ const LoginPage = ({ match }) => {
         <ResetPasswordForm
           colWidth={6}
           formTitle="Reset Password"
+          userId={id}
         />
       )
     }

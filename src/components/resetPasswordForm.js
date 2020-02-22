@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 import {
+  Link 
+} from "react-router-dom";
+
+import {
   Button,
   Form,
   Grid, 
@@ -14,7 +18,7 @@ import ErrorContainer from "./errorContainer";
 import SuccessContainer from "./successContainer";
 
 const ResetPasswordForm = props => {
-  const { colWidth, formTitle } = props;
+  const { colWidth, formTitle, userId } = props;
 
   // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
@@ -29,7 +33,7 @@ const ResetPasswordForm = props => {
   const [password, setPassword] = useState("");
 
   const postReset = () => {
-    const formData = { password }
+    const formData = { password, userId }
 
     // Form Validation
     let formError = false;
@@ -49,7 +53,7 @@ const ResetPasswordForm = props => {
         return;
       } else {
         fetch(`${process.env.REACT_APP_API_URL}/api/users/password/update`, {
-          method: "post",
+          method: "put",
           headers: {
             "Content-Type": "application/json"
           },
@@ -57,18 +61,19 @@ const ResetPasswordForm = props => {
         }).then(response => {
           return response.json();
         }).then(data => {
-          if(data.data) {
-            setIsSuccessHeader("Please Check Your Email");
-            setIsSuccessMessage("An email with a link to reset your password was successfully sent to your account.");
+          if(data.data && data.data[0] === 1) {
+            setIsSuccessHeader("Your Password was Successfully Reset");
+            setIsSuccessMessage(`You can now login using your new password.`);
             setIsSuccess(true);
+            setPassword("");
           } else {
             setIsErrorHeader("Unable to Reset Password");
-            setIsErrorMessage("No accounts associated with that email address were found. Please check your email address and try again.");
+            setIsErrorMessage("Something went terribly awry. Please try again.");
             setIsError(true);
           }
         }).catch(error => {
             setIsErrorHeader("Unable to Reset Password");
-            setIsErrorMessage("Please check your email address and try again.");
+            setIsErrorMessage("Something went wrong. Please try again.");
             setIsError(true);
         });
     }
@@ -135,12 +140,14 @@ const ResetPasswordForm = props => {
 
 ResetPasswordForm.defaultProps = {
   colWidth: 6,
-  formTitle: "Reset Password"
+  formTitle: "Reset Password",
+  userId: "-99"
 }
 
 ResetPasswordForm.propTypes = {
   colWidth: PropTypes.number,
-  formTitle: PropTypes.string
+  formTitle: PropTypes.string,
+  userId: PropTypes.string
 }
 
 export default ResetPasswordForm;
