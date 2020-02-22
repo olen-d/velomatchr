@@ -154,7 +154,7 @@ const LoginForm = props => {
           </Button>
         </Form>
         <p style={forgotStyle}>
-          <Link to="/login/reset-password">
+          <Link to="/login/request-password-reset">
             Forgot your password?
           </Link>
         </p>

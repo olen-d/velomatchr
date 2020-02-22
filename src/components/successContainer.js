@@ -5,11 +5,11 @@ import {
   Message,
 } from "semantic-ui-react"
 
-const ErrorContainer = props => {
+const SuccessContainer = props => {
   const { header, message, show } = props;
   if(show) {
     return(
-      <Message negative>
+      <Message positive>
         <Message.Header>
           {header}
         </Message.Header>
@@ -23,16 +23,16 @@ const ErrorContainer = props => {
   }
 }
 
-ErrorContainer.defaultProps = {
+SuccessContainer.defaultProps = {
   header: "No Header Specified",
   message: "No message was provided.",
   show: false
 }
 
-ErrorContainer.propTypes = {
+SuccessContainer.propTypes = {
   header: PropTypes.string,
   message: PropTypes.string,
   show: PropTypes.bool
 }
 
-export default ErrorContainer;
+export default SuccessContainer;

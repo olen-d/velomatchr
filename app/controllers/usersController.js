@@ -202,7 +202,17 @@ exports.read_one_user_by_id_reset = (req, res) => {
     attributes: ["password", "createdAt"]
   })
   .then(data => {
-   res.json({ data });
+    const { password, createdAt } = data;
+    const created = new Date(createdAt);
+    const secret = password + created.getTime();
+
+    jwt.verify(token, secret, (error, decoded) => {
+      if (error) {
+        res.json({ error })
+      } else {
+        res.json({ decoded });
+      }
+    });
   })
 };
 
@@ -343,7 +353,8 @@ exports.reset_user_password = (req, res) => {
           { expiresIn: "1h" },
         );
         // Create the password reset link
-        const passwordResetLink = `www.velomatchr.com/api/users/password/reset/${id}/${tempToken}`;
+        // const passwordResetLink = `${process.env.REACT_APP_API_URL}/api/users/password/reset/${id}/${tempToken}`;
+        const passwordResetLink = `${process.env.REACT_APP_URL}/login/reset-password/${id}/${tempToken}`;
         // Create the email
         const formData = {
           fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
@@ -370,6 +381,4 @@ exports.reset_user_password = (req, res) => {
       }
     })
   })
-  // Create the reset link
-  // Send the email
 }

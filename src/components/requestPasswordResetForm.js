@@ -20,35 +20,35 @@ const ResetPasswordForm = props => {
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
-  const [isPasswordError, setIsPasswordError] = useState(false);
+  const [isEmailError, setIsEmailError] = useState(false);
   // Set up the State for successful reset link
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessHeader, setIsSuccessHeader] = useState(null);
   const [isSuccessMessage, setIsSuccessMessage] = useState(null);
   // ...Rest of the State
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
   const postReset = () => {
-    const formData = { password }
+    const formData = { email }
 
     // Form Validation
     let formError = false;
 
-    if(password.length < 6) {
-      setIsPasswordError(true);
+    if(email.length < 6) {
+      setIsEmailError(true);
       formError = true;
     } else {
-      setIsPasswordError(false);
+      setIsEmailError(false);
     }
 
     if(formError)
       {
-        setIsErrorHeader("Unable to Create New Password");
+        setIsErrorHeader("Unable to Reset Password");
         setIsErrorMessage("Please check the fields in red and try again.");
         setIsError(true);
         return;
       } else {
-        fetch(`${process.env.REACT_APP_API_URL}/api/users/password/update`, {
+        fetch(`${process.env.REACT_APP_API_URL}/api/users/password/reset`, {
           method: "post",
           headers: {
             "Content-Type": "application/json"
@@ -95,7 +95,7 @@ const ResetPasswordForm = props => {
       />
       <Message>
         <Message.Content>
-          Enter your new password below. Passwords must be at least eight characters long and contain buth upper and lowercase letters and one or more numbers.
+          Enter your email address below and we'll email you a link with instructions to reset your password.
         </Message.Content>
       </Message>
       <Segment>
@@ -104,26 +104,26 @@ const ResetPasswordForm = props => {
         >
           <Form.Input
             className="fluid"
-            icon="lock"
+            icon="envelope"
             iconPosition="left"
-            name="password"
-            value={password}
-            placeholder="New Password"
-            type="password"
-            error={isPasswordError}
+            name="email"
+            value={email}
+            placeholder="Email Address"
+            type="email"
+            error={isEmailError}
             onChange={e => {
-              setPassword(e.target.value)
+              setEmail(e.target.value)
             }}
           />
           <Button
-            disabled={!password}
+            disabled={!email}
             className="fluid"
             type="button"
             color="red"
             size="large"
             icon="check circle"
             labelPosition="left"
-            content="Reset Password"
+            content="Request Password Reset"
             onClick={postReset}
           >
           </Button>
