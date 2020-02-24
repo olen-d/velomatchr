@@ -11,6 +11,7 @@ import {
   Grid,
   Header,
   Message,
+  Popup,
   Segment
 } from "semantic-ui-react";
 
@@ -116,43 +117,55 @@ const ProfileRequiredForm = props => {
         <Form
           size="large"
         >
-          <Form.Input
-            className="fluid"
-            icon="user"
-            iconPosition="left"
-            name="firstName"
-            value={fullName}
-            placeholder="First and Last Name"
-            error={isFullNameError}
-            onChange={e => {
-              setFullName(e.target.value)
-            }}
+          <Popup
+            trigger={
+              <Form.Input
+              className="fluid"
+              icon="user"
+              iconPosition="left"
+              name="firstName"
+              value={fullName}
+              placeholder="First and Last Name"
+              error={isFullNameError}
+              onChange={e => {
+                setFullName(e.target.value)
+              }}
+            />
+            }
+            content="Seperate first and last names with a space."
+            on="focus"
           />
-          <Form.Input
-            className="fluid"
-            control="select"
-            name="gender"
-            value={gender}
-            error={isGenderError}
-            onChange={e => {
-              setGender(e.target.value)
-            }}
-          >  
-            <option
-              key="-1"
-              value="default"
-              disabled
-            >
-              Select Your Gender
-            </option>
-            {genderChoices.map(genderChoice => (
-              <DropdownItems 
-                key={genderChoice.id}
-                value={genderChoice.value}
-                text={genderChoice.text}
-              />
-            ))}
-          </Form.Input>
+          <Popup
+            trigger={
+              <Form.Input
+                className="fluid"
+                control="select"
+                name="gender"
+                value={gender}
+                error={isGenderError}
+                onChange={e => {
+                  setGender(e.target.value)
+                }}
+              >  
+                <option
+                  key="-1"
+                  value="default"
+                  disabled
+                >
+                  Select Your Gender
+                </option>
+                {genderChoices.map(genderChoice => (
+                  <DropdownItems 
+                    key={genderChoice.id}
+                    value={genderChoice.value}
+                    text={genderChoice.text}
+                  />
+                ))}
+              </Form.Input>              
+            }
+            content="VeloMatchr offers cyclists the option of matching with the same gender only. The gender chosen here will be used for same gender only matches."
+            on="focus"
+          />
           <Button
             disabled={!fullName || gender ==="default"}
             className="fluid"
