@@ -7,11 +7,30 @@ import {
   Form,
   Grid, 
   Header,
+  List,
+  Popup,
   Segment
 } from "semantic-ui-react";
 
 import ErrorContainer from "./errorContainer";
 import MatchesNearMe from "./matchesNearMe";
+
+const ListTest = () => (
+  <List>
+    <List.Item>
+      <List.Icon name="check" verticalAlign="middle"></List.Icon>
+      <List.Content verticalAlign="middle">At least eight characters long</List.Content>
+    </List.Item>
+    <List.Item>
+      <List.Icon name="check" verticalAlign="middle"></List.Icon>
+      <List.Content verticalAlign="middle">Upper and lowercase letters</List.Content>
+    </List.Item>
+    <List.Item>
+      <List.Icon name="check" verticalAlign="middle"></List.Icon>
+      <List.Content verticalAlign="middle">At least one number or special character</List.Content>
+    </List.Item>
+  </List>
+)
 
 const SignupRequiredForm = props => {
   const { colWidth, formTitle } = props;
@@ -181,18 +200,25 @@ const SignupRequiredForm = props => {
               setEmail(e.target.value)
             }}
           />
-          <Form.Input
-            className="fluid"
-            icon="lock"
-            iconPosition="left"
-            name="password"
-            value={password}
-            placeholder="Password"
-            type="password"
-            error={isPasswordError}
-            onChange={e => {
-              setPassword(e.target.value)
-            }}
+          <Popup
+            trigger={
+              <Form.Input
+              className="fluid"
+              icon="lock"
+              iconPosition="left"
+              name="password"
+              value={password}
+              placeholder="Password"
+              type="password"
+              error={isPasswordError}
+              onChange={e => {
+                setPassword(e.target.value)
+              }}
+            />
+            }
+            header="Password Requirements"
+            content={ListTest}
+            on="focus"
           />
           <Button
             disabled={!email || !password}
