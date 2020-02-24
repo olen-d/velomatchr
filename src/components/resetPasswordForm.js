@@ -64,7 +64,9 @@ const ResetPasswordForm = props => {
             setPassword("");
           } else {
             setIsErrorHeader("Unable to Reset Password");
-            setIsErrorMessage("Something went terribly awry. Please try again.");
+            console.log(data.data);
+            console.log(data.error);
+            setIsErrorMessage("Something went terribly awry. Please try again." + JSON.stringify(data.error));
             setIsError(true);
           }
         }).catch(error => {
