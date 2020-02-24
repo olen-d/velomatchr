@@ -27,13 +27,12 @@ const Home = () => {
           >
             Find the riding buddy of your dreams.
           </Header>
-          {/* <p>Status: {this.state.data}</p> */}
         </Grid.Column>
       </Grid>
       <Grid stackable>
         <SignupRequiredForm
-          colWidth="6"
-          formTitle="Sign Up Today"
+          colWidth={6}
+          formTitle={"Sign Up Today"}
         />
       </Grid>
       <Grid stackable columns="equal">

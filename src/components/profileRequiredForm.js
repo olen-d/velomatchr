@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
 import auth from "./auth";
 
@@ -184,4 +185,22 @@ const ProfileRequiredForm = props => {
   );
 }
 
+ProfileRequiredForm.defaultProps = {
+  colWidth: 6,
+  formInstructions: "Only your first name and last initial will be displayed to other users. Your gender is never shown.",
+  formTitle: "Sign In",
+  submitBtnContent:"Update Profile",
+  submitRedirect: true,
+  submitRedirectURL: "/dashboard"
+}
+
+ProfileRequiredForm.propTypes = {
+  colWidth: PropTypes.number,
+  formInstructions: PropTypes.string,
+  formTitle: PropTypes.string,
+  submitBtnContent: PropTypes.string,
+  submitRedirect: PropTypes.bool,
+  submitRedirectURL: PropTypes.string
+}
+// colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL
 export default ProfileRequiredForm;
