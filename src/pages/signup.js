@@ -12,8 +12,8 @@ const Signup = () => {
     <Container>
       <Grid stackable>
       <SignupRequiredForm 
-          colWidth="6"
-          formTitle="Sign Up"
+          colWidth={6}
+          formTitle={"Sign Up"}
         />
       </Grid>
     </Container>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
 import { useAuth } from "../context/authContext";
 
@@ -241,6 +242,16 @@ const SignupRequiredForm = props => {
       />
     </Grid.Column>
   );
+}
+
+SignupRequiredForm.defaultProps = {
+  colWidth: 6,
+  formTitle: "Sign Up"
+}
+
+SignupRequiredForm.propTypes = {
+  colWidth: PropTypes.number,
+  formTitle: PropTypes.string
 }
 
 export default SignupRequiredForm;

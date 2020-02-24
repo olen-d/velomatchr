@@ -68,7 +68,7 @@ const Onboarding = ({ match }) => {
               render={(props) => 
                 <ProfileRequiredForm
                   {...props} 
-                  colWidth={"6"} 
+                  colWidth={6} 
                   formInstructions={"Set up your basic profile by telling us a few things about yourself. Only your first name and last initial will be displayed to other users. Your gender is never shown."}
                   formTitle={"Create Your Profile"} 
                   submitBtnContent="Save and Continue" 
