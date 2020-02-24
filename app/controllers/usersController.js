@@ -11,6 +11,7 @@ const jwt = require("jsonwebtoken");
 // const auth = require("../helpers/auth-module");
 const adr = require ("../helpers/arbitrary-digit-random");
 const bcrypt = require("../helpers/bcrypt-module");
+const passwordUpdatedEmail = require("../helpers/password-updated-email");
 const reverseGeocode = require("../helpers/reverse-geocode");
 
 // Create and Create/Update Modules
@@ -315,10 +316,10 @@ exports.update_user_password = (req, res) => {
     where: {
       id
     },
-    attributes: ["password", "createdAt"]
+    attributes: [ "createdAt", "email", "firstName", "lastName", "password"]
   })
   .then(data => {
-    const { password, createdAt } = data;
+    const { createdAt, email, firstName, lastName, password } = data;
     const created = new Date(createdAt);
     const secret = password + created.getTime();
 
@@ -332,6 +333,12 @@ exports.update_user_password = (req, res) => {
               { password: pwdRes.passwordHash },
               { where: {id }}
             ).then(data => {
+              if (data[0] === 1) {
+                // Send password has been reset email
+                // TODO: fix this so it doesn't crash if the passwordUpdatedEmail craps out
+                // TODO: log somewhere if the email fails...
+                passwordUpdatedEmail.send(email, firstName, lastName);
+              }
               res.json({ data });
               })
               .catch(error => {
