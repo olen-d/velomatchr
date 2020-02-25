@@ -82,7 +82,7 @@ const Onboarding = ({ match }) => {
               render={(props) => 
                 <SurveyForm 
                   {...props}
-                  colWidth={"8"}
+                  colWidth={8}
                   formInstructions={"Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement."}
                   formTitle={"Your Cycling Preferences"}
                   submitBtnContent={"Find My Buddies"}
