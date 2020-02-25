@@ -33,9 +33,9 @@ const Survey = () => {
           </Grid.Column>
         </Grid.Row>
           <SurveyForm 
-            colWidth="8"
-            formTitle="Your Cycling Preferences"
+            colWidth={8}
             formInstructions="Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement."
+            formTitle="Your Cycling Preferences"
             submitBtnContent="Find My Buddies"
             submitRedirect={true}
             submitRediredtURL={"/dashboard"}

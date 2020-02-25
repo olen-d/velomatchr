@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./styles.css";
 
 import {
@@ -6,41 +6,66 @@ import {
   ItemContent,
   ItemDescription,
   ItemExtra,
-  ItemHeader
+  ItemHeader,
+  Form
 } from "semantic-ui-react";
 
+const grey = {
+  color: "#767676"
+}
+const red = {
+  color: "#db2828"
+}
+
 const SurveyQuestion = props => {
+  const {answer, id, number, onChange, text, validate } = props;
+
+  const [isError, setIsError] = useState(false);
+  const [itemTextColor, setItemTextColor] = useState(grey);
+
+  useEffect(() => {
+    if (validate) {
+      if(!answer.find(x => x.id === id).selectedVal) {
+        setIsError(true);
+        setItemTextColor(red);
+      }
+    }
+  }, [validate, answer, id]);
+
   return (
     <Item>
       <ItemContent>
         <ItemHeader
           as="h3"
-          className="grey"
+          style={itemTextColor}
         >
-          Statement&nbsp;{props.number}
+          Statement&nbsp;{number}
         </ItemHeader>
-        <ItemDescription>
+        <ItemDescription style={itemTextColor}>
           <p className="survey-question">
-            {props.text}
+            {text}
           </p>
         </ItemDescription>
         <ItemExtra 
           className="survey-response"
         >
-          <select 
-            id={"st" + props.id}
-            name={props.id}
-            defaultValue={"default"}
-            onChange={props.onChange}
+          <Form.Input 
+            className="fluid"
+            control="select"
+            name={id}
+            value={answer.find(x => x.id === id).selectedVal || "default"}
+            error={isError}
+            onChange={onChange}
           >
             <option 
+              key={-1}
               value="default" 
               disabled
             >
               Select an Option
             </option>
             {props.children}
-          </select>
+          </Form.Input>
         </ItemExtra>
       </ItemContent>
     </Item>

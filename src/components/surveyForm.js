@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 import auth from "./auth";
 
@@ -25,15 +26,16 @@ questions.forEach(i => {
 const SurveyForm = props => {
   const {
     colWidth,
-    formTitle,
     formInstructions,
+    formTitle,
     submitBtnContent,
     submitRedirect,
     submitRedirectURL
   } = props;
 
+  const [answers, setAnswers] = useState(questions);
   const [userId, setUserId] = useState(null);
-  const [answers, SetAnswers] = useState(questions);
+  const [validate, setValidate] = useState(false);
 
   const { authTokens, setDoRedirect, setRedirectURL } = useAuth();
 
@@ -41,7 +43,7 @@ const SurveyForm = props => {
 
   const setAnswerState = e => {
     const updatedAnswer = answers.map(answer => answer.id === parseInt(e.target.name) ? {...answer, ...{selectedVal: parseInt(e.target.value)}} : answer)
-    SetAnswers(updatedAnswer);
+    setAnswers(updatedAnswer);
   }
 
   const postSurveyAnswers = () => {
@@ -52,6 +54,17 @@ const SurveyForm = props => {
     entries.forEach(entry => {
       formData[entry.id] = entry.selectedVal;
     });
+
+    // Form validation
+    console.log(formData);
+    setValidate(true);
+    return;
+    // formData.forEach(item => {
+    //   if (!item.selectedVal) {
+    //     console.log("NULL")
+    //   }
+    //   return;
+    // });
 
     fetch(`${process.env.REACT_APP_API_URL}/api/survey/submit`, {
       method: "post",
@@ -121,16 +134,19 @@ const SurveyForm = props => {
                 id={question.id}
                 number={question.number}
                 text={question.text}
+                error={false}
+                answer={answers}
+                validate={validate}
                 onChange={setAnswerState.bind(this)}
               >
-              {likertItems.map(likertItem => (
-                <LikertItem 
-                  key={likertItem.id}
-                  id={likertItem.id}
-                  number={likertItem.number}
-                  text={likertItem.text}
-                />
-                ))}  
+                {likertItems.map(likertItem => (
+                  <LikertItem 
+                    key={likertItem.id}
+                    id={likertItem.id}
+                    number={likertItem.number}
+                    text={likertItem.text}
+                  />
+                  ))}  
               </SurveyQuestion>
             ))}
             <Button
@@ -145,10 +161,31 @@ const SurveyForm = props => {
             >
             </Button>
           </Form>
+          <p>
+            {JSON.stringify(answers)}
+          </p>
         </Grid.Column>
       </Grid.Row>
     </>
   );
+}
+
+SurveyForm.defaultProps = {
+  colWidth: 8,
+  formInstructions: "Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement.",
+  formTitle: "Your Cycling Preferences",
+  submitBtnContent: "Find My Buddies",
+  submitRedirect: true,
+  submitRedirectURL: "/dashboard"
+}
+
+SurveyForm.propTypes = {
+  colWidth: PropTypes.number,
+  formInstructions: PropTypes.string,
+  formTitle: PropTypes.string,
+  submitBtnContent: PropTypes.string,
+  submitRedirect: PropTypes.bool,
+  submitRedirectURL: PropTypes.string
 }
 
 export default SurveyForm
