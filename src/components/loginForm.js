@@ -39,7 +39,7 @@ const LoginForm = props => {
 
   const postLogin = () => {
     const formData = { 
-      username,
+      username: username.toLowerCase(),
       pass
     };
 
