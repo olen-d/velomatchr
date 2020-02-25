@@ -17,6 +17,9 @@ import {
 } from "semantic-ui-react"
 
 import { useAuth } from "../context/authContext";
+
+import ErrorContainer from "./errorContainer";
+
 // Important TODO: Check to make sure the user has match preferences and set them prior to running the survey! Maybe use a modal...
 // Add the selectedVal attribute to the questions so we can keep track of which answer is selected in the state
 questions.forEach(i => {
@@ -33,6 +36,11 @@ const SurveyForm = props => {
     submitRedirectURL
   } = props;
 
+  // Set up the State for form error handling
+  const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  // ...Rest of the State
   const [answers, setAnswers] = useState(questions);
   const [userId, setUserId] = useState(null);
   const [validate, setValidate] = useState(false);
@@ -56,15 +64,22 @@ const SurveyForm = props => {
     });
 
     // Form validation
-    console.log(formData);
+    let formError = false;
     setValidate(true);
-    return;
-    // formData.forEach(item => {
-    //   if (!item.selectedVal) {
-    //     console.log("NULL")
-    //   }
-    //   return;
-    // });
+    Object.entries(formData).forEach(([key, value]) => {
+      if (!value) {
+        formError = true;
+        return;
+      }
+    });
+
+    if(formError)
+    {
+      setIsErrorHeader("Unable to Submit Survey");
+      setIsErrorMessage("Please choose an answer for the questions in red and try again.");
+      setIsError(true);
+      return;
+    }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/survey/submit`, {
       method: "post",
@@ -161,9 +176,11 @@ const SurveyForm = props => {
             >
             </Button>
           </Form>
-          <p>
-            {JSON.stringify(answers)}
-          </p>
+          <ErrorContainer
+            header={isErrorHeader}
+            message={isErrorMessage}
+            show={isError}
+          />
         </Grid.Column>
       </Grid.Row>
     </>

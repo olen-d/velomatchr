@@ -28,6 +28,9 @@ const SurveyQuestion = props => {
       if(!answer.find(x => x.id === id).selectedVal) {
         setIsError(true);
         setItemTextColor(red);
+      } else {
+        setIsError(false);
+        setItemTextColor(grey);
       }
     }
   }, [validate, answer, id]);
