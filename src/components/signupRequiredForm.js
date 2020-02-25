@@ -88,7 +88,7 @@ const SignupRequiredForm = props => {
 
   const postSignup = () => {
     const formData = { 
-      email,
+      email: email.toLowerCase(),
       password,
       latitude,
       longitude
