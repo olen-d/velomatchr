@@ -12,6 +12,7 @@ const jwt = require("jsonwebtoken");
 const adr = require ("../helpers/arbitrary-digit-random");
 const bcrypt = require("../helpers/bcrypt-module");
 const passwordUpdatedEmail = require("../helpers/password-updated-email");
+const passwordValidate = require("../helpers/password-validate");
 const reverseGeocode = require("../helpers/reverse-geocode");
 
 // Create and Create/Update Modules
@@ -22,90 +23,104 @@ exports.create_user = (req, res) => {
     locationRes.json().then(locationRes => {
       const location = locationRes.results[0].locations[0];
       const { adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK"} = location;
-
-      bcrypt.newPass(password).then(pwdRes => {
-        if(pwdRes.status === 200) {
-          const emailParts = email.split("@");
-          const name = emailParts[0];
-  
-          User.create({
-            name,
-            password: pwdRes.passwordHash,
-            email,
-            emailIsVerified: 0,
-            latitude,
-            longitude,
-            city,
-            state: "blank",
-            stateCode,
-            country: "blank",
-            countryCode
-          }).then(user => {
-            const newCode = adr.newRandomCode(6);
-            // Add the new code and userId to the database
-            EmailVerification.create({
-              userId: user.id,
-              verificationCode: newCode,
-              attempts: 0
-            })
-            .then(data => {
-              // TODO -figure out what to do here
+      passwordValidate.validatePassword(password).then(isValid => {
+        if (isValid) {
+          bcrypt.newPass(password).then(pwdRes => {
+            if(pwdRes.status === 200) {
+              const emailParts = email.split("@");
+              const name = emailParts[0];
+      
+              User.create({
+                name,
+                password: pwdRes.passwordHash,
+                email,
+                emailIsVerified: 0,
+                latitude,
+                longitude,
+                city,
+                state: "blank",
+                stateCode,
+                country: "blank",
+                countryCode
+              }).then(user => {
+                const newCode = adr.newRandomCode(6);
+                // Add the new code and userId to the database
+                EmailVerification.create({
+                  userId: user.id,
+                  verificationCode: newCode,
+                  attempts: 0
+                })
+                .then(data => {
+                  // TODO -figure out what to do here
+                })
+                .catch(error => {
+                  // TODO - return some sort of useful error
+                });
+                // TODO - if the code isn't unique, generate a new one
+                const formData = {
+                  fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
+                  toAddress: email, 
+                  subject: "Confirm Your Email Address", 
+                  message: `<p>Almost there! Please confirm your email address by entering the following code: <b>${newCode}</b></p>`
+                }
+                fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+                  method: "post",
+                  headers: {
+                    "Content-Type": "application/json"
+                  },
+                    body: JSON.stringify(formData)
+                  }).then(response => {
+                    return response.json();
+                  }).then(response => {
+                    if (!response.error) {
+                      jwt.sign(
+                        {user: user.id},
+                        process.env.SECRET,
+                        { expiresIn: "1h" },
+                        (err, token) => {
+                          return res.status(200).json({
+                            authenticated: true,
+                            token
+                          });
+                        });
+                    } else {
+                      console.log("\n\nusersController.js ~111 ERROR:", response);
+                      // TODO, parse response.error and provide a more useful error message
+                    }
+                  }).catch(error => {
+                    return ({
+                      type: "error",
+                      message: "Internal server error.",
+                      error: error
+                    })
+                  });
+                }).catch(err => {
+                  console.log("usersController.js ERROR:\n",err);
+                  res.status(500).json({ error: err });
+                });
+              } else {
+                res.status(500).json({ error: "userController ~100" });
+              }
             })
             .catch(error => {
-              // TODO - return some sort of useful error
+              res.json({ error })
             });
-            // TODO - if the code isn't unique, generate a new one
-            const formData = {
-              fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
-              toAddress: email, 
-              subject: "Confirm Your Email Address", 
-              message: `<p>Almost there! Please confirm your email address by entering the following code: <b>${newCode}</b></p>`
-            }
-              fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
-                method: "post",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                  body: JSON.stringify(formData)
-                }).then(response => {
-                  return response.json();
-                }).then(response => {
-                  if (!response.error) {
-                    jwt.sign(
-                      {user: user.id},
-                      process.env.SECRET,
-                      { expiresIn: "1h" },
-                      (err, token) => {
-                        return res.status(200).json({
-                          authenticated: true,
-                          token
-                        });
-                      });
-                  } else {
-                    console.log("\n\nusersController.js ~70 ERROR:", response);
-                    // TODO, parse response.error and provide a more useful error message
-                  }
-                }).catch(error => {
-                  return ({
-                    type: "error",
-                    message: "Internal server error.",
-                    error: error
-                  })
-                });
-            }).catch(err => {
-              console.log("usersController.js ERROR:\n",err);
-              res.status(500).json({ error: err });
-            });
-          } else {
-            res.status(500).json({ error: "userController ~53" });
-          }
-        });
+        } else {
+          res.json({ error: "IVP", message: "Invalid Password", status: 500 });
+        }
       })
+      .catch(error => {
+        res.json({ error, message: "Invalid Password", status: 500 });
+      });
     })
     .catch(err => {
       // TODO: do something with the error
-      console.log("ERROR - usersController.js ~ 60", err);
+      console.log("ERROR - usersController.js ~ 142", err);
     });
+  })
+  .catch(error => {
+    res.json({ error });
+  });
 };
 
 // Read Modules

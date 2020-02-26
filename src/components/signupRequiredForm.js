@@ -16,7 +16,9 @@ import {
 import ErrorContainer from "./errorContainer";
 import MatchesNearMe from "./matchesNearMe";
 
-const ListTest = () => (
+import passwordValidate from "../helpers/password-validate";
+
+const PasswordRequirements = () => (
   <List>
     <List.Item>
       <List.Icon name="check" verticalAlign="middle"></List.Icon>
@@ -86,6 +88,48 @@ const SignupRequiredForm = props => {
     });
   }
 
+  const createUser = formData => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error ("Network response was not ok.");
+      }
+      return response.json();
+    }).then(data => {
+      if (data.error) {
+        switch (data.error) {
+          case "IVP":
+            setIsPasswordError(true);
+            break;
+        
+          default:
+            break;
+        }
+      }
+      if (data.token) {
+        localStorage.setItem("user_token", JSON.stringify(data.token));
+        setIsAuth(data.authenticated);
+        setAuthTokens(data.token);
+        setRedirectURL("/onboarding/profile")
+        setDoRedirect(true);
+      } else {
+        setIsAuth(false);
+        setAuthTokens("");
+        console.log("signupRequiredForm.js ~173 - ERROR: Missing Token");
+      }
+    }).catch(error => {
+      // Set isError to true
+      setIsAuth(false);
+      setAuthTokens("");
+      console.log("signupRequiredForm.js ~179 - ERROR:\n", error);
+    });      
+  }
+  
   const postSignup = () => {
     const formData = { 
       email: email.toLowerCase(),
@@ -109,9 +153,40 @@ const SignupRequiredForm = props => {
             setIsEmailError(false);
           } else {
             setIsEmailError(true);
-            formError=true;
+            formError = true
           }
-        });
+          console.log("MXEXISTS form Error", formError);
+          return("MXFORM RES")
+        })
+        .then(result => {
+          console.log("Password Validate Form Error:", formError, result);
+          passwordValidate.validatePassword(password).then(isValid => {
+            if (isValid) {
+              setIsPasswordError(false);
+            } else {
+              setIsPasswordError(true);
+              formError = true;        
+            }
+            return("PVALID RES")
+          })
+          .then(result => {
+            if (formError) {
+              setIsErrorHeader("Unable to Sign Up");
+              setIsErrorMessage("Please check the fields in red and try again.");
+              setIsError(true);
+              return;
+            } else {
+              console.log("IMPORTANT",formError, result);
+              // createUser(formData);
+            }
+        
+          })
+          .catch(error => {
+            setIsPasswordError(true);
+            formError = true;
+          });
+      })
+      
       })
       .catch(error => {
         // TODO: Deal with the error
@@ -123,51 +198,6 @@ const SignupRequiredForm = props => {
       setIsEmailError(true);
       formError = true;
     }
-  
-    if(password.length < 6) {
-      setIsPasswordError(true);
-      formError = true;
-    } else {
-      setIsPasswordError(false);
-    }
-
-    if(formError)
-      {
-        setIsErrorHeader("Unable to Sign Up");
-        setIsErrorMessage("Please check the fields in red and try again.");
-        setIsError(true);
-        return;
-      }
-
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    }).then(response => {
-      if(!response.ok) {
-        throw new Error ("Network response was not ok.");
-      }
-      return response.json();
-    }).then(data => {
-      if(data.token) {
-        localStorage.setItem("user_token", JSON.stringify(data.token));
-        setIsAuth(data.authenticated);
-        setAuthTokens(data.token);
-        setRedirectURL("/onboarding/profile")
-        setDoRedirect(true);
-      } else {
-        setIsAuth(false);
-        setAuthTokens("");
-        console.log("signupRequiredForm.js ~142 - ERROR");
-      }
-    }).catch(error => {
-      // Set isError to true
-      setIsAuth(false);
-      setAuthTokens("");
-      console.log("signupRequiredForm.js ~148 - ERROR:\n", error);
-    });
   }
 
   return(
@@ -218,7 +248,7 @@ const SignupRequiredForm = props => {
             />
             }
             header="Password Requirements"
-            content={ListTest}
+            content={PasswordRequirements}
             on="focus"
           />
           <Button
