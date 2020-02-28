@@ -23,6 +23,19 @@ exports.create_user = (req, res) => {
     locationRes.json().then(locationRes => {
       const location = locationRes.results[0].locations[0];
       const { adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK"} = location;
+
+      // TODO: At some point fix this and the front end to flag all applicable errors rather than just bailing if the email is invalid
+      checkEmail(email)
+        .then(result => {
+          if (!result) {
+            res.json({ error: "IVE", message: "Invalid Email Address", status: 500 });
+            return;
+          } 
+        })
+        .catch(error => {
+          res.json({ error: "IVE", message: "Invalid Email Address", extra: error, status: 500 });
+        });
+
       passwordValidate.validatePassword(password).then(isValid => {
         if (isValid) {
           bcrypt.newPass(password).then(pwdRes => {
@@ -450,4 +463,17 @@ exports.reset_user_password = (req, res) => {
     .catch(error => {
       res.json({ error });
     });
+};
+
+// Check for MX record
+
+const checkEmail = async email => {
+  const expression = /.+@.+\..+/i;
+  if(expression.test(String(email).toLowerCase())) {
+    const result = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/check-mx/${email}`);
+    const data = await result.json();
+    const { mxExists } = data;
+
+    return mxExists ? true : false;
+  }
 };
