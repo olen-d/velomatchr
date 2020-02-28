@@ -107,9 +107,9 @@ exports.create_user = (req, res) => {
                       error: error
                     })
                   });
-                }).catch(err => {
-                  console.log("usersController.js ERROR:\n",err);
-                  res.status(500).json({ error: err });
+                }).catch(error => {
+                  // Database error
+                  res.json({ error });
                 });
               } else {
                 res.status(500).json({ error: "userController ~100" });

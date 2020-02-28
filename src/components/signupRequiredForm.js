@@ -96,10 +96,22 @@ const SignupRequiredForm = props => {
       },
       body: JSON.stringify(formData)
     }).then(response => {
-      if (!response.ok) {
-        throw new Error ("Network response was not ok.");
-      }
-      return response.json();
+      response.json().then(response => {
+        if (response.error) {
+
+          // There was a database issue
+          if(response.error.errors) {
+            response.error.errors.forEach(e => {
+              if (e.validatorKey === "isEmail") {
+                setIsEmailError(true);
+                formError = true;
+              }
+            });
+          }
+        }
+      });
+
+      return response;
     }).then(data => {
       if (data.error) {
         switch (data.error) {
