@@ -391,17 +391,41 @@ exports.update_profile_required = (req, res) => {
   const { userId: id, fullName, gender } = req.body;
   const [ firstName, ...remainingNames ] = fullName.split(" ");
   const lastName = remainingNames.join(" ");
+  const errors = [];
 
-  User.update(
-    { firstName, lastName, gender },
-    { where: { id }}
-  )
-  .then(data => {
-    res.json(data);
-  })
-  .catch(err => {
-    res.status(500).json({error: err});
-  })
+  const checkName = (firstName, lastName) => {
+    if(firstName.length < 1 || lastName.length < 1) {
+      errors.push({error: "IVN", message: "Invalid First or Last Name", status: 500});
+      return false;
+    }
+    return true;
+  };
+
+  const checkGender = gender => {
+    if (gender === "default") {
+      errors.push({error: "IVG", message: "Invalid Gender", status: 500});
+      return false;
+    }
+    return true;
+  };
+
+  const isValidName = checkName(firstName, lastName);
+  const isValidGender = checkGender(gender);
+
+  if (isValidName && isValidGender) {
+    User.update(
+      { firstName, lastName, gender },
+      { where: { id }}
+    )
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      res.status(500).json({error: err});
+    })
+  } else {
+    res.json({ errors });
+  }
 };
 
 // Non-CRUD Business Logic
