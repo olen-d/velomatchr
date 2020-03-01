@@ -180,7 +180,6 @@ const SignupRequiredForm = props => {
     await checkEmail();
     const isValid = await passwordValidate.validatePassword(password);
     if (isValid) {
-
       setIsPasswordError(false);
     } else {
       setIsPasswordError(true);

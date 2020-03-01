@@ -82,9 +82,21 @@ const ProfileRequiredForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      if(submitRedirect) {
-        setRedirectURL(submitRedirectURL);
-        setDoRedirect(true);
+      if (data.errors) {
+        const { errors } = data;
+        errors.forEach(e => {
+          if(e["error"] === "IVN") {
+            setIsFullNameError(true);
+          }
+          if(e["error"] === "IVG") {
+            setIsGenderError(true);
+          }
+        }); 
+      } else {
+        if(submitRedirect) {
+          setRedirectURL(submitRedirectURL);
+          setDoRedirect(true);
+        }
       }
     }).catch(error => {
       return ({
@@ -202,5 +214,5 @@ ProfileRequiredForm.propTypes = {
   submitRedirect: PropTypes.bool,
   submitRedirectURL: PropTypes.string
 }
-// colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL
+
 export default ProfileRequiredForm;
