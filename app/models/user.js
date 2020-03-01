@@ -9,18 +9,24 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
       validate: {
         len: [1]
       }
     },
     firstName: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
+      validate: {
+        len: [1]
+      }
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
+      validate: {
+        len: [1]
+      }
     },
     email: {
       type: DataTypes.STRING,
@@ -47,7 +53,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     gender: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
+      validate: {
+        len: [1]
+      }
     },
     latitude: {
       type: DataTypes.DECIMAL(10,8),
