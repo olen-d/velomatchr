@@ -64,22 +64,20 @@ const SurveyForm = props => {
     });
 
     // Form validation
-    let formError = false;
-    setValidate(true);
-    Object.entries(formData).forEach(([key, value]) => {
-      if (!value) {
-        formError = true;
-        return;
-      }
-    });
-
-    if(formError)
-    {
+    const showFormError = () => {
       setIsErrorHeader("Unable to Submit Survey");
       setIsErrorMessage("Please choose an answer for the questions in red and try again.");
       setIsError(true);
       return;
-    }
+    };
+
+    setValidate(true);
+    Object.values(formData).forEach(value => {
+      if (!value) {
+        showFormError();
+        return;
+      }
+    });
 
     fetch(`${process.env.REACT_APP_API_URL}/api/survey/submit`, {
       method: "post",
@@ -90,24 +88,29 @@ const SurveyForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      // Hit the API route to calculate matches...
-      fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ userId })
-      }).then(response => {
-        return response.json();
-      }).then(data => {
-        if(data && submitRedirect) {
-          setRedirectURL(submitRedirectURL);
-          setDoRedirect(true);
-        }
-      }).catch(err => {
-        console.log("AuthApp.js ~ 70 Error:\n", err);
-        // Do something about the err
-      });
+      if (data.errors) {
+        setValidate(true);
+        showFormError();
+      } else {
+        // Hit the API route to calculate matches...
+        fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ userId })
+        }).then(response => {
+          return response.json();
+        }).then(data => {
+          if(data && submitRedirect) {
+            setRedirectURL(submitRedirectURL);
+            setDoRedirect(true);
+          }
+        }).catch(err => {
+          console.log("AuthApp.js ~ 112 Error:\n", err);
+          // Do something about the err
+        });
+      }
     }).catch(error => {
       return ({
         errorCode: 500,
@@ -149,7 +152,6 @@ const SurveyForm = props => {
                 id={question.id}
                 number={question.number}
                 text={question.text}
-                error={false}
                 answer={answers}
                 validate={validate}
                 onChange={setAnswerState.bind(this)}
