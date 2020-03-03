@@ -9,20 +9,34 @@ const Op = Sequelize.Op;
 exports.update_survey_response = (req, res) => {
   const formData = req.body;
   const userId = formData.userId;
+  const errors = [];
 
   delete formData.userId;
 
-  const answers = Object.values(formData);
+  const checkSurveyAnswers = () => {
+    Object.entries(formData).forEach(([key, value]) => {
+      if (!value) {
+        errors.push({error: "IVQ", message: "Invalid Question", key, status: 500});
+      }
+    });
+    return errors.length > 0 ? false : true;
+  }
 
-  Answer.upsert({
-    userId: userId,
-    answers: answers.join()
-  }).then(newAnswer => {
-    res.json(newAnswer);
-  })
-  .catch(err => {
-    res.status(500).json({error: err});
-  });
+  if (checkSurveyAnswers()) {
+    const answers = Object.values(formData);
+
+    Answer.upsert({
+      userId: userId,
+      answers: answers.join()
+    }).then(newAnswer => {
+      res.json(newAnswer);
+    })
+    .catch(err => {
+      res.status(500).json({error: err});
+    });
+  } else {
+    res.json({ errors });
+  }
 };
 
 exports.read_survey_response = (req, res) => {
