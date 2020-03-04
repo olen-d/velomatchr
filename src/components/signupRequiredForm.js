@@ -95,52 +95,45 @@ const SignupRequiredForm = props => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(formData)
-    }).then(response => {
-      response.json().then(response => {
-        if (response.error) {
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.errors) {
 
-          // There was a database issue
-          if(response.error.errors) {
-            response.error.errors.forEach(e => {
-              if (e.validatorKey === "isEmail") {
-                setIsEmailError(true);
-                formError = true;
-              }
-            });
-          }
-        }
-      });
-
-      return response;
-    }).then(data => {
-      if (data.error) {
-        switch (data.error) {
-          case "IVE":
+        // There was a validation issue
+        const { errors } = data;
+        errors.forEach(e => {
+          if (e["error"] === "IVE") {
             setIsEmailError(true);
-            break;
-          case "IVP":
+            formError = true;
+          } else {
+            setIsEmailError(false);
+          }
+          if (e["error"] === "IVP") {
             setIsPasswordError(true);
-            break;
-          default:
-            break;
-        }
-      }
-      if (data.token) {
-        localStorage.setItem("user_token", JSON.stringify(data.token));
-        setIsAuth(data.authenticated);
-        setAuthTokens(data.token);
-        setRedirectURL("/onboarding/profile")
-        setDoRedirect(true);
+            formError = true;
+          } else {
+            setIsPasswordError(false);
+          }
+        });
       } else {
-        setIsAuth(false);
-        setAuthTokens("");
-        console.log("signupRequiredForm.js ~125 - ERROR: Missing Token");
+        if (data.token) {
+          localStorage.setItem("user_token", JSON.stringify(data.token));
+          setIsAuth(data.authenticated);
+          setAuthTokens(data.token);
+          setRedirectURL("/onboarding/profile")
+          setDoRedirect(true);
+        } else {
+          setIsAuth(false);
+          setAuthTokens("");
+          console.log("signupRequiredForm.js ~129 - ERROR: Missing Token");
+        }          
       }
     }).catch(error => {
       // Set isError to true
       setIsAuth(false);
       setAuthTokens("");
-      console.log("signupRequiredForm.js ~131 - ERROR:\n", error);
+      console.log("signupRequiredForm.js ~136 - ERROR:\n", error);
     });      
   }
   

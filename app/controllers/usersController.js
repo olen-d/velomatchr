@@ -18,6 +18,7 @@ const reverseGeocode = require("../helpers/reverse-geocode");
 // Create and Create/Update Modules
 exports.create_user = (req, res) => {
   const { email, password, latitude, longitude } = req.body;
+  const errors = [];
 
   reverseGeocode.reverseGeocode(latitude, longitude).then(locationRes => {
     locationRes.json().then(locationRes => {
@@ -28,12 +29,13 @@ exports.create_user = (req, res) => {
       checkEmail(email)
         .then(result => {
           if (!result) {
-            res.json({ error: "IVE", message: "Invalid Email Address", status: 500 });
-            return;
+            errors.push({ error: "IVE", message: "Invalid Email Address", status: 500 });
+            res.json({ errors })
           } 
         })
         .catch(error => {
-          res.json({ error: "IVE", message: "Invalid Email Address", extra: error, status: 500 });
+          errors.push({ error: "IVE", message: "Invalid Email Address", extra: error, status: 500 });
+          res.json({ errors })
         });
 
       passwordValidate.validatePassword(password).then(isValid => {
@@ -97,7 +99,7 @@ exports.create_user = (req, res) => {
                           });
                         });
                     } else {
-                      console.log("\n\nusersController.js ~111 ERROR:", response);
+                      console.log("\n\nusersController.js ~102 ERROR:", response);
                       // TODO, parse response.error and provide a more useful error message
                     }
                   }).catch(error => {
@@ -112,23 +114,25 @@ exports.create_user = (req, res) => {
                   res.json({ error });
                 });
               } else {
-                res.status(500).json({ error: "userController ~100" });
+                res.status(500).json({ error: "userController ~115" });
               }
             })
             .catch(error => {
               res.json({ error })
             });
         } else {
-          res.json({ error: "IVP", message: "Invalid Password", status: 500 });
+          errors.push({ error: "IVP", message: "Invalid Password", status: 500 });
+          res.json({ errors });
         }
       })
       .catch(error => {
-        res.json({ error, message: "Invalid Password", status: 500 });
+        errors.push({ error, message: "Invalid Password", status: 500 });
+        res.json({ errors });
       });
     })
     .catch(err => {
       // TODO: do something with the error
-      console.log("ERROR - usersController.js ~ 142", err);
+      console.log("ERROR - usersController.js ~ 135", err);
     });
   })
   .catch(error => {
