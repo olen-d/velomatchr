@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+
 import "./styles.css";
 
 import {
@@ -18,7 +20,7 @@ const red = {
 }
 
 const SurveyQuestion = props => {
-  const {answer, id, number, onChange, text, validate } = props;
+  const { answer, id, number, onChange, text, validate } = props;
 
   const [isError, setIsError] = useState(false);
   const [itemTextColor, setItemTextColor] = useState(grey);
@@ -73,6 +75,24 @@ const SurveyQuestion = props => {
       </ItemContent>
     </Item>
   );
+}
+
+SurveyQuestion.defaultProps = {
+  answer: [],
+  id: 0,
+  number: 0,
+  onChange: null,
+  text: "No question provided.",
+  validate: false
+}
+
+SurveyQuestion.propTypes = {
+  answer: PropTypes.array,
+  id: PropTypes.number,
+  number: PropTypes.number,
+  onChange: PropTypes.func,
+  text: PropTypes.string,
+  validate: PropTypes.bool
 }
 
 export default SurveyQuestion;
