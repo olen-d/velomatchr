@@ -20,10 +20,9 @@ import MatchPreferences from "./../components/matchPreferences";
 const Matches = ({ match }) => {
   const MatchLists = () => {
     const [matches, setMatches] = useState({ error: null, matchesResult: [], isLoading: false });
-    const [matchesUpdated, setMatchesUpdated] = useState(false);
 
     return(
-      <MatchesContext.Provider value={{matches, setMatches, matchesUpdated, setMatchesUpdated}}>
+      <MatchesContext.Provider value={{matches, setMatches}}>
         <Grid.Row>
           <Grid.Column width={4}>
             &nbsp;
