@@ -21,7 +21,7 @@ import auth from "./auth";
 
   // Get items from context
   const { authTokens } = useAuth();
-  const { matches, setMatches, matchesUpdated, setMatchesUpdated } = useMatches();
+  const { matches, setMatches } = useMatches();
 
   const userInfo = auth.getUserInfo(authTokens);
 
@@ -81,25 +81,28 @@ import auth from "./auth";
   }, [setMatches, userId]);
 
   useEffect(() => {
-    matchesUpdated ? setMatchesUpdated(false) : setMatchesUpdated(true);
-
     const { error, matchesResult } = matches;
 
     if(error) {
       // TODO: Do something about the error
     } else {
       if(Array.isArray(matchesResult) && matchesResult.length) {
-        let filteredMatches;
-  
-        if(status === 0 || status === 2) {
+        let filteredMatches = [];
+
+        if (status === 0) {
           filteredMatches = matchesResult.filter(
-            match => match.status === status
+            match => match.status === status && match.matchScore < 20
           );
-        } else if(status === 1) {
+
+        } else if (status === 1) {
           filteredMatches = matchesResult.filter(
-            match => match.status === status && match.actionUserId !== userId
+            match => match.status === status && match.actionUserId !== userId && match.matchScore < 20
           );
           setNoMatches("No buddy requests were found. ");
+        } else if (status === 2) {
+          filteredMatches = matchesResult.filter(
+            match => match.status === status 
+          );
         }
         switch(status) {
           case 0:
@@ -115,12 +118,13 @@ import auth from "./auth";
             setNoMatches("No potential matches were found. ");
             break;
         }
-        setMatchesFilteredByStatus(filteredMatches);
+        const returnedMatches = filteredMatches.length > 10 && status !== 2 ? filteredMatches.slice(0, 10) : filteredMatches;
+        setMatchesFilteredByStatus(returnedMatches);
       };
     }
-  }, [matches, matchesUpdated, setMatchesUpdated, status, userId]);
+  }, [matches, status, userId]);
 
-  if(matchesFilteredByStatus.length === 0)
+  if (matchesFilteredByStatus.length === 0)
   {
     return(
       <div className="no-matches-found">
@@ -128,7 +132,7 @@ import auth from "./auth";
       </div>
     )
   } else {
-    if(matches.isLoading) {
+    if (matches.isLoading) {
       return(
         <div>
           Loading matches..
