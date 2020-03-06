@@ -26,7 +26,7 @@ import {
     rightBtnValue
   } = props;
   
-  const { matches, setMatches, matchesUpdated, setMatchesUpdated } = useMatches();
+  const { matches, setMatches } = useMatches();
 
   let pl = null;
 
@@ -69,7 +69,6 @@ import {
             // Change the status as appropriate
             matchesResult[addresseeIndex].status = status
             setMatches({ matchesResult });
-            setMatchesUpdated(!matchesUpdated); // Dirty hack to trigger a rerender, since React uses Object.is which doesn't work on the matches array
           }
       }).catch(error => {
           setIsError(true);

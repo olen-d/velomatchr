@@ -82,6 +82,7 @@ import auth from "./auth";
 
   useEffect(() => {
     const { error, matchesResult } = matches;
+    let mounted = true;
 
     if(error) {
       // TODO: Do something about the error
@@ -119,9 +120,12 @@ import auth from "./auth";
             break;
         }
         const returnedMatches = filteredMatches.length > 10 && status !== 2 ? filteredMatches.slice(0, 10) : filteredMatches;
-        setMatchesFilteredByStatus(returnedMatches);
+        if (mounted) {
+          setMatchesFilteredByStatus(returnedMatches);
+        }
       };
     }
+    return ()=> mounted = false;
   }, [matches, status, userId]);
 
   if (matchesFilteredByStatus.length === 0)
