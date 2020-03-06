@@ -151,11 +151,14 @@ import auth from "./auth";
                 requesterId={userId}
                 addresseeId={match.addressee.id}
                 firstName={match.addressee.firstName}
-                lastName={match.addressee.lastName}
+                lastName={match.addressee.lastName.substring(0,1) + "."}
                 photoLink={match.addressee.photoLink}
                 city={match.addressee.city}
                 stateCode={match.addressee.stateCode}
-                createdAt={match.addressee.createdAt}
+                createdAt={new Intl.DateTimeFormat("en-US", {
+                  year: "numeric",
+                  month: "long"
+                }).format(new Date(match.addressee.createdAt))}
                 leftBtnIcon={leftBtnIcon}
                 leftBtnContent={leftBtnContent}
                 leftBtnAction={leftBtnAction}
