@@ -1,5 +1,6 @@
 const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 // Models
 const { EmailVerification, MatchPref, User } = require("../models");
@@ -148,12 +149,24 @@ exports.read_one_email_verification = (req, res) => {
     where: {
       userId,
       verificationCode
+      // createdAt: {
+      //   [Op.gt]: new Date(Date.now() - (24 * 60 * 60 * 1000))
+      // }
     },
     attributes: { exclude: ["verificationCode"]}
   })
   .then(data => {
-    // TODO: Increment and update the attempts field
-    res.send({ data });
+    // Check to make sure the code hasn't expired
+    const expiration = new Date(Date.now() - (24 * 60 * 60 * 1000));
+    const createdAt = new Date(data.createdAt);
+    if (createdAt < expiration) {
+      res.send({ error: "expired"});
+    } else {
+      // Verification was successful
+      console.log("\n\n", data, "\n\n\n");
+      // TODO: Increment and update the attempts field
+      res.send({ data });
+    }
   })
   .catch(error => {
     // TODO: Deal with the error
