@@ -1,6 +1,5 @@
 const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
-const Op = Sequelize.Op;
 
 // Models
 const { EmailVerification, MatchPref, User } = require("../models");
@@ -59,34 +58,16 @@ exports.create_user = (req, res) => {
                 country: "blank",
                 countryCode
               }).then(user => {
-                const newCode = adr.newRandomCode(6);
-                // Add the new code and userId to the database
-                EmailVerification.create({
-                  userId: user.id,
-                  verificationCode: newCode,
-                  attempts: 0
-                })
-                .then(data => {
-                  // TODO -figure out what to do here
-                })
-                .catch(error => {
-                  // TODO - return some sort of useful error
-                });
-                // TODO - if the code isn't unique, generate a new one
                 const formData = {
-                  fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
-                  toAddress: email, 
-                  subject: "Confirm Your Email Address", 
-                  message: `<p>Almost there! Please confirm your email address by entering the following code: <b>${newCode}</b></p>`
+                  email,
+                  userId: user.id
                 }
-                fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+                fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
                   method: "post",
                   headers: {
                     "Content-Type": "application/json"
                   },
                     body: JSON.stringify(formData)
-                  }).then(response => {
-                    return response.json();
                   }).then(response => {
                     if (!response.error) {
                       jwt.sign(
@@ -149,9 +130,6 @@ exports.read_one_email_verification = (req, res) => {
     where: {
       userId,
       verificationCode
-      // createdAt: {
-      //   [Op.gt]: new Date(Date.now() - (24 * 60 * 60 * 1000))
-      // }
     },
     attributes: { exclude: ["verificationCode"]}
   })
@@ -445,7 +423,53 @@ exports.update_profile_required = (req, res) => {
   }
 };
 
+//
 // Non-CRUD Business Logic
+//
+
+// Send Email Verification Code
+exports.send_email_verification_code = (req, res) => {
+  const { email, userId } = req.body;
+
+  const newCode = adr.newRandomCode(6);
+
+  // Add the new code and userId to the database
+  EmailVerification.create({
+    userId,
+    verificationCode: newCode,
+    attempts: 0
+  })
+  .then(data => {
+    // TODO -figure out what to do here
+  })
+  .catch(error => {
+    // TODO - return some sort of useful error
+  });
+  // TODO - if the code isn't unique, generate a new one
+  // TODO - if nothing was entered in the database, stop and return an error, don't send a bogus confirmation email
+  const formData = {
+    fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
+    toAddress: email, 
+    subject: "Confirm Your Email Address", 
+    message: `<p>Almost there! Please confirm your email address by entering the following code: <b>${newCode}</b></p>`
+  }
+  fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(response => {
+    if (!response.error) {
+      res.json(response);
+    }
+  })
+  .catch(error => {
+    res.json(error)
+  });
+}
+
 // Password Reset
 
 exports.reset_user_password = (req, res) => {

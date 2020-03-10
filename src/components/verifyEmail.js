@@ -15,6 +15,16 @@ import {
 
 import ErrorContainer from "./errorContainer";
 
+const resendStyle = {
+  background: "none",
+  marginTop: "1.25rem",
+  marginBottom: "0.5rem",
+  marginLeft: "0rem",
+  paddingTop: "0rem",
+  paddingBottom: "0rem",
+  paddingLeft: "0rem"
+}
+
 const VerifyEmail = props => {
   const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
@@ -105,6 +115,38 @@ const VerifyEmail = props => {
     });
   }
 
+  const resendEmail = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`)
+      .then(response => {
+        return response.ok ? response.json() : setIsErrorMessage({ error: response.statusText }); 
+      })
+      .then(json => {
+        const { user: { email },} = json;
+        const formData = ({ email, userId });
+
+        fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => {
+          if(!response.ok) {
+            throw new Error ("Network response was not ok.");
+          }
+          //TODO Update the success field on resend...
+          console.log(response.json());
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    }
+
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
   return(
@@ -154,6 +196,13 @@ const VerifyEmail = props => {
           >
           </Button>
         </Form>
+        <Button
+          style={resendStyle}
+          as="a"
+          content="Resend email verification"
+          onClick={resendEmail}
+        >
+        </Button>
       </Segment>
     </Grid.Column>
   );

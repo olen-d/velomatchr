@@ -19,6 +19,7 @@ router.get("/users/password/reset/:id/:token", users_controller.read_one_user_by
 
 router.post("/users/login", users_controller.read_login);
 router.post("/users/email/verify", users_controller.read_one_email_verification);
+router.post("/users/email/send/verification", users_controller.send_email_verification_code);
 router.post("/users/password/reset", users_controller.reset_user_password);
 
 router.put("/users/password/update", users_controller.update_user_password);
