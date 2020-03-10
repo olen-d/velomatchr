@@ -116,6 +116,18 @@ const VerifyEmail = props => {
   }
 
   const resendEmail = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/verification/codes/${userId}`, {
+      method: "delete"
+    })
+    .then(response => {
+      if(!response.ok) {
+        throw new Error ("Network response was not ok.");
+      }
+    })
+    .catch(error => {
+      console.log({ error });
+    });
+
     fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`)
       .then(response => {
         return response.ok ? response.json() : setIsErrorMessage({ error: response.statusText }); 
@@ -136,7 +148,6 @@ const VerifyEmail = props => {
             throw new Error ("Network response was not ok.");
           }
           //TODO Update the success field on resend...
-          console.log(response.json());
         })
         .catch(error => {
           console.log(error);
