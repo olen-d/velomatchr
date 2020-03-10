@@ -140,8 +140,18 @@ exports.read_one_email_verification = (req, res) => {
     if (createdAt < expiration) {
       res.send({ error: "expired"});
     } else {
-      // Verification was successful
-      console.log("\n\n", data, "\n\n\n");
+      // Verification was successful, delete the record
+      fetch(`${process.env.REACT_APP_API_URL}/api/users/verification/codes/${userId}`, {
+        method: "delete"
+      })
+      .then(response => {
+        if(!response.ok) {
+          throw new Error ("Network response was not ok.");
+        }
+      })
+      .catch(error => {
+        console.log({ error });
+      });
       // TODO: Increment and update the attempts field
       res.send({ data });
     }
