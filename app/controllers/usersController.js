@@ -423,6 +423,26 @@ exports.update_profile_required = (req, res) => {
   }
 };
 
+// Delete requests
+
+exports.delete_user_email_verification_codes = (req, res) => {
+  const { userId } = req.params
+
+  EmailVerification.destroy({
+    where: { userId }
+  })
+  .then(response => {
+    if (response !== 1) {
+      res.json({ error: "notdeleted"});
+    } else {
+      res.json({ data: "The previous email verification codes were deleted successfully."});
+    }
+  })
+  .catch(error => {
+    res.json({ error });
+  })
+}
+
 //
 // Non-CRUD Business Logic
 //

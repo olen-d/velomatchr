@@ -26,4 +26,6 @@ router.put("/users/password/update", users_controller.update_user_password);
 router.put("/users/profile/required/update", users_controller.update_profile_required);
 router.put("/users/verified/update", users_controller.update_is_email_verified);
 
+router.delete("/users/verification/codes/:userId", users_controller.delete_user_email_verification_codes);
+
 module.exports = router;
