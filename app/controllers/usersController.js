@@ -138,7 +138,7 @@ exports.read_one_email_verification = (req, res) => {
     const expiration = new Date(Date.now() - (24 * 60 * 60 * 1000));
     const createdAt = new Date(data.createdAt);
     if (createdAt < expiration) {
-      res.send({ error: "expired"});
+      res.json({ error: "expired"});
     } else {
       // Verification was successful, delete the record
       fetch(`${process.env.REACT_APP_API_URL}/api/users/verification/codes/${userId}`, {
@@ -150,16 +150,26 @@ exports.read_one_email_verification = (req, res) => {
         }
       })
       .catch(error => {
-        console.log({ error });
+        res.json({ error, code: "900", message: "Verification code not deleted" });
       });
-      // TODO: Increment and update the attempts field
-      res.send({ data });
+      res.json({ data });
     }
   })
   .catch(error => {
-    // TODO: Deal with the error
-    res.send({ error });
-    // console.log(err);
+    if (userId) {
+      EmailVerification.increment(
+        "attempts",
+        { where: { userId }}
+      )
+      .then(data => {
+        res.status(200).json(data);
+      })
+      .catch(error => {
+        res.status(500).json({ error });
+      });
+    } else {
+      res.status(404).json({ error, code: "904", message: "Verification code did not match." });
+    }
   });
 };
 
