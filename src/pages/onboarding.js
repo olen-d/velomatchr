@@ -96,7 +96,7 @@ const Onboarding = ({ match }) => {
               render={(props) => 
                 <VerifyEmail
                   {...props}
-                  colWidth={"6"}
+                  colWidth={6}
                   formInstructions={"We sent a six digit code to your email address. Please enter it below to verify you have access to the account."}
                   formTitle={"Verify Your Email Address"}
                   submitBtnContent={"Verify Email"}

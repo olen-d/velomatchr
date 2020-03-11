@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 import auth from "./auth";
 
@@ -217,6 +218,24 @@ const VerifyEmail = props => {
       </Segment>
     </Grid.Column>
   );
+}
+
+VerifyEmail.defaultProps = {
+  colWidth: 6,
+  formInstructions: "We sent a six digit code to your email address. Please enter it below to verify you have access to the account.",
+  formTitle: "Verify Your Email Address",
+  submitBtnContent: "Verify Email",
+  submitRedirect: true,
+  submitRedirectURL: "/dashboard"
+}
+
+VerifyEmail.propTypes = {
+  colWidth: PropTypes.number,
+  formInstructions: PropTypes.string,
+  formTitle: PropTypes.string,
+  submitBtnContent: PropTypes.string,
+  submitRedirect: PropTypes.bool,
+  submitRedirectURL: PropTypes.string
 }
 
 export default VerifyEmail;
