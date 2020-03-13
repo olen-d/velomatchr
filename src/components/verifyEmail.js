@@ -79,9 +79,13 @@ const VerifyEmail = props => {
       return response.json();
     }).then(data => {
       if(!data.data || data.error) {
+        console.log("DATA DATA", data.data);
+        console.log("DATA ERROR", data.error);
         setIsErrorHeader("Unable to verify your email address");
         if(data.error === "expired") {
           setIsErrorMessage("The code we sent you has expird. Please click the \"Resend verification code\" link below to get a new code.");
+        } else if (data.error === "tooManyRequests") {
+          setIsErrorMessage("Cannot verify email. You've entered too many incorrect codes. Please click the \"Resend verification code\" link below to get a new code.")
         } else {
           setIsErrorMessage("Please make sure the code we sent you is entered correctly and try again.");
         }
@@ -101,6 +105,7 @@ const VerifyEmail = props => {
         })
         .then(response => {
           // TODO: Great Success!
+          console.log("RESPONSE", response)
         })
         .catch(error => {
           // TODO: Deal with the error.

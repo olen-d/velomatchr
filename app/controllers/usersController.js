@@ -128,48 +128,63 @@ exports.read_one_email_verification = (req, res) => {
 
   EmailVerification.findOne({
     where: {
-      userId,
-      verificationCode
+      userId
     },
-    attributes: { exclude: ["verificationCode"]}
+    attributes: ["attempts"]
   })
   .then(data => {
-    // Check to make sure the code hasn't expired
-    const expiration = new Date(Date.now() - (24 * 60 * 60 * 1000));
-    const createdAt = new Date(data.createdAt);
-    if (createdAt < expiration) {
-      res.json({ error: "expired"});
-    } else {
-      // Verification was successful, delete the record
-      fetch(`${process.env.REACT_APP_API_URL}/api/users/verification/codes/${userId}`, {
-        method: "delete"
+    if (data.attempts < 3) {
+      EmailVerification.findOne({
+        where: {
+          userId,
+          verificationCode
+        },
+        attributes: { exclude: ["verificationCode"]}
       })
-      .then(response => {
-        if(!response.ok) {
-          throw new Error ("Network response was not ok.");
+      .then(data => {
+        // Check to make sure the code hasn't expired
+        const expiration = new Date(Date.now() - (24 * 60 * 60 * 1000));
+        const createdAt = new Date(data.createdAt);
+        if (createdAt < expiration) {
+          res.json({ error: "expired"});
+        } else {
+          // Verification was successful, delete the record
+          fetch(`${process.env.REACT_APP_API_URL}/api/users/verification/codes/${userId}`, {
+            method: "delete"
+          })
+          .then(response => {
+            if(!response.ok) {
+              throw new Error ("Network response was not ok.");
+            }
+          })
+          .catch(error => {
+            res.json({ error, code: "900", message: "Verification code not deleted" });
+          });
+          res.json({ data });
         }
       })
       .catch(error => {
-        res.json({ error, code: "900", message: "Verification code not deleted" });
+        if (userId) {
+          EmailVerification.increment(
+            "attempts",
+            { where: { userId }}
+          )
+          .then(data => {
+            res.status(200).json({});
+          })
+          .catch(error => {
+            res.status(400).json({ error, code: "900", message: "Verification attempts not updated." });
+          });
+        } else {
+          res.status(404).json({ error, code: "904", message: "Verification code did not match." });
+        }
       });
-      res.json({ data });
+    } else {
+      res.json({ error: "tooManyRequests" });
     }
   })
   .catch(error => {
-    if (userId) {
-      EmailVerification.increment(
-        "attempts",
-        { where: { userId }}
-      )
-      .then(data => {
-        res.status(200).json(data);
-      })
-      .catch(error => {
-        res.status(500).json({ error });
-      });
-    } else {
-      res.status(404).json({ error, code: "904", message: "Verification code did not match." });
-    }
+    res.status(404).json({ error, code: "904", message: "No user was found." });
   });
 };
 
