@@ -147,7 +147,7 @@ exports.read_one_email_verification = (req, res) => {
         const createdAt = new Date(data.createdAt);
         if (createdAt < expiration) {
           // TODO: Delete the record
-          res.json({ error: "expired"});
+          res.status(410).json({ error: "Gone", code: "910", message: "The verification code has expired. "});
         } else {
           // Verification was successful, delete the record
           fetch(`${process.env.REACT_APP_API_URL}/api/users/verification/codes/${userId}`, {
@@ -171,21 +171,21 @@ exports.read_one_email_verification = (req, res) => {
             { where: { userId }}
           )
           .then(data => {
-            res.status(200).json({});
+            res.status(403).json({ error: "Code Not Found", code: "903", message: "Verification code did not match." });
           })
           .catch(error => {
             res.status(400).json({ error, code: "900", message: "Verification attempts not updated." });
           });
         } else {
-          res.status(404).json({ error, code: "904", message: "Verification code did not match." });
+          res.status(403).json({ error: "Code Not Found", code: "903", message: "Verification code did not match." });
         }
       });
     } else {
-      res.json({ error: "tooManyRequests" });
+      res.status(429).json({ error: "Too Many Requests", code: "929", message: "The number of attempts to verify the email address have exceeded the limit. " });
     }
   })
   .catch(error => {
-    res.status(404).json({ error, code: "904", message: "No user was found." });
+    res.status(404).json({ error, code: "904", message: "No verification code was found. " });
   });
 };
 
