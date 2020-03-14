@@ -64,8 +64,12 @@ const VerifyEmail = props => {
         setIsErrorMessage("Please check the fields in red and try again.");
         setIsError(true);
         return;
+      } else {
+        processForm(formData);
       }
+  }
 
+  const processForm = (formData) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verify`, {
       method: "post",
       headers: {
@@ -73,21 +77,33 @@ const VerifyEmail = props => {
       },
       body: JSON.stringify(formData)
     }).then(response => {
-      if(!response.ok) {
-        throw new Error ("Network response was not ok.");
-      }
       return response.json();
     }).then(data => {
-      if(!data.data || data.error) {
-        setIsErrorHeader("Unable to verify your email address");
-        if(data.error === "expired") {
-          setIsErrorMessage("The code we sent you has expird. Please click the \"Resend verification code\" link below to get a new code.");
-        } else if (data.error === "tooManyRequests") {
-          setIsErrorMessage("Cannot verify email. You've entered too many incorrect codes. Please click the \"Resend verification code\" link below to get a new code.")
-        } else {
-          setIsErrorMessage("Please make sure the code we sent you is entered correctly and try again.");
-        }
+      if(data.error) {
+        //TODO: Add error, message to the destructuring and show them when user has admin priv
+        const { code } = data;
+        const resendMessage = "Please click the \"Resend verification code\" link below to get a new code. ";
+
         setIsError(true);
+        setIsErrorHeader("Unable to verify your email address");
+
+        switch (code) {
+          case "903":
+            setIsErrorMessage("Please make sure the code we sent you is entered correctly and try again.");
+            break;
+          case "904":
+            setIsErrorMessage("No verification code was found. " + resendMessage);
+            break;
+          case "910":
+            setIsErrorMessage("The code we sent you has expired. " + resendMessage);
+            break;
+          case "929":
+            setIsErrorMessage("You've entered too many incorrect codes. " + resendMessage);
+            break;
+          default:
+            setIsErrorMessage("Please make sure the code we sent you is entered correctly and try again.");
+            break;
+        }        
       } else {
         const formData = {
           id: userId,
@@ -214,7 +230,7 @@ const VerifyEmail = props => {
         <Button
           style={resendStyle}
           as="a"
-          content="Resend email verification"
+          content="Resend verification code"
           onClick={resendEmail}
         >
         </Button>
