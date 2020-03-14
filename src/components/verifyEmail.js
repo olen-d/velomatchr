@@ -79,8 +79,6 @@ const VerifyEmail = props => {
       return response.json();
     }).then(data => {
       if(!data.data || data.error) {
-        console.log("DATA DATA", data.data);
-        console.log("DATA ERROR", data.error);
         setIsErrorHeader("Unable to verify your email address");
         if(data.error === "expired") {
           setIsErrorMessage("The code we sent you has expird. Please click the \"Resend verification code\" link below to get a new code.");
@@ -105,7 +103,7 @@ const VerifyEmail = props => {
         })
         .then(response => {
           // TODO: Great Success!
-          console.log("RESPONSE", response)
+          // console.log("RESPONSE", response)
         })
         .catch(error => {
           // TODO: Deal with the error.
@@ -117,7 +115,7 @@ const VerifyEmail = props => {
       }
     }).catch(error => {
       // Set isError to true
-      console.log("verifyEmail.js ~72 - ERROR:\n", error);
+      console.log("verifyEmail.js ~118 - ERROR:\n", error);
     });
   }
 

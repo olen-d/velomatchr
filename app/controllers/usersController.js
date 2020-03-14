@@ -146,6 +146,7 @@ exports.read_one_email_verification = (req, res) => {
         const expiration = new Date(Date.now() - (24 * 60 * 60 * 1000));
         const createdAt = new Date(data.createdAt);
         if (createdAt < expiration) {
+          // TODO: Delete the record
           res.json({ error: "expired"});
         } else {
           // Verification was successful, delete the record
