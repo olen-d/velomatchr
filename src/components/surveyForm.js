@@ -42,6 +42,8 @@ const SurveyForm = props => {
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   // ...Rest of the State
   const [answers, setAnswers] = useState(questions);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [savedAnswers, setSavedAnswers] = useState([]);
   const [userId, setUserId] = useState(null);
   const [validate, setValidate] = useState(false);
 
@@ -121,6 +123,29 @@ const SurveyForm = props => {
   }
 
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
+
+  useEffect(() => {
+    const getUserAnswers = async () => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/survey/user/${userId}`);
+      const data = await response.json();
+      if (data) {
+        const { answers: userAnswers } = data;
+        const savedAnswers = userAnswers.split(",");
+        const initialAnswers = answers.map(answer => {
+          return {...answer, ...{selectedVal: savedAnswers[answer.id]}};
+        });
+        setSavedAnswers(initialAnswers);
+      }
+    }
+    getUserAnswers();
+  }, [answers, userId]);
+
+  useEffect(() => {
+    if (savedAnswers.length > 0 && !isInitialized) {
+      setAnswers(savedAnswers);
+      setIsInitialized(true);
+    }
+  }, [isInitialized, savedAnswers]);
 
   return(
     <>
