@@ -1,7 +1,7 @@
 import React from "react";
 import auth from "./auth";
 
-import { 
+import {
   Link, 
   NavLink,
 } from "react-router-dom";
@@ -12,6 +12,13 @@ import {
   Container,
   Menu, 
 } from 'semantic-ui-react';
+
+import NavDropdown from "./navDropdown";
+
+const matchesItems = [
+  { key: "matches", text: "All Matches", value: "/matches"},
+  { key: "preferences", text: "Preferences", value: "/matches/preferences" }
+]
 
 const NavBar = props => {
   const { setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
@@ -34,9 +41,7 @@ const NavBar = props => {
           <Menu.Item as={ NavLink } to="/survey">
             Survey
           </Menu.Item>
-          <Menu.Item as={ NavLink } to="/matches">
-            Matches
-          </Menu.Item>
+          <NavDropdown title="Matches" items={ matchesItems } />
           <Menu.Item as={ NavLink } to="/messages">
             Messages
           </Menu.Item>
@@ -48,6 +53,7 @@ const NavBar = props => {
           </Menu.Item>
         </Menu.Menu>
       </Menu>
+
     </Container>
   );
 }
