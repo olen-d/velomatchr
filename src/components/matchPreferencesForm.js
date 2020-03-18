@@ -96,6 +96,20 @@ const MatchPreferencesForm = props => {
 
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
+  useEffect(() => {
+    const getUserMatchPrefs = async () => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`);
+      const data = await response.json();
+
+      if (data && data.user && data.user.userMatchPrefs) { // Skips the destructuring if any of these are null, which would throw a type error
+        const { user: { userMatchPrefs: { distance: userDistance, gender: userGender },},} = data;
+        setDistance(userDistance);
+        setGender(userGender);
+      }
+    }
+    getUserMatchPrefs();
+  }, [userId]);
+
   return(
     <Grid.Column width={colWidth}>
       <Header 
