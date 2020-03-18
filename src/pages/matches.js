@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import { 
-  Link,
   Route,
   Switch
 } from "react-router-dom";
@@ -61,13 +60,10 @@ const Matches = ({ match }) => {
             >
               Matches
             </Header>
-            <Link to={`${match.url}/preferences`}>LINKY</Link><br />
-            <Link to={`${match.url}/preferences/signup`}>SIGNUP</Link>
           </Grid.Column>
         </Grid.Row>
           <Switch>
             <Route exact path={`${match.url}/`} component={MatchLists} />
-            <Route path={`${match.url}/preferences/:flow`} component={MatchPreferences} />
             <Route path={`${match.url}/preferences`} component={MatchPreferences} />
           </Switch>
       </Grid>

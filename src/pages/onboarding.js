@@ -54,7 +54,7 @@ const Onboarding = ({ match }) => {
               render={(props) => 
                 <MatchPreferencesForm 
                   {...props}
-                  colWidth={"6"}
+                  colWidth={6}
                   formInstructions={"Tell us a bit about who you'd like to match with."}
                   formTitle={"Match Preferences"}
                   submitBtnContent="Save and Continue"
