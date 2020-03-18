@@ -36,6 +36,7 @@ const NavDropdown = props => {
       text={title}
       options={items}
       value={newValue}
+      selectOnBlur={false}
       onClick={checkRoute}
       onChange={handleDropdown}
     />
