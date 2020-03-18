@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 import auth from "./auth";
 
@@ -198,6 +199,24 @@ const MatchPreferencesForm = props => {
     </Grid.Column>
   );
   // }
+}
+
+MatchPreferencesForm.defaultProps = {
+  colWidth: 8,
+  formInstructions: "Please tell us your preferences regarding who you'd like to match with.",
+  formTitle: "Your Match Characteristics",
+  submitBtnContent: "Update Match Preferences",
+  submitRedirect: true,
+  submitRedirectURL: "/dashboard"
+}
+
+MatchPreferencesForm.propTypes = {
+  colWidth: PropTypes.number,
+  formInstructions: PropTypes.string,
+  formTitle: PropTypes.string,
+  submitBtnContent: PropTypes.string,
+  submitRedirect: PropTypes.bool,
+  submitRedirectURL: PropTypes.string
 }
 
 export default MatchPreferencesForm;
