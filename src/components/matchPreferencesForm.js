@@ -13,13 +13,20 @@ import {
   Form,
   Grid, 
   Header,
+  Icon,
   Message,
+  Modal,
   Segment
 } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
 import ErrorContainer from "./errorContainer";
+
+const warning = {
+  color: "#d9b500"
+}
+
 
 const MatchPreferencesForm = props => {
   const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
@@ -30,6 +37,7 @@ const MatchPreferencesForm = props => {
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [isDistanceError, setIsDistanceError] = useState(false);
   const [isGenderError, setIsGenderError] = useState(false);
+
   // ...Rest of the State
   const [userId, setUserId] = useState(null);
   const [distance, setDistance] = useState("default");
@@ -41,6 +49,63 @@ const MatchPreferencesForm = props => {
   const setRedirectURL = context.setRedirectURL;
 
   const userInfo = auth.getUserInfo(token);
+
+  const ConfirmUpdateModal = () => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleOpen = () => {
+      setIsOpen(true);
+    }
+  
+    const handleClose = () => {
+      setIsOpen(false);
+    }
+
+    const handleConfirm = () => {
+      setIsOpen(false);
+      postMatchPreferences();
+    }
+
+    return(
+      <Modal
+      trigger={
+        <Button
+          disabled={distance ==="default" || gender ==="default"}
+          className="fluid"
+          type="button"
+          color="red"
+          size="large"
+          icon="check circle"
+          labelPosition="left"
+          content={submitBtnContent}
+          onClick={handleOpen}
+        >
+        </Button>
+      }     
+      open={isOpen}
+      onClose={handleClose} closeIcon>
+      <Modal.Header><span style={warning}><Icon name="exclamation triangle" />&nbsp;Update Match Preferences</span></Modal.Header>
+      <Modal.Content>
+        <Modal.Description>
+          <p>
+            Updating your match preferences will automatically delete potential matches that do not meet the new preferences. Pending and accepted match requests will not be affected.
+          </p>
+          <p>
+            Are you sure you want to update your match preferences?
+          </p>
+        </Modal.Description>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button color="grey" onClick={handleClose}>
+          <Icon name="remove" /> No
+        </Button>
+        <Button color="orange" onClick={handleConfirm}>
+          <Icon name="checkmark" /> Yes
+        </Button>
+      </Modal.Actions>
+    </Modal>
+    );
+  }
 
   const postMatchPreferences = () => {
     const formData = { 
@@ -182,18 +247,8 @@ const MatchPreferencesForm = props => {
               />
             ))}
           </Form.Input>
-          <Button
-            disabled={distance ==="default" || gender ==="default"}
-            className="fluid"
-            type="button"
-            color="red"
-            size="large"
-            icon="check circle"
-            labelPosition="left"
-            content={submitBtnContent}
-            onClick={postMatchPreferences}
-          >
-          </Button>
+
+          <ConfirmUpdateModal />
         </Form>
       </Segment>
     </Grid.Column>
