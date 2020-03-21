@@ -87,3 +87,33 @@ exports.update_user_relationship_status = (req, res) => {
     console.log("relationshipsController.js - ERROR:\n", err);
   })
 };
+
+// Delete
+exports.delete_user_relationships = (req, res) => {
+  const { userId } = req.params;
+
+  Relationship.destroy({
+    where: { 
+      [Op.and]: [
+        { status: { [Op.lt]: 2 } },
+        {
+          [Op.or]: [
+            { requesterId: userId },
+            { addresseeId: userId },
+          ]
+        }
+      ]
+    }
+  })
+  .then(response => {
+    if (response < 1) {
+      // TODO: It's totally possible no relationsips were deleted
+      res.json({ data: "No relationships were deleted." });
+    } else {
+      res.json({ data: "The previous realationships were successfully deleted." });
+    }
+  })
+  .catch(error => {
+    res.json({ error });
+  })
+};
