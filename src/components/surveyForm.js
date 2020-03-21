@@ -13,12 +13,18 @@ import {
   Button,
   Form,
   Grid,
+  Icon,
+  Modal,
   Header,
 } from "semantic-ui-react"
 
 import { useAuth } from "../context/authContext";
 
 import ErrorContainer from "./errorContainer";
+
+const warning = {
+  color: "#d9b500"
+}
 
 // Important TODO: Check to make sure the user has match preferences and set them prior to running the survey! Maybe use a modal...
 // Add the selectedVal attribute to the questions so we can keep track of which answer is selected in the state
@@ -54,6 +60,62 @@ const SurveyForm = props => {
   const setAnswerState = e => {
     const updatedAnswer = answers.map(answer => answer.id === parseInt(e.target.name) ? {...answer, ...{selectedVal: parseInt(e.target.value)}} : answer)
     setAnswers(updatedAnswer);
+  }
+
+  const ConfirmUpdateModal = () => {
+    const [isOpen, setIsOpen] = useState(false);
+  
+    const handleOpen = () => {
+      setIsOpen(true);
+    }
+  
+    const handleClose = () => {
+      setIsOpen(false);
+    }
+  
+    const handleConfirm = () => {
+      setIsOpen(false);
+      postSurveyAnswers();
+    }
+  
+    return(
+      <Modal
+      trigger={
+        <Button
+          className="fluid"
+          type="button"
+          color="red"
+          size="large"
+          icon="check circle"
+          labelPosition="left"
+          content={submitBtnContent}
+          onClick={handleOpen}
+        >
+        </Button>
+      }     
+      open={isOpen}
+      onClose={handleClose} closeIcon>
+      <Modal.Header><span style={warning}><Icon name="exclamation triangle" />&nbsp;Update Surevey Answers</span></Modal.Header>
+      <Modal.Content>
+        <Modal.Description>
+          <p>
+            Updating your survey answers will recalculate your potential matches and delete any that are no longer deemed compatible. Pending and accepted matches will not be affected.
+          </p>
+          <p>
+            Are you sure you want to update your survey answers?
+          </p>
+        </Modal.Description>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button color="grey" onClick={handleClose}>
+          <Icon name="remove" /> No
+        </Button>
+        <Button color="orange" onClick={handleConfirm}>
+          <Icon name="checkmark" /> Yes
+        </Button>
+      </Modal.Actions>
+    </Modal>
+    );
   }
 
   const postSurveyAnswers = () => {
@@ -191,17 +253,7 @@ const SurveyForm = props => {
                   ))}  
               </SurveyQuestion>
             ))}
-            <Button
-              className="fluid"
-              type="button"
-              color="red"
-              size="large"
-              icon="check circle"
-              labelPosition="left"
-              content={submitBtnContent}
-              onClick={postSurveyAnswers}
-            >
-            </Button>
+            <ConfirmUpdateModal />
           </Form>
           <ErrorContainer
             header={isErrorHeader}
