@@ -42,6 +42,7 @@ const MatchPreferencesForm = props => {
   const [userId, setUserId] = useState(null);
   const [distance, setDistance] = useState("default");
   const [gender, setGender] = useState("default");
+  const [hasMatchPreferences, setHasMatchPreferences] = useState(false);
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
@@ -54,7 +55,7 @@ const MatchPreferencesForm = props => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleOpen = () => {
-      setIsOpen(true);
+      hasMatchPreferences ? setIsOpen(true) : postMatchPreferences(); // Don't open the modal if a user doesn't have existin match preferences.
     }
   
     const handleClose = () => {
@@ -63,6 +64,17 @@ const MatchPreferencesForm = props => {
 
     const handleConfirm = () => {
       setIsOpen(false);
+      fetch(`${process.env.REACT_APP_API_URL}/api/relationships/delete/requester/id/${userId}`, {
+        method: "delete"
+      })
+      .then(async response => {
+        const response_1 = await response.json();
+        console.log(response_1);
+      })
+      .catch(error => {
+        // TODO: Deal with the error
+        console.log(error);
+      });
       postMatchPreferences();
     }
 
@@ -147,9 +159,25 @@ const MatchPreferencesForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      if(submitRedirect) {
-        setRedirectURL(submitRedirectURL);
-        setDoRedirect(true);
+      // Sequelize returns true if a record is created and false is updated. The match recalculation should only run on updates.
+      if (!data) {
+        fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ userId })
+        }).then(response => {
+          return response.json();
+        }).then(data => {
+          if(data && submitRedirect) {
+            setRedirectURL(submitRedirectURL);
+            setDoRedirect(true);
+          }
+        }).catch(err => {
+          console.log("matchPreferencesForm.js Error:\n", err);
+          // Do something about the err
+        })        
       }
     }).catch(error => {
       return ({
@@ -171,6 +199,7 @@ const MatchPreferencesForm = props => {
         const { user: { userMatchPrefs: { distance: userDistance, gender: userGender },},} = data;
         setDistance(userDistance);
         setGender(userGender);
+        setHasMatchPreferences(true);
       }
     }
     getUserMatchPrefs();
