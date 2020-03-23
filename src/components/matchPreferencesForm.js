@@ -70,6 +70,7 @@ const MatchPreferencesForm = props => {
       .then(async response => {
         const response_1 = await response.json();
         console.log(response_1);
+        // TODO: Add some sort of success message
       })
       .catch(error => {
         // TODO: Deal with the error
@@ -120,6 +121,11 @@ const MatchPreferencesForm = props => {
   }
 
   const postMatchPreferences = () => {
+    const handleRedirect = () => {
+      setRedirectURL(submitRedirectURL);
+      setDoRedirect(true);
+    }
+
     const formData = { 
       userId,
       distance,
@@ -171,13 +177,14 @@ const MatchPreferencesForm = props => {
           return response.json();
         }).then(data => {
           if(data && submitRedirect) {
-            setRedirectURL(submitRedirectURL);
-            setDoRedirect(true);
+            handleRedirect();
           }
         }).catch(err => {
           console.log("matchPreferencesForm.js Error:\n", err);
           // Do something about the err
         })        
+      } else {
+        handleRedirect();
       }
     }).catch(error => {
       return ({
