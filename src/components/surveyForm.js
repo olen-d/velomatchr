@@ -48,6 +48,7 @@ const SurveyForm = props => {
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   // ...Rest of the State
   const [answers, setAnswers] = useState(questions);
+  const [hasSavedAnswers, setHasSavedAnswers] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState([]);
   const [userId, setUserId] = useState(null);
@@ -66,7 +67,7 @@ const SurveyForm = props => {
     const [isOpen, setIsOpen] = useState(false);
   
     const handleOpen = () => {
-      setIsOpen(true);
+      hasSavedAnswers ? setIsOpen(true) : postSurveyAnswers(); // Don't open the modal if a user doesn't have existing survey answers.
     }
   
     const handleClose = () => {
@@ -196,6 +197,7 @@ const SurveyForm = props => {
         const initialAnswers = answers.map(answer => {
           return {...answer, ...{selectedVal: savedAnswers[answer.id]}};
         });
+        setHasSavedAnswers(true);
         setSavedAnswers(initialAnswers);
       }
     }
