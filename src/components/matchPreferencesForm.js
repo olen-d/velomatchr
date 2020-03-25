@@ -55,7 +55,7 @@ const MatchPreferencesForm = props => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleOpen = () => {
-      hasMatchPreferences ? setIsOpen(true) : postMatchPreferences(); // Don't open the modal if a user doesn't have existin match preferences.
+      hasMatchPreferences ? setIsOpen(true) : postMatchPreferences(); // Don't open the modal if a user doesn't have existing match preferences.
     }
   
     const handleClose = () => {
