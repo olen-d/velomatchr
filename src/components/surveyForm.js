@@ -9,13 +9,15 @@ import LikertItem from "./likertitem";
 import questions from "../models/questions.json";
 import likertItems from "../models/likertItems.json";
 
+import MatchPreferencesForm from "./matchPreferencesForm";
+
 import {
   Button,
   Form,
   Grid,
   Icon,
   Modal,
-  Header,
+  Header
 } from "semantic-ui-react"
 
 import { useAuth } from "../context/authContext";
@@ -172,27 +174,21 @@ const SurveyForm = props => {
       <Modal
         open={isOpen}
         onClose={handleClose}
-        closeIcon
+        size={"tiny"}
       >
       <Modal.Header><span style={error}><Icon name="exclamation triangle" />&nbsp;Match Preferences Required</span></Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <p>
-            Cheeseburger.
-          </p>
-          <p>
-            Are you sure you want to update your survey answers?
-          </p>
+          <MatchPreferencesForm 
+            colWidth={16}
+            formTitle={""}
+            formInstructions={"We need to know a couple of things about who you'd like to match with before you take the survey, otherwise we won't be able to find your matches."}
+            submitBtnContent={"Save and Continue"}
+            submitRedirect={true}
+            submitRedirectURL={"/survey"}
+          />
         </Modal.Description>
       </Modal.Content>
-      <Modal.Actions>
-        <Button color="grey" onClick={handleClose}>
-          <Icon name="remove" /> No
-        </Button>
-        <Button color="orange" onClick={handleSubmit}>
-          <Icon name="checkmark" /> Yes
-        </Button>
-      </Modal.Actions>
     </Modal>
     );
   }
