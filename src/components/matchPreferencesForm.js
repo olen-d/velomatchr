@@ -29,7 +29,7 @@ const warning = {
 
 
 const MatchPreferencesForm = props => {
-  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL, handleSubmit } = props;
 
   // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
@@ -165,6 +165,7 @@ const MatchPreferencesForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
+      handleSubmit(); // Closes the modal, if this component is wrapped in one.
       // Sequelize returns true if a record is created and false is updated. The match recalculation should only run on updates.
       if (!data) {
         fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
@@ -307,7 +308,8 @@ MatchPreferencesForm.propTypes = {
   formTitle: PropTypes.string,
   submitBtnContent: PropTypes.string,
   submitRedirect: PropTypes.bool,
-  submitRedirectURL: PropTypes.string
+  submitRedirectURL: PropTypes.string,
+  handleSubmit: PropTypes.func
 }
 
 export default MatchPreferencesForm;

@@ -9,24 +9,29 @@ import LikertItem from "./likertitem";
 import questions from "../models/questions.json";
 import likertItems from "../models/likertItems.json";
 
+import MatchPreferencesForm from "./matchPreferencesForm";
+
 import {
   Button,
   Form,
   Grid,
   Icon,
   Modal,
-  Header,
+  Header
 } from "semantic-ui-react"
 
 import { useAuth } from "../context/authContext";
 
 import ErrorContainer from "./errorContainer";
 
+const error = {
+  color: "#db2828"
+}
+
 const warning = {
   color: "#d9b500"
 }
 
-// Important TODO: Check to make sure the user has match preferences and set them prior to running the survey! Maybe use a modal...
 // Add the selectedVal attribute to the questions so we can keep track of which answer is selected in the state
 questions.forEach(i => {
   i["selectedVal"] = null;
@@ -48,6 +53,7 @@ const SurveyForm = props => {
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   // ...Rest of the State
   const [answers, setAnswers] = useState(questions);
+  const [hasMatchPrefs, setHasMatchPrefs] = useState(true);
   const [hasSavedAnswers, setHasSavedAnswers] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState([]);
@@ -65,7 +71,7 @@ const SurveyForm = props => {
 
   const ConfirmUpdateModal = () => {
     const [isOpen, setIsOpen] = useState(false);
-  
+    
     const handleOpen = () => {
       hasSavedAnswers ? setIsOpen(true) : postSurveyAnswers(); // Don't open the modal if a user doesn't have existing survey answers.
     }
@@ -93,22 +99,24 @@ const SurveyForm = props => {
   
     return(
       <Modal
-      trigger={
-        <Button
-          className="fluid"
-          type="button"
-          color="red"
-          size="large"
-          icon="check circle"
-          labelPosition="left"
-          content={submitBtnContent}
-          onClick={handleOpen}
-        >
-        </Button>
-      }     
-      open={isOpen}
-      onClose={handleClose} closeIcon>
-      <Modal.Header><span style={warning}><Icon name="exclamation triangle" />&nbsp;Update Surevey Answers</span></Modal.Header>
+        trigger={
+          <Button
+            className="fluid"
+            type="button"
+            color="red"
+            size="large"
+            icon="check circle"
+            labelPosition="left"
+            content={submitBtnContent}
+            onClick={handleOpen}
+          >
+          </Button>
+        }     
+        open={isOpen}
+        onClose={handleClose}
+        closeIcon
+      >
+      <Modal.Header><span style={warning}><Icon name="exclamation triangle" />&nbsp;Update Survey Answers</span></Modal.Header>
       <Modal.Content>
         <Modal.Description>
           <p>
@@ -127,6 +135,40 @@ const SurveyForm = props => {
           <Icon name="checkmark" /> Yes
         </Button>
       </Modal.Actions>
+    </Modal>
+    );
+  }
+
+  const MatchPrefsModal = props => {
+    const { isOpen } = props;
+  
+    const handleClose = () => {
+      // setIsOpen(false);
+    }
+  
+    const handleSubmit = () => {
+      setHasMatchPrefs(true);
+    }
+  
+    return(
+      <Modal
+        open={isOpen}
+        size={"tiny"}
+      >
+      <Modal.Header><span style={error}><Icon name="exclamation triangle" />&nbsp;Match Preferences Required</span></Modal.Header>
+      <Modal.Content>
+        <Modal.Description>
+          <MatchPreferencesForm 
+            colWidth={16}
+            formTitle={""}
+            formInstructions={"We need to know a couple of things about who you'd like to match with before you take the survey, otherwise we won't be able to find your matches."}
+            submitBtnContent={"Save and Continue"}
+            submitRedirect={true}
+            submitRedirectURL={"/survey"}
+            handleSubmit={handleSubmit}
+          />
+        </Modal.Description>
+      </Modal.Content>
     </Modal>
     );
   }
@@ -223,6 +265,20 @@ const SurveyForm = props => {
     }
   }, [isInitialized, savedAnswers]);
 
+  useEffect(() => {
+    const getUserMatchPrefs = async () => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`);
+      const data = await response.json();
+
+      if (userId && data.user) {
+        const { user: { userMatchPrefs }, } = data;
+
+        userMatchPrefs ? setHasMatchPrefs(true) : setHasMatchPrefs(false);
+      }
+    }
+    getUserMatchPrefs();
+  }, [userId]);
+
   return(
     <>
       <Grid.Row>
@@ -268,6 +324,7 @@ const SurveyForm = props => {
               </SurveyQuestion>
             ))}
             <ConfirmUpdateModal />
+            <MatchPrefsModal isOpen = { hasMatchPrefs ? false : true }/>
           </Form>
           <ErrorContainer
             header={isErrorHeader}
