@@ -32,7 +32,6 @@ const warning = {
   color: "#d9b500"
 }
 
-// Important TODO: Check to make sure the user has match preferences and set them prior to running the survey! Maybe use a modal...
 // Add the selectedVal attribute to the questions so we can keep track of which answer is selected in the state
 questions.forEach(i => {
   i["selectedVal"] = null;
@@ -117,7 +116,7 @@ const SurveyForm = props => {
         onClose={handleClose}
         closeIcon
       >
-      <Modal.Header><span style={warning}><Icon name="exclamation triangle" />&nbsp;Update Surevey Answers</span></Modal.Header>
+      <Modal.Header><span style={warning}><Icon name="exclamation triangle" />&nbsp;Update Survey Answers</span></Modal.Header>
       <Modal.Content>
         <Modal.Description>
           <p>
@@ -142,38 +141,18 @@ const SurveyForm = props => {
 
   const MatchPrefsModal = props => {
     const { isOpen } = props;
-    // console.log("CHEESE");
-    // console.log(hasMatchPrefs);
-    // hasMatchPrefs ? setIsOpen(false) :setIsOpen(true);
-    // const handleOpen = () => {
-    //   hasMatchPrefs ? setIsOpen(false) :setIsOpen(true);
-    // }
   
     const handleClose = () => {
       // setIsOpen(false);
     }
   
     const handleSubmit = () => {
-      // setIsOpen(false);
-      // fetch(`${process.env.REACT_APP_API_URL}/api/relationships/delete/requester/id/${userId}`, {
-      //   method: "delete"
-      // })
-      // .then(async response => {
-      //   const response_1 = await response.json();
-      //   console.log(response_1);
-      //   // TODO: Add some sort of success message
-      // })
-      // .catch(error => {
-      //   // TODO: Deal with the error
-      //   console.log(error);
-      // });
-      // postSurveyAnswers();
+      setHasMatchPrefs(true);
     }
   
     return(
       <Modal
         open={isOpen}
-        onClose={handleClose}
         size={"tiny"}
       >
       <Modal.Header><span style={error}><Icon name="exclamation triangle" />&nbsp;Match Preferences Required</span></Modal.Header>
@@ -186,6 +165,7 @@ const SurveyForm = props => {
             submitBtnContent={"Save and Continue"}
             submitRedirect={true}
             submitRedirectURL={"/survey"}
+            handleSubmit={handleSubmit}
           />
         </Modal.Description>
       </Modal.Content>
@@ -344,7 +324,7 @@ const SurveyForm = props => {
               </SurveyQuestion>
             ))}
             <ConfirmUpdateModal />
-            <MatchPrefsModal isOpen={ hasMatchPrefs ? false : true }/>
+            <MatchPrefsModal isOpen = { hasMatchPrefs ? false : true }/>
           </Form>
           <ErrorContainer
             header={isErrorHeader}
