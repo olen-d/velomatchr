@@ -27,6 +27,7 @@ const MatchPreferences = () => {
         submitBtnContent={"Update Match Preferences"}
         submitRedirect={true}
         submitRedirectURL={"/dashboard"}
+        isModal={false}
       />
     </>
   );

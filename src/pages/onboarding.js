@@ -60,6 +60,7 @@ const Onboarding = ({ match }) => {
                   submitBtnContent="Save and Continue"
                   submitRedirect={true}
                   submitRedirectURL={"/onboarding/survey"}
+                  isModal={false}
                 />
               }
             />

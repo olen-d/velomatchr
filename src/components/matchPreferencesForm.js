@@ -29,7 +29,7 @@ const warning = {
 
 
 const MatchPreferencesForm = props => {
-  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL, handleSubmit } = props;
+  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL, isModal, handleSubmit } = props;
 
   // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
@@ -165,8 +165,11 @@ const MatchPreferencesForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      handleSubmit(); // Closes the modal, if this component is wrapped in one.
-      // Sequelize returns true if a record is created and false is updated. The match recalculation should only run on updates.
+      if (isModal) {
+        handleSubmit(); // Closes the modal, if this component is wrapped in one.
+      }
+      // Sequelize returns true if a record is created and false is updated. 
+      // The match recalculation should only run on updates.
       if (!data) {
         fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
           method: "post",
@@ -299,7 +302,8 @@ MatchPreferencesForm.defaultProps = {
   formTitle: "Your Match Characteristics",
   submitBtnContent: "Update Match Preferences",
   submitRedirect: true,
-  submitRedirectURL: "/dashboard"
+  submitRedirectURL: "/dashboard",
+  isModal: false
 }
 
 MatchPreferencesForm.propTypes = {
@@ -309,6 +313,7 @@ MatchPreferencesForm.propTypes = {
   submitBtnContent: PropTypes.string,
   submitRedirect: PropTypes.bool,
   submitRedirectURL: PropTypes.string,
+  isModal: PropTypes.bool,
   handleSubmit: PropTypes.func
 }
 
