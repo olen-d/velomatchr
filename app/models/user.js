@@ -93,6 +93,10 @@ module.exports = (sequelize, DataTypes) => {
     countryCode: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    postalCode: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   },
   {

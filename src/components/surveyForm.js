@@ -142,10 +142,6 @@ const SurveyForm = props => {
   const MatchPrefsModal = props => {
     const { isOpen } = props;
   
-    const handleClose = () => {
-      // setIsOpen(false);
-    }
-  
     const handleSubmit = () => {
       setHasMatchPrefs(true);
     }
@@ -165,6 +161,7 @@ const SurveyForm = props => {
             submitBtnContent={"Save and Continue"}
             submitRedirect={true}
             submitRedirectURL={"/survey"}
+            isModal={true}
             handleSubmit={handleSubmit}
           />
         </Modal.Description>

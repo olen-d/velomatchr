@@ -23,7 +23,7 @@ exports.create_user = (req, res) => {
   reverseGeocode.reverseGeocode(latitude, longitude).then(locationRes => {
     locationRes.json().then(locationRes => {
       const location = locationRes.results[0].locations[0];
-      const { adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK"} = location;
+      const { adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000"} = location;
 
       // TODO: At some point fix this and the front end to flag all applicable errors rather than just bailing if the email is invalid
       checkEmail(email)
@@ -56,7 +56,8 @@ exports.create_user = (req, res) => {
                 state: "blank",
                 stateCode,
                 country: "blank",
-                countryCode
+                countryCode,
+                postalCode
               }).then(user => {
                 const formData = {
                   email,
