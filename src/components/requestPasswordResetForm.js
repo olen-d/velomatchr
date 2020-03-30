@@ -60,6 +60,7 @@ const ResetPasswordForm = props => {
           if(data.data) {
             setIsSuccessHeader("Please Check Your Email");
             setIsSuccessMessage("An email with a link to reset your password was successfully sent to your account.");
+            setIsError(false);
             setIsSuccess(true);
           } else {
             setIsErrorHeader("Unable to Reset Password");

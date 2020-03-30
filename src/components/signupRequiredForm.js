@@ -8,32 +8,15 @@ import {
   Form,
   Grid, 
   Header,
-  List,
   Popup,
   Segment
 } from "semantic-ui-react";
 
 import ErrorContainer from "./errorContainer";
 import MatchesNearMe from "./matchesNearMe";
+import PasswordRequirements from "./passwordRequirements";
 
 import passwordValidate from "../helpers/password-validate";
-
-const PasswordRequirements = () => (
-  <List>
-    <List.Item>
-      <List.Icon name="check" verticalAlign="middle"></List.Icon>
-      <List.Content verticalAlign="middle">At least eight characters long</List.Content>
-    </List.Item>
-    <List.Item>
-      <List.Icon name="check" verticalAlign="middle"></List.Icon>
-      <List.Content verticalAlign="middle">Upper and lowercase letters</List.Content>
-    </List.Item>
-    <List.Item>
-      <List.Icon name="check" verticalAlign="middle"></List.Icon>
-      <List.Content verticalAlign="middle">At least one number or special character</List.Content>
-    </List.Item>
-  </List>
-)
 
 const SignupRequiredForm = props => {
   const { colWidth, formTitle } = props;

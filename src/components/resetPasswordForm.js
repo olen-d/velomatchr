@@ -7,11 +7,15 @@ import {
   Grid, 
   Header,
   Message,
+  Popup,
   Segment
 } from "semantic-ui-react"
 
 import ErrorContainer from "./errorContainer";
 import SuccessContainer from "./successContainer";
+import PasswordRequirements from "./passwordRequirements";
+
+import passwordValidate from "../helpers/password-validate";
 
 const ResetPasswordForm = props => {
   const { colWidth, formTitle, token, userId } = props;
@@ -28,52 +32,74 @@ const ResetPasswordForm = props => {
   // ...Rest of the State
   const [password, setPassword] = useState("");
 
+  const updatePassword = formData => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/password/update`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+      if (data.errors) {
+        // There was a validation issue
+        const { errors } = data;
+        errors.forEach(e => {
+          if (e["error"] === "IVP") {
+            setIsPasswordError(true);
+            setIsErrorMessage("The password you entered did not meet the requirements. Please try again. ");
+            setIsError(true);
+            formError = true;
+          } else {
+            setIsError(false);
+          }
+        });
+      } else {
+        if(data.data && data.data[0] === 1) {
+          setIsSuccessHeader("Your Password was Successfully Reset");
+          setIsSuccessMessage(`You can now login using your new password.`);
+          setIsSuccess(true);
+          setIsError(false);
+          setPassword("");
+        } else {
+          setIsErrorHeader("Unable to Reset Password");
+          setIsErrorMessage("Something went terribly awry. Please try again." + JSON.stringify(data.error));
+          setIsError(true);
+        }
+      }
+    }).catch(error => {
+        setIsErrorHeader("Unable to Reset Password");
+        setIsErrorMessage("Something went wrong. Please try again.");
+        setIsError(true);
+    });
+  }
+
   const postReset = () => {
+    validateForm();
+  }
+
+  // Form Validation
+  let formError = false;
+
+  const validateForm = async () => {
     const formData = { password, token, userId }
 
-    // Form Validation
-    let formError = false;
-
-    if(password.length < 6) {
-      setIsPasswordError(true);
-      formError = true;
-    } else {
+    const isValid = await passwordValidate.validatePassword(password);
+    if (isValid) {
       setIsPasswordError(false);
+    } else {
+      setIsPasswordError(true);
+      formError = true;        
     }
 
-    if(formError)
-      {
-        setIsErrorHeader("Unable to Create New Password");
-        setIsErrorMessage("Please check the fields in red and try again.");
-        setIsError(true);
-        return;
-      } else {
-        fetch(`${process.env.REACT_APP_API_URL}/api/users/password/update`, {
-          method: "put",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(formData)
-        }).then(response => {
-          return response.json();
-        }).then(data => {
-          if(data.data && data.data[0] === 1) {
-            setIsSuccessHeader("Your Password was Successfully Reset");
-            setIsSuccessMessage(`You can now login using your new password.`);
-            setIsSuccess(true);
-            setPassword("");
-          } else {
-            setIsErrorHeader("Unable to Reset Password");
-            console.log(data.data);
-            console.log(data.error);
-            setIsErrorMessage("Something went terribly awry. Please try again." + JSON.stringify(data.error));
-            setIsError(true);
-          }
-        }).catch(error => {
-            setIsErrorHeader("Unable to Reset Password");
-            setIsErrorMessage("Something went wrong. Please try again.");
-            setIsError(true);
-        });
+    if(formError) {
+      setIsErrorHeader("Unable to Reset Password");
+      setIsErrorMessage("Please check the fields in red and try again.");
+      setIsError(true);
+      return;
+    } else {
+      updatePassword(formData);
     }
   }
 
@@ -98,25 +124,32 @@ const ResetPasswordForm = props => {
       />
       <Message>
         <Message.Content>
-          Enter your new password below. Passwords must be at least eight characters long and contain buth upper and lowercase letters and one or more numbers.
+          Enter your new password below.
         </Message.Content>
       </Message>
       <Segment>
         <Form
           size="large"
         >
-          <Form.Input
-            className="fluid"
-            icon="lock"
-            iconPosition="left"
-            name="password"
-            value={password}
-            placeholder="New Password"
-            type="password"
-            error={isPasswordError}
-            onChange={e => {
-              setPassword(e.target.value)
-            }}
+          <Popup
+            trigger={
+              <Form.Input
+                className="fluid"
+                icon="lock"
+                iconPosition="left"
+                name="password"
+                value={password}
+                placeholder="New Password"
+                type="password"
+                error={isPasswordError}
+                onChange={e => {
+                  setPassword(e.target.value)
+                }}
+              />
+            }
+            header="Password Requirements"
+            content={PasswordRequirements}
+            on="focus"
           />
           <Button
             disabled={!password}
