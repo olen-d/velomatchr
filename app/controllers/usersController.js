@@ -82,7 +82,7 @@ exports.create_user = (req, res) => {
                           });
                         });
                     } else {
-                      console.log("\n\nusersController.js ~102 ERROR:", response);
+                      console.log("\n\nusersController.js ~85 ERROR:", response);
                       // TODO, parse response.error and provide a more useful error message
                     }
                   }).catch(error => {
@@ -97,7 +97,7 @@ exports.create_user = (req, res) => {
                   res.json({ error });
                 });
               } else {
-                res.status(500).json({ error: "userController ~115" });
+                res.status(500).json({ error: "userController ~100" });
               }
             })
             .catch(error => {
@@ -371,6 +371,7 @@ exports.update_is_email_verified = (req, res) => {
 
 exports.update_user_password = (req, res) => {
   const { password: newPassword, token, userId: id, } = req.body;
+  const errors = [];
 
   User.findOne({
     where: {
@@ -387,28 +388,39 @@ exports.update_user_password = (req, res) => {
       if (error) {
         res.json({ error });
       } else if (decoded) {
-        bcrypt.newPass(newPassword).then(pwdRes => {
-          if(pwdRes.status === 200) {    
-            User.update(
-              { password: pwdRes.passwordHash },
-              { where: {id }}
-            ).then(data => {
-              if (data[0] === 1) {
-                // Send password has been reset email
-                // TODO: fix this so it doesn't crash if the passwordUpdatedEmail craps out
-                // TODO: log somewhere if the email fails...
-                passwordUpdatedEmail.send(email, firstName, lastName);
+        passwordValidate.validatePassword(newPassword).then(isValid => {
+          if (isValid) {
+            bcrypt.newPass(newPassword).then(pwdRes => {
+              if(pwdRes.status === 200) {    
+                User.update(
+                  { password: pwdRes.passwordHash },
+                  { where: {id }}
+                ).then(data => {
+                  if (data[0] === 1) {
+                    // Send password has been reset email
+                    // TODO: fix this so it doesn't crash if the passwordUpdatedEmail craps out
+                    // TODO: log somewhere if the email fails...
+                    passwordUpdatedEmail.send(email, firstName, lastName);
+                  }
+                  res.json({ data });
+                })
+                .catch(error => {
+                  // TODO - return some sort of useful error
+                  res.json({ error });
+                });
+              } else {
+                // TODO: Throw useful error. 
+                // Unable to hash password.
               }
-              res.json({ data });
-              })
-              .catch(error => {
-                // TODO - return some sort of useful error
-                res.json({ error });
-              });
+            });
           } else {
-            // TODO: Throw useful error. 
-            // Unable to hash password.
+            // Invalid Password
+            errors.push({ error: "IVP", message: "Invalid Password", status: 500 });
+            res.json({ errors });
           }
+        }).catch(error => {
+          // TODO - return some sort of useful error
+          res.json({ error });
         });
       }
     });
