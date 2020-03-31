@@ -29,8 +29,6 @@ const LoginForm = props => {
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
-  const [isPassError, setIsPassError] = useState(false);
-  const [isUsernameError, setIsUserNameError] = useState(false);
   // ...Rest of the State
   const [pass, setPass] = useState("");
   const [username, setUsername] = useState("");
@@ -45,19 +43,6 @@ const LoginForm = props => {
 
     // Form Validation
     let formError = false;
-
-    if(pass.length < 6) {
-      setIsPassError(true);
-      formError = true;
-    } else {
-      setIsPassError(false);
-    }
-    if(username.length < 2) {
-      setIsUserNameError(true);
-      formError = true;
-    } else {
-      setIsUserNameError(false);
-    }
 
     if(formError)
       {
@@ -122,7 +107,7 @@ const LoginForm = props => {
             name="username"
             value={username}
             placeholder="Email Address"
-            error={isUsernameError}
+            error={isError}
             onChange={e => {
               setUsername(e.target.value);
             }}
@@ -135,7 +120,7 @@ const LoginForm = props => {
             value={pass}
             placeholder="Password"
             type="password"
-            error={isPassError}
+            error={isError}
             onChange={e => {
               setPass(e.target.value);
             }}
