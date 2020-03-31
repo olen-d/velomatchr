@@ -220,7 +220,7 @@ exports.read_one_user_id_by_email = (req, res) => {
     where: {
       email
     },
-    attributes: ["id", "password", "createdAt"]
+    attributes: ["id", "password", "firstName", "lastName", "createdAt"]
   })
   .then(data => {
     if(!data) {
@@ -549,7 +549,7 @@ exports.reset_user_password = (req, res) => {
       if (json.error) {
         res.json({ error: json.error })
       } else {
-        const {id, password, createdAt } = json.data;
+        const {id, password, firstName, lastName, createdAt } = json.data;
         const payload = {
           id,
           email
@@ -570,7 +570,7 @@ exports.reset_user_password = (req, res) => {
           fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
           toAddress: email, 
           subject: "Reset Your Password", 
-          message: `<p>Please reset your password using the following link: <a href=${passwordResetLink}>Reset Password</a></p>`
+          message: `<p>Hi ${firstName} ${lastName},</p><p>We received a request to reset your VeloMatchr password. If it wasn't you, don't worry, your password is safe and you can ignore this email. </p><p>To reset your password use the following link: <a href=${passwordResetLink}>Reset My Password</a>. </p><p>The password reset link will expire in one hour. </p>`
         }
         // Send the email
         fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
