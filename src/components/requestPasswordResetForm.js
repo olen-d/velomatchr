@@ -95,42 +95,46 @@ const ResetPasswordForm = props => {
         message={isSuccessMessage}
         show={isSuccess}
       />
-      <Message>
-        <Message.Content>
-          Enter your email address below and we'll email you a link with instructions to reset your password.
-        </Message.Content>
-      </Message>
-      <Segment>
-        <Form
-          size="large"
-        >
-          <Form.Input
-            className="fluid"
-            icon="envelope"
-            iconPosition="left"
-            name="email"
-            value={email}
-            placeholder="Email Address"
-            type="email"
-            error={isEmailError}
-            onChange={e => {
-              setEmail(e.target.value)
-            }}
-          />
-          <Button
-            disabled={!email}
-            className="fluid"
-            type="button"
-            color="red"
-            size="large"
-            icon="check circle"
-            labelPosition="left"
-            content="Request Password Reset"
-            onClick={postRequest}
-          >
-          </Button>
-        </Form>
-      </Segment>
+      {!isSuccess && 
+        <>
+          <Message>
+            <Message.Content>
+              Enter your email address below and we'll email you a link with instructions to reset your password.
+            </Message.Content>
+          </Message>
+          <Segment>
+            <Form
+              size="large"
+            >
+              <Form.Input
+                className="fluid"
+                icon="envelope"
+                iconPosition="left"
+                name="email"
+                value={email}
+                placeholder="Email Address"
+                type="email"
+                error={isEmailError}
+                onChange={e => {
+                  setEmail(e.target.value)
+                }}
+              />
+              <Button
+                disabled={!email}
+                className="fluid"
+                type="button"
+                color="red"
+                size="large"
+                icon="check circle"
+                labelPosition="left"
+                content="Request Password Reset"
+                onClick={postRequest}
+              >
+              </Button>
+            </Form>
+          </Segment>
+        </>
+      }
     </Grid.Column>
   );
 }
