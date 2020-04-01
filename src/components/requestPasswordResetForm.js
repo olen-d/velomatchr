@@ -59,16 +59,17 @@ const ResetPasswordForm = props => {
         }).then(data => {
           if(data.data) {
             setIsSuccessHeader("Please Check Your Email");
-            setIsSuccessMessage("An email with a link to reset your password was successfully sent to your account.");
+            setIsSuccessMessage("A message with instructions to reset your password was successfully sent to the email address you entered.");
             setIsError(false);
             setIsSuccess(true);
           } else {
-            setIsErrorHeader("Unable to Reset Password");
-            setIsErrorMessage("No accounts associated with that email address were found. Please check your email address and try again.");
+            setIsErrorHeader("Invalid Email Address");
+            setIsErrorMessage("Please check the email address you entered and try again.");
+            setIsEmailError(true);
             setIsError(true);
           }
         }).catch(error => {
-            setIsErrorHeader("Unable to Reset Password");
+            setIsErrorHeader("Something Went Terribly Awry");
             setIsErrorMessage("Please check your email address and try again.");
             setIsError(true);
         });
