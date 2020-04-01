@@ -12,6 +12,7 @@ import {
 } from "semantic-ui-react"
 
 import ErrorContainer from "./errorContainer";
+import LoginForm from "./loginForm";
 import SuccessContainer from "./successContainer";
 import PasswordRequirements from "./passwordRequirements";
 
@@ -122,49 +123,54 @@ const ResetPasswordForm = props => {
         message={isSuccessMessage}
         show={isSuccess}
       />
-      <Message>
-        <Message.Content>
-          Enter your new password below.
-        </Message.Content>
-      </Message>
-      <Segment>
-        <Form
-          size="large"
-        >
-          <Popup
-            trigger={
-              <Form.Input
-                className="fluid"
-                icon="lock"
-                iconPosition="left"
-                name="password"
-                value={password}
-                placeholder="New Password"
-                type="password"
-                error={isPasswordError}
-                onChange={e => {
-                  setPassword(e.target.value)
-                }}
+      {!isSuccess &&
+        <>
+          <Message>
+            <Message.Content>
+              Enter your new password below.
+            </Message.Content>
+          </Message>
+          <Segment>
+            <Form
+              size="large"
+            >
+              <Popup
+                trigger={
+                  <Form.Input
+                    className="fluid"
+                    icon="lock"
+                    iconPosition="left"
+                    name="password"
+                    value={password}
+                    placeholder="New Password"
+                    type="password"
+                    error={isPasswordError}
+                    onChange={e => {
+                      setPassword(e.target.value)
+                    }}
+                  />
+                }
+                header="Password Requirements"
+                content={PasswordRequirements}
+                on="focus"
               />
-            }
-            header="Password Requirements"
-            content={PasswordRequirements}
-            on="focus"
-          />
-          <Button
-            disabled={!password}
-            className="fluid"
-            type="button"
-            color="red"
-            size="large"
-            icon="check circle"
-            labelPosition="left"
-            content="Reset Password"
-            onClick={postReset}
-          >
-          </Button>
-        </Form>
-      </Segment>
+              <Button
+                disabled={!password}
+                className="fluid"
+                type="button"
+                color="red"
+                size="large"
+                icon="check circle"
+                labelPosition="left"
+                content="Reset Password"
+                onClick={postReset}
+              >
+              </Button>
+            </Form>
+          </Segment>
+        </>
+      }
+      {isSuccess && <LoginForm />}
     </Grid.Column>
   );
 }
