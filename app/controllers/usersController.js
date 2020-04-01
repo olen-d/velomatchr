@@ -547,7 +547,38 @@ exports.reset_user_password = (req, res) => {
   fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${email}`).then(data => {
     data.json().then(json =>{
       if (json.error) {
-        res.json({ error: json.error })
+        checkEmail(email)
+        .then(isValidEmail => {
+          if (!isValidEmail) {
+            res.json({ error: json.error })
+          } else {
+            const formData = {
+              fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
+              toAddress: email, 
+              subject: "Password Reset Attempted", 
+              message: `<p>We received a request to reset your VeloMatchr password. However, there is no VeloMatchr account associated with this email address. </p><p>If you have a VeloMatchr account and were expecting this email, please try again with the address you provided when signing up. </p><p>If you don't have a VeloMatchr account, please ignore this email. </p><p>Regards, </p><p>The VeloMatchr Support Team </p>`
+            }
+            // Send the email
+            fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+              method: "post",
+              headers: {
+                "Content-Type": "application/json"
+              },
+                body: JSON.stringify(formData)
+              }).then(data => {
+                return data.json();
+              }).then(json => {
+                if (!json.error) {
+                  res.json({ data: json });
+                }
+              }).catch(error => {
+                res.json({ error });
+              });
+          }
+        })
+        .catch(error => {
+          res.json({ error });
+        });
       } else {
         const {id, password, firstName, lastName, createdAt } = json.data;
         const payload = {
