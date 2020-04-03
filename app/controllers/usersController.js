@@ -190,7 +190,7 @@ exports.read_one_email_verification = (req, res) => {
   });
 };
 
-exports.read_one_user = (req, res) => {
+exports.read_one_user_by_username = (req, res) => {
   const userName = req.params.username;
 
   User.findOne({

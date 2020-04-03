@@ -109,6 +109,20 @@ const ProfileRequiredForm = props => {
 
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
+  useEffect(() => {
+    const getUserProfile = async () => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`);
+      const data = await response.json();
+
+      if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
+        const { user: { firstName, lastName, gender: userGender }, } = data;
+        setFullName(firstName + " " + lastName);
+        setGender(userGender);
+      }
+    }
+    getUserProfile();
+  }, [userId]);
+
   return(
     <Grid.Column width={colWidth}>
       <Header 
@@ -200,7 +214,7 @@ const ProfileRequiredForm = props => {
 ProfileRequiredForm.defaultProps = {
   colWidth: 6,
   formInstructions: "Only your first name and last initial will be displayed to other users. Your gender is never shown.",
-  formTitle: "Sign In",
+  formTitle: "Your Profile",
   submitBtnContent:"Update Profile",
   submitRedirect: true,
   submitRedirectURL: "/dashboard"
