@@ -12,8 +12,8 @@ const Settings = () => {
     <Container>
       <Grid stackable>
       <ProfileRequiredForm
-          colWidth="6"
-          formTitle="Create Profile"
+          colWidth={6}
+          formTitle={"My Profile"}
         />
       </Grid>
     </Container>
