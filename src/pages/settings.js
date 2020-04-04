@@ -5,16 +5,13 @@ import {
   Grid
  } from "semantic-ui-react";
 
-import ProfileRequiredForm from "../components/profileRequiredForm";
+import ProfileFullForm from "../components/profileFullForm";
 
 const Settings = () => {
   return(
     <Container>
       <Grid stackable>
-      <ProfileRequiredForm
-          colWidth={6}
-          formTitle={"My Profile"}
-        />
+        <ProfileFullForm />
       </Grid>
     </Container>
   );
