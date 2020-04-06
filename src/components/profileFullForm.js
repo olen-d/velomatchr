@@ -13,6 +13,7 @@ const ProfileFullForm = () => {
         <ProfilePhotoForm
           colWidth={8}
           formTitle={"Current Photograph"}
+          profilePhotoBtnContent={"Upload Profile Photo"}
         />
       </Grid.Row>
       <Grid.Row>
