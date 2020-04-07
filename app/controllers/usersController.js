@@ -123,6 +123,31 @@ exports.create_user = (req, res) => {
   });
 };
 
+exports.create_user_profile_photograph = (req, res) => {
+  console.log("\n\n\n file", req.file, "\n\n");
+  console.log("body:", req.body);
+  if (req.body && req.file) {
+    const { body: { userId: id }, file: { originalname, path } } = req;
+console.log("\n\nOGNAME", originalname, "\nPATH", path, "\nID", id);
+    User.update(
+      { photolink: path },
+      { where: { id }}
+    )
+    .then(data => {
+      if (data[0] === 0) {
+        return res.send({ success: false, error: "The database was not updated." })
+      } else {
+        return res.send({ success: true, originalname });
+      }
+    })
+    .catch(error => {
+      return res.status(500).json({ error });
+    });
+  } else {
+    return res.send({ success: false });
+  }
+};
+
 // Read Modules
 exports.read_one_email_verification = (req, res) => {
   const { userId, verificationCode } = req.body;

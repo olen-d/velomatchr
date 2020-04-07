@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
     cb(null, "public/images-profiles");
   }, // TODO - FIX THIS TO FILTER FOR IMAGE FILES
   filename: (req, file, cb) => {
-    cb(null, "vm" + "-" + Date.now() + "-" + file.originalname);
+    cb(null, "vm-" + Date.now() + "-" + file.originalname);
   }
 });
 
