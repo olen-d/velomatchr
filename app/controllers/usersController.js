@@ -124,13 +124,11 @@ exports.create_user = (req, res) => {
 };
 
 exports.create_user_profile_photograph = (req, res) => {
-  console.log("\n\n\n file", req.file, "\n\n");
-  console.log("body:", req.body);
   if (req.body && req.file) {
     const { body: { userId: id }, file: { originalname, path } } = req;
-console.log("\n\nOGNAME", originalname, "\nPATH", path, "\nID", id);
+    
     User.update(
-      { photolink: path },
+      { photoLink: path },
       { where: { id }}
     )
     .then(data => {

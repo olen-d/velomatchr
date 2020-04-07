@@ -13,7 +13,6 @@ const ProfilePhotoForm = props => {
   }
 
   useEffect (() => {
-    console.log("PFF", profilePhotographFile);
     if (profilePhotographFile && userId) {
       const formData = new FormData();
       formData.append("userId", userId);
@@ -28,7 +27,7 @@ const ProfilePhotoForm = props => {
         }
         return response.json();
       }).then(data => {
-        if(data) {
+        if (data) {
           console.log("DATA", data);
         } else {
           console.log("EPIC FAIL");
