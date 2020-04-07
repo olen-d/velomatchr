@@ -21,6 +21,7 @@ router.post("/users/login", users_controller.read_login);
 router.post("/users/email/verify", users_controller.read_one_email_verification);
 router.post("/users/email/send/verification", users_controller.send_email_verification_code);
 router.post("/users/password/reset", users_controller.reset_user_password);
+router.post("/users/profile/photograph/update", imageUpload, users_controller.create_user_profile_photograph);
 
 router.put("/users/password/update", users_controller.update_user_password);
 router.put("/users/profile/required/update", users_controller.update_profile_required);
