@@ -31,9 +31,11 @@ import {
   let pl = null;
 
   if(photoLink) {
-    const pla = photoLink.split("\\");
-    pla.shift();
-    pl = pla.join("/");
+    let pub = null;
+    const slash = photoLink.indexOf("/");
+
+    slash === -1 ? pub = "public\\" : pub = "public/";
+    pl = photoLink.replace(pub, "")
   }
 
   const [isError, setIsError] = useState(false);
