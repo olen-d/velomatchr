@@ -49,7 +49,7 @@ const Template = () => {
           <Route path="/onboarding" component={Onboarding} />
           <Route path="/settings" component={Settings} />
           <Route path="/survey" component={Survey} />
-          
+          <Route path="*" render={ () => "404 NOT FOUND" } />
         </Switch>
       <Footer />
     </>
