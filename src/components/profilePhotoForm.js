@@ -54,7 +54,7 @@ const ProfilePhotoForm = props => {
 
           let pub = null;
           const slash = path.indexOf("/");
-          slash === -1 ? pub = "public\\" : pub = "public/"
+          slash === -1 ? pub = "public\\" : pub = "public/";
           setPhotoLinkImage(path.replace(pub, ""));
           setIsSuccessHeader("Profile Photograph Uploaded");
           setIsSuccessMessage("\"" + originalname + "\" was successfully uploaded. ");
