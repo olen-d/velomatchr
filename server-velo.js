@@ -17,6 +17,9 @@ if (process.env.ENVIRONMENT === "dev") {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Set up the static folder
+app.use(express.static("public"));
+
 // Set up the routes
 // app.get("/api/express_backend", (req, res) => {
 //     res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
