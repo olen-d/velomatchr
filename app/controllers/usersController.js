@@ -126,7 +126,7 @@ exports.create_user = (req, res) => {
 exports.create_user_profile_photograph = (req, res) => {
   if (req.body && req.file) {
     const { body: { userId: id }, file: { originalname, path } } = req;
-    
+
     User.update(
       { photoLink: path },
       { where: { id }}
@@ -135,7 +135,7 @@ exports.create_user_profile_photograph = (req, res) => {
       if (data[0] === 0) {
         return res.send({ success: false, error: "The database was not updated." })
       } else {
-        return res.send({ success: true, originalname });
+        return res.send({ success: true, originalname, path });
       }
     })
     .catch(error => {
