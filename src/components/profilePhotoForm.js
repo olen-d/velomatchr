@@ -1,11 +1,31 @@
 import React, { useEffect, useState } from "react";
 // import PropTypes from "prop-types";
 
-import { Button, Form, Grid, Header, Icon } from "semantic-ui-react";
+import {
+  Button,
+  Form,
+  Grid,
+  Header,
+  Icon,
+  Image
+} from "semantic-ui-react";
+
+import ErrorContainer from "./errorContainer";
+import SuccessContainer from "./successContainer";
 
 const ProfilePhotoForm = props => {
-  const { colWidth, formTitle, profilePhotoBtnContent, userId } = props;
+  const { colWidth, formTitle, photoLink, profilePhotoBtnContent, userId } = props;
 
+  // Error container items
+  const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  // Success container items
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccessHeader, setIsSuccessHeader] = useState(null);
+  const [isSuccessMessage, setIsSuccessMessage] = useState(null);
+  // Rest of the state
+  const [photoLinkImage, setPhotoLinkImage] = useState(null);
   const [profilePhotographFile, setProfilePhotographFile] = useState(null);
 
   const uploadFile = e => {
@@ -23,21 +43,38 @@ const ProfilePhotoForm = props => {
         body: formData
       }).then(response => {
         if(!response.ok) {
-          throw new Error ("Network response was not ok.");
+          setIsErrorHeader("Profile Photograph Not Uploaded");
+          setIsErrorMessage("The network response was not ok. Please check your internet connection and try again. ");
+          setIsError(true);
         }
         return response.json();
       }).then(data => {
-        if (data) {
-          console.log("DATA", data);
+        if (data && data.success) {
+          const { originalname, path } = data;
+
+          setPhotoLinkImage(path.replace("public\\",""));
+          setIsSuccessHeader("Profile Photograph Uploaded");
+          setIsSuccessMessage("\"" + originalname + "\" was successfully uploaded. ");
+          setIsSuccess(true);
         } else {
-          console.log("EPIC FAIL");
+          setIsErrorHeader("Profile Photograph Not Uploaded");
+          setIsErrorMessage("The database was not updated. Please try again. ");
+          setIsError(true);
         }
       }).catch(error => {
-        console.log("SOME OTHER EPIC FAIL - ERROR:\n", error);
+        setIsErrorHeader("Profile Photograph Not Uploaded");
+        setIsErrorMessage("Something went terribly awry and your photograph was not uploaded. Please try again. ");
+        setIsError(true);
       });
     }
   }, [profilePhotographFile, userId]);
 
+  useEffect (() => {
+    if (photoLink) {
+      setPhotoLinkImage(photoLink.replace("public\\",""));
+    }
+  }, [photoLink]);
+  
   return(
     <Grid.Column width={colWidth}>
       <Header 
@@ -47,7 +84,17 @@ const ProfilePhotoForm = props => {
       >
         {formTitle}
       </Header>
-      <Icon color="grey" name="user circle" size="massive" />
+      { photoLink ? <Image src={photoLinkImage} size="small" rounded />: <Icon color="grey" name="user circle" size="massive" />}
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}
+      />
+      <SuccessContainer
+        header={isSuccessHeader}
+        message={isSuccessMessage}
+        show={isSuccess}
+      />
       <Form >
         <Button
           as="label"
@@ -77,6 +124,7 @@ const ProfilePhotoForm = props => {
 ProfilePhotoForm.defaultProps = {
   colWidth: 6,
   formTitle: "Current Photograph",
+  photoLink: null,
   profilePhotoBtnContent: "Upload Profile Photo"
 }
 
