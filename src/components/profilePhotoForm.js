@@ -71,7 +71,13 @@ const ProfilePhotoForm = props => {
 
   useEffect (() => {
     if (photoLink) {
-      setPhotoLinkImage(photoLink.replace("public\\",""));
+      let pub = null;
+      const slash = photoLink.indexOf("/");
+  
+      slash === -1 ? pub = "public\\" : pub = "public/";
+      const pl = photoLink.replace(pub, "")
+
+      setPhotoLinkImage(pl);
     }
   }, [photoLink]);
   
