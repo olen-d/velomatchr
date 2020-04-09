@@ -27,6 +27,7 @@ const ProfilePhotoForm = props => {
   // Rest of the state
   const [photoLinkImage, setPhotoLinkImage] = useState(null);
   const [profilePhotographFile, setProfilePhotographFile] = useState(null);
+  const [showUserIcon, setShowUserIcon] = useState(true);
 
   const uploadFile = e => {
     setProfilePhotographFile(e.target.files[0]);
@@ -52,10 +53,8 @@ const ProfilePhotoForm = props => {
         if (data && data.success) {
           const { originalname, path } = data;
 
-          let pub = null;
-          const slash = path.indexOf("/");
-          slash === -1 ? pub = "public\\" : pub = "public/";
-          setPhotoLinkImage(path.replace(pub, ""));
+          setShowUserIcon(false);
+          setPhotoLinkImage(`${process.env.REACT_APP_API_URL}/${path}`);
           setIsSuccessHeader("Profile Photograph Uploaded");
           setIsSuccessMessage("\"" + originalname + "\" was successfully uploaded. ");
           setIsSuccess(true);
@@ -74,13 +73,8 @@ const ProfilePhotoForm = props => {
 
   useEffect (() => {
     if (photoLink) {
-      let pub = null;
-      const slash = photoLink.indexOf("/");
-  
-      slash === -1 ? pub = "public\\" : pub = "public/";
-      const pl = photoLink.replace(pub, "")
-
-      setPhotoLinkImage(pl);
+      setShowUserIcon(false);
+      setPhotoLinkImage(`${process.env.REACT_APP_API_URL}/${photoLink}`);
     }
   }, [photoLink]);
   
@@ -93,7 +87,7 @@ const ProfilePhotoForm = props => {
       >
         {formTitle}
       </Header>
-      { photoLink ? <Image src={photoLinkImage} size="small" rounded />: <Icon color="grey" name="user circle" size="massive" />}
+      { showUserIcon ? <Icon color="grey" name="user circle" size="massive" /> : <Image src={photoLinkImage} size="small" rounded /> }
       <ErrorContainer
         header={isErrorHeader}
         message={isErrorMessage}

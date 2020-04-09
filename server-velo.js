@@ -17,6 +17,9 @@ if (process.env.ENVIRONMENT === "dev") {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Set up the static folder for the profile images
+app.use("/public/images-profiles", express.static("public/images-profiles"));
+
 // Set up the routes
 // app.get("/api/express_backend", (req, res) => {
 //     res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
