@@ -52,10 +52,11 @@ const ProfilePhotoForm = props => {
         if (data && data.success) {
           const { originalname, path } = data;
 
-          let pub = null;
-          const slash = path.indexOf("/");
-          slash === -1 ? pub = "public\\" : pub = "public/";
-          setPhotoLinkImage(path.replace(pub, "https://www.velomatchr.com/"));
+          // let pub = null;
+          // const slash = path.indexOf("/");
+          // slash === -1 ? pub = "public\\" : pub = "public/";
+          // setPhotoLinkImage(path.replace(pub, "https://www.velomatchr.com/"));
+          setPhotoLinkImage(`${process.env.REACT_APP_API_URL}/${path}`);
           setIsSuccessHeader("Profile Photograph Uploaded");
           setIsSuccessMessage("\"" + originalname + "\" was successfully uploaded. ");
           setIsSuccess(true);
@@ -74,13 +75,13 @@ const ProfilePhotoForm = props => {
 
   useEffect (() => {
     if (photoLink) {
-      let pub = null;
-      const slash = photoLink.indexOf("/");
+      // let pub = null;
+      // const slash = photoLink.indexOf("/");
   
-      slash === -1 ? pub = "public\\" : pub = "public/";
-      const pl = photoLink.replace(pub, "")
+      // slash === -1 ? pub = "public\\" : pub = "public/";
+      // const pl = photoLink.replace(pub, "")
 
-      setPhotoLinkImage(pl);
+      setPhotoLinkImage(`${process.env.REACT_APP_API_URL}/${photoLink}`);
     }
   }, [photoLink]);
   
