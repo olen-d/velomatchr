@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Set up the static folder
-// app.use(express.static("public"));
+app.use(express.static("public/images-profiles"));
 
 // Set up the routes
 // app.get("/api/express_backend", (req, res) => {
