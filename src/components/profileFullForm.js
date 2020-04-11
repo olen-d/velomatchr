@@ -51,8 +51,11 @@ const ProfileFullForm = () => {
         />
       </Grid.Row>
       <Grid.Row>
-        <UserNameForm
-          name={username}
+        <FormInput
+          icon={"user"}
+          inputValue={username}
+          name={"name"}
+          placeholder={"User Name"}
         />
       </Grid.Row>
       <Grid.Row>
@@ -65,17 +68,16 @@ const ProfileFullForm = () => {
   );
 }
 
-const UserNameForm = props => {
-  console.log("PROPS", props);
-  const { name: username } = props;
+const FormInput = props => {
+  const { icon, inputValue, name, placeholder } = props;
 
-  const [name, setName] = useState("");
+  const [value, setValue] = useState("");
 
   useEffect(() =>{
-    if (username) {
-      setName(username);
+    if (inputValue) {
+      setValue(inputValue);
     }
-  }, [username])
+  }, [inputValue])
 
   return(
     <Form
@@ -83,13 +85,13 @@ const UserNameForm = props => {
     >
       <Form.Input
         className="fluid"
-        icon="user"
+        icon={icon}
         iconPosition="left"
-        name="name"
-        value={name}
-        placeholder="User Name"
+        name={name}
+        value={value}
+        placeholder={placeholder}
         onChange={e => {
-          setName(e.target.value)
+          setValue(e.target.value)
         }}
       />
     </Form>
