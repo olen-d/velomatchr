@@ -9,10 +9,18 @@ import { Form, Grid } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
+
 const ProfileFullForm = () => {
+  const [city, setCity] = useState(null);
+  const [country, setCountry] = useState(null);
   const [fullName, setFullName] = useState(null);
   const [gender, setGender] = useState(null);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [phone, setPhone] = useState(null);
   const [photoLink, setPhotoLink] = useState(null);
+  const [postalCode, setPostalCode] = useState(null);  
+  const [state, setState] = useState(null);
   const [userId, setUserId] = useState(null);
   const [username, setUsername] = useState(null);
 
@@ -29,11 +37,35 @@ const ProfileFullForm = () => {
       const data = await response.json();
 
       if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
-        const { user: { name, firstName, lastName, gender: userGender, photoLink }, } = data;
+        const {
+          user: {
+            city,
+            country,
+            firstName,
+            lastName,
+            gender,
+            latitude,
+            longitude,
+            name:
+            username,
+            phone,
+            photoLink,
+            postalCode,
+            state
+          },
+        } = data;
+
+        setCity(city);
+        setCountry(country);
         setFullName(firstName + " " + lastName);
-        setGender(userGender);
+        setGender(gender);
+        setLatitude(latitude);
+        setLongitude(longitude);
+        setPhone(phone);
         setPhotoLink(photoLink);
-        setUsername(name);
+        setPostalCode(postalCode);
+        setState(state);
+        setUsername(username);
       }
     }
     getUserProfile();
@@ -57,11 +89,44 @@ const ProfileFullForm = () => {
           name={"name"}
           placeholder={"User Name"}
         />
+      <Grid.Row>
+        <FormInput
+          icon={"phone"}
+          inputValue={phone}
+          name={"phone"}
+          placeholder={"Phone Number"}
+        />
       </Grid.Row>
       <Grid.Row>
-      <ProfileRequiredForm 
-          colWidth={8}
-          formTitle={"My Profile"}
+        <FormInput
+          icon={"map pin"}
+          inputValue={city}
+          name={"city"}
+          placeholder={"City"}
+        />
+      </Grid.Row>
+      <Grid.Row>
+        <FormInput
+          icon={"map pin"}
+          inputValue={state}
+          name={"state"}
+          placeholder={"State"}
+        />
+      </Grid.Row>
+      <Grid.Row>
+        <FormInput
+          icon={"flag"}
+          inputValue={country}
+          name={"country"}
+          placeholder={"Country"}
+        />
+      </Grid.Row>
+      <Grid.Row>
+        <FormInput
+          icon={"map pin"}
+          inputValue={postalCode}
+          name={"postalcode"}
+          placeholder={"Postal Code"}
         />
       </Grid.Row>
     </>
