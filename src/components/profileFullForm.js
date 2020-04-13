@@ -46,8 +46,7 @@ const ProfileFullForm = () => {
             gender,
             latitude,
             longitude,
-            name:
-            username,
+            name: username,
             phone,
             photoLink,
             postalCode,
@@ -89,6 +88,13 @@ const ProfileFullForm = () => {
           name={"name"}
           placeholder={"User Name"}
         />
+      </Grid.Row>
+      <Grid.Row>
+      <ProfileRequiredForm
+          colWidth={8}
+          formTitle={"My Profile"}
+        />
+      </Grid.Row>
       <Grid.Row>
         <FormInput
           icon={"phone"}
