@@ -5,10 +5,11 @@ import auth from "./auth";
 
 import ProfilePhotoForm from "./profilePhotoForm";
 import ProfileRequiredForm from "./profileRequiredForm";
-import { Form, Grid } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
+import FormInput from "./formInput";
 
 const ProfileFullForm = () => {
   const [city, setCity] = useState(null);
@@ -105,7 +106,7 @@ const ProfileFullForm = () => {
       </Grid.Row>
       <Grid.Row>
         <FormInput
-          icon={"map pin"}
+          icon={"building"}
           inputValue={city}
           name={"city"}
           placeholder={"City"}
@@ -136,36 +137,6 @@ const ProfileFullForm = () => {
         />
       </Grid.Row>
     </>
-  );
-}
-
-const FormInput = props => {
-  const { icon, inputValue, name, placeholder } = props;
-
-  const [value, setValue] = useState("");
-
-  useEffect(() =>{
-    if (inputValue) {
-      setValue(inputValue);
-    }
-  }, [inputValue])
-
-  return(
-    <Form
-      size="large"
-    >
-      <Form.Input
-        className="fluid"
-        icon={icon}
-        iconPosition="left"
-        name={name}
-        value={value}
-        placeholder={placeholder}
-        onChange={e => {
-          setValue(e.target.value)
-        }}
-      />
-    </Form>
   );
 }
 
