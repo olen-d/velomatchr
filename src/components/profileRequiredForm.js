@@ -90,11 +90,11 @@ const useForm = ({ initialValues, onSubmit, validate }) => {
       const data = await response.json();
 
       if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
-        const { user: { firstName, lastName, gender: userGender }, } = data;
+        const { user: { firstName, lastName, gender }, } = data;
         // setFullName(firstName + " " + lastName);
 
         const fullName = firstName + " " + lastName;
-        setValues({ fullName });
+        setValues({ fullName, gender });
         // setValues({
         //   ...values,
         //   fullName
@@ -281,7 +281,7 @@ const ProfileRequiredForm = props => {
                 className="fluid"
                 control="select"
                 name="gender"
-                value={gender}
+                value={values.gender}
                 error={isGenderError}
                 onChange={e => {
                   setGender(e.target.value)
