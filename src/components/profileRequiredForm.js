@@ -20,9 +20,84 @@ import { AuthContext } from "../context/authContext";
 
 import ErrorContainer from "./errorContainer";
 
+// Custom hook - TODO: move this to it's own file and import
+
+const useForm = ({ initialValues, onSubmit, validate }) => {
+  const [values, setValues] = useState(initialValues || {});
+  const [touchedValues, setTouchedValues] = useState({});
+  const [errors, setErrors] = useState({});
+  
+  const handleChange = event => {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+    
+    setValues({
+      ...values,
+      [name]: value
+    });
+  }
+
+  const handleBlur = event => {
+    const target = event.target;
+    const name = target.name;
+
+    setTouchedValues({ 
+      ...touchedValues,
+      [name]: true
+    });
+
+    const error = validate(values);
+    setErrors({
+      ...errors,
+      ...error
+    })
+  }
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    const error = validate(values);
+    setErrors({
+      ...errors,
+      ...error
+    })
+    onSubmit({ values, error});
+  }
+
+  return {
+    values,
+    touchedValues,
+    errors,
+    handleChange,
+    handleSubmit,
+    handleBlur
+  }
+}
+
 const ProfileRequiredForm = props => {
   const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
   
+  // New error stuff
+  const {
+    values,
+    handleChange,
+    handleSubmit
+  } = useForm({
+    initialValues: {
+      firstName: "",
+      gender: ""
+    },
+    onSubmit(values, errors) {
+      alert(JSON.stringify({ values, errors}, null, 2));
+    },
+    validate(values) {
+      const errors = {};
+      if (values.fullName === "") {
+        errors.fullName = "Please enter a name"
+      }
+      return errors;
+    }
+  })
   // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
@@ -150,13 +225,14 @@ const ProfileRequiredForm = props => {
               className="fluid"
               icon="user"
               iconPosition="left"
-              name="firstName"
-              value={fullName}
+              name="fullName"
+              value={values.fullName}
               placeholder="First and Last Name"
               error={isFullNameError}
-              onChange={e => {
-                setFullName(e.target.value)
-              }}
+              onChange={handleChange}
+              // onChange={e => {
+              //   setFullName(e.target.value)
+              // }}
             />
             }
             content="Seperate first and last names with a space."
