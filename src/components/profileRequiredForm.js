@@ -23,10 +23,25 @@ import ErrorContainer from "./errorContainer";
 // Custom hook - TODO: move this to it's own file and import
 
 const useForm = ({ initialValues, onSubmit, validate }) => {
+  const [userId, setUserId] = useState(null);
+  // const [fullName, setFullName] = useState(null);
   const [values, setValues] = useState(initialValues || {});
   const [touchedValues, setTouchedValues] = useState({});
   const [errors, setErrors] = useState({});
+
+  const context = useContext(AuthContext);
+  const token = context.authTokens;
   
+//   const handleFetchedDataItem = item => {
+//     console.log("ITEM", item);
+//     const { name, value } = item;
+// console.log("DESTRUCT:", name, value);
+//     setValues({
+//       ...values,
+//       [name]: value
+//     });
+//   }
+
   const handleChange = event => {
     const target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
@@ -51,7 +66,7 @@ const useForm = ({ initialValues, onSubmit, validate }) => {
     setErrors({
       ...errors,
       ...error
-    })
+    });
   }
 
   const handleSubmit = event => {
@@ -64,10 +79,37 @@ const useForm = ({ initialValues, onSubmit, validate }) => {
     onSubmit({ values, error});
   }
 
+  const userInfo = auth.getUserInfo(token);
+
+  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+
+  useEffect(() => {
+    // console.log("VALUES", JSON.stringify(values));
+    const getUserProfile = async () => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`);
+      const data = await response.json();
+
+      if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
+        const { user: { firstName, lastName, gender: userGender }, } = data;
+        // setFullName(firstName + " " + lastName);
+
+        const fullName = firstName + " " + lastName;
+        setValues({ fullName });
+        // setValues({
+        //   ...values,
+        //   fullName
+        // });
+        // setGender(userGender);
+      }
+    }
+    getUserProfile();
+  }, [userId]);
+
   return {
     values,
     touchedValues,
     errors,
+    // handleFetchedDataItem,
     handleChange,
     handleSubmit,
     handleBlur
@@ -77,14 +119,35 @@ const useForm = ({ initialValues, onSubmit, validate }) => {
 const ProfileRequiredForm = props => {
   const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
   
+
+  // Set up the State for form error handling
+  const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isFullNameError, setIsFullNameError] = useState(false);
+  const [isGenderError, setIsGenderError] = useState(false);
+  // ...Rest of the State
+  const [fetchedDataItem, setFetchedDataItem] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [fullName, setFullName] = useState("");
+  const [gender, setGender] = useState("default");
+
+  const context = useContext(AuthContext);
+  const token = context.authTokens;
+  const setDoRedirect = context.setDoRedirect;
+  const setRedirectURL = context.setRedirectURL;
+
+ 
+
   // New error stuff
   const {
     values,
+    // handleFetchedDataItem,
     handleChange,
     handleSubmit
   } = useForm({
     initialValues: {
-      firstName: "",
+      fullName: "",
       gender: ""
     },
     onSubmit(values, errors) {
@@ -98,23 +161,8 @@ const ProfileRequiredForm = props => {
       return errors;
     }
   })
-  // Set up the State for form error handling
-  const [isError, setIsError] = useState(false);
-  const [isErrorHeader, setIsErrorHeader] = useState(null);
-  const [isErrorMessage, setIsErrorMessage] = useState(null);
-  const [isFullNameError, setIsFullNameError] = useState(false);
-  const [isGenderError, setIsGenderError] = useState(false);
-  // ...Rest of the State
-  const [userId, setUserId] = useState(null);
-  const [fullName, setFullName] = useState("");
-  const [gender, setGender] = useState("default");
 
-  const context = useContext(AuthContext);
-  const token = context.authTokens;
-  const setDoRedirect = context.setDoRedirect;
-  const setRedirectURL = context.setRedirectURL;
 
-  const userInfo = auth.getUserInfo(token);
 
   const postProfileRequired = () => {
 
@@ -182,21 +230,10 @@ const ProfileRequiredForm = props => {
     });
   }
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
-  useEffect(() => {
-    const getUserProfile = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`);
-      const data = await response.json();
 
-      if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
-        const { user: { firstName, lastName, gender: userGender }, } = data;
-        setFullName(firstName + " " + lastName);
-        setGender(userGender);
-      }
-    }
-    getUserProfile();
-  }, [userId]);
+
+
 
   return(
     <Grid.Column width={colWidth}>
