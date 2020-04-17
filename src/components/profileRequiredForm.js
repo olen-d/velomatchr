@@ -307,7 +307,7 @@ const ProfileRequiredForm = props => {
             on="focus"
           />
           <Button
-            disabled={!fullName || gender ==="default"}
+            disabled={!values.fullName || values.gender ==="default"}
             className="fluid"
             type="button"
             color="red"
