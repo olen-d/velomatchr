@@ -24,23 +24,12 @@ import ErrorContainer from "./errorContainer";
 
 const useForm = ({ initialValues, onSubmit, validate }) => {
   const [userId, setUserId] = useState(null);
-  // const [fullName, setFullName] = useState(null);
   const [values, setValues] = useState(initialValues || {});
   const [touchedValues, setTouchedValues] = useState({});
   const [errors, setErrors] = useState({});
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
-  
-//   const handleFetchedDataItem = item => {
-//     console.log("ITEM", item);
-//     const { name, value } = item;
-// console.log("DESTRUCT:", name, value);
-//     setValues({
-//       ...values,
-//       [name]: value
-//     });
-//   }
 
   const handleChange = event => {
     const target = event.target;
@@ -84,22 +73,15 @@ const useForm = ({ initialValues, onSubmit, validate }) => {
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
   useEffect(() => {
-    // console.log("VALUES", JSON.stringify(values));
     const getUserProfile = async () => {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`);
       const data = await response.json();
 
       if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
         const { user: { firstName, lastName, gender }, } = data;
-        // setFullName(firstName + " " + lastName);
 
         const fullName = firstName + " " + lastName;
         setValues({ fullName, gender });
-        // setValues({
-        //   ...values,
-        //   fullName
-        // });
-        // setGender(userGender);
       }
     }
     getUserProfile();
@@ -109,7 +91,6 @@ const useForm = ({ initialValues, onSubmit, validate }) => {
     values,
     touchedValues,
     errors,
-    // handleFetchedDataItem,
     handleChange,
     handleSubmit,
     handleBlur
@@ -127,7 +108,6 @@ const ProfileRequiredForm = props => {
   const [isFullNameError, setIsFullNameError] = useState(false);
   const [isGenderError, setIsGenderError] = useState(false);
   // ...Rest of the State
-  const [fetchedDataItem, setFetchedDataItem] = useState(null);
   const [userId, setUserId] = useState(null);
   const [fullName, setFullName] = useState("");
   const [gender, setGender] = useState("default");
@@ -148,7 +128,7 @@ const ProfileRequiredForm = props => {
   } = useForm({
     initialValues: {
       fullName: "",
-      gender: ""
+      gender: "default"
     },
     onSubmit(values, errors) {
       alert(JSON.stringify({ values, errors}, null, 2));
@@ -161,8 +141,6 @@ const ProfileRequiredForm = props => {
       return errors;
     }
   })
-
-
 
   const postProfileRequired = () => {
 
@@ -230,11 +208,6 @@ const ProfileRequiredForm = props => {
     });
   }
 
-
-
-
-
-
   return(
     <Grid.Column width={colWidth}>
       <Header 
@@ -267,9 +240,6 @@ const ProfileRequiredForm = props => {
               placeholder="First and Last Name"
               error={isFullNameError}
               onChange={handleChange}
-              // onChange={e => {
-              //   setFullName(e.target.value)
-              // }}
             />
             }
             content="Seperate first and last names with a space."
@@ -283,9 +253,7 @@ const ProfileRequiredForm = props => {
                 name="gender"
                 value={values.gender}
                 error={isGenderError}
-                onChange={e => {
-                  setGender(e.target.value)
-                }}
+                onChange={handleChange}
               >  
                 <option
                   key="-1"
