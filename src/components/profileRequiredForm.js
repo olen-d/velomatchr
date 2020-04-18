@@ -19,6 +19,7 @@ import {
 import { AuthContext } from "../context/authContext";
 
 import ErrorContainer from "./errorContainer";
+import FullnameInput from "./formFields/fullname";
 
 // Custom hook - TODO: move this to it's own file and import
 
@@ -51,20 +52,13 @@ const useForm = ({ initialValues, onSubmit, validate }) => {
       [name]: true
     });
 
-    const error = validate(values);
-    setErrors({
-      ...errors,
-      ...error
-    });
+    
   }
 
   const handleSubmit = event => {
+    console.log("cheeseburger");
     event.preventDefault();
     const error = validate(values);
-    setErrors({
-      ...errors,
-      ...error
-    })
     onSubmit({ values, error});
   }
 
@@ -122,6 +116,8 @@ const ProfileRequiredForm = props => {
   // New error stuff
   const {
     values,
+    touchedValues,
+    errors,
     // handleFetchedDataItem,
     handleChange,
     handleSubmit
@@ -131,11 +127,12 @@ const ProfileRequiredForm = props => {
       gender: "default"
     },
     onSubmit(values, errors) {
+      console.log("ERRORS", errors);
       alert(JSON.stringify({ values, errors}, null, 2));
     },
     validate(values) {
       const errors = {};
-      if (values.fullName === "") {
+      if (values.fullName.length < 6) {
         errors.fullName = "Please enter a name"
       }
       return errors;
@@ -283,11 +280,12 @@ const ProfileRequiredForm = props => {
             icon="check circle"
             labelPosition="left"
             content={submitBtnContent}
-            onClick={postProfileRequired}
+            onClick={handleSubmit}
           >
           </Button>
         </Form>
       </Segment>
+      <FullnameInput placeholder="First and Last Name" />
     </Grid.Column>
   );
 }
