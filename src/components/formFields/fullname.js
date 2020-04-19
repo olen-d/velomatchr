@@ -8,6 +8,10 @@ const FullnameInput = props => {
   const [ fullname, setFullname ] = useState("");
   const [ isFullnameError, setIsFullnameError ] = useState(false);
 
+  const handleBlur = event => {
+    validate();
+  }
+
   const handleChange = event => {
     const target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
@@ -18,6 +22,14 @@ const FullnameInput = props => {
     //   ...values,
     //   [name]: value
     // });
+  }
+
+  const validate = () => {
+    if (fullname.length < 2) {
+      setIsFullnameError(true);
+    } else {
+      setIsFullnameError(false);
+    }
   }
 
   return(
@@ -32,6 +44,7 @@ const FullnameInput = props => {
             value={fullname}
             placeholder={placeholder}
             error={isFullnameError}
+            onBlur={handleBlur}
             onChange={handleChange}
           />
         }
