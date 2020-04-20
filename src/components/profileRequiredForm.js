@@ -19,7 +19,8 @@ import {
 import { AuthContext } from "../context/authContext";
 
 import ErrorContainer from "./errorContainer";
-import FullnameInput from "./formFields/fullname";
+import FullnameInput from "./formFields/fullnameInput";
+import GenderInput from "./formFields/genderInput";
 
 // Custom hook - TODO: move this to it's own file and import
 
@@ -286,6 +287,7 @@ const ProfileRequiredForm = props => {
         </Form>
       </Segment>
       <FullnameInput initialValue={values.fullName} placeholder="First and Last Name" />
+      <GenderInput initialValue={values.gender} />
     </Grid.Column>
   );
 }
