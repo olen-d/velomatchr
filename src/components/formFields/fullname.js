@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { Form, Popup } from "semantic-ui-react";
 
@@ -14,17 +14,13 @@ const FullnameInput = props => {
       fullname: ""
     })
   }
-  
-  const [isFullnameError, setIsFullnameError] = useState(false);
 
   const handleBlur = event => {
     validate(event);
   }
 
   const handleChange = event => {
-    const target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const name = target.name;
+    const { target: { name, value }, } = event
     
     setValues({
       ...values,
@@ -33,7 +29,7 @@ const FullnameInput = props => {
   }
 
   const validate = event => {
-    const name = event.target.name;
+    const { target: { name }, } = event;
 
     if (values.fullname.length < 2) {
       setErrors({
