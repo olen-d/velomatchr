@@ -285,7 +285,7 @@ const ProfileRequiredForm = props => {
           </Button>
         </Form>
       </Segment>
-      <FullnameInput placeholder="First and Last Name" />
+      <FullnameInput initialValue={values.fullName} placeholder="First and Last Name" />
     </Grid.Column>
   );
 }

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Form, Popup } from "semantic-ui-react";
 
 const FullnameInput = props => {
-  const { placeholder } = props;
+  const { initialValue, placeholder } = props;
 
   const [ fullname, setFullname ] = useState("");
   const [ isFullnameError, setIsFullnameError ] = useState(false);
@@ -32,6 +32,16 @@ const FullnameInput = props => {
     }
   }
 
+  // Set the user's full name if one was passed in with the props
+  // Since the full name is coming from an asynchronus operation,
+  // the full name might be defined in the first render, so useEffect
+  // is needed to update the state in this component when it becomes
+  // available in the parent.
+  
+  useEffect(() => {
+    setFullname(initialValue);
+  }, [initialValue]);
+
   return(
     <Form size="large"> 
       <Popup
@@ -56,6 +66,7 @@ const FullnameInput = props => {
 }
 
 FullnameInput.defaultProps = {
+  initialValue: "",
   placeholder: "First and Last Name"
 }
 
