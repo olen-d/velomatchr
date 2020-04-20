@@ -2,14 +2,23 @@ import React, { useEffect, useState } from "react";
 
 import { Form, Popup } from "semantic-ui-react";
 
+import useForm from "../../hooks/useForm";
+
 const FullnameInput = props => {
   const { initialValue, placeholder } = props;
 
-  const [ fullname, setFullname ] = useState("");
-  const [ isFullnameError, setIsFullnameError ] = useState(false);
+  const { errors, setErrors, values, setValues } = useForm();
+
+  if(typeof values.fullname === "undefined") {
+    setValues({
+      fullname: ""
+    })
+  }
+  
+  const [isFullnameError, setIsFullnameError] = useState(false);
 
   const handleBlur = event => {
-    validate();
+    validate(event);
   }
 
   const handleChange = event => {
@@ -17,18 +26,25 @@ const FullnameInput = props => {
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
     
-    setFullname(value);
-    // setValues({
-    //   ...values,
-    //   [name]: value
-    // });
+    setValues({
+      ...values,
+      [name]: value
+    });
   }
 
-  const validate = () => {
-    if (fullname.length < 2) {
-      setIsFullnameError(true);
+  const validate = event => {
+    const name = event.target.name;
+
+    if (values.fullname.length < 2) {
+      setErrors({
+        ...errors,
+        [name]: true
+      });
     } else {
-      setIsFullnameError(false);
+      setErrors({
+        ...errors,
+        [name]: false
+      });
     }
   }
 
@@ -39,10 +55,13 @@ const FullnameInput = props => {
   // available in the parent.
   
   useEffect(() => {
-    setFullname(initialValue);
-  }, [initialValue]);
+    setValues({
+      fullname: initialValue
+    });
+  }, [initialValue, setValues]);
 
   return(
+    <>
     <Form size="large"> 
       <Popup
         trigger={
@@ -51,9 +70,9 @@ const FullnameInput = props => {
             icon="user"
             iconPosition="left"
             name="fullname"
-            value={fullname}
+            value={values.fullname}
             placeholder={placeholder}
-            error={isFullnameError}
+            error={errors.fullname}
             onBlur={handleBlur}
             onChange={handleChange}
           />
@@ -62,6 +81,10 @@ const FullnameInput = props => {
         on="focus"
       />
     </Form>
+    {JSON.stringify(values)}
+    <br />
+    {JSON.stringify(errors)}
+    </>
   );
 }
 
