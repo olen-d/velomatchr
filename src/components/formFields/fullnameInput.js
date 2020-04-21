@@ -2,31 +2,25 @@ import React, { useEffect } from "react";
 
 import { Form, Popup } from "semantic-ui-react";
 
-import useForm from "../../hooks/useForm";
+// import useForm from "../../hooks/useForm";
 
 const FullnameInput = props => {
-  const { initialValue, placeholder } = props;
+  const { errors, handleChange, initialValue, placeholder, setErrors, values } = props;
 
-  const { errors, setErrors, values, setValues } = useForm();
+  // const { errors, setErrors, values, setValues } = useForm();
 
-  if(typeof values.fullname === "undefined") {
-    setValues({
-      fullname: ""
-    })
-  }
+  // if(typeof values.fullname === "undefined") {
+  //   setValues({
+  //     ...values,
+  //     fullname: ""
+  //   })
+  // }
 
   const handleBlur = event => {
     validate(event);
   }
 
-  const handleChange = event => {
-    const { target: { name, value }, } = event
-    
-    setValues({
-      ...values,
-      [name]: value
-    });
-  }
+
 
   const validate = event => {
     const { target: { name }, } = event;
@@ -50,37 +44,30 @@ const FullnameInput = props => {
   // is needed to update the state in this component when it becomes
   // available in the parent.
   
-  useEffect(() => {
-    setValues({
-      fullname: initialValue
-    });
-  }, [initialValue, setValues]);
+  // useEffect(() => {
+  //   setValues({
+  //     fullname: initialValue
+  //   });
+  // }, [initialValue, setValues]);
 
   return(
-    <>
-    <Form size="large"> 
-      <Popup
-        trigger={
-          <Form.Input
-            className="fluid"
-            icon="user"
-            iconPosition="left"
-            name="fullname"
-            value={values.fullname}
-            placeholder={placeholder}
-            error={errors.fullname}
-            onBlur={handleBlur}
-            onChange={handleChange}
-          />
-        }
-        content="Seperate first and last names with a space."
-        on="focus"
-      />
-    </Form>
-    {JSON.stringify(values)}
-    <br />
-    {JSON.stringify(errors)}
-    </>
+    <Popup
+      trigger={
+        <Form.Input
+          className="fluid"
+          icon="user"
+          iconPosition="left"
+          name="fullname"
+          value={values.fullname}
+          placeholder={placeholder}
+          error={errors.fullname}
+          onBlur={handleBlur}
+          onChange={handleChange}
+        />
+      }
+      content="Seperate first and last names with a space."
+      on="focus"
+    />
   );
 }
 
