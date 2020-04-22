@@ -2,51 +2,16 @@ import React, { useEffect } from "react";
 
 import { Form, Popup } from "semantic-ui-react";
 
-// import useForm from "../../hooks/useForm";
-
 import DropdownItems from "../dropdownItems/dropdownItems"
 import genderChoices from "../../models/genderChoices"
 
 const GenderInput = props => {
-  const { errors, handleChange, initialValue, setErrors, values } = props;
-
-  // const { errors, setErrors, values, setValues } = useForm();
-
-  // if(typeof values.gender === "undefined") {
-  //   setValues({
-  //     gender: ""
-  //   })
-  // }
-
-  const handleBlur = event => {
-    validate(event);
-  }
-
-  // const handleChange = event => {
-  //   const { target: { name, value }, } = event
-  //   console.log("NAME:", name, "\nVALUE:", value);
-  //   console.log("VALUES:", values);
-  //   setValues({
-  //     ...values,
-  //     [name]: value,
-  //     cow: "abunga"
-  //   });
-  // }
+  const { errors, handleBlur, handleChange, initialValue, values } = props;
 
   const validate = event => {
     const { target: { name }, } = event;
-
-    if (values.gender === "default") {
-      setErrors({
-        ...errors,
-        [name]: true
-      });
-    } else {
-      setErrors({
-        ...errors,
-        [name]: false
-      });
-    }
+console.log("gender", values[name]);
+    return values[name] || values[name] === "default" ? false: true;
   }
 
   // Set the user's gender if one was passed in with the props
@@ -68,9 +33,9 @@ const GenderInput = props => {
           className="fluid"
           control="select"
           name="gender"
-          value={values.gender}
+          value={values.gender || "default"}
           error={errors.gender}
-          onBlur={handleBlur}
+          onBlur={(event) => handleBlur(validate(event), event)}
           onChange={handleChange}
         >  
           <option
