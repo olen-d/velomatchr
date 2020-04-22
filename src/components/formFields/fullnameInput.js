@@ -2,40 +2,13 @@ import React, { useEffect } from "react";
 
 import { Form, Popup } from "semantic-ui-react";
 
-// import useForm from "../../hooks/useForm";
-
 const FullnameInput = props => {
-  const { errors, handleChange, initialValue, placeholder, setErrors, values } = props;
-
-  // const { errors, setErrors, values, setValues } = useForm();
-
-  // if(typeof values.fullname === "undefined") {
-  //   setValues({
-  //     ...values,
-  //     fullname: ""
-  //   })
-  // }
-
-  const handleBlur = event => {
-    validate(event);
-  }
-
-
+  const { errors, handleBlur, handleChange, initialValue, placeholder, values } = props;
 
   const validate = event => {
     const { target: { name }, } = event;
 
-    if (values.fullname.length < 2) {
-      setErrors({
-        ...errors,
-        [name]: true
-      });
-    } else {
-      setErrors({
-        ...errors,
-        [name]: false
-      });
-    }
+    return values[name] && values[name].length > 1 ? false : true;  // Short circuit to avoid error when attempting to read length of undefined
   }
 
   // Set the user's full name if one was passed in with the props
@@ -58,10 +31,10 @@ const FullnameInput = props => {
           icon="user"
           iconPosition="left"
           name="fullname"
-          value={values.fullname}
+          value={values.fullname || ""}
           placeholder={placeholder}
           error={errors.fullname}
-          onBlur={handleBlur}
+          onBlur={(event) => handleBlur(validate(event), event)}
           onChange={handleChange}
         />
       }

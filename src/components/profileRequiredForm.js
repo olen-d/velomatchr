@@ -97,7 +97,7 @@ import useForm from "../hooks/useForm";
 const ProfileRequiredForm = props => {
   const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
   
-  const { errors, handleChange, setErrors, values } = useForm();
+  const { errors, handleBlur, handleChange, values } = useForm();
   // // Set up the State for form error handling
   // const [isError, setIsError] = useState(false);
   // const [isErrorHeader, setIsErrorHeader] = useState(null);
@@ -230,21 +230,21 @@ const ProfileRequiredForm = props => {
         <Form size="large"> 
           <FullnameInput 
             errors={errors}
-            initialValue={values.fullName}
+            initialValue={values.fullname}
             placeholder="First and Last Name"
-            setErrors={setErrors}
+            handleBlur={handleBlur}
             handleChange={handleChange}
             values={values}
           />
           <GenderInput 
             errors={errors}
             initialValue={values.gender} 
-            setErrors={setErrors}
+            handleBlur={handleBlur}
             handleChange={handleChange}
             values={values}
           />
           <Button
-            disabled={!values.fullName || values.gender ==="default"}
+            disabled={!values.fullname || !values.gender || values.gender ==="default"}
             className="fluid"
             type="button"
             color="red"

@@ -4,8 +4,17 @@ const useForm = () => {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
 
+  const handleBlur = (isError, event) => {
+    const { target: { name }, } = event;
+
+    setErrors({
+      ...errors,
+      [name]: isError
+    });
+  }
+
   const handleChange = event => {
-    const { target: { name, value }, } = event
+    const { target: { name, value }, } = event;
     
     setValues({
       ...values,
@@ -16,7 +25,7 @@ const useForm = () => {
   return {
     values,
     errors,
-    setErrors,
+    handleBlur,
     handleChange
   }
 }
