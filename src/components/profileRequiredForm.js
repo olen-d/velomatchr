@@ -3,16 +3,12 @@ import PropTypes from "prop-types";
 
 import auth from "./auth";
 
-import DropdownItems from "./dropdownItems/dropdownItems";
-import genderChoices from "../models/genderChoices";
-
 import {
   Button,
   Form,
   Grid,
   Header,
   Message,
-  Popup,
   Segment
 } from "semantic-ui-react";
 
@@ -24,123 +20,43 @@ import GenderInput from "./formFields/genderInput";
 
 import useForm from "../hooks/useForm";
 
-// Custom hook - TODO: move this to it's own file and import
-
-// const useForm = ({ initialValues, onSubmit, validate }) => {
-//   const [userId, setUserId] = useState(null);
-//   const [values, setValues] = useState(initialValues || {});
-//   const [touchedValues, setTouchedValues] = useState({});
-//   const [errors, setErrors] = useState({});
-
-//   const context = useContext(AuthContext);
-//   const token = context.authTokens;
-
-//   const handleChange = event => {
-//     const target = event.target;
-//     const value = target.type === "checkbox" ? target.checked : target.value;
-//     const name = target.name;
-    
-//     setValues({
-//       ...values,
-//       [name]: value
-//     });
-//   }
-
-//   const handleBlur = event => {
-//     const target = event.target;
-//     const name = target.name;
-
-//     setTouchedValues({ 
-//       ...touchedValues,
-//       [name]: true
-//     });
-
-    
-//   }
-
-//   const handleSubmit = event => {
-//     console.log("cheeseburger");
-//     event.preventDefault();
-//     const error = validate(values);
-//     onSubmit({ values, error});
-//   }
-
-//   const userInfo = auth.getUserInfo(token);
-
-//   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
-
-//   useEffect(() => {
-//     const getUserProfile = async () => {
-//       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`);
-//       const data = await response.json();
-
-//       if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
-//         const { user: { firstName, lastName, gender }, } = data;
-
-//         const fullName = firstName + " " + lastName;
-//         setValues({ fullName, gender });
-//       }
-//     }
-//     getUserProfile();
-//   }, [userId]);
-
-//   return {
-//     values,
-//     touchedValues,
-//     errors,
-//     handleChange,
-//     handleSubmit,
-//     handleBlur
-//   }
-// }
-
 const ProfileRequiredForm = props => {
   const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
-  
-  const { errors, handleBlur, handleChange, values } = useForm();
-  // // Set up the State for form error handling
-  // const [isError, setIsError] = useState(false);
-  // const [isErrorHeader, setIsErrorHeader] = useState(null);
-  // const [isErrorMessage, setIsErrorMessage] = useState(null);
-  // const [isFullNameError, setIsFullNameError] = useState(false);
-  // const [isGenderError, setIsGenderError] = useState(false);
-  // // ...Rest of the State
-  // const [userId, setUserId] = useState(null);
-  // const [fullName, setFullName] = useState("");
-  // const [gender, setGender] = useState("default");
 
-  // const context = useContext(AuthContext);
-  // const token = context.authTokens;
+  const [flag, setFlag] = useState(true);
+  const [initialValues, setInitialValues] = useState({});
+  const [userId, setUserId] = useState(null);
+  
+  const { errors, handleBlur, handleChange, initializeFields, values } = useForm();
+
+  const context = useContext(AuthContext);
+  const token = context.authTokens;
   // const setDoRedirect = context.setDoRedirect;
   // const setRedirectURL = context.setRedirectURL;
 
- 
+  const userInfo = auth.getUserInfo(token);
 
-  // New error stuff
-  // const {
-  //   values,
-  //   touchedValues,
-  //   errors,
-  //   // handleFetchedDataItem,
-  //   handleChange,
-  //   handleSubmit
-  // } = useForm({
-  //   initialValues: {
-  //     fullName: "",
-  //     gender: "default"
-  //   },
-  //   onSubmit(values, errors) {
-  //     console.log("ERRORS", errors);
-  //     alert(JSON.stringify({ values, errors}, null, 2));
-  //   },
-  //   validate(values) {
-  //     const errors = {};
-  //     if (values.fullName.length < 6) {
-  //       errors.fullName = "Please enter a name"
-  //     }
-  //     return errors;
-  //   }
-  // })
+  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+
+  useEffect(() => {
+    const getUserProfile = async () => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`);
+      const data = await response.json();
+
+      if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
+        const { user: { firstName, lastName, gender }, } = data;
+        const fullname = firstName + " " + lastName;
+        
+        setInitialValues({ fullname, gender });
+      }
+    }
+    getUserProfile();
+  }, [userId]);
+
+  if(Object.keys(initialValues).length > 0 && flag) {
+    initializeFields(initialValues);
+    setFlag(false);
+  }
 
   const postProfileRequired = () => {
     
@@ -244,7 +160,7 @@ const ProfileRequiredForm = props => {
             values={values}
           />
           <Button
-            disabled={!values.fullname || !values.gender || values.gender ==="default"}
+            disabled={!values.fullname || !values.gender || Object.values(errors).indexOf(true) > -1}
             className="fluid"
             type="button"
             color="red"
@@ -256,9 +172,6 @@ const ProfileRequiredForm = props => {
           >
           </Button>
         </Form>
-        {JSON.stringify(values)}
-        <br />
-        {JSON.stringify(errors)}
       </Segment>
     </Grid.Column>
   );
