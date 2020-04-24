@@ -45,7 +45,7 @@ const ProfileRequiredForm = props => {
 
       if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
         const { user: { firstName, lastName, gender }, } = data;
-        const fullname = firstName + " " + lastName;
+        const fullname = firstName || lastName ? `${firstName} ${lastName}` : "";
         
         setInitialValues({ fullname, gender });
       }
