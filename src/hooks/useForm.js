@@ -15,10 +15,15 @@ const useForm = () => {
 
   const handleChange = event => {
     const { target: { name, value }, } = event;
-    
     setValues({
       ...values,
       [name]: value
+    });
+  }
+
+  const initializeFields = initialValues => {
+    setValues({
+      ...initialValues
     });
   }
 
@@ -26,7 +31,8 @@ const useForm = () => {
     values,
     errors,
     handleBlur,
-    handleChange
+    handleChange,
+    initializeFields
   }
 }
 
