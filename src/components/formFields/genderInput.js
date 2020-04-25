@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import { Form, Popup } from "semantic-ui-react";
 
@@ -10,7 +11,7 @@ const GenderInput = props => {
 
   const validate = event => {
     const { target: { name }, } = event;
-    
+
     return values[name] || values[name] === "default" ? false: true;
   }
 
@@ -46,6 +47,13 @@ const GenderInput = props => {
       on="focus"
     />
   );
+}
+
+GenderInput.propTypes = {
+  errors: PropTypes.object,
+  handleBlur: PropTypes.func,
+  handleChange: PropTypes.func,
+  values: PropTypes.object
 }
 
 export default GenderInput;
