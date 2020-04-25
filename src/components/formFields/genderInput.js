@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import { Form, Popup } from "semantic-ui-react";
 
@@ -6,25 +6,13 @@ import DropdownItems from "../dropdownItems/dropdownItems"
 import genderChoices from "../../models/genderChoices"
 
 const GenderInput = props => {
-  const { errors, handleBlur, handleChange, initialValue, values } = props;
+  const { errors, handleBlur, handleChange, values } = props;
 
   const validate = event => {
     const { target: { name }, } = event;
-console.log("gender", values[name]);
+    
     return values[name] || values[name] === "default" ? false: true;
   }
-
-  // Set the user's gender if one was passed in with the props
-  // Since the gender is coming from an asynchronus operation,
-  // the gender might be defined in the first render, so useEffect
-  // is needed to update the state in this component when it becomes
-  // available in the parent.
-  
-  // useEffect(() => {
-  //   setValues({
-  //     gender: initialValue
-  //   });
-  // }, [initialValue, setValues]);
 
   return(
     <Popup
@@ -58,10 +46,6 @@ console.log("gender", values[name]);
       on="focus"
     />
   );
-}
-
-GenderInput.defaultProps = {
-  initialValue: "default",
 }
 
 export default GenderInput;
