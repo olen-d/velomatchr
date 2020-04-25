@@ -25,14 +25,15 @@ const ProfileRequiredForm = props => {
 
   const [flag, setFlag] = useState(true);
   const [initialValues, setInitialValues] = useState({});
+  const [isError, setIsError] = useState(false);
   const [userId, setUserId] = useState(null);
   
-  const { errors, handleBlur, handleChange, initializeFields, values } = useForm();
+  const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
-  // const setDoRedirect = context.setDoRedirect;
-  // const setRedirectURL = context.setRedirectURL;
+  const setDoRedirect = context.setDoRedirect;
+  const setRedirectURL = context.setRedirectURL;
 
   const userInfo = auth.getUserInfo(token);
 
@@ -53,76 +54,65 @@ const ProfileRequiredForm = props => {
     getUserProfile();
   }, [userId]);
 
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
+
   if(Object.keys(initialValues).length > 0 && flag) {
     initializeFields(initialValues);
     setFlag(false);
   }
 
+  const handleSubmit = () => {
+    if (!isError) {
+      postProfileRequired();
+    } else {
+      // TODO: return failure
+    }
+  }
+
   const postProfileRequired = () => {
-    
+    const { fullname, gender } = values;
 
-    // const formData = {
-    //   userId,
-    //   fullName, 
-    //   gender,
-    // };
+    const formData = {
+      userId,
+      fullname, 
+      gender,
+    };
 
-    // // Form Validation
-    // let formError = false;
-
-    // if(fullName.length < 1) {
-    //   setIsFullNameError(true);
-    //   formError = true;
-    // } else {
-    //   setIsFullNameError(false);
-    // }
-    // if(gender === "default") {
-    //   setIsGenderError(true);
-    //   formError = true;
-    // } else {
-    //   setIsGenderError(false);
-    // }
-
-    // if(formError)
-    //   {
-    //     setIsErrorHeader("Unable to save your profile");
-    //     setIsErrorMessage("Please check the fields in red and try again.");
-    //     setIsError(true);
-    //     return;
-    //   }
-
-  //   fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/required/update`, {
-  //     method: "put",
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify(formData)
-  //   }).then(response => {
-  //     return response.json();
-  //   }).then(data => {
-  //     if (data.errors) {
-  //       const { errors } = data;
-  //       errors.forEach(e => {
-  //         if(e["error"] === "IVN") {
-  //           setIsFullNameError(true);
-  //         }
-  //         if(e["error"] === "IVG") {
-  //           setIsGenderError(true);
-  //         }
-  //       }); 
-  //     } else {
-  //       if(submitRedirect) {
-  //         setRedirectURL(submitRedirectURL);
-  //         setDoRedirect(true);
-  //       }
-  //     }
-  //   }).catch(error => {
-  //     return ({
-  //       errorCode: 500,
-  //       errorMsg: "Internal Server Error",
-  //       errorDetail: error
-  //     })
-  //   });
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/required/update`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+      if (data.errors) {
+        const { errors } = data;
+        errors.forEach(e => {
+          // TODO: fix the errors to return the form name so we can just loop through with [name]: true
+          if(e["error"] === "IVN") {
+            handleServerErrors({ fullname: true });
+          }
+          if(e["error"] === "IVG") {
+            handleServerErrors({ gender: true });
+          }
+        }); 
+      } else {
+        if(submitRedirect) {
+          setRedirectURL(submitRedirectURL);
+          setDoRedirect(true);
+        }
+      }
+    }).catch(error => {
+      return ({
+        errorCode: 500,
+        errorMsg: "Internal Server Error",
+        errorDetail: error
+      })
+    });
   }
 
   return(
@@ -160,7 +150,7 @@ const ProfileRequiredForm = props => {
             values={values}
           />
           <Button
-            disabled={!values.fullname || !values.gender || Object.values(errors).indexOf(true) > -1}
+            disabled={!values.fullname || !values.gender || isError}
             className="fluid"
             type="button"
             color="red"
@@ -168,7 +158,7 @@ const ProfileRequiredForm = props => {
             icon="check circle"
             labelPosition="left"
             content={submitBtnContent}
-            // onClick={handleSubmit}
+            onClick={handleSubmit}
           >
           </Button>
         </Form>
