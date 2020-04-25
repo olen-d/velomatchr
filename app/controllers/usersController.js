@@ -449,14 +449,14 @@ exports.update_user_password = (req, res) => {
     });
   })
   .catch(error => {
-    // TODOL Throw useful error.
+    // TODO Throw useful error.
     // Couldn't find users
   });
 };
 
 exports.update_profile_required = (req, res) => {
-  const { userId: id, fullName, gender } = req.body;
-  const [ firstName, ...remainingNames ] = fullName.split(" ");
+  const { userId: id, fullname, gender } = req.body;
+  const [ firstName, ...remainingNames ] = fullname.split(" ");
   const lastName = remainingNames.join(" ");
   const errors = [];
 
