@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import { Form, Popup } from "semantic-ui-react";
 
@@ -34,6 +35,14 @@ const FullnameInput = props => {
 
 FullnameInput.defaultProps = {
   placeholder: "First and Last Name"
+}
+
+FullnameInput.propTypes = {
+  errors: PropTypes.object,
+  handleBlur: PropTypes.func,
+  handleChange: PropTypes.func,
+  placeholder: PropTypes.string,
+  values: PropTypes.object
 }
 
 export default FullnameInput;
