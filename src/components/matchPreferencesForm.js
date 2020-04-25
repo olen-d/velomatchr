@@ -3,11 +3,6 @@ import PropTypes from "prop-types";
 
 import auth from "./auth";
 
-import DropdownItems from "./dropdownItems/dropdownItems";
-
-import matchDistances from "../models/matchDistances";
-import matchGenders from "../models/matchGenders";
-
 import {
   Button,
   Form,
@@ -22,6 +17,11 @@ import {
 import { AuthContext } from "../context/authContext";
 
 import ErrorContainer from "./errorContainer";
+
+import MatchGenderInput from "./formFields/matchGenderInput";
+import MatchProximityInput from "./formFields/matchProximityInput";
+
+import useForm from "../hooks/useForm";
 
 const warning = {
   color: "#d9b500"
@@ -43,6 +43,8 @@ const MatchPreferencesForm = props => {
   const [distance, setDistance] = useState("default");
   const [gender, setGender] = useState("default");
   const [hasMatchPreferences, setHasMatchPreferences] = useState(false);
+
+  const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
@@ -237,7 +239,21 @@ const MatchPreferencesForm = props => {
         <Form 
           size="large"
         >
-          <Form.Input
+          <MatchProximityInput 
+            errors={errors}
+            initialValue={values.gender} 
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          <MatchGenderInput 
+            errors={errors}
+            initialValue={values.gender} 
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          {/* <Form.Input
             className="fluid"
             control="select"
             name="distance"
@@ -260,9 +276,9 @@ const MatchPreferencesForm = props => {
                 value={matchDistance.value}
                 text={matchDistance.text}
               />
-            ))}
-          </Form.Input>
-          <Form.Input
+            ))} */}
+          {/* </Form.Input> */}
+          {/* <Form.Input
             className="fluid"
             control="select"
             name="gender"
@@ -286,10 +302,13 @@ const MatchPreferencesForm = props => {
                 text={matchGender.text}
               />
             ))}
-          </Form.Input>
+          </Form.Input> */}
 
           <ConfirmUpdateModal />
         </Form>
+        {JSON.stringify(values)}
+        <br />
+        {JSON.stringify(errors)}
       </Segment>
     </Grid.Column>
   );
