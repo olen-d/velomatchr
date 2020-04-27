@@ -9,16 +9,41 @@ const Op = Sequelize.Op;
 // Create or update match preferences
 exports.update_match_preferences = (req, res) => {
   const { userId, distance, gender } = req.body;
-  MatchPref.upsert({
-    userId,
-    distance,
-    gender
-  }).then(newMatchPreferences => {
-    res.json(newMatchPreferences);
-  })
-  .catch(err => {
-    res.status(500).json({error: err});
-  });
+  const errors = [];
+
+  const checkDistance = distance => {
+    if (distance === "default") {
+      errors.push({matchProximityPref: true});
+      return false;
+    }
+    return true;
+  };
+
+  const checkGender = gender => {
+    if (gender === "default") {
+      errors.push({matchGenderPref: true});
+      return false;
+    }
+    return true;
+  };
+
+  const isValidDistance = checkDistance(distance);
+  const isValidGender = checkGender(gender);
+
+  if (isValidDistance && isValidGender) {
+    MatchPref.upsert({
+      userId,
+      distance,
+      gender
+    }).then(newMatchPreferences => {
+      res.json(newMatchPreferences);
+    })
+    .catch(err => {
+      res.status(500).json({error: err});
+    });
+  } else {
+    res.json({ errors });
+  }
 };
 
 // Calculate user matches and create relationships
