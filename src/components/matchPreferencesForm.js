@@ -80,7 +80,7 @@ const MatchPreferencesForm = props => {
       <Modal
         trigger={
           <Button
-            // disabled={Object.entries(values).length < 2 || isError}
+            disabled={Object.entries(values).length < 2 || isError}
             className="fluid"
             type="button"
             color="red"
