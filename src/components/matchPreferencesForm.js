@@ -27,24 +27,17 @@ const warning = {
   color: "#d9b500"
 }
 
-
 const MatchPreferencesForm = props => {
-  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL, isModal, handleSubmit } = props;
+  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL, isModal } = props;
 
-  // Set up the State for form error handling
+
   const [flag, setFlag] = useState(true);
+  const [hasMatchPreferences, setHasMatchPreferences] = useState(false);
   const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
-  const [isDistanceError, setIsDistanceError] = useState(false);
-  const [isGenderError, setIsGenderError] = useState(false);
-
-  // ...Rest of the State
   const [userId, setUserId] = useState(null);
-  const [distance, setDistance] = useState("default");
-  const [gender, setGender] = useState("default");
-  const [hasMatchPreferences, setHasMatchPreferences] = useState(false);
 
   const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
@@ -80,55 +73,61 @@ const MatchPreferencesForm = props => {
         // TODO: Deal with the error
         console.log(error);
       });
-      postMatchPreferences();
+      handleSubmit();
     }
 
     return(
       <Modal
-      trigger={
-        <Button
-          disabled={distance ==="default" || gender ==="default"}
-          className="fluid"
-          type="button"
-          color="red"
-          size="large"
-          icon="check circle"
-          labelPosition="left"
-          content={submitBtnContent}
-          onClick={handleOpen}
-        >
-        </Button>
-      }     
-      open={isOpen}
-      onClose={handleClose} closeIcon>
-      <Modal.Header><span style={warning}><Icon name="exclamation triangle" />&nbsp;Update Match Preferences</span></Modal.Header>
-      <Modal.Content>
-        <Modal.Description>
-          <p>
-            Updating your match preferences will automatically delete potential matches that do not meet the new preferences. Pending and accepted match requests will not be affected.
-          </p>
-          <p>
-            Are you sure you want to update your match preferences?
-          </p>
-        </Modal.Description>
-      </Modal.Content>
-      <Modal.Actions>
-        <Button color="grey" onClick={handleClose}>
-          <Icon name="remove" /> No
-        </Button>
-        <Button color="orange" onClick={handleConfirm}>
-          <Icon name="checkmark" /> Yes
-        </Button>
-      </Modal.Actions>
-    </Modal>
+        trigger={
+          <Button
+            // disabled={Object.entries(values).length < 2 || isError}
+            className="fluid"
+            type="button"
+            color="red"
+            size="large"
+            icon="check circle"
+            labelPosition="left"
+            content={submitBtnContent}
+            onMouseUp={handleOpen}
+          >
+          </Button>
+        }     
+        open={isOpen}
+        onClose={handleClose} closeIcon
+      >
+        <Modal.Header><span style={warning}><Icon name="exclamation triangle" />&nbsp;Update Match Preferences</span></Modal.Header>
+        <Modal.Content>
+          <Modal.Description>
+            <p>
+              Updating your match preferences will automatically delete potential matches that do not meet the new preferences. Pending and accepted match requests will not be affected.
+            </p>
+            <p>
+              Are you sure you want to update your match preferences?
+            </p>
+          </Modal.Description>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button color="grey" onClick={handleClose}>
+            <Icon name="remove" /> No
+          </Button>
+          <Button color="orange" onClick={handleConfirm}>
+            <Icon name="checkmark" /> Yes
+          </Button>
+        </Modal.Actions>
+      </Modal>
     );
   }
 
-  const postMatchPreferences = () => {
-    const handleRedirect = () => {
-      setRedirectURL(submitRedirectURL);
-      setDoRedirect(true);
+  const handleSubmit = () => {
+    if (!isError) {
+      postMatchPreferences();
+    } else {
+      // TODO: return failure
     }
+  }
+
+  const postMatchPreferences = () => {
+    const { matchProximityPref: distance, matchGenderPref: gender } = values;
 
     const formData = { 
       userId,
@@ -136,29 +135,10 @@ const MatchPreferencesForm = props => {
       gender
     };
 
-    // Form Validation
-    let formError = false;
-
-    if(distance === "default") {
-      setIsDistanceError(true);
-      formError = true;
-    } else {
-      setIsDistanceError(false);
+    const handleRedirect = () => {
+      setRedirectURL(submitRedirectURL);
+      setDoRedirect(true);
     }
-    if(gender === "default") {
-      setIsGenderError(true);
-      formError = true;
-    } else {
-      setIsGenderError(false);
-    }
-
-    if(formError)
-      {
-        setIsErrorHeader("Unable to save your match preferences");
-        setIsErrorMessage("Please check the fields in red and try again.");
-        setIsError(true);
-        return;
-      }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/submit`, {
       method: "post",
@@ -169,30 +149,40 @@ const MatchPreferencesForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      if (isModal) {
-        handleSubmit(); // Closes the modal, if this component is wrapped in one.
-      }
-      // Sequelize returns true if a record is created and false is updated. 
-      // The match recalculation should only run on updates.
-      if (!data) {
-        fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ userId })
-        }).then(response => {
-          return response.json();
-        }).then(data => {
-          if(data && submitRedirect) {
-            handleRedirect();
-          }
-        }).catch(err => {
-          console.log("matchPreferencesForm.js Error:\n", err);
-          // Do something about the err
-        })        
+      if (data.errors) {
+        const { errors } = data;
+
+        errors.forEach(e => {
+          handleServerErrors(e);
+        })
       } else {
-        handleRedirect();
+        if (isModal) {
+          // handleSubmit(); // Closes the modal, if this component is wrapped in one.
+          // TODO: Close the modal this component is wrapped in
+        }
+
+        // Sequelize returns true if a record is created and false is updated. 
+        // The match recalculation should only run on updates.
+        if (!data) {
+          fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ userId })
+          }).then(response => {
+            return response.json();
+          }).then(data => {
+            if(data && submitRedirect) {
+              handleRedirect();
+            }
+          }).catch(err => {
+            console.log("matchPreferencesForm.js Error:\n", err);
+            // Do something about the err
+          })        
+        } else {
+          handleRedirect();
+        }
       }
     }).catch(error => {
       return ({
@@ -218,6 +208,17 @@ const MatchPreferencesForm = props => {
     }
     getUserMatchPrefs();
   }, [userId]);
+
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
+
+  useEffect(() => {
+    if (isError) {
+      setIsErrorHeader("Unable to Update Match Preferences");
+      setIsErrorMessage("Please select an option from the fields shown in red.");
+    }
+  }, [isError]);
 
   if(Object.keys(initialValues).length > 0 && flag) {
     initializeFields(initialValues);
@@ -259,57 +260,6 @@ const MatchPreferencesForm = props => {
             handleChange={handleChange}
             values={values}
           />
-          {/* <Form.Input
-            className="fluid"
-            control="select"
-            name="distance"
-            value={distance}
-            error={isDistanceError}
-            onChange={e => {
-              setDistance(e.target.value)
-            }}
-          >  
-            <option
-              key="-1"
-              value="default"
-              disabled
-            >
-              Select Match Proximity
-            </option>
-            {matchDistances.map(matchDistance => (
-              <DropdownItems 
-                key={matchDistance.id}
-                value={matchDistance.value}
-                text={matchDistance.text}
-              />
-            ))} */}
-          {/* </Form.Input> */}
-          {/* <Form.Input
-            className="fluid"
-            control="select"
-            name="gender"
-            value={gender}
-            error={isGenderError}
-            onChange={e => {
-              setGender(e.target.value)
-            }}
-          >  
-            <option
-              key="-1"
-              value="default"
-              disabled
-            >
-              Select Genders to Match With
-            </option>
-            {matchGenders.map(matchGender => (
-              <DropdownItems 
-                key={matchGender.id}
-                value={matchGender.value}
-                text={matchGender.text}
-              />
-            ))}
-          </Form.Input> */}
-
           <ConfirmUpdateModal />
         </Form>
         {JSON.stringify(values)}
@@ -318,7 +268,6 @@ const MatchPreferencesForm = props => {
       </Segment>
     </Grid.Column>
   );
-  // }
 }
 
 MatchPreferencesForm.defaultProps = {
@@ -338,8 +287,7 @@ MatchPreferencesForm.propTypes = {
   submitBtnContent: PropTypes.string,
   submitRedirect: PropTypes.bool,
   submitRedirectURL: PropTypes.string,
-  isModal: PropTypes.bool,
-  handleSubmit: PropTypes.func
+  isModal: PropTypes.bool
 }
 
 export default MatchPreferencesForm;
