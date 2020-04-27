@@ -32,6 +32,8 @@ const MatchPreferencesForm = props => {
   const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL, isModal, handleSubmit } = props;
 
   // Set up the State for form error handling
+  const [flag, setFlag] = useState(true);
+  const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
@@ -209,14 +211,18 @@ const MatchPreferencesForm = props => {
       const data = await response.json();
 
       if (data && data.user && data.user.userMatchPrefs) { // Skips the destructuring if any of these are null, which would throw a type error
-        const { user: { userMatchPrefs: { distance: userDistance, gender: userGender },},} = data;
-        setDistance(userDistance);
-        setGender(userGender);
+        const { user: { userMatchPrefs: { distance: matchProximityPref, gender: matchGenderPref },},} = data;
+        setInitialValues({ matchProximityPref, matchGenderPref});
         setHasMatchPreferences(true);
       }
     }
     getUserMatchPrefs();
   }, [userId]);
+
+  if(Object.keys(initialValues).length > 0 && flag) {
+    initializeFields(initialValues);
+    setFlag(false);
+  }
 
   return(
     <Grid.Column width={colWidth}>
