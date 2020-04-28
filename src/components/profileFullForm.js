@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 // import PropTypes from "prop-types";
+// TODO: Remove all FormInput
+// TODO: Delete FormInput from src/components
 
 import auth from "./auth";
 
@@ -10,6 +12,9 @@ import { Grid } from "semantic-ui-react";
 import { AuthContext } from "../context/authContext";
 
 import FormInput from "./formInput";
+import UsernameInput from "./formFields/usernameInput";
+
+import useForm from "../hooks/useForm";
 
 const ProfileFullForm = () => {
   const [city, setCity] = useState(null);
@@ -22,8 +27,14 @@ const ProfileFullForm = () => {
   const [photoLink, setPhotoLink] = useState(null);
   const [postalCode, setPostalCode] = useState(null);  
   const [state, setState] = useState(null);
+
+
+  // New state (TODO: Delete this line)
+  const [flag, setFlag] = useState(true);
+  const [initialValues, setInitialValues] = useState({});
+  const [isError, setIsError] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [username, setUsername] = useState(null);
+  const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
@@ -55,6 +66,9 @@ const ProfileFullForm = () => {
           },
         } = data;
 
+        setInitialValues({ username });
+
+        // Delete below when incorporated into initialvalues
         setCity(city);
         setCountry(country);
         setFullName(firstName + " " + lastName);
@@ -65,12 +79,16 @@ const ProfileFullForm = () => {
         setPhotoLink(photoLink);
         setPostalCode(postalCode);
         setState(state);
-        setUsername(username);
       }
     }
     getUserProfile();
   }, [userId]);
 
+  if(Object.keys(initialValues).length > 0 && flag) {
+    initializeFields(initialValues);
+    setFlag(false);
+  }
+  
   return(
     <>
       <Grid.Row>
@@ -83,12 +101,14 @@ const ProfileFullForm = () => {
         />
       </Grid.Row>
       <Grid.Row>
-        <FormInput
-          icon={"user"}
-          inputValue={username}
-          name={"name"}
-          placeholder={"User Name"}
-        />
+      <UsernameInput 
+        errors={errors}
+        initialValue={values.fullname}
+        placeholder="First and Last Name"
+        handleBlur={handleBlur}
+        handleChange={handleChange}
+        values={values}
+      />
       </Grid.Row>
       <Grid.Row>
       <ProfileRequiredForm
