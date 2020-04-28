@@ -28,7 +28,7 @@ const warning = {
 }
 
 const MatchPreferencesForm = props => {
-  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL, isModal } = props;
+  const { colWidth, formInstructions, formTitle, isModal, submitBtnContent, submitRedirect, submitRedirectURL, updateHasMatchPrefs } = props;
 
 
   const [flag, setFlag] = useState(true);
@@ -66,7 +66,7 @@ const MatchPreferencesForm = props => {
       })
       .then(async response => {
         const response_1 = await response.json();
-        console.log(response_1);
+        return response_1;
         // TODO: Add some sort of success message
       })
       .catch(error => {
@@ -159,6 +159,7 @@ const MatchPreferencesForm = props => {
         if (isModal) {
           // handleSubmit(); // Closes the modal, if this component is wrapped in one.
           // TODO: Close the modal this component is wrapped in
+          updateHasMatchPrefs();
         }
 
         // Sequelize returns true if a record is created and false is updated. 
@@ -262,9 +263,6 @@ const MatchPreferencesForm = props => {
           />
           <ConfirmUpdateModal />
         </Form>
-        {JSON.stringify(values)}
-        <br />
-        {JSON.stringify(errors)}
       </Segment>
     </Grid.Column>
   );
@@ -287,7 +285,8 @@ MatchPreferencesForm.propTypes = {
   submitBtnContent: PropTypes.string,
   submitRedirect: PropTypes.bool,
   submitRedirectURL: PropTypes.string,
-  isModal: PropTypes.bool
+  isModal: PropTypes.bool,
+  updateHasMatchPrefs: PropTypes.func
 }
 
 export default MatchPreferencesForm;
