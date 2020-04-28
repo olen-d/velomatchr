@@ -142,7 +142,7 @@ const SurveyForm = props => {
   const MatchPrefsModal = props => {
     const { isOpen } = props;
   
-    const handleSubmit = () => {
+    const updateHasMatchPrefs = () => {
       setHasMatchPrefs(true);
     }
   
@@ -162,7 +162,7 @@ const SurveyForm = props => {
             submitRedirect={true}
             submitRedirectURL={"/survey"}
             isModal={true}
-            handleSubmit={handleSubmit}
+            updateHasMatchPrefs={updateHasMatchPrefs}
           />
         </Modal.Description>
       </Modal.Content>
