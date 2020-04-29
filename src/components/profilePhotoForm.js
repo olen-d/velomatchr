@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Form,
-  Grid,
   Header,
   Icon,
   Image
@@ -14,7 +13,7 @@ import ErrorContainer from "./errorContainer";
 import SuccessContainer from "./successContainer";
 
 const ProfilePhotoForm = props => {
-  const { colWidth, formTitle, photoLink, profilePhotoBtnContent, userId } = props;
+  const { formTitle, photoLink, profilePhotoBtnContent, userId } = props;
 
   // Error container items
   const [isError, setIsError] = useState(false);
@@ -79,7 +78,7 @@ const ProfilePhotoForm = props => {
   }, [photoLink]);
   
   return(
-    <Grid.Column width={colWidth}>
+    <>
       <Header 
         as="h2" 
         textAlign="center"
@@ -119,8 +118,7 @@ const ProfilePhotoForm = props => {
           onChange={uploadFile}
         />
       </Form>
-
-    </Grid.Column>
+    </>
   );
 }
 

@@ -11,7 +11,15 @@ const Settings = () => {
   return(
     <Container>
       <Grid stackable>
-        <ProfileFullForm />
+        <Grid.Column width={4}>
+          &nbsp;
+        </Grid.Column>
+        <Grid.Column width={8}>
+          <ProfileFullForm formTitle={"My Profile"}/>
+        </Grid.Column>
+        <Grid.Column width={4}>
+          &nbsp;
+        </Grid.Column>
       </Grid>
     </Container>
   );

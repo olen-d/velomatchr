@@ -6,28 +6,27 @@ import React, { useContext, useEffect, useState } from "react";
 import auth from "./auth";
 
 import ProfilePhotoForm from "./profilePhotoForm";
-import ProfileRequiredForm from "./profileRequiredForm";
-import { Grid } from "semantic-ui-react";
+import { Form, Header } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
-import FormInput from "./formInput";
+import CityInput from "./formFields/cityInput";
+import CountryInput from "./formFields/countryInput"
+import FullnameInput from "./formFields/fullnameInput";
+import GenderInput from "./formFields/genderInput";
+import PhoneInput from "./formFields/phoneInput";
+import PostalCodeInput from "./formFields/postalCodeInput";
+import StateInput from "./formFields/stateInput";
 import UsernameInput from "./formFields/usernameInput";
 
 import useForm from "../hooks/useForm";
 
-const ProfileFullForm = () => {
-  const [city, setCity] = useState(null);
-  const [country, setCountry] = useState(null);
-  const [fullName, setFullName] = useState(null);
-  const [gender, setGender] = useState(null);
+const ProfileFullForm = props => {
+  const { formTitle } = props;
+
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-  const [phone, setPhone] = useState(null);
   const [photoLink, setPhotoLink] = useState(null);
-  const [postalCode, setPostalCode] = useState(null);  
-  const [state, setState] = useState(null);
-
 
   // New state (TODO: Delete this line)
   const [flag, setFlag] = useState(true);
@@ -66,19 +65,14 @@ const ProfileFullForm = () => {
           },
         } = data;
 
-        setInitialValues({ username });
+        const fullname = firstName || lastName ? `${firstName} ${lastName}` : "";
+
+        setInitialValues({ city, country, fullname, gender, phone, postalCode, state, username });
 
         // Delete below when incorporated into initialvalues
-        setCity(city);
-        setCountry(country);
-        setFullName(firstName + " " + lastName);
-        setGender(gender);
         setLatitude(latitude);
         setLongitude(longitude);
-        setPhone(phone);
         setPhotoLink(photoLink);
-        setPostalCode(postalCode);
-        setState(state);
       }
     }
     getUserProfile();
@@ -91,71 +85,91 @@ const ProfileFullForm = () => {
   
   return(
     <>
-      <Grid.Row>
-        <ProfilePhotoForm
-          colWidth={8}
-          formTitle={"Current Photograph"}
-          profilePhotoBtnContent={"Upload Profile Photo"}
-          photoLink={photoLink}
-          userId={userId}
-        />
-      </Grid.Row>
-      <Grid.Row>
-      <UsernameInput 
-        errors={errors}
-        initialValue={values.fullname}
-        placeholder="First and Last Name"
-        handleBlur={handleBlur}
-        handleChange={handleChange}
-        values={values}
+      <Header 
+        as="h2" 
+        textAlign="center"
+        color="grey"
+      >
+        {formTitle}
+      </Header>
+      <ProfilePhotoForm
+        formTitle={"Current Photograph"}
+        profilePhotoBtnContent={"Upload Profile Photo"}
+        photoLink={photoLink}
+        userId={userId}
       />
-      </Grid.Row>
-      <Grid.Row>
-      <ProfileRequiredForm
-          colWidth={8}
-          formTitle={"My Profile"}
+      <Form size="large">
+        <UsernameInput 
+          errors={errors}
+          initialValue={values.fullname}
+          placeholder="User Name"
+          handleBlur={handleBlur}
+          handleChange={handleChange}
+          values={values}
         />
-      </Grid.Row>
-      <Grid.Row>
-        <FormInput
-          icon={"phone"}
-          inputValue={phone}
-          name={"phone"}
-          placeholder={"Phone Number"}
+        
+        <FullnameInput
+          errors={errors}
+          initialValue={values.fullname}
+          placeholder="First and Last Name"
+          handleBlur={handleBlur}
+          handleChange={handleChange}
+          values={values}
         />
-      </Grid.Row>
-      <Grid.Row>
-        <FormInput
-          icon={"building"}
-          inputValue={city}
-          name={"city"}
-          placeholder={"City"}
+
+        <GenderInput 
+          errors={errors}
+          initialValue={values.gender} 
+          handleBlur={handleBlur}
+          handleChange={handleChange}
+          values={values}
         />
-      </Grid.Row>
-      <Grid.Row>
-        <FormInput
-          icon={"map pin"}
-          inputValue={state}
-          name={"state"}
-          placeholder={"State"}
+
+        <PhoneInput
+          errors={errors}
+          initialValue={values.phone}
+          placeholder="Phone Number"
+          handleBlur={handleBlur}
+          handleChange={handleChange}
+          values={values}
         />
-      </Grid.Row>
-      <Grid.Row>
-        <FormInput
-          icon={"flag"}
-          inputValue={country}
-          name={"country"}
-          placeholder={"Country"}
+
+        <CityInput
+          errors={errors}
+          initialValue={values.city}
+          placeholder="City"
+          handleBlur={handleBlur}
+          handleChange={handleChange}
+          values={values}
         />
-      </Grid.Row>
-      <Grid.Row>
-        <FormInput
-          icon={"map pin"}
-          inputValue={postalCode}
-          name={"postalcode"}
-          placeholder={"Postal Code"}
+        
+        <StateInput
+          errors={errors}
+          initialValue={values.state}
+          placeholder="State"
+          handleBlur={handleBlur}
+          handleChange={handleChange}
+          values={values}
         />
-      </Grid.Row>
+
+        <CountryInput
+          errors={errors}
+          initialValue={values.country}
+          placeholder="Country"
+          handleBlur={handleBlur}
+          handleChange={handleChange}
+          values={values}
+        />
+
+        <PostalCodeInput
+          errors={errors}
+          initialValue={values.postalCode}
+          placeholder="Postal Code"
+          handleBlur={handleBlur}
+          handleChange={handleChange}
+          values={values}
+        />
+      </Form>
     </>
   );
 }
