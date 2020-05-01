@@ -15,7 +15,7 @@ const Settings = () => {
           &nbsp;
         </Grid.Column>
         <Grid.Column width={8}>
-          <ProfileFullForm formTitle={"My Profile"}/>
+          <ProfileFullForm formTitle={"My Profile"} submitBtnContent={"Update Profile"}/>
         </Grid.Column>
         <Grid.Column width={4}>
           &nbsp;

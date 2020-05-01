@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from "react";
 import auth from "./auth";
 
 import ProfilePhotoForm from "./profilePhotoForm";
-import { Form, Header } from "semantic-ui-react";
+import { Button, Form, Header } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
@@ -22,7 +22,7 @@ import UsernameInput from "./formFields/usernameInput";
 import useForm from "../hooks/useForm";
 
 const ProfileFullForm = props => {
-  const { formTitle } = props;
+  const { formTitle, submitBtnContent } = props;
 
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -78,11 +78,28 @@ const ProfileFullForm = props => {
     getUserProfile();
   }, [userId]);
 
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
+  
   if(Object.keys(initialValues).length > 0 && flag) {
     initializeFields(initialValues);
     setFlag(false);
   }
   
+  const handleSubmit = () => {
+    if (!isError) {
+      postProfileUpdate();
+    } else {
+      // TODO: return failure
+    }
+  }
+
+  const postProfileUpdate = () => {
+    // Need to add route
+    // Need to add controller
+  }
+
   return(
     <>
       <Header 
@@ -169,6 +186,19 @@ const ProfileFullForm = props => {
           handleChange={handleChange}
           values={values}
         />
+
+        <Button
+            disabled={isError}
+            className="fluid"
+            type="button"
+            color="red"
+            size="large"
+            icon="check circle"
+            labelPosition="left"
+            content={submitBtnContent}
+            onClick={handleSubmit}
+        >
+        </Button>        
       </Form>
     </>
   );
