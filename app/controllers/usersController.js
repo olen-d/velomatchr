@@ -454,6 +454,24 @@ exports.update_user_password = (req, res) => {
   });
 };
 
+exports.update_profile_full = (req, res) => {
+  const { 
+    userId: id,
+    city,
+    country,
+    fullname,
+    gender,
+    phone,
+    postalCode,
+    state,
+    name
+  } = req.body;
+  const [ firstName, ...remainingNames ] = fullname.split(" ");
+  const lastName = remainingNames.join(" ");
+  const errors = [];
+  
+}
+
 exports.update_profile_required = (req, res) => {
   const { userId: id, fullname, gender } = req.body;
   const [ firstName, ...remainingNames ] = fullname.split(" ");
