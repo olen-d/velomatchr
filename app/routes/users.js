@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+// TODO: Fix users/profile/.../update routes to be users/profile/update/...
 const imageUpload = require("../helpers/upload-image");
 
 const users_controller = require("../controllers/usersController");
@@ -25,6 +25,7 @@ router.post("/users/profile/photograph/update", imageUpload, users_controller.cr
 
 router.put("/users/password/update", users_controller.update_user_password);
 router.put("/users/profile/required/update", users_controller.update_profile_required);
+router.put("/users/profile/full/update", users_controller.update_profile_full);
 router.put("/users/verified/update", users_controller.update_is_email_verified);
 
 router.delete("/users/verification/codes/:userId", users_controller.delete_user_email_verification_codes);

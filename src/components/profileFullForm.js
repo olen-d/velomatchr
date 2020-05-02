@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 // import PropTypes from "prop-types";
-// TODO: Remove all FormInput
+// COMLETE TODO: Remove all FormInput
 // TODO: Delete FormInput from src/components
 
 import auth from "./auth";
 
 import ProfilePhotoForm from "./profilePhotoForm";
-import { Button, Form, Header } from "semantic-ui-react";
+import { Button, Form, Header, Segment } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
@@ -22,10 +22,8 @@ import UsernameInput from "./formFields/usernameInput";
 import useForm from "../hooks/useForm";
 
 const ProfileFullForm = props => {
-  const { formTitle, submitBtnContent } = props;
+  const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
   const [photoLink, setPhotoLink] = useState(null);
 
   // New state (TODO: Delete this line)
@@ -37,6 +35,8 @@ const ProfileFullForm = props => {
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
+  const setDoRedirect = context.setDoRedirect;
+  const setRedirectURL = context.setRedirectURL;
 
   const userInfo = auth.getUserInfo(token);
 
@@ -52,6 +52,7 @@ const ProfileFullForm = props => {
           user: {
             city,
             country,
+            countryCode,
             firstName,
             lastName,
             gender,
@@ -59,20 +60,31 @@ const ProfileFullForm = props => {
             longitude,
             name: username,
             phone,
-            photoLink,
+            photoLink: initialPhotoLink,
             postalCode,
-            state
+            state,
+            stateCode
           },
         } = data;
 
         const fullname = firstName || lastName ? `${firstName} ${lastName}` : "";
 
-        setInitialValues({ city, country, fullname, gender, phone, postalCode, state, username });
+        setInitialValues({
+          city,
+          country,
+          countryCode,
+          fullname,
+          gender,
+          latitude,
+          longitude,
+          phone,
+          postalCode,
+          state,
+          stateCode,
+          username
+        });
 
-        // Delete below when incorporated into initialvalues
-        setLatitude(latitude);
-        setLongitude(longitude);
-        setPhotoLink(photoLink);
+        setPhotoLink(initialPhotoLink);
       }
     }
     getUserProfile();
@@ -96,8 +108,63 @@ const ProfileFullForm = props => {
   }
 
   const postProfileUpdate = () => {
-    // Need to add route
-    // Need to add controller
+    const {
+      city,
+      country,
+      countryCode,
+      fullname,
+      gender,
+      latitude,
+      longitude,
+      phone,
+      postalCode,
+      state,
+      stateCode,
+      username: name
+    } = values;
+ 
+    const formData = {
+      userId,
+      city,
+      country,
+      countryCode,
+      fullname,
+      gender,
+      latitude,
+      longitude,
+      phone,
+      postalCode,
+      state,
+      stateCode,
+      name
+    };
+
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/full/update`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+      if (data.errors) {
+        const { errors } = data;
+        // TODO: fix profileRequiredForm.js 
+        handleServerErrors(...errors);
+      } else {
+        if(submitRedirect) {
+          setRedirectURL(submitRedirectURL);
+          setDoRedirect(true);
+        }
+      }
+    }).catch(error => {
+      return ({
+        errorCode: 500,
+        errorMsg: "Internal Server Error",
+        errorDetail: error
+      })
+    });
   }
 
   return(
@@ -115,91 +182,103 @@ const ProfileFullForm = props => {
         photoLink={photoLink}
         userId={userId}
       />
-      <Form size="large">
-        <UsernameInput 
-          errors={errors}
-          initialValue={values.fullname}
-          placeholder="User Name"
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-        
-        <FullnameInput
-          errors={errors}
-          initialValue={values.fullname}
-          placeholder="First and Last Name"
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-
-        <GenderInput 
-          errors={errors}
-          initialValue={values.gender} 
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-
-        <PhoneInput
-          errors={errors}
-          initialValue={values.phone}
-          placeholder="Phone Number"
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-
-        <CityInput
-          errors={errors}
-          initialValue={values.city}
-          placeholder="City"
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-        
-        <StateInput
-          errors={errors}
-          initialValue={values.state}
-          placeholder="State"
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-
-        <CountryInput
-          errors={errors}
-          initialValue={values.country}
-          placeholder="Country"
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-
-        <PostalCodeInput
-          errors={errors}
-          initialValue={values.postalCode}
-          placeholder="Postal Code"
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-
-        <Button
-            disabled={isError}
-            className="fluid"
-            type="button"
-            color="red"
-            size="large"
-            icon="check circle"
-            labelPosition="left"
-            content={submitBtnContent}
-            onClick={handleSubmit}
-        >
-        </Button>        
-      </Form>
+      <Header
+        as="h3"
+        text-align="left"
+        color="grey"
+      >
+        My Personal Information
+      </Header>
+      <Segment>
+        <Form size="large">
+          <UsernameInput 
+            errors={errors}
+            initialValue={values.fullname}
+            placeholder="User Name"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          <FullnameInput
+            errors={errors}
+            initialValue={values.fullname}
+            placeholder="First and Last Name"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          <GenderInput 
+            errors={errors}
+            initialValue={values.gender} 
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          <PhoneInput
+            errors={errors}
+            initialValue={values.phone}
+            placeholder="Phone Number"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+        </Form>
+      </Segment>
+      <Header
+        as="h3"
+        text-align="left"
+        color="grey"
+      >
+        My Location
+      </Header>
+      <Segment>
+        <Form size="large">
+          <CityInput
+            errors={errors}
+            initialValue={values.city}
+            placeholder="City"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          <StateInput
+            errors={errors}
+            initialValue={values.state}
+            placeholder="State"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          <CountryInput
+            errors={errors}
+            initialValue={values.country}
+            placeholder="Country"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          <PostalCodeInput
+            errors={errors}
+            initialValue={values.postalCode}
+            placeholder="Postal Code"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+        </Form>
+      </Segment>
+      <Button
+          disabled={isError}
+          className="fluid"
+          type="button"
+          color="red"
+          size="large"
+          icon="check circle"
+          labelPosition="left"
+          content={submitBtnContent}
+          onClick={handleSubmit}
+      >
+      </Button>
     </>
   );
 }
