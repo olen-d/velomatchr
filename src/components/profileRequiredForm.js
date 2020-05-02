@@ -93,6 +93,7 @@ const ProfileRequiredForm = props => {
         const { errors } = data;
         errors.forEach(e => {
           // TODO: fix the errors to return the form name so we can just loop through with [name]: true
+          // Update - use handleServerErrors and just set handleServerErrors(...errors)
           if(e["error"] === "IVN") {
             handleServerErrors({ fullname: true });
           }

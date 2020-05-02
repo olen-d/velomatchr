@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 // import PropTypes from "prop-types";
-// TODO: Remove all FormInput
+// COMLETE TODO: Remove all FormInput
 // TODO: Delete FormInput from src/components
 
 import auth from "./auth";
@@ -22,10 +22,8 @@ import UsernameInput from "./formFields/usernameInput";
 import useForm from "../hooks/useForm";
 
 const ProfileFullForm = props => {
-  const { formTitle, submitBtnContent } = props;
+  const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
   const [photoLink, setPhotoLink] = useState(null);
 
   // New state (TODO: Delete this line)
@@ -37,6 +35,8 @@ const ProfileFullForm = props => {
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
+  const setDoRedirect = context.setDoRedirect;
+  const setRedirectURL = context.setRedirectURL;
 
   const userInfo = auth.getUserInfo(token);
 
@@ -52,6 +52,7 @@ const ProfileFullForm = props => {
           user: {
             city,
             country,
+            countryCode,
             firstName,
             lastName,
             gender,
@@ -59,20 +60,31 @@ const ProfileFullForm = props => {
             longitude,
             name: username,
             phone,
-            photoLink,
+            photoLink: initialPhotoLink,
             postalCode,
-            state
+            state,
+            stateCode
           },
         } = data;
 
         const fullname = firstName || lastName ? `${firstName} ${lastName}` : "";
 
-        setInitialValues({ city, country, fullname, gender, phone, postalCode, state, username });
+        setInitialValues({
+          city,
+          country,
+          countryCode,
+          fullname,
+          gender,
+          latitude,
+          longitude,
+          phone,
+          postalCode,
+          state,
+          stateCode,
+          username
+        });
 
-        // Delete below when incorporated into initialvalues
-        setLatitude(latitude);
-        setLongitude(longitude);
-        setPhotoLink(photoLink);
+        setPhotoLink(initialPhotoLink);
       }
     }
     getUserProfile();
@@ -96,22 +108,63 @@ const ProfileFullForm = props => {
   }
 
   const postProfileUpdate = () => {
-    const { city, country, fullname, gender, phone, postalCode, state, username: name } = values;
+    const {
+      city,
+      country,
+      countryCode,
+      fullname,
+      gender,
+      latitude,
+      longitude,
+      phone,
+      postalCode,
+      state,
+      stateCode,
+      username: name
+    } = values;
  
     const formData = {
       userId,
       city,
       country,
+      countryCode,
       fullname,
       gender,
+      latitude,
+      longitude,
       phone,
       postalCode,
       state,
+      stateCode,
       name
     };
 
-    // Need to add route
-    // Need to add controller
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/full/update`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+      if (data.errors) {
+        const { errors } = data;
+        // TODO: fix profileRequiredForm.js 
+        handleServerErrors(...errors);
+      } else {
+        if(submitRedirect) {
+          setRedirectURL(submitRedirectURL);
+          setDoRedirect(true);
+        }
+      }
+    }).catch(error => {
+      return ({
+        errorCode: 500,
+        errorMsg: "Internal Server Error",
+        errorDetail: error
+      })
+    });
   }
 
   return(

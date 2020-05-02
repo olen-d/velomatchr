@@ -459,18 +459,145 @@ exports.update_profile_full = (req, res) => {
     userId: id,
     city,
     country,
+    countryCode,
     fullname,
     gender,
+    latitude,
+    longitude,
     phone,
     postalCode,
     state,
+    stateCode,
     name
   } = req.body;
   const [ firstName, ...remainingNames ] = fullname.split(" ");
   const lastName = remainingNames.join(" ");
   const errors = [];
-  
-}
+
+  // TODO: Pull these out into a validation object with methods probably as a helper
+  const checkCity = city => {
+    if (city.length < 1 ) {
+      errors.push({ city: true });
+      return false;
+    } else {
+      return true;
+    }
+  }
+  const checkCountry = country => {
+    if (country.length < 1 ) {
+      errors.push({ country: true });
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  const checkFullname = (firstName, lastName) => {
+    if (firstName.length < 1 || lastName.length < 1) {
+      errors.push({ fullname: true });
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  const checkGender = gender => {
+    if (gender === "default") {
+      errors.push({ gender: true });
+      return false;
+    }
+    return true;
+  };
+
+  const checkPhone = phone => {
+    if (phone !== "") {
+      const regEx = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/gm
+      if (regEx.test(phone)) {
+        return true;
+      } else {
+        errors.push({ phone: true });
+        return false;
+      }
+    } else {
+      return true;    // Phone number is an optional field, so a blank is not an error
+    }
+  }
+
+  const checkPostalCode = postalCode => {
+    if (postalCode.length < 1 ) {
+      errors.push({ postalCode: true });
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  const checkState = state => {
+    if (state.length < 1 ) {
+      errors.push({ state: true });
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  const checkUsername = name => {
+    if (name.length < 1 ) {
+      errors.push({ name: true });
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  const isValidCity = checkCity(city);
+  const isValidCountry = checkCountry(country);
+  const isValidFullname = checkFullname(firstName, lastName);
+  const isValidGender = checkGender(gender);
+  const isValidPhone = checkPhone(phone);
+  const isValidPostalCode = checkPostalCode(postalCode);
+  const isValidState = checkState(state);
+  const isValidUsername = checkUsername(name);
+
+  if (
+    isValidCity &&
+    isValidCountry &&
+    isValidFullname &&
+    isValidGender &&
+    isValidPhone &&
+    isValidPostalCode &&
+    isValidState &&
+    isValidUsername
+    ) {
+      User.update(
+        {
+          city,
+          country,
+          countryCode,
+          firstName,
+          lastName,
+          gender,
+          latitude,
+          longitude,
+          phone,
+          postalCode,
+          state,
+          stateCode,
+          name
+        },
+        { where: { id }}
+      )
+      .then(data => {
+        res.json(data);
+      })
+      .catch(err => {
+        res.status(500).json({error: err});
+      });
+    } else {
+      // Return validation errors
+      res.json({ errors });
+    }
+};
 
 exports.update_profile_required = (req, res) => {
   const { userId: id, fullname, gender } = req.body;
@@ -478,6 +605,7 @@ exports.update_profile_required = (req, res) => {
   const lastName = remainingNames.join(" ");
   const errors = [];
 
+  // TODO: Pull these out into a validation object with methods probably as a helper
   const checkName = (firstName, lastName) => {
     if(firstName.length < 1 || lastName.length < 1) {
       errors.push({error: "IVN", message: "Invalid First or Last Name", status: 500});

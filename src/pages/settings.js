@@ -15,7 +15,12 @@ const Settings = () => {
           &nbsp;
         </Grid.Column>
         <Grid.Column width={8}>
-          <ProfileFullForm formTitle={"My Profile"} submitBtnContent={"Update Profile"}/>
+          <ProfileFullForm
+            formTitle={"My Profile"}
+            submitBtnContent={"Update Profile"}
+            submitRedirect={true} 
+            submitRedirectURL={"/dashboard"} 
+          />
         </Grid.Column>
         <Grid.Column width={4}>
           &nbsp;
