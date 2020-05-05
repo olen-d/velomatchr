@@ -16,6 +16,7 @@ import ErrorContainer from "./errorContainer";
 import MatchesNearMe from "./matchesNearMe";
 import PasswordRequirements from "./passwordRequirements";
 
+import locater from "../helpers/locater";
 import passwordValidate from "../helpers/password-validate";
 
 const SignupRequiredForm = props => {
@@ -36,40 +37,17 @@ const SignupRequiredForm = props => {
   const { setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
 
   useEffect(() => {
-    locater().then(locaterRes => {
+    locater.locater().then(locaterRes => {
       if (locaterRes.status === 200) {
         setLatitude(locaterRes.latitude);
         setLongitude(locaterRes.longitude);
+      } else {
+        // TODO: Modal to get user address if they decline geolocation
       }
     });
   }, []);
 
-  const locater = () => {
-    return new Promise((res, rej) => {
-      try {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition((position) => {
-            res({
-              status: 200,
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            });
-            // TODO: Return the number of nearby matches (within 5 miles)
-          });
-        } else {
-          /* geolocation IS NOT available */
-          // Ask for a city and state
-          // Then hit (probably) MapQuest to generate a lat/long
-          // In the database note that it was city/state and not accurate
-        }
-      } catch (err) {
-        rej({
-          status: 500,
-          error: "Internal server error. Failed to get latitude and longitude of user."
-        });
-      }
-    });
-  }
+
 
   const createUser = formData => {
     fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
