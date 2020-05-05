@@ -21,16 +21,20 @@ import UsernameInput from "./formFields/usernameInput";
 
 import useForm from "../hooks/useForm";
 
+import locator from "../helpers/locator";
+
 const ProfileFullForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
   const [photoLink, setPhotoLink] = useState(null);
 
-  // New state (TODO: Delete this line)
   const [flag, setFlag] = useState(true);
   const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
+  const [newLatitude, setNewLatitude] = useState(0.0);
+  const [newLongitude, setNewLongitude] = useState(0.0);
   const [userId, setUserId] = useState(null);
+
   const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
   const context = useContext(AuthContext);
@@ -99,6 +103,17 @@ const ProfileFullForm = props => {
     setFlag(false);
   }
   
+  const getNewLocation = () => {
+    locator.locator().then(locatorRes => {
+      if (locatorRes.status === 200) {
+        setNewLatitude(locatorRes.latitude);
+        setNewLongitude(locatorRes.longitude);
+      } else {
+        // TODO: Modal to get user address if they decline geolocation
+      }
+    });
+  }
+
   const handleSubmit = () => {
     if (!isError) {
       postProfileUpdate();
@@ -231,8 +246,20 @@ const ProfileFullForm = props => {
       >
         My Location
       </Header>
+      {newLatitude}, {newLongitude}
       <Segment>
         <Form size="large">
+          <Button
+            basic
+            type="button"
+            color="red"
+            size="large"
+            icon="compass"
+            labelPosition="left"
+            content="Use My Current Location"
+            onClick={getNewLocation}
+          >
+          </Button>
           <CityInput
             errors={errors}
             initialValue={values.city}

@@ -47,8 +47,6 @@ const SignupRequiredForm = props => {
     });
   }, []);
 
-
-
   const createUser = formData => {
     fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
       method: "post",
