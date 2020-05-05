@@ -1,4 +1,4 @@
-const locater = () => {
+const locator = () => {
   return new Promise((res, rej) => {
     try {
       if ("geolocation" in navigator) {
@@ -24,4 +24,4 @@ const locater = () => {
   });
 };
 
-module.exports = { locater }
+module.exports = { locator }

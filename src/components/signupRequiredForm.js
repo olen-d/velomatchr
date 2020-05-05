@@ -16,7 +16,7 @@ import ErrorContainer from "./errorContainer";
 import MatchesNearMe from "./matchesNearMe";
 import PasswordRequirements from "./passwordRequirements";
 
-import locater from "../helpers/locater";
+import locator from "../helpers/locator";
 import passwordValidate from "../helpers/password-validate";
 
 const SignupRequiredForm = props => {
@@ -37,10 +37,10 @@ const SignupRequiredForm = props => {
   const { setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
 
   useEffect(() => {
-    locater.locater().then(locaterRes => {
-      if (locaterRes.status === 200) {
-        setLatitude(locaterRes.latitude);
-        setLongitude(locaterRes.longitude);
+    locator.locator().then(locatorRes => {
+      if (locatorRes.status === 200) {
+        setLatitude(locatorRes.latitude);
+        setLongitude(locatorRes.longitude);
       } else {
         // TODO: Modal to get user address if they decline geolocation
       }
