@@ -22,6 +22,7 @@ import UsernameInput from "./formFields/usernameInput";
 import useForm from "../hooks/useForm";
 
 import locator from "../helpers/locator";
+import reverseGeocode from "../helpers/reverse-geocode";
 
 const ProfileFullForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
@@ -29,13 +30,24 @@ const ProfileFullForm = props => {
   const [photoLink, setPhotoLink] = useState(null);
 
   const [flag, setFlag] = useState(true);
+
+  const [address, setAddress] = useState({});
+  const [addressDidChange, setAddressDidChange] = useState(false);
   const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
   const [newLatitude, setNewLatitude] = useState(0.0);
   const [newLongitude, setNewLongitude] = useState(0.0);
   const [userId, setUserId] = useState(null);
 
-  const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
+  const {
+    errors,
+    handleBlur,
+    handleChange,
+    handleServerErrors,
+    handleUpdateValues,
+    initializeFields,
+    values
+  } = useForm();
 
   const context = useContext(AuthContext);
   const token = context.authTokens;
@@ -98,11 +110,38 @@ const ProfileFullForm = props => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
   }, [errors]);
   
+  useEffect(() => {
+    if (newLatitude !== 0 && newLongitude !== 0) {
+      reverseGeocode.reverseGeocode(newLatitude, newLongitude).then(locationRes => {
+        locationRes.json().then(locationRes => {
+          const location = locationRes.results[0].locations[0];
+          const { 
+            adminArea1: countryCode = "BLANK",
+            adminArea3: stateCode = "BLANK",
+            adminArea5: city = "",
+            postalCode = ""
+          } = location
+        setAddress({ city, countryCode, postalCode, stateCode });
+        setAddressDidChange(true);
+        })
+      })
+      .catch(error => {
+        // TODO: Deal with the error
+        console.log(error);
+      });
+    }
+  }, [newLatitude, newLongitude]);
+
   if(Object.keys(initialValues).length > 0 && flag) {
     initializeFields(initialValues);
     setFlag(false);
   }
   
+  if(Object.keys(address).length > 0 && addressDidChange) {
+    handleUpdateValues(address);
+    setAddressDidChange(false);
+  }
+
   const getNewLocation = () => {
     locator.locator().then(locatorRes => {
       if (locatorRes.status === 200) {
@@ -246,7 +285,6 @@ const ProfileFullForm = props => {
       >
         My Location
       </Header>
-      {newLatitude}, {newLongitude}
       <Segment>
         <Form size="large">
           <Button

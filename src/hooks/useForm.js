@@ -21,6 +21,14 @@ const useForm = () => {
     });
   }
 
+  const handleUpdateValues = newValues => {
+    setValues({
+      ...values,
+      ...newValues
+    })
+
+  }
+
   const handleServerErrors = serverErrors => {
     setErrors({
       ...errors,
@@ -40,6 +48,7 @@ const useForm = () => {
     handleBlur,
     handleChange,
     handleServerErrors,
+    handleUpdateValues,
     initializeFields
   }
 }
