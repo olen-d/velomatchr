@@ -4,7 +4,7 @@ const router = express.Router();
 const imageUpload = require("../helpers/upload-image");
 
 const users_controller = require("../controllers/usersController");
-
+// TODO: Fix this to no longer require imageUpload, since no image is uploaded on the initial user creation.
 router.post(
     "/users/create",
     imageUpload,
