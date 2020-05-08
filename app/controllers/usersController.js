@@ -454,7 +454,7 @@ exports.update_user_password = (req, res) => {
   });
 };
 
-exports.update_profile_full = (req, res) => {
+exports.profile_update_full = (req, res) => {
   const { 
     userId: id,
     city,

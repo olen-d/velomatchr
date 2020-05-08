@@ -193,7 +193,7 @@ const ProfileFullForm = props => {
       name
     };
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/full/update`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/full`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"
