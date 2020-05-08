@@ -80,7 +80,7 @@ const ProfileRequiredForm = props => {
       gender,
     };
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/required/update`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/required`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"
