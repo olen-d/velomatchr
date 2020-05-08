@@ -599,7 +599,7 @@ exports.update_profile_full = (req, res) => {
     }
 };
 
-exports.update_profile_required = (req, res) => {
+exports.profile_update_required = (req, res) => {
   const { userId: id, fullname, gender } = req.body;
   const [ firstName, ...remainingNames ] = fullname.split(" ");
   const lastName = remainingNames.join(" ");
