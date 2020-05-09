@@ -19,7 +19,7 @@ const reverseGeocode = require("../helpers/reverse-geocode");
 exports.create_user = (req, res) => {
   const { email, password, latitude, longitude } = req.body;
   const errors = [];
-
+  // TODO: Refactor this mess of spaghetti code to use async/await
   reverseGeocode.reverseGeocode(latitude, longitude).then(locationRes => {
     locationRes.json().then(locationRes => {
       const location = locationRes.results[0].locations[0];
@@ -44,65 +44,78 @@ exports.create_user = (req, res) => {
             if(pwdRes.status === 200) {
               const emailParts = email.split("@");
               const name = emailParts[0];
-      
-              User.create({
-                name,
-                password: pwdRes.passwordHash,
-                email,
-                emailIsVerified: 0,
-                latitude,
-                longitude,
-                city,
-                state: "blank",
-                stateCode,
-                country: "blank",
-                countryCode,
-                postalCode
-              }).then(user => {
-                const formData = {
-                  email,
-                  userId: user.id
-                }
-                fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
-                  method: "post",
-                  headers: {
-                    "Content-Type": "application/json"
-                  },
-                    body: JSON.stringify(formData)
-                  }).then(response => {
-                    if (!response.error) {
-                      jwt.sign(
-                        {user: user.id},
-                        process.env.SECRET,
-                        { expiresIn: "1h" },
-                        (err, token) => {
-                          return res.status(200).json({
-                            authenticated: true,
-                            token
-                          });
-                        });
-                    } else {
-                      console.log("\n\nusersController.js ~85 ERROR:", response);
-                      // TODO, parse response.error and provide a more useful error message
+
+              fetch(`${process.env.REACT_APP_API_URL}/api/states/code/${stateCode}`).then(response => {
+                response.json().then(data => {
+                  const { state: { name: stateName }, } = data;
+                  
+                  User.create({
+                    name,
+                    password: pwdRes.passwordHash,
+                    email,
+                    emailIsVerified: 0,
+                    latitude,
+                    longitude,
+                    city,
+                    state: stateName,
+                    stateCode,
+                    country: "blank",
+                    countryCode,
+                    postalCode
+                  }).then(user => {
+                    const formData = {
+                      email,
+                      userId: user.id
                     }
-                  }).catch(error => {
-                    return ({
-                      type: "error",
-                      message: "Internal server error.",
-                      error: error
-                    })
-                  });
+                    fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
+                      method: "post",
+                      headers: {
+                        "Content-Type": "application/json"
+                      },
+                        body: JSON.stringify(formData)
+                      }).then(response => {
+                        if (!response.error) {
+                          jwt.sign(
+                            {user: user.id},
+                            process.env.SECRET,
+                            { expiresIn: "1h" },
+                            (err, token) => {
+                              return res.status(200).json({
+                                authenticated: true,
+                                token
+                              });
+                            });
+                        } else {
+                          console.log("\n\nusersController.js ~85 ERROR:", response);
+                          // TODO, parse response.error and provide a more useful error message
+                        }
+                      }).catch(error => {
+                        return ({
+                          type: "error",
+                          message: "Internal server error.",
+                          error: error
+                        })
+                      });
+                    }).catch(error => {
+                      // Database error
+                      res.json({ error });
+                    });
                 }).catch(error => {
-                  // Database error
-                  res.json({ error });
+                  // TODO: Deal with the error
+                  console.log("Body.json() failed in fetch state by code.\nError:", error);
                 });
+              }).catch(error => {
+                // TODO: Deal with the error
+                console.log("Fetch state by code failed.\nError:", error)
+              });
+
               } else {
                 res.status(500).json({ error: "userController ~100" });
               }
-            })
-            .catch(error => {
-              res.json({ error })
-            });
+          })
+          .catch(error => {
+            res.json({ error })
+          });
         } else {
           errors.push({ error: "IVP", message: "Invalid Password", status: 500 });
           res.json({ errors });
