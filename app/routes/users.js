@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-// TODO: Fix users/profile/.../update routes to be users/profile/update/...
+
 const imageUpload = require("../helpers/upload-image");
 
 const users_controller = require("../controllers/usersController");
