@@ -25,11 +25,11 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     "country-code": {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
       validate: {
-        isNumeric: true
+        len: [3,3]
       }
     },
     "iso_3166-2": {
@@ -49,39 +49,26 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     "region-code": {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isNumeric: true,
         len: [0,3]
       }
     },
     "sub-region-code": {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isNumeric: true,
         len: [0,3]
       }
     },
     "intermediate-region-code": {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isNumeric: true,
         len: [0,3]
       }
     }
-  },
-  {
-    indexes:[
-      {
-        unique: true,
-        fields: [
-          "name", "alpha-2", "alpha-3", "country-code"
-        ]
-      }
-    ]
   });
     
   return Country;

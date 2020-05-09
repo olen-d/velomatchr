@@ -87,7 +87,7 @@ const SignupForm = props => {
     for (const [key, value] of entries) {
       formData.append(key, value);
     }
-
+    // TODO: Clean out the references to profilePhotographFile
     formData.append("profilePhotographFile", profilePhotographFile);
     
     fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
