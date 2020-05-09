@@ -29,6 +29,7 @@ app.use("/public/images-profiles", express.static("public/images-profiles"));
 app.use("/api", require("./app/routes/mail"));
 app.use("/api", require("./app/routes/matches"));
 app.use("/api", require("./app/routes/relationships"));
+app.use("/api", require("./app/routes/states"));
 app.use("/api", require("./app/routes/survey"));
 app.use("/api", require("./app/routes/users"));
 
