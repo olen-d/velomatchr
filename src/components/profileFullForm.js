@@ -121,8 +121,24 @@ const ProfileFullForm = props => {
             adminArea5: city = "",
             postalCode = ""
           } = location
-        setAddress({ city, countryCode, postalCode, stateCode });
-        setAddressDidChange(true);
+
+          Promise.all([
+            fetch(`http://localhost:5000/api/states/code/${stateCode}`),
+            fetch(`http://localhost:5000/api/countries/alphatwo/${countryCode}`)
+          ])
+          .then(responses => {
+            const data = responses.map(response => response.json());
+            return Promise.all(data);
+          })
+          .then(data => {
+            const [ { state: { name: state }, },  { country: { name: country }, } ] = data;
+
+            setAddress({ city, country, countryCode, postalCode, state, stateCode });
+            setAddressDidChange(true)
+          })
+          .catch(error => {
+            console.log("ERROR: ", error);
+          });
         })
       })
       .catch(error => {
