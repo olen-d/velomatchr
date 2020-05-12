@@ -18,7 +18,11 @@ import NavDropdown from "./navDropdown";
 const matchesItems = [
   { key: "matches", text: "All Matches", value: "/matches"},
   { key: "preferences", text: "Preferences", value: "/matches/preferences" }
-]
+];
+
+const settingsItems = [
+  { key: "profile", text: "Profile", value: "/settings/profile"}
+];
 
 const NavBar = props => {
   const { setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
@@ -45,9 +49,7 @@ const NavBar = props => {
           <Menu.Item as={ NavLink } to="/messages">
             Messages
           </Menu.Item>
-          <Menu.Item as={ NavLink } to="/settings">
-            Settings
-          </Menu.Item>
+          <NavDropdown title="Settings" items={ settingsItems } />
           <Menu.Item as={ NavLink } to="/" onClick={logout}>
             Sign Out
           </Menu.Item>

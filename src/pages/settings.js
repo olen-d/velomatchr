@@ -1,13 +1,18 @@
 import React from "react";
 
+import { 
+  Route,
+  Switch
+} from "react-router-dom";
+
 import {
   Container,
   Grid
  } from "semantic-ui-react";
 
-import ProfileFullForm from "../components/profileFullForm";
+import SettingsProfile from "../components/settingsProfile";
 
-const Settings = () => {
+const Settings = ({ match }) => {
   return(
     <Container>
       <Grid stackable>
@@ -15,12 +20,10 @@ const Settings = () => {
           &nbsp;
         </Grid.Column>
         <Grid.Column width={8}>
-          <ProfileFullForm
-            formTitle={"My Profile"}
-            submitBtnContent={"Update Profile"}
-            submitRedirect={true} 
-            submitRedirectURL={"/dashboard"} 
-          />
+        <Switch>
+            <Route exact path={`${match.url}/profile`} component={SettingsProfile} />
+            {/* <Route path={`${match.url}/preferences`} component={MatchPreferences} /> */}
+          </Switch>
         </Grid.Column>
         <Grid.Column width={4}>
           &nbsp;
