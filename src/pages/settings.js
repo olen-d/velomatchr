@@ -10,6 +10,7 @@ import {
   Grid
  } from "semantic-ui-react";
 
+import SettingsAccount from "../components/settingsAccount";
 import SettingsProfile from "../components/settingsProfile";
 
 const Settings = ({ match }) => {
@@ -22,7 +23,7 @@ const Settings = ({ match }) => {
         <Grid.Column width={8}>
         <Switch>
             <Route exact path={`${match.url}/profile`} component={SettingsProfile} />
-            {/* <Route path={`${match.url}/preferences`} component={MatchPreferences} /> */}
+            <Route path={`${match.url}/account`} component={SettingsAccount} />
           </Switch>
         </Grid.Column>
         <Grid.Column width={4}>
