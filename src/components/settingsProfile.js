@@ -4,7 +4,7 @@ import { Grid, Header } from "semantic-ui-react";
 
 import ProfileFullForm from "./profileFullForm";
 
-const settingsProfile = () => {
+const SettingsProfile = () => {
   return(
     <>
       <Grid.Column width={8}>
@@ -27,4 +27,4 @@ const settingsProfile = () => {
   );
 }
 
-export default settingsProfile;
+export default SettingsProfile;

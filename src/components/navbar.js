@@ -21,7 +21,8 @@ const matchesItems = [
 ];
 
 const settingsItems = [
-  { key: "profile", text: "Profile", value: "/settings/profile"}
+  { key: "profile", text: "Profile", value: "/settings/profile"},
+  { key: "account", text: "Account", value: "/settings/account"}
 ];
 
 const NavBar = props => {
