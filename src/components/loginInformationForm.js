@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+// TODO: import PropTypes from "prop-types";
+
 
 import { Button, Form, Header, Segment } from "semantic-ui-react";
 
@@ -10,6 +12,8 @@ import useForm from "../hooks/useForm";
 const LoginInformationForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
+  const [isError, setIsError] = useState(false);
+
   const {
     errors,
     handleBlur,
@@ -19,6 +23,22 @@ const LoginInformationForm = props => {
     initializeFields,
     values
   } = useForm();
+
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
+
+  const handleSubmit = () => {
+    if (!isError) {
+      postUpdate();
+    } else {
+      // TODO: return failure
+    }
+  }
+  
+  const postUpdate = () => {
+    //
+  }
 
   return(
     <>
@@ -47,10 +67,25 @@ const LoginInformationForm = props => {
             handleChange={handleChange}
             values={values}
           />
+          <Button
+            disabled={isError}
+            className="fluid"
+            type="button"
+            color="red"
+            size="large"
+            icon="check circle"
+            labelPosition="left"
+            content={submitBtnContent}
+            onClick={handleSubmit}
+          >
+          </Button>
         </Form>
       </Segment>
     </>
   );
 }
+
+// TODO: Add prop type checking
+// TODO: Add default props
 
 export default LoginInformationForm;
