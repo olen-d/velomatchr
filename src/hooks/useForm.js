@@ -4,12 +4,14 @@ const useForm = () => {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
 
-  const handleBlur = (isError, event) => {
+  const handleBlur = async (isError, event) => {
     const { target: { name }, } = event;
 
+    const isErrorResult = await isError;
+    
     setErrors({
       ...errors,
-      [name]: isError
+      [name]: isErrorResult
     });
   }
 
