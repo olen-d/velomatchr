@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 // import PropTypes from "prop-types";
-// COMLETE TODO: Remove all FormInput
-// TODO: Delete FormInput from src/components
 
 import auth from "./auth";
 
@@ -363,5 +361,8 @@ const ProfileFullForm = props => {
     </>
   );
 }
+
+// TODO: Add default props
+// TODO: Add prop type checking
 
 export default ProfileFullForm;
