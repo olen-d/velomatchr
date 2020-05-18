@@ -6,17 +6,14 @@ import { Button, Form, Header, Segment } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
-import EmailInput from "./formFields/emailInput";
 import PasswordInput from "./formFields/passwordInput";
 
 import useForm from "../hooks/useForm";
 
-const LoginInformationForm = props => {
+const UpdatePasswordForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
-  const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
-  const [isInitialValuesSet, setIsInitalValuesSet] = useState(false);
   const [userId, setUserId] = useState(null);
 
   const {
@@ -38,33 +35,8 @@ const LoginInformationForm = props => {
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
   useEffect(() => {
-    const getUserAccount = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/account/id/${userId}`);
-      const data = await response.json();
-
-      if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
-        const {
-          user: {
-            email
-          },
-        } = data;
-
-        setInitialValues({
-          email
-        });
-      }
-    }
-    getUserAccount();
-  }, [userId]);
-
-  useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
   }, [errors]);
-
-  if(Object.keys(initialValues).length > 0 && !isInitialValuesSet) {
-    initializeFields(initialValues);
-    setIsInitalValuesSet(true);
-  }
 
   const handleSubmit = () => {
     if (!isError) {
@@ -89,14 +61,6 @@ const LoginInformationForm = props => {
       </Header>
       <Segment>
         <Form size="large">
-          <EmailInput 
-            errors={errors}
-            initialValue={values.email}
-            placeholder="Email Address"
-            handleBlur={handleBlur}
-            handleChange={handleChange}
-            values={values}
-          />
           <PasswordInput 
             errors={errors}
             initialValue={values.password}
@@ -126,4 +90,4 @@ const LoginInformationForm = props => {
 // TODO: Add prop type checking
 // TODO: Add default props
 
-export default LoginInformationForm;
+export default UpdatePasswordForm;

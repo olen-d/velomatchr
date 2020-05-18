@@ -2,7 +2,8 @@ import React from "react";
 
 import { Grid, Header } from "semantic-ui-react";
 
-import LoginInformationForm from "./loginInformationForm";
+import UpdateEmailAddressForm from "./updateEmailAddressForm";
+import UpdatePasswordForm from "./updatePasswordForm";
 
 const SettingsAccount = () => {
   return(
@@ -16,9 +17,15 @@ const SettingsAccount = () => {
         </Header>
       </Grid.Column>
       <Grid.Column width={8}>
-        <LoginInformationForm
-          formTitle={"Login Information"}
-          submitBtnContent={"Update Login Information"}
+        <UpdateEmailAddressForm
+          formTitle={"My Email Address"}
+          submitBtnContent={"Update Email Address"}
+          submitRedirect={false}
+          submitRedirectURL={""}
+        />
+        <UpdatePasswordForm
+          formTitle={"My Password"}
+          submitBtnContent={"Update Password"}
           submitRedirect={false}
           submitRedirectURL={""}
         />
