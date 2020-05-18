@@ -74,7 +74,35 @@ const UpdateEmailAddressForm = props => {
   }
   
   const postUpdate = () => {
-    //
+    const { email } = values;
+    const formData = { userId, email };
+
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/email/update`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    }).then(response => {
+      return response.json();
+    }).then(data => {
+      if (data.errors) {
+        const { errors } = data;
+        // TODO: Check errors in users controller
+        handleServerErrors(...errors);
+      } else {
+        if(submitRedirect) {
+          setRedirectURL(submitRedirectURL);
+          setDoRedirect(true);
+        }
+      }
+    }).catch(error => {
+      return ({
+        errorCode: 500,
+        errorMsg: "Internal Server Error",
+        errorDetail: error
+      })
+    });
   }
 
   return(

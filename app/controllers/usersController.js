@@ -416,6 +416,20 @@ exports.read_login = (req, response) => {
 };
 
 // Update modules
+exports.user_email_update = (req, res) => {
+  const { userId: id, email } = req.body;
+
+  User.update(
+    { email },
+    { where: { id } }
+  ).then( data => {
+    res.status(200).json(data);
+  })
+  .catch(error => {
+    res.status(500).json({ error });
+  });
+};
+
 exports.update_is_email_verified = (req, res) => {
   const { id, isEmailVerified } = req.body;
 
