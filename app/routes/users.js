@@ -11,11 +11,12 @@ router.post(
     users_controller.create_user
   );
 
-router.get("/users/username/:username", users_controller.read_one_user_by_username);
+router.get("/users/account/id/:userId", users_controller.read_one_user_account_by_id);
 router.get("/users/email/:email", users_controller.read_one_user_id_by_email);
 router.get("/users/id/:userId", users_controller.read_one_user_by_id);
 router.get("/users/matches/preferences/:userId", users_controller.read_one_user_and_matches_preferences);
 router.get("/users/password/reset/:id/:token", users_controller.read_one_user_by_id_reset);
+router.get("/users/username/:username", users_controller.read_one_user_by_username);
 
 router.post("/users/login", users_controller.read_login);
 router.post("/users/email/verify", users_controller.read_one_email_verification);

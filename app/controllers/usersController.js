@@ -232,6 +232,26 @@ exports.read_one_email_verification = (req, res) => {
   });
 };
 
+exports.read_one_user_account_by_id = (req, res) => {
+  const userId = req.params.userId;
+
+  User.findOne({
+    where: {
+      id: userId
+    },
+    attributes: ["email"]
+  })
+  .then(resolve => {
+    let userObj = {
+      user: resolve
+    };
+    res.send(userObj);
+  })
+  .catch(err => {
+    res.json(err);
+  });
+};
+
 exports.read_one_user_by_username = (req, res) => {
   const userName = req.params.username;
 
