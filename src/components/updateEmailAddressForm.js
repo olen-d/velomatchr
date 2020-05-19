@@ -23,7 +23,6 @@ const UpdateEmailAddressForm = props => {
     handleBlur,
     handleChange,
     handleServerErrors,
-    handleUpdateValues,
     initializeFields,
     values
   } = useForm();
@@ -68,6 +67,7 @@ const UpdateEmailAddressForm = props => {
   const handleSubmit = () => {
     if (!isError) {
       postUpdate();
+      // TODO: return success
     } else {
       // TODO: return failure
     }
@@ -83,12 +83,13 @@ const UpdateEmailAddressForm = props => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(formData)
-    }).then(response => {
+    })
+    .then(response => {
       return response.json();
-    }).then(data => {
+    })
+    .then(data => {
       if (data.errors) {
         const { errors } = data;
-        // TODO: Check errors in users controller
         handleServerErrors(...errors);
       } else {
         if(submitRedirect) {
@@ -96,7 +97,8 @@ const UpdateEmailAddressForm = props => {
           setDoRedirect(true);
         }
       }
-    }).catch(error => {
+    })
+    .catch(error => {
       return ({
         errorCode: 500,
         errorMsg: "Internal Server Error",

@@ -419,14 +419,28 @@ exports.read_login = (req, response) => {
 exports.user_email_update = (req, res) => {
   const { userId: id, email } = req.body;
 
-  User.update(
-    { email },
-    { where: { id } }
-  ).then( data => {
-    res.status(200).json(data);
+  const errors = [];
+
+  checkEmail(email)
+  .then(isValidEmail => {
+    if (isValidEmail) {
+      User.update(
+        { email },
+        { where: { id } }
+      ).then( data => {
+        res.status(200).json(data);
+      })
+      .catch(error => {
+        res.status(500).json({ error });
+      });
+    } else {
+      errors.push({ email: true });
+      res.json({ errors });
+    }
   })
   .catch(error => {
-    res.status(500).json({ error });
+    // TODO: Deal with the error
+    console.log("usersController.js - user_email_update - checkEmail Error:", error);
   });
 };
 
@@ -862,5 +876,7 @@ const checkEmail = async email => {
     const { mxExists } = data;
 
     return mxExists ? true : false;
+  } else {
+    return false;
   }
 };
