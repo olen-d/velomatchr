@@ -66,7 +66,14 @@ const UpdateEmailAddressForm = props => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
   }, [errors]);
 
-  if(Object.keys(initialValues).length > 0 && !isInitialValuesSet) {
+  useEffect(() => {
+    if (isError && errors.email) {
+      setIsErrorHeader("Invalid Email Address");
+      setIsErrorMessage("Please check the email address you entered and try again.");
+    }
+  }, [errors.email, isError]);
+
+  if (Object.keys(initialValues).length > 0 && !isInitialValuesSet) {
     initializeFields(initialValues);
     setIsInitalValuesSet(true);
   }
