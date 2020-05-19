@@ -6,16 +6,23 @@ import { Button, Form, Header, Segment } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
-import EmailInput from "./formFields/emailInput";
-
 import useForm from "../hooks/useForm";
+
+import EmailInput from "./formFields/emailInput";
+import ErrorContainer from "./errorContainer";
+import SuccessContainer from "./successContainer";
 
 const UpdateEmailAddressForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
   const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [isInitialValuesSet, setIsInitalValuesSet] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccessHeader, setIsSuccessHeader] = useState(null);
+  const [isSuccessMessage, setIsSuccessMesssage] = useState(null);
   const [userId, setUserId] = useState(null);
 
   const {
@@ -90,11 +97,18 @@ const UpdateEmailAddressForm = props => {
     .then(data => {
       if (data.errors) {
         const { errors } = data;
+        setIsSuccess(false);
+        setIsErrorHeader("Unable to Update Email Address");
+        setIsErrorMessage("Please enter a valid email address and try again.")
         handleServerErrors(...errors);
       } else {
         if(submitRedirect) {
           setRedirectURL(submitRedirectURL);
           setDoRedirect(true);
+        } else {
+          setIsSuccessHeader("Your Email Address was Successfully Updated");
+          setIsSuccessMesssage("You can now login using your updated email address.");
+          setIsSuccess(true);
         }
       }
     })
@@ -116,6 +130,16 @@ const UpdateEmailAddressForm = props => {
       >
         {formTitle}
       </Header>
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}
+      />
+      <SuccessContainer
+        header={isSuccessHeader}
+        message={isSuccessMessage}
+        show={isSuccess}
+      />
       <Segment>
         <Form size="large">
           <EmailInput 
