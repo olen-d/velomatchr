@@ -459,6 +459,35 @@ exports.email_verified_update = (req, res) => {
   })
 };
 
+exports.password_change  = (req, res) => {
+  const { password, userId: id } = req.body;
+  const errors = [];
+
+  const wrapper = async () => {
+    const isValid = await passwordValidate.validatePassword(password);
+    if (isValid) {
+      const encryptPassResult = await bcrypt.newPass(password);
+        if (encryptPassResult.status === 200) {
+          const data = await User.update(
+            { password: encryptPassResult.passwordHash },
+            { where: { id }}
+          )
+          if (data[0] === 1) {
+            // passwordUpdatedEmail.send(email, firstName, lastName)
+          }
+        } else {
+          // Send password not encrypted error
+        }
+    } else {
+      // Set invalid password error
+      errors.push({ password: true });
+      res.json({ errors });
+    }
+  }
+
+  wrapper();
+};
+
 exports.password_update = (req, res) => {
   const { password: newPassword, token, userId: id, } = req.body;
   const errors = [];

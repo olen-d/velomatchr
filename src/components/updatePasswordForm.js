@@ -21,8 +21,6 @@ const UpdatePasswordForm = props => {
     handleBlur,
     handleChange,
     handleServerErrors,
-    handleUpdateValues,
-    initializeFields,
     values
   } = useForm();
 
@@ -47,7 +45,44 @@ const UpdatePasswordForm = props => {
   }
   
   const postUpdate = () => {
-    //
+    const { password } = values;
+    const formData = { userId, password };
+
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/password/change`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      if (data.errors) {
+        const { errors } = data;
+        // setIsSuccess(false);
+        // setIsErrorHeader("Unable to Change Password");
+        // setIsErrorMessage("Please enter a valid password and try again.")
+        handleServerErrors(...errors);
+      } else {
+        if(submitRedirect) {
+          setRedirectURL(submitRedirectURL);
+          setDoRedirect(true);
+        } else {
+          // setIsSuccessHeader("Your Password was Successfully Changed");
+          // setIsSuccessMesssage("You can now login using your new password.");
+          // setIsSuccess(true);
+        }
+      }
+    })
+    .catch(error => {
+      return ({
+        errorCode: 500,
+        errorMsg: "Internal Server Error",
+        errorDetail: error
+      })
+    });
   }
 
   return(
