@@ -142,7 +142,7 @@ exports.create_user = (req, res) => {
   });
 };
 
-exports.create_user_profile_photograph = (req, res) => {
+exports.profile_photograph_update = (req, res) => {
   if (req.body && req.file) {
     const { body: { userId: id }, file: { originalname, path } } = req;
 
@@ -416,7 +416,7 @@ exports.read_login = (req, response) => {
 };
 
 // Update modules
-exports.user_email_update = (req, res) => {
+exports.email_update = (req, res) => {
   const { userId: id, email } = req.body;
 
   const errors = [];
@@ -444,7 +444,7 @@ exports.user_email_update = (req, res) => {
   });
 };
 
-exports.update_is_email_verified = (req, res) => {
+exports.email_verified_update = (req, res) => {
   const { id, isEmailVerified } = req.body;
 
   User.update(
@@ -459,7 +459,7 @@ exports.update_is_email_verified = (req, res) => {
   })
 };
 
-exports.update_user_password = (req, res) => {
+exports.password_update = (req, res) => {
   const { password: newPassword, token, userId: id, } = req.body;
   const errors = [];
 
@@ -710,7 +710,7 @@ exports.profile_update_required = (req, res) => {
 
 // Delete requests
 
-exports.delete_user_email_verification_codes = (req, res) => {
+exports.email_verified_code_delete = (req, res) => {
   const { userId } = req.params
 
   EmailVerification.destroy({
@@ -733,7 +733,7 @@ exports.delete_user_email_verification_codes = (req, res) => {
 //
 
 // Send Email Verification Code
-exports.send_email_verification_code = (req, res) => {
+exports.email_send_verification = (req, res) => {
   const { email, userId } = req.body;
 
   const newCode = adr.newRandomCode(6);
@@ -777,7 +777,7 @@ exports.send_email_verification_code = (req, res) => {
 
 // Password Reset
 
-exports.reset_user_password = (req, res) => {
+exports.password_reset = (req, res) => {
   const { email } = req.body;
   // Check that the email exists
   fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${email}`).then(data => {
