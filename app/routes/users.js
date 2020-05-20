@@ -4,7 +4,6 @@ const router = express.Router();
 const imageUpload = require("../helpers/upload-image");
 
 const users_controller = require("../controllers/usersController");
-// TODO: Fix users/password/reset in the actual componentes calling it
 // TODO: Fix this to no longer require imageUpload, since no image is uploaded on the initial user creation.
 router.post(
     "/users/create",
@@ -16,21 +15,21 @@ router.get("/users/account/id/:userId", users_controller.read_one_user_account_b
 router.get("/users/email/:email", users_controller.read_one_user_id_by_email);
 router.get("/users/id/:userId", users_controller.read_one_user_by_id);
 router.get("/users/matches/preferences/:userId", users_controller.read_one_user_and_matches_preferences);
-router.get("/users/password/reset/:id/:token", users_controller.read_one_user_by_id_reset);
+router.get("/users/password/reset/:id/:token", users_controller.read_one_user_password_reset_by_id);
 router.get("/users/username/:username", users_controller.read_one_user_by_username);
 
-router.post("/users/login", users_controller.read_login);
 router.post("/users/email/verify", users_controller.read_one_email_verification);
 router.post("/users/email/send/verification", users_controller.email_send_verification);
+router.post("/users/login", users_controller.read_login);
 router.post("/users/password/reset", users_controller.password_reset);
-router.post("/users/profile/update/photograph", imageUpload, users_controller.profile_photograph_update);
+router.post("/users/profile/photograph/update", imageUpload, users_controller.profile_photograph_update);
 
 router.put("/users/email/update", users_controller.email_update);
+router.put("/users/email/verified/update", users_controller.email_verified_update);
 router.put("/users/password/update", users_controller.password_update);
-router.put("/users/profile/update/required/", users_controller.profile_update_required);
 router.put("/users/profile/update/full", users_controller.profile_update_full);
-router.put("/users/verified/update", users_controller.email_verified_update);
+router.put("/users/profile/update/required/", users_controller.profile_update_required);
 
-router.delete("/users/verification/codes/:userId", users_controller.email_verified_code_delete);
+router.delete("/users/email/verification/codes/delete/id/:userId", users_controller.email_verified_code_delete_by_id);
 
 module.exports = router;

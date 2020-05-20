@@ -316,7 +316,7 @@ exports.read_one_user_by_id = (req, res) => {
   });
 };
 
-exports.read_one_user_by_id_reset = (req, res) => {
+exports.read_one_user_password_reset_by_id = (req, res) => {
   const { id, token } = req.params;
   User.findOne({
     where: {
@@ -710,7 +710,7 @@ exports.profile_update_required = (req, res) => {
 
 // Delete requests
 
-exports.email_verified_code_delete = (req, res) => {
+exports.email_verified_code_delete_by_id = (req, res) => {
   const { userId } = req.params
 
   EmailVerification.destroy({

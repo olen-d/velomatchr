@@ -110,7 +110,7 @@ const VerifyEmail = props => {
           isEmailVerified: 1
         }
 
-        fetch(`${process.env.REACT_APP_API_URL}/api/users/verified/update`, {
+        fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verified/update`, {
           method: "put",
           headers: {
             "Content-Type": "application/json"
@@ -136,7 +136,7 @@ const VerifyEmail = props => {
   }
 
   const resendEmail = () => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/verification/codes/${userId}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/delete/id/${userId}`, {
       method: "delete"
     })
     .then(response => {

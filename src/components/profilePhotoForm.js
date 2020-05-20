@@ -38,7 +38,7 @@ const ProfilePhotoForm = props => {
       formData.append("userId", userId);
       formData.append("profilePhotographFile", profilePhotographFile);
 
-      fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/photograph`, {
+      fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/photograph/update`, {
         method: "post",
         body: formData
       }).then(response => {
