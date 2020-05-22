@@ -475,6 +475,7 @@ exports.password_change  = (req, res) => {
           if (data[0] === 1) {
             // passwordUpdatedEmail.send(email, firstName, lastName)
           }
+          res.json({ data });
         } else {
           // Send password not encrypted error
         }
