@@ -5,13 +5,16 @@ import { Form, Popup } from "semantic-ui-react";
 
 import PasswordRequirements from "../passwordRequirements";
 
+import passwordValidate from "../../helpers/password-validate";
+
 const PasswordInput = props => {
   const { errors, handleBlur, handleChange, placeholder, values } = props;
 
-  const validate = event => {
+  const validate = async event => {
     const { target: { name }, } = event;
-    // TODO - fix this to use the passsword validator
-    return values[name] && values[name].length > 1 ? false : true;  // Short circuit to avoid error when attempting to read length of undefined
+
+    const isValid = await passwordValidate.validatePassword(values[name]);
+    return isValid ? false : true
   }
 
   return(
