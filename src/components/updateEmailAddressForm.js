@@ -6,11 +6,11 @@ import { Button, Form, Header, Segment } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
-import useForm from "../hooks/useForm";
-
 import EmailInput from "./formFields/emailInput";
 import ErrorContainer from "./errorContainer";
 import SuccessContainer from "./successContainer";
+
+import useForm from "../hooks/useForm";
 
 const UpdateEmailAddressForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;

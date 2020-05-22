@@ -6,7 +6,9 @@ import { Button, Form, Header, Segment } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
+import ErrorContainer from "./errorContainer";
 import PasswordInput from "./formFields/passwordInput";
+import SuccessContainer from "./successContainer";
 
 import useForm from "../hooks/useForm";
 
@@ -14,6 +16,11 @@ const UpdatePasswordForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
   const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccessHeader, setIsSuccessHeader] = useState(null);
+  const [isSuccessMessage, setIsSuccessMesssage] = useState(null);
   const [userId, setUserId] = useState(null);
 
   const {
@@ -35,6 +42,13 @@ const UpdatePasswordForm = props => {
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
   }, [errors]);
+
+  useEffect(() => {
+    if (isError && errors.password) {
+      setIsErrorHeader("Invalid Password");
+      setIsErrorMessage("Please entered a valid password and try again.");
+    }
+  }, [errors.password, isError]);
 
   const handleSubmit = () => {
     if (!isError) {
@@ -61,18 +75,18 @@ const UpdatePasswordForm = props => {
     .then(data => {
       if (data.errors) {
         const { errors } = data;
-        // setIsSuccess(false);
-        // setIsErrorHeader("Unable to Change Password");
-        // setIsErrorMessage("Please enter a valid password and try again.")
+        setIsSuccess(false);
+        setIsErrorHeader("Unable to Change Password");
+        setIsErrorMessage("Please enter a valid password and try again.")
         handleServerErrors(...errors);
       } else {
         if(submitRedirect) {
           setRedirectURL(submitRedirectURL);
           setDoRedirect(true);
         } else {
-          // setIsSuccessHeader("Your Password was Successfully Changed");
-          // setIsSuccessMesssage("You can now login using your new password.");
-          // setIsSuccess(true);
+          setIsSuccessHeader("Your Password was Successfully Changed");
+          setIsSuccessMesssage("You can now login using your new password.");
+          setIsSuccess(true);
         }
       }
     })
@@ -94,6 +108,16 @@ const UpdatePasswordForm = props => {
       >
         {formTitle}
       </Header>
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}
+      />
+      <SuccessContainer
+        header={isSuccessHeader}
+        message={isSuccessMessage}
+        show={isSuccess}
+      />
       <Segment>
         <Form size="large">
           <PasswordInput 
