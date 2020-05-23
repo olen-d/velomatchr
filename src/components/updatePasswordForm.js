@@ -6,11 +6,13 @@ import { Button, Form, Header, Segment } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
+import ConfirmPasswordModal from "./confirmPasswordModal";
 import ErrorContainer from "./errorContainer";
 import PasswordInput from "./formFields/passwordInput";
 import SuccessContainer from "./successContainer";
 
 import useForm from "../hooks/useForm";
+
 
 const UpdatePasswordForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
@@ -18,6 +20,7 @@ const UpdatePasswordForm = props => {
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessHeader, setIsSuccessHeader] = useState(null);
   const [isSuccessMessage, setIsSuccessMesssage] = useState(null);
@@ -52,7 +55,8 @@ const UpdatePasswordForm = props => {
 
   const handleSubmit = () => {
     if (!isError) {
-      postUpdate();
+      setIsModalOpen(true);
+      // postUpdate();
     } else {
       // TODO: return failure
     }
@@ -140,6 +144,13 @@ const UpdatePasswordForm = props => {
             onClick={handleSubmit}
           >
           </Button>
+          <ConfirmPasswordModal
+            actionNegative={"Cancel"}
+            actionPositive={"Submit"}
+            header={"Password Required"}
+            message={"Please enter your old password."}
+            isOpen={isModalOpen}
+          />
         </Form>
       </Segment>
     </>
