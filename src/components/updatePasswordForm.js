@@ -103,6 +103,10 @@ const UpdatePasswordForm = props => {
     });
   }
 
+  const handleClose = () => {
+    setIsModalOpen(false);
+  }
+
   return(
     <>
       <Header 
@@ -133,7 +137,7 @@ const UpdatePasswordForm = props => {
             values={values}
           />
           <Button
-            disabled={isError}
+            disabled={isError || !values.password}
             className="fluid"
             type="button"
             color="red"
@@ -145,6 +149,7 @@ const UpdatePasswordForm = props => {
           >
           </Button>
           <ConfirmPasswordModal
+            handleClose={handleClose}
             actionNegative={"Cancel"}
             actionPositive={"Submit"}
             header={"Password Required"}
