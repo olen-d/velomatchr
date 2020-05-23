@@ -6,6 +6,7 @@ import { Button, Form, Header, Segment } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
+import ConfirmPasswordModal from "./confirmPasswordModal";
 import EmailInput from "./formFields/emailInput";
 import ErrorContainer from "./errorContainer";
 import SuccessContainer from "./successContainer";
