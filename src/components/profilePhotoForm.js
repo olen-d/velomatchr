@@ -80,8 +80,8 @@ const ProfilePhotoForm = props => {
   return(
     <>
       <Header 
-        as="h2" 
-        textAlign="center"
+        as="h3" 
+        textAlign="left"
         color="grey"
       >
         {formTitle}

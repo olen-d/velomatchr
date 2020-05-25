@@ -239,7 +239,7 @@ const ProfileFullForm = props => {
     <>
       <Header 
         as="h2" 
-        textAlign="center"
+        textAlign="left"
         color="grey"
       >
         {formTitle}

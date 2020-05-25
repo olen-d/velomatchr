@@ -14,7 +14,6 @@ import SuccessContainer from "./successContainer";
 
 import useForm from "../hooks/useForm";
 
-
 const UpdatePasswordForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
@@ -123,8 +122,8 @@ const UpdatePasswordForm = props => {
   return(
     <>
       <Header 
-        as="h2" 
-        textAlign="center"
+        as="h3" 
+        textAlign="left"
         color="grey"
       >
         {formTitle}
