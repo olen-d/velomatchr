@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-// TODO: import PropTypes from "prop-types";
+import PropTypes from "prop-types";
+
 import auth from "./auth";
 
 import { Button, Form, Header, Segment } from "semantic-ui-react";
@@ -176,7 +177,18 @@ const UpdatePasswordForm = props => {
   );
 }
 
-// TODO: Add prop type checking
-// TODO: Add default props
+UpdatePasswordForm.defaultProps = {
+  formTitle: "My Password",
+  submitBtnContent: "Update Password",
+  submitRedirect: false,
+  submitRedirectURL: ""
+}
+
+UpdatePasswordForm.propTypes = {
+  formTitle: PropTypes.string, 
+  submitBtnContent: PropTypes.string,
+  submitRedirect: PropTypes.bool, 
+  submitRedirectURL: PropTypes.string
+}
 
 export default UpdatePasswordForm;
