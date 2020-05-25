@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 // TODO: import PropTypes from "prop-types";
 import auth from "./auth";
 
@@ -21,6 +21,8 @@ const UpdateEmailAddressForm = props => {
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [isInitialValuesSet, setIsInitalValuesSet] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPassVerified, setIsPassVerified] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessHeader, setIsSuccessHeader] = useState(null);
   const [isSuccessMessage, setIsSuccessMesssage] = useState(null);
@@ -41,54 +43,16 @@ const UpdateEmailAddressForm = props => {
   const setRedirectURL = context.setRedirectURL;
 
   const userInfo = auth.getUserInfo(token);
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
-
-  useEffect(() => {
-    const getUserAccount = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/account/id/${userId}`);
-      const data = await response.json();
-
-      if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
-        const {
-          user: {
-            email
-          },
-        } = data;
-
-        setInitialValues({
-          email
-        });
-      }
-    }
-    getUserAccount();
-  }, [userId]);
-
-  useEffect(() => {
-    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
-  }, [errors]);
-
-  useEffect(() => {
-    if (isError && errors.email) {
-      setIsErrorHeader("Invalid Email Address");
-      setIsErrorMessage("Please check the email address you entered and try again.");
-    }
-  }, [errors.email, isError]);
-
-  if (Object.keys(initialValues).length > 0 && !isInitialValuesSet) {
-    initializeFields(initialValues);
-    setIsInitalValuesSet(true);
-  }
-
+  
   const handleSubmit = () => {
     if (!isError) {
-      postUpdate();
-      // TODO: return success
+      setIsModalOpen(true);
     } else {
       // TODO: return failure
     }
   }
   
-  const postUpdate = () => {
+  const postUpdate = useCallback(() => {
     const { email } = values;
     const formData = { userId, email };
 
@@ -127,6 +91,59 @@ const UpdateEmailAddressForm = props => {
         errorDetail: error
       })
     });
+  }, [handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
+
+  const handleIsPassVerified = isAuthenticated => {
+    setIsPassVerified(isAuthenticated);
+  }
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+  }
+
+  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+
+  useEffect(() => {
+    const getUserAccount = async () => {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/account/id/${userId}`);
+      const data = await response.json();
+
+      if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
+        const {
+          user: {
+            email
+          },
+        } = data;
+
+        setInitialValues({
+          email
+        });
+      }
+    }
+    getUserAccount();
+  }, [userId]);
+
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
+
+  useEffect(() => {
+    if (isError && errors.email) {
+      setIsErrorHeader("Invalid Email Address");
+      setIsErrorMessage("Please check the email address you entered and try again.");
+    }
+  }, [errors.email, isError]);
+
+  useEffect(() => {
+    if(isPassVerified === true) {
+      postUpdate();
+      setIsPassVerified(false);
+    }
+  }, [isPassVerified, postUpdate]);
+
+  if (Object.keys(initialValues).length > 0 && !isInitialValuesSet) {
+    initializeFields(initialValues);
+    setIsInitalValuesSet(true);
   }
 
   return(
@@ -170,6 +187,16 @@ const UpdateEmailAddressForm = props => {
             onClick={handleSubmit}
           >
           </Button>
+          <ConfirmPasswordModal
+            actionNegative={"Cancel"}
+            actionPositive={"Submit"}
+            handleClose={handleClose}
+            handleIsPassVerified={handleIsPassVerified}
+            header={"Password Required"}
+            isOpen={isModalOpen}
+            message={"Please enter your password."}
+            userId={userId}
+          />
         </Form>
       </Segment>
     </>
