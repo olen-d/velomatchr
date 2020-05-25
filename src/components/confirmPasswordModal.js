@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-//TODO: import PropTypes from "prop-types"
+import PropTypes from "prop-types"
 
 import { Button, Form, Icon, Modal } from "semantic-ui-react";
 
@@ -13,7 +13,16 @@ const warning = {
 }
 
 const ConfirmPasswordModal = props => {
-  const { actionNegative, actionPositive, handleClose, handleIsPassVerified, header, isOpen, message, userId } = props;
+  const {
+    actionNegative,
+    actionPositive,
+    handleClose,
+    handleIsPassVerified,
+    header,
+    isOpen,
+    message,
+    userId 
+  } = props;
 
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
@@ -107,6 +116,26 @@ const ConfirmPasswordModal = props => {
         </Modal.Actions>
     </Modal>
   )
+}
+
+ConfirmPasswordModal.defaultProps = {
+  actionNegative: "Cancel",
+  actionPositive: "Submit",
+  header: "Password Required",
+  isOpen: false,
+  message: "Please enter your old password.",
+  userId: -99 
+}
+
+ConfirmPasswordModal.propTypes = {
+  actionNegative: PropTypes.string,
+  actionPositive: PropTypes.string,
+  handleClose: PropTypes.func,
+  handleIsPassVerified: PropTypes.func,
+  header: PropTypes.string,
+  isOpen: PropTypes.bool,
+  message: PropTypes.string,
+  userId: PropTypes.number
 }
 
 export default ConfirmPasswordModal;
