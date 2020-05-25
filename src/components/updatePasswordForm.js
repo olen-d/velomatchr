@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 // TODO: import PropTypes from "prop-types";
 import auth from "./auth";
 
@@ -21,6 +21,7 @@ const UpdatePasswordForm = props => {
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPassVerified, setIsPassVerified] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessHeader, setIsSuccessHeader] = useState(null);
   const [isSuccessMessage, setIsSuccessMesssage] = useState(null);
@@ -40,29 +41,16 @@ const UpdatePasswordForm = props => {
   const setRedirectURL = context.setRedirectURL;
 
   const userInfo = auth.getUserInfo(token);
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
-
-  useEffect(() => {
-    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
-  }, [errors]);
-
-  useEffect(() => {
-    if (isError && errors.password) {
-      setIsErrorHeader("Invalid Password");
-      setIsErrorMessage("Please entered a valid password and try again.");
-    }
-  }, [errors.password, isError]);
 
   const handleSubmit = () => {
     if (!isError) {
       setIsModalOpen(true);
-      // postUpdate();
     } else {
       // TODO: return failure
     }
   }
   
-  const postUpdate = () => {
+  const postUpdate = useCallback(() => {
     const { password } = values;
     const formData = { userId, password };
 
@@ -101,11 +89,35 @@ const UpdatePasswordForm = props => {
         errorDetail: error
       })
     });
+  }, [handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
+
+  const handleIsPassVerified = isAuthenticated => {
+    setIsPassVerified(isAuthenticated);
   }
 
   const handleClose = () => {
     setIsModalOpen(false);
   }
+
+  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
+
+  useEffect(() => {
+    if (isError && errors.password) {
+      setIsErrorHeader("Invalid Password");
+      setIsErrorMessage("Please entered a valid password and try again.");
+    }
+  }, [errors.password, isError]);
+
+  useEffect(() => {
+    if(isPassVerified === true) {
+      postUpdate();
+      setIsPassVerified(false);
+    }
+  }, [isPassVerified, postUpdate]);
 
   return(
     <>
@@ -149,12 +161,14 @@ const UpdatePasswordForm = props => {
           >
           </Button>
           <ConfirmPasswordModal
-            handleClose={handleClose}
             actionNegative={"Cancel"}
             actionPositive={"Submit"}
+            handleClose={handleClose}
+            handleIsPassVerified={handleIsPassVerified}
             header={"Password Required"}
-            message={"Please enter your old password."}
             isOpen={isModalOpen}
+            message={"Please enter your old password."}
+            userId={userId}
           />
         </Form>
       </Segment>
