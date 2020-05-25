@@ -61,7 +61,7 @@ const ConfirmPasswordModal = props => {
   useEffect(() => {
     if (isError && errors.passwordVerify) {
       setIsErrorHeader("Invalid Password");
-      setIsErrorMessage("Please entered a valid password and try again.");
+      setIsErrorMessage("Please enter a valid password and try again.");
     }
   }, [errors.passwordVerify, isError]);
 
@@ -69,6 +69,7 @@ const ConfirmPasswordModal = props => {
     <Modal
       open={isOpen}
       onClose={handleClose} closeIcon
+      size={"tiny"}
     >
       <Modal.Header><span style={warning}><Icon name="exclamation triangle" />&nbsp;{header}</span></Modal.Header>
       <Modal.Content>

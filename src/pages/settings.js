@@ -7,7 +7,8 @@ import {
 
 import {
   Container,
-  Grid
+  Grid,
+  Header
  } from "semantic-ui-react";
 
 import SettingsAccount from "../components/settingsAccount";
@@ -21,6 +22,12 @@ const Settings = ({ match }) => {
           &nbsp;
         </Grid.Column>
         <Grid.Column width={8}>
+          <Header 
+            as="h1"
+            color="orange"
+          >
+            Settings
+          </Header>
         <Switch>
             <Route exact path={`${match.url}/profile`} component={SettingsProfile} />
             <Route path={`${match.url}/account`} component={SettingsAccount} />

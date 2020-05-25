@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-// TODO: import PropTypes from "prop-types";
+import PropTypes from "prop-types";
+
 import auth from "./auth";
 
 import { Button, Form, Header, Segment } from "semantic-ui-react";
@@ -149,8 +150,8 @@ const UpdateEmailAddressForm = props => {
   return(
     <>
       <Header 
-        as="h2" 
-        textAlign="center"
+        as="h3" 
+        textAlign="left"
         color="grey"
       >
         {formTitle}
@@ -203,7 +204,18 @@ const UpdateEmailAddressForm = props => {
   );
 }
 
-// TODO: Add prop type checking
-// TODO: Add default props
+UpdateEmailAddressForm.defaultProps = {
+  formTitle: "My Email Address",
+  submitBtnContent: "Update Email Address",
+  submitRedirect: false,
+  submitRedirectURL: ""
+}
+
+UpdateEmailAddressForm.propTypes = {
+  formTitle: PropTypes.string, 
+  submitBtnContent: PropTypes.string,
+  submitRedirect: PropTypes.bool, 
+  submitRedirectURL: PropTypes.string
+}
 
 export default UpdateEmailAddressForm;

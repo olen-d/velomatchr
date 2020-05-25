@@ -10,13 +10,12 @@ const SettingsAccount = () => {
     <>
       <Grid.Column width={8}>
         <Header 
-          as="h1"
-          color="orange"
+          as="h2"
+          textAlign="left"
+          color="grey"
         >
-          Account
+          My Account
         </Header>
-      </Grid.Column>
-      <Grid.Column width={8}>
         <UpdateEmailAddressForm
           formTitle={"My Email Address"}
           submitBtnContent={"Update Email Address"}
