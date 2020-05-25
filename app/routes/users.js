@@ -21,6 +21,7 @@ router.get("/users/username/:username", users_controller.read_one_user_by_userna
 router.post("/users/email/verify", users_controller.read_one_email_verification);
 router.post("/users/email/send/verification", users_controller.email_send_verification);
 router.post("/users/login", users_controller.read_login);
+router.post("/users/password/authenticate", users_controller.read_one_user_password_authenticate);
 router.post("/users/password/reset", users_controller.password_reset);
 router.post("/users/profile/photograph/update", imageUpload, users_controller.profile_photograph_update);
 

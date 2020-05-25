@@ -13,7 +13,7 @@ const warning = {
 }
 
 const ConfirmPasswordModal = props => {
-  const { actionNegative, actionPositive, handleClose, header, isOpen, message } = props;
+  const { actionNegative, actionPositive, handleClose, handleIsPassVerified, header, isOpen, message, userId } = props;
 
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
@@ -28,14 +28,30 @@ const ConfirmPasswordModal = props => {
   } = useForm();
 
   const handleConfirm = () => {
-    // Check the password
-    // values.passwordVerify
-    // If it's wrong, error
-    // If it's right close the modal
-    // And update the password
-    // Confirmation success
-    handleClose();
-    // return true... maybe some sort of isPasswordConfirmed?
+    (async () => {
+      const password = values.passwordVerify;
+      const formData = { id: userId, password }
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/password/authenticate`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      const { isAuthenticated } = data;
+
+      handleIsPassVerified(isAuthenticated);
+
+      if (isAuthenticated) {
+        handleClose();
+      } else {
+        handleServerErrors({ passwordVerify: true });
+      }
+    })();
   }
 
   useEffect(() => {
@@ -88,7 +104,6 @@ const ConfirmPasswordModal = props => {
           <Icon name="checkmark" /> {actionPositive}
           </Button>
         </Modal.Actions>
-      <p>Values: {values.passwordVerify}</p>
     </Modal>
   )
 }

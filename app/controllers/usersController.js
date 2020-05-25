@@ -316,6 +316,29 @@ exports.read_one_user_by_id = (req, res) => {
   });
 };
 
+exports.read_one_user_password_authenticate = (req, res) => {
+  const { id, password } = req.body;
+
+  (async () => {
+    const data = await User.findOne({
+      where: {
+        id
+      },
+      attributes: ["password"]
+    });
+    const { password: passwordHash } = data;
+
+    const isAuthenticated = await bcrypt.checkPass(password, passwordHash);
+    const { status, login } = isAuthenticated;
+
+    if (status === 200 && login) {
+      res.json({ isAuthenticated: true });
+    } else {
+      res.json({ isAuthenticated: false });
+    }
+  })();
+};
+
 exports.read_one_user_password_reset_by_id = (req, res) => {
   const { id, token } = req.params;
   User.findOne({
