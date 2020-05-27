@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 
 import auth from "./auth";
 
@@ -362,7 +362,18 @@ const ProfileFullForm = props => {
   );
 }
 
-// TODO: Add default props
-// TODO: Add prop type checking
+ProfileFullForm.defaultProps = {
+  formTitle: "My Profile",
+  submitBtnContent: "Update Profile",
+  submitRedirect: true,
+  submitRedirectURL: "/dashboard"
+}
+
+ProfileFullForm.propTypes = {
+  formTitle: PropTypes.string,
+  submitBtnContent: PropTypes.string,
+  submitRedirect: PropTypes.bool,
+  submitRedirectURL: PropTypes.string
+}
 
 export default ProfileFullForm;
