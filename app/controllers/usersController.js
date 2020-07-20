@@ -297,23 +297,29 @@ exports.read_one_user_id_by_email = (req, res) => {
 };
 
 exports.read_one_user_by_id = (req, res) => {
-  const userId = req.params.userId;
+  const authorized = req.authorized;
 
-  User.findOne({
-    where: {
-      id: userId
-    },
-    attributes: { exclude: ["password"]}
-  })
-  .then(resolve => {
-    let userObj = {
-      user: resolve
-    };
-    res.send(userObj);
-  })
-  .catch(err => {
-    res.json(err);
-  });
+  if(authorized) {
+    const userId = req.params.userId;
+
+    User.findOne({
+      where: {
+        id: userId
+      },
+      attributes: { exclude: ["password"]}
+    })
+    .then(resolve => {
+      let userObj = {
+        user: resolve
+      };
+      res.send(userObj);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+  } else {
+    res.sendStatus(403)
+  }
 };
 
 exports.read_one_user_password_authenticate = (req, res) => {
