@@ -1,37 +1,50 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import auth from "./auth";
 
-
 import { useAuth } from "../context/authContext";
 
+import { Header } from "semantic-ui-react";
+
+
 const MatchesCount = () => {
+  // Get items from context
+  const { authTokens: token } = useAuth();
+  const { user } = auth.getUserInfo(token);
+
+  // Set up the state
   const [userId, setUserId] = useState(null);
   const [totalMatches, setTotalMatches] = useState(null);
 
-  // Get items from context
-  const { authTokens } = useAuth();
-
-  const userInfo = auth.getUserInfo(authTokens);
-
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
+  useEffect(() => { setUserId(user) }, [user])
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/relationships/matched/count/user/${userId}`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/relationships/matched/count/user/id/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then(response => {
       return response.ok ? response.json() : new Error(response.statusText); 
     })
     .then(json => {
-      setTotalMatches(json[0].totalMatches);
+      const { data: [ { totalMatches }, ], } = json;
+      setTotalMatches(totalMatches);
     })
     .catch(err => {
       return err;
     });
-  }, [setTotalMatches, userId]);
+  }, [setTotalMatches, token, userId]);
 
   return(
     <div>
-      {totalMatches}
+      <Header as="h1" color="black">
+       {totalMatches}
+      </Header>
+      <p>
+        <Link to="/matches">Buddies</Link>
+      </p>
     </div>
   );
 }
