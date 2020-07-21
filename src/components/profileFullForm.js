@@ -8,6 +8,8 @@ import { Button, Form, Header, Segment } from "semantic-ui-react";
 
 import { AuthContext } from "../context/authContext";
 
+import ErrorContainer from "./errorContainer";
+
 import CityInput from "./formFields/cityInput";
 import CountryInput from "./formFields/countryInput"
 import FullnameInput from "./formFields/fullnameInput";
@@ -33,6 +35,7 @@ const ProfileFullForm = props => {
   const [addressDidChange, setAddressDidChange] = useState(false);
   const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
+  const [isUserProfileError, setIsUserProfileError] = useState(false);
   const [newLatitude, setNewLatitude] = useState(0.0);
   const [newLongitude, setNewLongitude] = useState(0.0);
   const [userId, setUserId] = useState(null);
@@ -57,55 +60,61 @@ const ProfileFullForm = props => {
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
   useEffect(() => {
-    const getUserProfile = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-
-      if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
-        const {
-          user: {
+    if (userId) {
+      const getUserProfile = async () => {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+  
+        const data = response.status === 200 ? await response.json() : false;
+  
+        if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
+          const {
+            user: {
+              city,
+              country,
+              countryCode,
+              firstName,
+              lastName,
+              gender,
+              latitude,
+              longitude,
+              name: username,
+              phone,
+              photoLink: initialPhotoLink,
+              postalCode,
+              state,
+              stateCode
+            },
+          } = data;
+  
+          const fullname = firstName || lastName ? `${firstName} ${lastName}` : "";
+  
+          setInitialValues({
             city,
             country,
             countryCode,
-            firstName,
-            lastName,
+            fullname,
             gender,
             latitude,
             longitude,
-            name: username,
             phone,
-            photoLink: initialPhotoLink,
             postalCode,
             state,
-            stateCode
-          },
-        } = data;
-
-        const fullname = firstName || lastName ? `${firstName} ${lastName}` : "";
-
-        setInitialValues({
-          city,
-          country,
-          countryCode,
-          fullname,
-          gender,
-          latitude,
-          longitude,
-          phone,
-          postalCode,
-          state,
-          stateCode,
-          username
-        });
-
-        setPhotoLink(initialPhotoLink);
+            stateCode,
+            username
+          });
+  
+          setPhotoLink(initialPhotoLink);
+          setIsUserProfileError(false);
+        } else {
+            setIsUserProfileError(true);
+        }
       }
+      getUserProfile();
     }
-    getUserProfile();
   }, [token, userId]);
 
   useEffect(() => {
@@ -248,6 +257,11 @@ const ProfileFullForm = props => {
       >
         {formTitle}
       </Header>
+      <ErrorContainer
+        header="Unable to Retrieve Your Profile"
+        message="Please reload the page to try again."
+        show={isUserProfileError}>
+      </ErrorContainer>
       <ProfilePhotoForm
         formTitle={"Current Photograph"}
         profilePhotoBtnContent={"Upload Profile Photo"}
