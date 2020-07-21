@@ -55,22 +55,28 @@ exports.read_user_relationships = (req, res) => {
   });
 };
 
-exports.read_user_matched_count = (req, res) => {
-  const userid = req.params.userid;
+exports.read_user_matched_count_by_id = (req, res) => {
+  const authorized = req.authorized;
 
-  Relationship.findAll({
-    attributes: [[Relationship.sequelize.fn("COUNT", Relationship.sequelize.col("status")), "totalMatches"]],
-    where: {
-      requesterId: userid,
-      status: 2
-    }
-  })
-  .then(data => {
-    res.json(data)
-  })
-  .catch(err => {
-    res.send(err)
-  });
+  if(authorized) {
+    const { params: { userid }, } = req;
+
+    Relationship.findAll({
+      attributes: [[Relationship.sequelize.fn("COUNT", Relationship.sequelize.col("status")), "totalMatches"]],
+      where: {
+        requesterId: userid,
+        status: 2
+      }
+    })
+    .then(data => {
+      res.json({ data })
+    })
+    .catch(err => {
+      res.send(err)
+    });
+  } else {
+    res.sendStatus(403)
+  }
 };
 
 exports.update_user_relationship_status = (req, res) => {

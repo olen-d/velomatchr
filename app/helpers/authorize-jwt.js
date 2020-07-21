@@ -16,6 +16,7 @@ module.exports = (req, res, next) => {
       req.authorized = true;
       next();
     } catch (error) {
+      req.authorized = false;
       return next();
     }
   } else {
