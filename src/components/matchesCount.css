@@ -1,0 +1,27 @@
+.matches-count {
+  width: 100%;
+  margin-top: 6rem;
+  border-radius: 0.3rem;
+  text-align: center;
+  background-color: #ffdbb3;
+}
+
+.matches-count h1.ui.header {
+  padding-top: 1rem;
+  font-size: 4rem;
+  color: #cc6d00;
+}
+
+.matches-count p {
+  padding-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.matches-count a:link,
+.matches-count a:visited {
+  color: #cc6d00;
+}
+
+.matches-count a:hover {
+  color: #ff8800;
+}

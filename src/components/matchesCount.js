@@ -7,6 +7,7 @@ import { useAuth } from "../context/authContext";
 
 import { Header } from "semantic-ui-react";
 
+import "./matchesCount.css";
 
 const MatchesCount = () => {
   // Get items from context
@@ -39,8 +40,8 @@ const MatchesCount = () => {
   }, [setTotalMatches, token, userId]);
 
   return(
-    <div>
-      <Header as="h1" color="black">
+    <div className="matches-count">
+      <Header as="h1">
        {totalMatches}
       </Header>
       <p>
