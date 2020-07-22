@@ -20,21 +20,22 @@ const MatchesCount = () => {
   useEffect(() => { setUserId(user) }, [user])
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/relationships/matched/count/user/id/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    (async() => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/matched/count/user/id/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        const json = response.ok ? await response.json() : new Error(response.statusText); 
+        const { data: [ { totalMatches }, ], } = json;
+        
+        setTotalMatches(totalMatches);
+      } catch(err) {
+        return err;
       }
-    })
-    .then(response => {
-      return response.ok ? response.json() : new Error(response.statusText); 
-    })
-    .then(json => {
-      const { data: [ { totalMatches }, ], } = json;
-      setTotalMatches(totalMatches);
-    })
-    .catch(err => {
-      return err;
-    });
+    })()
   }, [setTotalMatches, token, userId]);
 
   return(
