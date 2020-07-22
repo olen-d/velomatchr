@@ -29,34 +29,40 @@ exports.update_user_relationships = (req, res) => {
   });
 };
 
-exports.read_user_relationships = (req, res) => {
-  const userid = req.params.userid;
+exports.read_user_relationships_by_id = (req, res) => {
+  const { authorized } = req;
 
-  Relationship.findAll({
-    where: {
-      requesterId: userid,
-      status: {[Op.not]: 3 }
-    },
-    include: [{ 
-      model: User, 
-      as: "addressee",
-      attributes: { exclude: ["password"]}
-    }],
-    order: [
-      ["matchScore", "ASC"],
-      ["updatedAt", "DESC"]
-    ]
-  })
-  .then(data => {
-    res.json(data);
-  })
-  .catch(err => {
-    res.send(err);
-  });
+  if (authorized) {
+    const userid = req.params.userid;
+
+    Relationship.findAll({
+      where: {
+        requesterId: userid,
+        status: {[Op.not]: 3 }
+      },
+      include: [{ 
+        model: User, 
+        as: "addressee",
+        attributes: { exclude: ["password"]}
+      }],
+      order: [
+        ["matchScore", "ASC"],
+        ["updatedAt", "DESC"]
+      ]
+    })
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      res.send(err);
+    });
+  }else {
+    res.sendStatus(403)
+  }
 };
 
 exports.read_user_matched_count_by_id = (req, res) => {
-  const authorized = req.authorized;
+  const { authorized } = req;
 
   if(authorized) {
     const { params: { userid }, } = req;

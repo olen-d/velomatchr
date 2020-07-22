@@ -20,10 +20,10 @@ import auth from "./auth";
   const [noMatches, setNoMatches] = useState(null);
 
   // Get items from context
-  const { authTokens } = useAuth();
+  const { authTokens: token } = useAuth();
   const { matches, setMatches } = useMatches();
 
-  const userInfo = auth.getUserInfo(authTokens);
+  const userInfo = auth.getUserInfo(token);
 
   let status = parseInt(props.status);
 
@@ -68,7 +68,11 @@ import auth from "./auth";
   useEffect(() => {
     setMatches({isLoading: true});
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/relationships/user/${userId}`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/relationships/user/id/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then(response => {
       return response.ok ? response.json() : setMatches({ error: response.statusText, matchesResult: [], isLoading: false }); 
     })
@@ -78,7 +82,7 @@ import auth from "./auth";
     .catch(error => {
       setMatches({ error, matchesResult: [], isLoading: false });;
     });
-  }, [setMatches, userId]);
+  }, [setMatches, token, userId]);
 
   useEffect(() => {
     const { error, matchesResult } = matches;
