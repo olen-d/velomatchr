@@ -33,7 +33,7 @@ exports.read_user_relationships_by_id = (req, res) => {
   const { authorized } = req;
 
   if (authorized) {
-    const userid = req.params.userid;
+    const { params: { userid }, } = req;
 
     Relationship.findAll({
       where: {
