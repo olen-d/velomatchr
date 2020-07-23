@@ -68,25 +68,26 @@ import auth from "./auth";
   useEffect(() => {
     setMatches({isLoading: true});
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/relationships/user/id/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    (async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/user/id/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const json = response.ok ? await response.json() : setMatches({ error: response.statusText, matchesResult: [], isLoading: false }); 
+        setMatches({ matchesResult: json, isLoading: false });
+      } catch(error) {
+        setMatches({ error, matchesResult: [], isLoading: false });;
       }
-    })
-    .then(response => {
-      return response.ok ? response.json() : setMatches({ error: response.statusText, matchesResult: [], isLoading: false }); 
-    })
-    .then(json => {
-      setMatches({ matchesResult: json, isLoading: false });
-    })
-    .catch(error => {
-      setMatches({ error, matchesResult: [], isLoading: false });;
-    });
+    })()
   }, [setMatches, token, userId]);
 
   useEffect(() => {
     const { error, matchesResult } = matches;
     let mounted = true;
+
 
     if(error) {
       // TODO: Do something about the error
@@ -149,20 +150,20 @@ import auth from "./auth";
     } else {
       return(
         <div className="matches-list">
-          {matchesFilteredByStatus.map(match => (
-            <div className="match-card" key={match.id}>
+          {matchesFilteredByStatus.map(({ id, addressee: { id: addresseeId, firstName, lastName, photoLink, city, stateCode, createdAt}, }) => (
+            <div className="match-card" key={id}>
               <MatchCard
                 requesterId={userId}
-                addresseeId={match.addressee.id}
-                firstName={match.addressee.firstName}
-                lastName={match.addressee.lastName.substring(0,1) + "."}
-                photoLink={match.addressee.photoLink}
-                city={match.addressee.city}
-                stateCode={match.addressee.stateCode}
+                addresseeId={addresseeId}
+                firstName={firstName}
+                lastName={lastName.substring(0,1) + "."}
+                photoLink={photoLink}
+                city={city}
+                stateCode={stateCode}
                 createdAt={new Intl.DateTimeFormat("en-US", {
                   year: "numeric",
                   month: "long"
-                }).format(new Date(match.addressee.createdAt))}
+                }).format(new Date(createdAt))}
                 leftBtnIcon={leftBtnIcon}
                 leftBtnContent={leftBtnContent}
                 leftBtnAction={leftBtnAction}
