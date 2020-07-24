@@ -47,6 +47,10 @@ const SurveyForm = props => {
     submitRedirectURL
   } = props;
 
+  // Get items from context
+  const { authTokens: token, setDoRedirect, setRedirectURL } = useAuth();
+  const { user } = auth.getUserInfo(token);
+
   // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
@@ -59,10 +63,6 @@ const SurveyForm = props => {
   const [savedAnswers, setSavedAnswers] = useState([]);
   const [userId, setUserId] = useState(null);
   const [validate, setValidate] = useState(false);
-
-  const { authTokens, setDoRedirect, setRedirectURL } = useAuth();
-
-  const userInfo = auth.getUserInfo(authTokens);
 
   const setAnswerState = e => {
     const updatedAnswer = answers.map(answer => answer.id === parseInt(e.target.name) ? {...answer, ...{selectedVal: parseInt(e.target.value)}} : answer)
@@ -236,11 +236,17 @@ const SurveyForm = props => {
     });
   }
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
+  useEffect(() => { setUserId(user) }, [user])
 
   useEffect(() => {
     const getUserAnswers = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/survey/user/${userId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/survey/user/id/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
       const data = await response.json();
       if (data) {
         const { answers: userAnswers } = data;
@@ -252,8 +258,10 @@ const SurveyForm = props => {
         setSavedAnswers(initialAnswers);
       }
     }
-    getUserAnswers();
-  }, [answers, userId]);
+    if (userId) {
+      getUserAnswers();
+    }
+  }, [answers, token, userId]);
 
   useEffect(() => {
     if (savedAnswers.length > 0 && !isInitialized) {
