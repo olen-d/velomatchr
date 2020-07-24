@@ -56,7 +56,7 @@ exports.read_user_relationships_by_id = (req, res) => {
     .catch(err => {
       res.send(err);
     });
-  }else {
+  } else {
     res.sendStatus(403)
   }
 };
