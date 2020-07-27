@@ -1,10 +1,6 @@
 const express = require("express");
-const app = express();
 
 const router = express.Router();
-
-const bodyParser = require("body-parser");
-app.use(bodyParser);
 
 const authorizeJWT = require("../helpers/authorize-jwt");
 
@@ -16,6 +12,6 @@ router.get("/matches/near/location/:lat/:long", matches_controller.read_matches_
 router.get("/matches/user/:userid", matches_controller.read_user_matches);
 router.get("/matches/preferences/user/:userid", matches_controller.read_user_matches_preferences);
 
-router.post("/matches/calculate", [bodyParser(), authorizeJWT], matches_controller.calculate_user_matches);
+router.post("/matches/calculate", authorizeJWT, matches_controller.calculate_user_matches);
 
 module.exports = router;
