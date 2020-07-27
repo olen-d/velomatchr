@@ -102,30 +102,35 @@ exports.update_user_relationship_status = (req, res) => {
 
 // Delete
 exports.delete_user_relationships = (req, res) => {
-  const { userId } = req.params;
+  const { authorized } = req;
+  if (authorized) {
+    const { params: { userid }, } = req;
 
-  Relationship.destroy({
-    where: { 
-      [Op.and]: [
-        { status: { [Op.lt]: 2 } },
-        {
-          [Op.or]: [
-            { requesterId: userId },
-            { addresseeId: userId },
-          ]
-        }
-      ]
-    }
-  })
-  .then(response => {
-    if (response < 1) {
-      // TODO: It's totally possible no relationsips were deleted
-      res.json({ data: "No relationships were deleted." });
-    } else {
-      res.json({ data: "The previous realationships were successfully deleted." });
-    }
-  })
-  .catch(error => {
-    res.json({ error });
-  })
+    Relationship.destroy({
+      where: { 
+        [Op.and]: [
+          { status: { [Op.lt]: 2 } },
+          {
+            [Op.or]: [
+              { requesterId: userid },
+              { addresseeId: userid },
+            ]
+          }
+        ]
+      }
+    })
+    .then(response => {
+      if (response < 1) {
+        // TODO: It's totally possible no relationsips were deleted
+        res.json({ data: "No relationships were deleted." });
+      } else {
+        res.json({ data: "The previous realationships were successfully deleted." });
+      }
+    })
+    .catch(error => {
+      res.json({ error });
+    });
+  } else {
+    res.sendStatus(403)
+  }
 };
