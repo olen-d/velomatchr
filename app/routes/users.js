@@ -1,10 +1,6 @@
 const express = require("express");
-const app = express();
 
 const router = express.Router();
-
-const bodyParser = require("body-parser");
-app.use(bodyParser);
 
 const authorizeJWT = require("../helpers/authorize-jwt");
 const imageUpload = require("../helpers/upload-image");
@@ -19,7 +15,7 @@ router.post(
 
 router.get("/users/account/id/:userId", users_controller.read_one_user_account_by_id);
 router.get("/users/email/:email", users_controller.read_one_user_id_by_email);
-router.get("/users/id/:userId", [bodyParser(), authorizeJWT], users_controller.read_one_user_by_id);
+router.get("/users/id/:userId", authorizeJWT, users_controller.read_one_user_by_id);
 router.get("/users/matches/preferences/:userId", users_controller.read_one_user_and_matches_preferences);
 router.get("/users/password/reset/:id/:token", users_controller.read_one_user_password_reset_by_id);
 router.get("/users/username/:username", users_controller.read_one_user_by_username);
