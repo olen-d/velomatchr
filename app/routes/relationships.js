@@ -17,6 +17,6 @@ router.get("/relationships/matched/count/user/id/:userid", [bodyParser(), author
 
 router.put("/relationships/status/update", relationships_controller.update_user_relationship_status);
 
-router.delete("/relationships/delete/requester/id/:userId", relationships_controller.delete_user_relationships);
+router.delete("/relationships/delete/requester/id/:userid", [bodyParser(), authorizeJWT], relationships_controller.delete_user_relationships);
 
 module.exports = router;
