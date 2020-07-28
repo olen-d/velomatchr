@@ -13,7 +13,7 @@ exports.update_survey_response = (req, res) => {
 
   delete formData.userId;
 
-  const checkSurveyAnswers = () => {
+  const isSurveyValid = () => {
     Object.entries(formData).forEach(([key, value]) => {
       if (!value) {
         errors.push({error: "IVQ", message: "Invalid Question", key, status: 500});
@@ -22,26 +22,26 @@ exports.update_survey_response = (req, res) => {
     return errors.length > 0 ? false : true;
   }
 
-  if (checkSurveyAnswers()) {
+  if (isSurveyValid()) {
     const answers = Object.values(formData);
 
     Answer.upsert({
       userId: userId,
       answers: answers.join()
     }).then(newAnswer => {
-      res.json(newAnswer);
+      res.status(200).json({ status: 200, newAnswer });
     })
     .catch(err => {
       res.status(500).json({error: err});
     });
   } else {
-    res.json({ errors });
+    res.status(400).json({ status: 400, errors });
   }
 };
 
 exports.read_survey_response_by_id = (req, res) => {
   const { authorized } = req;
-  
+
   if (authorized) {
     const { params: { userid }, } = req;
     Answer.findOne({

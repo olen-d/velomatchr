@@ -201,16 +201,24 @@ const SurveyForm = props => {
     fetch(`${process.env.REACT_APP_API_URL}/api/survey/submit`, {
       method: "post",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
       return response.json();
     }).then(data => {
-      if (data.errors) {
+      const { status } = data;
+
+      if (status === 403) {
+        const { message } = data;
+        setIsErrorHeader("Unable to Update Survey Response");
+        setIsErrorMessage(message + " Please make sure you are signed in and try again.");
+        setIsError(true);
+      } else if (status === 400 && data.errors) {
         setValidate(true);
         showFormError();
-      } else {
+      } else if (status === 200) {
         // Hit the API route to calculate matches...
         fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
           method: "post",
