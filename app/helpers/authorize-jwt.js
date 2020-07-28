@@ -11,16 +11,15 @@ module.exports = (req, res, next) => {
       const { exp } = decoded;
 
       if(exp <= (Math.floor(Date.now() / 1000))) {
-        res.end("Access token has expired", 400);
+        res.status(400).json({ status: 400, message: "Access token has expired" });
       }
       req.authorized = true;
       next();
     } catch (error) {
       req.authorized = false;
-      return next();
+      res.status(403).json({ status: 403, message: `Forbidden. ${error}` });
     }
   } else {
-    res.status(403).send("Forbidden. A valid access token was not provided.");
-    next();
+    res.status(403).json({ status: 403, message: "Forbidden. A valid access token was not provided." });
   }
 };
