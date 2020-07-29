@@ -7,35 +7,41 @@ const { Answer, MatchPref, User } = require("../models");
 const Op = Sequelize.Op;
 
 exports.update_survey_response = (req, res) => {
-  const formData = req.body;
-  const userId = formData.userId;
-  const errors = [];
+  const { authorized } = req;
 
-  delete formData.userId;
+  if (authorized) {
+    const { body: { userId }, body: formData, } = req; // Duplicate "body" keys because the body object is used to check for valid responses
 
-  const isSurveyValid = () => {
-    Object.entries(formData).forEach(([key, value]) => {
-      if (!value) {
-        errors.push({error: "IVQ", message: "Invalid Question", key, status: 500});
-      }
-    });
-    return errors.length > 0 ? false : true;
-  }
-
-  if (isSurveyValid()) {
-    const answers = Object.values(formData);
-
-    Answer.upsert({
-      userId: userId,
-      answers: answers.join()
-    }).then(newAnswer => {
-      res.status(200).json({ status: 200, newAnswer });
-    })
-    .catch(err => {
-      res.status(500).json({error: err});
-    });
+    const errors = [];
+  
+    delete formData.userId;;
+  
+    const isSurveyValid = () => {
+      Object.entries(formData).forEach(([key, value]) => {
+        if (!value) {
+          errors.push({error: "IVQ", message: "Invalid Question", key, status: 500});
+        }
+      });
+      return errors.length > 0 ? false : true;
+    }
+  
+    if (isSurveyValid()) {
+      const answers = Object.values(formData);
+  
+      Answer.upsert({
+        userId: userId,
+        answers: answers.join()
+      }).then(newAnswer => {
+        res.status(200).json({ status: 200, newAnswer });
+      })
+      .catch(err => {
+        res.status(500).json({error: err});
+      });
+    } else {
+      res.status(400).json({ status: 400, errors });
+    }
   } else {
-    res.status(400).json({ status: 400, errors });
+    res.status(403).json({ status: 403, message: "Forbidden. You are not authorized to change survey answers." });
   }
 };
 
