@@ -204,19 +204,25 @@ exports.read_user_matches = (req, res) => {
 };
 
 // Get the user's match preferences
-exports.read_user_matches_preferences = (req, res) => {
-  const userid = req.params.userid;
+exports.read_user_matches_preferences_by_id = (req, res) => {
+  const { authorized } = req;
 
-  MatchPref.findOne({
-    where: {
-      userId: userid
-    },
-    attributes: ["distance", "gender"]
-  })
-  .then(data => {
-    res.json(data);
-  })
-  .catch(err => {
-    res.send(err);
-  });
+  if (authorized) {
+    const { params: { userid }, } = req;
+
+    MatchPref.findOne({
+      where: {
+        userId: userid
+      },
+      attributes: ["distance", "gender"]
+    })
+    .then(data => {
+      data ? res.status(200).json({ status: 200, message: "ok", data }) : res.status(404).json({ status: 404, message: `No match preferences were found for user ${userid}.` });
+    })
+    .catch(error => {
+      res.status(500).json({ status: 500, message: "Internal server error.", error });
+    });
+  } else {
+    res.status(403).json({ status: 403, message: "Forbidden. You are not authorized to access match preferences." });
+  }
 };
