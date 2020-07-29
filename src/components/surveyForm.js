@@ -284,17 +284,24 @@ const SurveyForm = props => {
 
   useEffect(() => {
     const getUserMatchPrefs = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`);
-      const data = await response.json();
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/user/id/${userId}`, 
+      {
+        headers: { 
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const result = await response.json();
 
-      if (userId && data.user) {
-        const { user: { userMatchPrefs }, } = data;
-
-        userMatchPrefs ? setHasMatchPrefs(true) : setHasMatchPrefs(false);
+      if (result) {
+        const { status } = result;
+        status === 200 ? setHasMatchPrefs(true) : setHasMatchPrefs(false);
       }
     }
-    getUserMatchPrefs();
-  }, [userId]);
+
+    if (userId) { // Don't hit the API if the userId hasn't been set yet
+      getUserMatchPrefs();
+    }
+  }, [token, userId]);
 
   return(
     <>
