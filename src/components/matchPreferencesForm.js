@@ -62,7 +62,10 @@ const MatchPreferencesForm = props => {
     const handleConfirm = () => {
       setIsOpen(false);
       fetch(`${process.env.REACT_APP_API_URL}/api/relationships/delete/requester/id/${userId}`, {
-        method: "delete"
+        method: "delete",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       })
       .then(async response => {
         const response_1 = await response.json();
