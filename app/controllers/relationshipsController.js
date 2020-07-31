@@ -103,6 +103,7 @@ exports.update_user_relationship_status = (req, res) => {
 // Delete
 exports.delete_user_relationships = (req, res) => {
   const { authorized } = req;
+  
   if (authorized) {
     const { params: { userid }, } = req;
 
