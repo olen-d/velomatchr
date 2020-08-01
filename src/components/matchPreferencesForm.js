@@ -146,7 +146,8 @@ const MatchPreferencesForm = props => {
     fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/submit`, {
       method: "post",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
