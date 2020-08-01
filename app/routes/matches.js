@@ -6,7 +6,7 @@ const authorizeJWT = require("../helpers/authorize-jwt");
 
 const matches_controller = require("../controllers/matchesController");
 // TODO: Add "id" to all routes using {userid}
-router.post("/matches/preferences/submit", matches_controller.update_match_preferences);
+router.post("/matches/preferences/submit", authorizeJWT, matches_controller.update_match_preferences);
 
 router.get("/matches/near/location/:lat/:long", matches_controller.read_matches_nearby);
 router.get("/matches/user/:userid", matches_controller.read_user_matches);
