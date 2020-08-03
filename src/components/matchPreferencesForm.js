@@ -203,7 +203,12 @@ const MatchPreferencesForm = props => {
 
   useEffect(() => {
     const getUserMatchPrefs = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await response.json();
 
       if (data && data.user && data.user.userMatchPrefs) { // Skips the destructuring if any of these are null, which would throw a type error
@@ -213,7 +218,7 @@ const MatchPreferencesForm = props => {
       }
     }
     getUserMatchPrefs();
-  }, [userId]);
+  }, [token, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);

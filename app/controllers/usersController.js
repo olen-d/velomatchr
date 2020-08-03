@@ -297,7 +297,7 @@ exports.read_one_user_id_by_email = (req, res) => {
 };
 
 exports.read_one_user_by_id = (req, res) => {
-  const authorized = req.authorized;
+  const { authorized } = req;
 
   if(authorized) {
     const userId = req.params.userId;
@@ -369,37 +369,44 @@ exports.read_one_user_password_reset_by_id = (req, res) => {
 };
 
 // Get the user's information and match preferences
+// Only return information needed to calculate the matches and show preferences 
 exports.read_one_user_and_matches_preferences = (req, res) => {
-  const userId = req.params.userId;
+  const { authorized } = req;
 
-  User.findOne({
-    where: {
-      id: userId
-    },
-    attributes: {
-      include: [
-        [Sequelize.literal("latitude - (15.0 / 69.0)"), "latMinus"],
-        [Sequelize.literal("latitude + (15.0 / 69.0)"), "latPlus"],
-        [Sequelize.literal("longitude - (15.0 / (69.0 * COS(RADIANS(latitude))))"), "longMinus"],
-        [Sequelize.literal("longitude + (15.0 / (69.0 * COS(RADIANS(latitude))))"), "longPlus"]
-      ],
-      exclude: ["password"]
-    },
-    include: [{
-      model: MatchPref,
-      as: "userMatchPrefs",
-      attributes: ["distance", "gender"]
-    }]
-  })
-  .then(resolve =>{
-    let userObj = {
-      user: resolve
-    };
-    res.send(userObj);
-  })
-  .catch(err => {
-    res.json(err);
-  });
+  if (authorized) {
+    const { params: { userId }, } = req;
+
+    User.findOne({
+      where: {
+        id: userId
+      },
+      attributes: [
+          "id",
+          "gender",
+          "isEmailVerified",
+          [Sequelize.literal("latitude - (15.0 / 69.0)"), "latMinus"],
+          [Sequelize.literal("latitude + (15.0 / 69.0)"), "latPlus"],
+          [Sequelize.literal("longitude - (15.0 / (69.0 * COS(RADIANS(latitude))))"), "longMinus"],
+          [Sequelize.literal("longitude + (15.0 / (69.0 * COS(RADIANS(latitude))))"), "longPlus"]
+        ],
+      include: [{
+        model: MatchPref,
+        as: "userMatchPrefs",
+        attributes: ["distance", "gender"]
+      }]
+    })
+    .then(resolve =>{
+      let userObj = {
+        user: resolve
+      };
+      res.send(userObj);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+  } else {
+    res.sendStatus(403)
+  }
 };
 
 exports.read_login = (req, response) => {
