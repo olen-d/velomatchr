@@ -58,8 +58,9 @@ exports.calculate_user_matches = (req, res) => {
   const { authorized } = req;
 
   if (authorized) {
-    const { userId } = req.body;
+    const { body: { userId }, } = req;
 
+    // TODO: Split this into a helper function
     const createToken = userId => {
       return new Promise((resolve, reject) => {
         jwt.sign(
@@ -80,7 +81,6 @@ exports.calculate_user_matches = (req, res) => {
 
     createToken(userId)
     .then(token => {
-      console.log(token);
       Promise.all(urls.map(url =>
         fetch(url, {
           headers: {
