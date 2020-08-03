@@ -172,7 +172,8 @@ const MatchPreferencesForm = props => {
           fetch(`${process.env.REACT_APP_API_URL}/api/matches/calculate`, {
             method: "post",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({ userId })
           }).then(response => {
