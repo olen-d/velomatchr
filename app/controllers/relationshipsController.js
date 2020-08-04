@@ -5,28 +5,34 @@ const Op = Sequelize.Op;
 const { Relationship, User } = require("../models");
 
 exports.update_user_relationships = (req, res) => {
-  const relationships = [];
-  const { matches, userId } = req.body;
+  const { authorized } = req;
 
-  const scores = new Map(matches);
-
-  scores.forEach((value, key) => {
-    relationships.push({ requesterId: userId, addresseeId: key, matchScore: value, status: 0, actionUserId: userId });
-    relationships.push({ requesterId: key, addresseeId: userId, matchScore: value, status: 0, actionUserId: userId });
-  });
-  Relationship.bulkCreate(
-    relationships,
-    {
-    updateOnDuplicate: ["matchScore", "actionUserId", "updatedAt"]
-    }
-  ).then(() => {
-    return Relationship.findAll({ where: { requesterId: userId }});
-  }).then (newRelationships => {
-    res.json(newRelationships);
-  })
-  .catch(err => {
-    res.status(500).send(err);
-  });
+  if (authorized) {
+    const relationships = [];
+    const { matches, userId } = req.body;
+  
+    const scores = new Map(matches);
+  
+    scores.forEach((value, key) => {
+      relationships.push({ requesterId: userId, addresseeId: key, matchScore: value, status: 0, actionUserId: userId });
+      relationships.push({ requesterId: key, addresseeId: userId, matchScore: value, status: 0, actionUserId: userId });
+    });
+    Relationship.bulkCreate(
+      relationships,
+      {
+      updateOnDuplicate: ["matchScore", "actionUserId", "updatedAt"]
+      }
+    ).then(() => {
+      return Relationship.findAll({ where: { requesterId: userId }});
+    }).then (newRelationships => {
+      res.json(newRelationships);
+    })
+    .catch(err => {
+      res.status(500).send(err);
+    });
+  } else {
+    res.sendStatus(403)
+  }
 };
 
 exports.read_user_relationships_by_id = (req, res) => {
@@ -103,7 +109,7 @@ exports.update_user_relationship_status = (req, res) => {
 // Delete
 exports.delete_user_relationships = (req, res) => {
   const { authorized } = req;
-  
+
   if (authorized) {
     const { params: { userid }, } = req;
 

@@ -6,7 +6,7 @@ const authorizeJWT = require("../helpers/authorize-jwt");
 
 const relationships_controller = require("../controllers/relationshipsController");
 
-router.post("/relationships/create", relationships_controller.update_user_relationships);
+router.post("/relationships/create", authorizeJWT, relationships_controller.update_user_relationships);
 
 router.get("/relationships/user/id/:userid", authorizeJWT, relationships_controller.read_user_relationships_by_id);
 router.get("/relationships/matched/count/user/id/:userid", authorizeJWT, relationships_controller.read_user_matched_count_by_id);

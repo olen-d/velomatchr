@@ -125,7 +125,8 @@ exports.calculate_user_matches = (req, res) => {
           fetch(`${process.env.REACT_APP_API_URL}/api/relationships/create`, {
           method: "post",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({ matches, userId })
           })
