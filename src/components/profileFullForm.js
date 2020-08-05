@@ -223,7 +223,8 @@ const ProfileFullForm = props => {
     fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/full`, {
       method: "put",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
