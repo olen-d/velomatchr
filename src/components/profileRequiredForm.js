@@ -41,7 +41,11 @@ const ProfileRequiredForm = props => {
 
   useEffect(() => {
     const getUserProfile = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await response.json();
 
       if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
@@ -52,7 +56,7 @@ const ProfileRequiredForm = props => {
       }
     }
     getUserProfile();
-  }, [userId]);
+  }, [token, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
