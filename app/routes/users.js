@@ -32,7 +32,7 @@ router.put("/users/email/verified/update", users_controller.email_verified_updat
 router.put("/users/password/change", users_controller.password_change);
 router.put("/users/password/update", users_controller.password_update);
 router.put("/users/profile/update/full", authorizeJWT, users_controller.profile_update_full);
-router.put("/users/profile/update/required/", users_controller.profile_update_required);
+router.put("/users/profile/update/required/", authorizeJWT, users_controller.profile_update_required);
 
 router.delete("/users/email/verification/codes/delete/id/:userId", users_controller.email_verified_code_delete_by_id);
 

@@ -739,44 +739,50 @@ exports.profile_update_full = (req, res) => {
 };
 
 exports.profile_update_required = (req, res) => {
-  const { userId: id, fullname, gender } = req.body;
-  const [ firstName, ...remainingNames ] = fullname.split(" ");
-  const lastName = remainingNames.join(" ");
-  const errors = [];
+  const { authorized } = req;
 
-  // TODO: Pull these out into a validation object with methods probably as a helper
-  const checkName = (firstName, lastName) => {
-    if(firstName.length < 1 || lastName.length < 1) {
-      errors.push({error: "IVN", message: "Invalid First or Last Name", status: 500});
-      return false;
+  if (authorized) {
+    const { userId: id, fullname, gender } = req.body;
+    const [ firstName, ...remainingNames ] = fullname.split(" ");
+    const lastName = remainingNames.join(" ");
+    const errors = [];
+  
+    // TODO: Pull these out into a validation object with methods probably as a helper
+    const checkName = (firstName, lastName) => {
+      if(firstName.length < 1 || lastName.length < 1) {
+        errors.push({error: "IVN", message: "Invalid First or Last Name", status: 500});
+        return false;
+      }
+      return true;
+    };
+  
+    const checkGender = gender => {
+      if (gender === "default") {
+        errors.push({error: "IVG", message: "Invalid Gender", status: 500});
+        return false;
+      }
+      return true;
+    };
+  
+    const isValidName = checkName(firstName, lastName);
+    const isValidGender = checkGender(gender);
+  
+    if (isValidName && isValidGender) {
+      User.update(
+        { firstName, lastName, gender },
+        { where: { id }}
+      )
+      .then(data => {
+        res.json(data);
+      })
+      .catch(err => {
+        res.status(500).json({error: err});
+      })
+    } else {
+      res.json({ errors });
     }
-    return true;
-  };
-
-  const checkGender = gender => {
-    if (gender === "default") {
-      errors.push({error: "IVG", message: "Invalid Gender", status: 500});
-      return false;
-    }
-    return true;
-  };
-
-  const isValidName = checkName(firstName, lastName);
-  const isValidGender = checkGender(gender);
-
-  if (isValidName && isValidGender) {
-    User.update(
-      { firstName, lastName, gender },
-      { where: { id }}
-    )
-    .then(data => {
-      res.json(data);
-    })
-    .catch(err => {
-      res.status(500).json({error: err});
-    })
-  } else {
-    res.json({ errors });
+  }else {
+    res.sendStatus(403)
   }
 };
 
