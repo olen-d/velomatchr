@@ -38,9 +38,9 @@ const VerifyEmail = props => {
   const [userId, setUserId] = useState(null);
   const [verificationCode, setVerificationCode] = useState(""); // React gets grumpy if the default is null
 
-  const { authTokens, setDoRedirect, setRedirectURL } = useAuth();
+  const { authTokens: token, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(authTokens);
+  const userInfo = auth.getUserInfo(token);
 
   const postVerifyEmail = () => {
     const formData = {
@@ -148,7 +148,11 @@ const VerifyEmail = props => {
       console.log({ error });
     });
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then(response => {
         return response.ok ? response.json() : setIsErrorMessage({ error: response.statusText }); 
       })
