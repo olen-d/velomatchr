@@ -73,20 +73,21 @@ const VerifyEmail = props => {
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verify`, {
       method: "post",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
       return response.json();
     }).then(data => {
-      if(data.error) {
+      if(data.error || data.status === 403) { // TODO: clean up the controller to return a sensible status (e.g. 200 ok) and get rid of the or
         //TODO: Add error, message to the destructuring and show them when user has admin priv
         const { code } = data;
         const resendMessage = "Please click the \"Resend verification code\" link below to get a new code. ";
 
         setIsError(true);
         setIsErrorHeader("Unable to verify your email address");
-
+        // TODO: Return sensible error codes from the controller and distinguish between 400/500 series and the codes, also controller should send the resend messages.
         switch (code) {
           case "903":
             setIsErrorMessage("Please make sure the code we sent you is entered correctly and try again.");

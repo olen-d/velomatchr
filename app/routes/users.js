@@ -20,7 +20,7 @@ router.get("/users/matches/preferences/:userId", authorizeJWT, users_controller.
 router.get("/users/password/reset/:id/:token", users_controller.read_one_user_password_reset_by_id);
 router.get("/users/username/:username", users_controller.read_one_user_by_username);
 
-router.post("/users/email/verify", users_controller.read_one_email_verification);
+router.post("/users/email/verify", authorizeJWT, users_controller.read_one_email_verification);
 router.post("/users/email/send/verification", users_controller.email_send_verification);
 router.post("/users/login", users_controller.read_login);
 router.post("/users/password/authenticate", users_controller.read_one_user_password_authenticate);
