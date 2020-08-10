@@ -28,7 +28,7 @@ router.post("/users/password/reset", users_controller.password_reset);
 router.post("/users/profile/photograph/update", imageUpload, users_controller.profile_photograph_update);
 
 router.put("/users/email/update", users_controller.email_update);
-router.put("/users/email/verified/update", users_controller.email_verified_update);
+router.put("/users/email/verified/update", authorizeJWT, users_controller.email_verified_update);
 router.put("/users/password/change", users_controller.password_change);
 router.put("/users/password/update", users_controller.password_update);
 router.put("/users/profile/update/full", authorizeJWT, users_controller.profile_update_full);
