@@ -114,21 +114,29 @@ const VerifyEmail = props => {
         fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verified/update`, {
           method: "put",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(formData)
         })
         .then(response => {
-          // TODO: Great Success!
-          // console.log("RESPONSE", response)
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            throw new Error("Response was not ok.")
+          }
+        })
+        .then(data => {
+          if(submitRedirect) {
+            setRedirectURL(submitRedirectURL);
+            setDoRedirect(true);
+          }
         })
         .catch(error => {
-          // TODO: Deal with the error.
-        });
-        if(submitRedirect) {
-          setRedirectURL(submitRedirectURL);
-          setDoRedirect(true);
-        }
+          setIsError(true);
+          setIsErrorHeader("Internal Server Error");
+          setIsErrorMessage("The verification code you entered was correct. However there was a problem with the server and your email address has not been verified.")
+         });
       }
     }).catch(error => {
       // Set isError to true

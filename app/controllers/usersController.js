@@ -487,18 +487,24 @@ exports.email_update = (req, res) => {
 };
 
 exports.email_verified_update = (req, res) => {
-  const { id, isEmailVerified } = req.body;
+  const { authorized } = req;
 
-  User.update(
-    { isEmailVerified: isEmailVerified },
-    { where: { id }}
-  )
-  .then(data => {
-    res.status(200).json(data);
-  })
-  .catch(error => {
-    res.status(500).json({ error });
-  })
+  if (authorized) {
+    const { id, isEmailVerified } = req.body;
+
+    User.update(
+      { isEmailVerified: isEmailVerified },
+      { where: { id }}
+    )
+    .then(data => {
+      res.status(200).json(data);
+    })
+    .catch(error => {
+      res.status(500).json({ error });
+    })
+  } else {
+    res.sendStatus(403)
+  }
 };
 
 exports.password_change  = (req, res) => {
