@@ -146,7 +146,10 @@ const VerifyEmail = props => {
 
   const resendEmail = () => {
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/delete/id/${userId}`, {
-      method: "delete"
+      method: "delete",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
     .then(response => {
       if(!response.ok) {
