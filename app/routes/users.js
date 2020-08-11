@@ -34,6 +34,6 @@ router.put("/users/password/update", users_controller.password_update);
 router.put("/users/profile/update/full", authorizeJWT, users_controller.profile_update_full);
 router.put("/users/profile/update/required/", authorizeJWT, users_controller.profile_update_required);
 
-router.delete("/users/email/verification/codes/delete/id/:userId", users_controller.email_verified_code_delete_by_id);
+router.delete("/users/email/verification/codes/delete/id/:userId", authorizeJWT, users_controller.email_verified_code_delete_by_id);
 
 module.exports = router;

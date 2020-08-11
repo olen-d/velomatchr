@@ -793,29 +793,35 @@ exports.profile_update_required = (req, res) => {
     } else {
       res.json({ errors });
     }
-  }else {
-    res.sendStatus(403)
+  } else {
+    res.sendStatus(403);
   }
 };
 
 // Delete requests
 
 exports.email_verified_code_delete_by_id = (req, res) => {
-  const { userId } = req.params
+  const { authorized } = req;
 
-  EmailVerification.destroy({
-    where: { userId }
-  })
-  .then(response => {
-    if (response !== 1) {
-      res.json({ error: "notdeleted"});
-    } else {
-      res.json({ data: "The previous email verification codes were deleted successfully."});
-    }
-  })
-  .catch(error => {
-    res.json({ error });
-  })
+  if (authorized) {
+    const { params: { userId }, } = req;
+
+    EmailVerification.destroy({
+      where: { userId }
+    })
+    .then(response => {
+      if (response !== 1) {
+        res.json({ error: "notdeleted"});
+      } else {
+        res.json({ data: "The previous email verification codes were deleted successfully."});
+      }
+    })
+    .catch(error => {
+      res.json({ error });
+    })
+  } else {
+    res.sendStatus(403);
+  }
 }
 
 //
