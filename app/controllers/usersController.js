@@ -830,45 +830,52 @@ exports.email_verified_code_delete_by_id = (req, res) => {
 
 // Send Email Verification Code
 exports.email_send_verification = (req, res) => {
-  const { email, userId } = req.body;
+  const { authorized } = req;
 
-  const newCode = adr.newRandomCode(6);
+  if (authorized) {
+    const { email, userId } = req.body;
 
-  // Add the new code and userId to the database
-  EmailVerification.create({
-    userId,
-    verificationCode: newCode,
-    attempts: 0
-  })
-  .then(data => {
-    // TODO -figure out what to do here
-  })
-  .catch(error => {
-    // TODO - return some sort of useful error
-  });
-  // TODO - if the code isn't unique, generate a new one
-  // TODO - if nothing was entered in the database, stop and return an error, don't send a bogus confirmation email
-  const formData = {
-    fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
-    toAddress: email, 
-    subject: "Confirm Your Email Address", 
-    message: `<p>Almost there! Please confirm your email address by entering the following code: <b>${newCode}</b></p>`
-  }
-  fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(formData)
-  })
-  .then(response => {
-    if (!response.error) {
-      res.json(response);
+    const newCode = adr.newRandomCode(6);
+  
+    // Add the new code and userId to the database
+    EmailVerification.create({
+      userId,
+      verificationCode: newCode,
+      attempts: 0
+    })
+    .then(data => {
+      // TODO -figure out what to do here
+    })
+    .catch(error => {
+      // TODO - return some sort of useful error
+    });
+    // TODO - if the code isn't unique, generate a new one
+    // TODO - if nothing was entered in the database, stop and return an error, don't send a bogus confirmation email
+    const formData = {
+      fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
+      toAddress: email, 
+      subject: "Confirm Your Email Address", 
+      message: `<p>Almost there! Please confirm your email address by entering the following code: <b>${newCode}</b></p>`
     }
-  })
-  .catch(error => {
-    res.json(error)
-  });
+
+    fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      if (!response.error) {
+        res.json(response);
+      }
+    })
+    .catch(error => {
+      res.json(error)
+    });
+  } else {
+    res.sendStatus(403);
+  }
 }
 
 // Password Reset

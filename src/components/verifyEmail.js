@@ -175,7 +175,8 @@ const VerifyEmail = props => {
         fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
           method: "post",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(formData)
         })
