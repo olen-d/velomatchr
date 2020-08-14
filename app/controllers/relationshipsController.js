@@ -9,7 +9,7 @@ exports.update_user_relationships = (req, res) => {
 
   if (authorized) {
     const relationships = [];
-    const { matches, userId } = req.body;
+    const { body: { matches, userId }, } = req;
   
     const scores = new Map(matches);
   
