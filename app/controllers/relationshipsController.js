@@ -95,7 +95,7 @@ exports.update_user_relationship_status = (req, res) => {
   const { authorized } = req;
 
   if (authorized) {
-    const { requesterId, addresseeId, status, actionUserId } = req.body;
+    const { body: { requesterId, addresseeId, status, actionUserId }, } = req;
 
     Relationship.update(
       { status, actionUserId },
