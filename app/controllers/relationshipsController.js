@@ -92,18 +92,24 @@ exports.read_user_matched_count_by_id = (req, res) => {
 };
 
 exports.update_user_relationship_status = (req, res) => {
-  const { requesterId, addresseeId, status, actionUserId } = req.body;
+  const { authorized } = req;
 
-  Relationship.update(
-    { status, actionUserId },
-    { returning: true, where: {[Op.or]: [{[Op.and]: [{requesterId}, {addresseeId}]}, {[Op.and]: [{addresseeId: requesterId}, {requesterId: addresseeId}]}]}}
-  )
-  .then(data => {
-    res.json(data);
-  })
-  .catch(err => {
-    console.log("relationshipsController.js - ERROR:\n", err);
-  })
+  if (authorized) {
+    const { requesterId, addresseeId, status, actionUserId } = req.body;
+
+    Relationship.update(
+      { status, actionUserId },
+      { returning: true, where: {[Op.or]: [{[Op.and]: [{requesterId}, {addresseeId}]}, {[Op.and]: [{addresseeId: requesterId}, {requesterId: addresseeId}]}]}}
+    )
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      console.log("relationshipsController.js - ERROR:\n", err);
+    })
+  } else {
+    res.sendStatus(403)
+  }
 };
 
 // Delete

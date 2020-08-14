@@ -1,9 +1,10 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 
 import {
   Button
  } from "semantic-ui-react";
 
+ import { AuthContext } from "../context/authContext";
  import { useMatches } from "../context/matchesContext";
 
  const MatchCard = props => {
@@ -26,6 +27,9 @@ import {
     rightBtnValue
   } = props;
   
+  const context = useContext(AuthContext);
+  const {authTokens: token } = context;
+
   const { matches, setMatches } = useMatches();
 
   let pl = null;
@@ -54,7 +58,8 @@ import {
       fetch(`${process.env.REACT_APP_API_URL}/api/relationships/status/update`, {
         method: "put",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(actionData)
       }).then(response => {
