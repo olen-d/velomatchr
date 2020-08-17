@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react"
+import PropTypes from "prop-types";
 
 import {
   Button
@@ -123,7 +124,7 @@ import {
   )
  }
 
- MatchCard.defaultProps = {
+MatchCard.defaultProps = {
   requesterId: -99,
   addresseeId: -99,
   firstName: "John",
@@ -142,4 +143,24 @@ import {
   rightBtnValue: 0
 }
 
+const { number, string } = PropTypes;
+
+MatchCard.propTypes = {
+  requesterId: number,
+  addresseeId: number,
+  firstName: string,
+  lastName: string,
+  photoLink: string,
+  city: string,
+  stateCode: string,
+  createdAt: string,
+  leftBtnIcon: string,
+  leftBtnContent: string,
+  leftBtnAction: string,
+  leftBtnValue: number,
+  rightBtnIcon: string,
+  rightBtnContent: string,
+  rightBtnAction: string,
+  rightBtnValue: number
+}
  export default MatchCard;
