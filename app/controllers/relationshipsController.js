@@ -102,10 +102,16 @@ exports.update_user_relationship_status = (req, res) => {
       { returning: true, where: {[Op.or]: [{[Op.and]: [{requesterId}, {addresseeId}]}, {[Op.and]: [{addresseeId: requesterId}, {requesterId: addresseeId}]}]}}
     )
     .then(data => {
-      res.json(data);
+      const [ , rows ] = data;
+
+      if (rows !== 2 ) {  // Two and only two rows should be updated (the requester and the addressee)
+        res.status(500).json({ status: 500, message: "Internal server error. Something went wrong and the relationship was not updated." });
+      } else {
+        res.status(200).json({ status: 200, message: "ok", data });
+      }
     })
-    .catch(err => {
-      console.log("relationshipsController.js - ERROR:\n", err);
+    .catch(error => {
+      res.status(500).json({ status: 500, message: `Internal server error. Relationship not updated. Guru Meditation: ${error}` });
     })
   } else {
     res.sendStatus(403)

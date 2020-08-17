@@ -8,6 +8,8 @@ import {
  import { AuthContext } from "../context/authContext";
  import { useMatches } from "../context/matchesContext";
 
+ import ErrorContainer from "./errorContainer";
+
  const MatchCard = props => {
   const {
     requesterId,
@@ -44,6 +46,8 @@ import {
   }
 
   const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null)
 
   const postAction = (action, value) => {
     if(action === "updateStatus") {
@@ -66,11 +70,13 @@ import {
       }).then(response => {
         return response.json();
       }).then(data => {
-        if(data[1] !== 2)
+        if (data.status !== 200)
           {
-            // Something went horribly wrong
-            // TODO: Deal with the error
+            setIsError(true);
+            setIsErrorHeader("Realtionship Not Updated");
+            setIsErrorMessage(data.message);
           } else {
+            setIsError(false);
             // Find the addressee in the list of matches
             const { matchesResult } = matches;
             const addresseeIndex = matchesResult.map(item => {return item.addresseeId}).indexOf(addresseeId);
@@ -79,7 +85,10 @@ import {
             setMatches({ matchesResult });
           }
       }).catch(error => {
+        console.log("ERROR:", error)
           setIsError(true);
+          setIsErrorHeader("Network Error");
+          setIsErrorMessage("Something went wrong when fetching data from the server. Please try again later.");
       });
     } else if(action === "composeEmail") {
       // const addressee = parseInt(value);
@@ -88,6 +97,11 @@ import {
 
   return(
     <>
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}
+      />
       <div className="match-card-profile photo">
         { photoLink ? ( <img src={pl} width="100px" height="auto" alt={firstName} /> ) : ( <i className="fas fa-user-circle"></i> ) }
       </div>
