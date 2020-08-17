@@ -121,7 +121,25 @@ import {
       </div>
     </>
   )
-
  }
+
+ MatchCard.defaultProps = {
+  requesterId: -99,
+  addresseeId: -99,
+  firstName: "John",
+  lastName: "Doe",
+  photoLink: "",
+  city: "New York",
+  stateCode: "NY",
+  createdAt: "March 2019",
+  leftBtnIcon: "",
+  leftBtnContent: "",
+  leftBtnAction: "",
+  leftBtnValue: 0,
+  rightBtnIcon: "",
+  rightBtnContent: "",
+  rightBtnAction: "",
+  rightBtnValue: 0
+}
 
  export default MatchCard;
