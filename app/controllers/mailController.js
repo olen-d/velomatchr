@@ -3,35 +3,41 @@ const dnsPromises = require("dns").promises;
 const nodemailer = require("nodemailer");
 
 exports.send_mail = (req, res) => {
-  const { fromAddress, toAddress, subject, message } = req.body;
+  const { authorized } = req;
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: process.env.SMTP_SECURE,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMPT_PASS
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  });
+  if (authorized) {
+    const { body: { fromAddress, toAddress, subject, message }, } = req;
 
-  const mailOptions = {
-    from: `${fromAddress}`,
-    to: `${toAddress}`,
-    subject: `[VELOMATCHR] ${subject}`,
-    html: `${message}`
-  };
-
-  transporter.sendMail(mailOptions, (err, success) => {
-    if (err) {
-      res.json({ error: err });
-    } else {
-      res.json(success);
-    }
-  });
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: process.env.SMTP_SECURE,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMPT_PASS
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+  
+    const mailOptions = {
+      from: `${fromAddress}`,
+      to: `${toAddress}`,
+      subject: `[VELOMATCHR] ${subject}`,
+      html: `${message}`
+    };
+  
+    transporter.sendMail(mailOptions, (err, success) => {
+      if (err) {
+        res.status(500).json({ status: 500, message: `Internal server error. ${err}` });
+      } else {
+        res.status(200).json({ status: 200, message: "ok", data: success });
+      }
+    });
+  } else {
+    res.sendStatus(403);
+  }
 };
 
 exports.check_mx = (req, res) => {
