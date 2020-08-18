@@ -880,16 +880,18 @@ exports.email_send_verification = (req, res) => {
 
 // Password Reset
 
-exports.password_reset = (req, res) => {
-  const { email } = req.body;
+exports.password_reset = async (req, res) => {
+  const { body: { email }, } = req;
   // Check that the email exists
+  const token = await createToken(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
+
   fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${email}`).then(data => {
-    data.json().then(json =>{
+    data.json().then(json => {
       if (json.error) {
         checkEmail(email)
         .then(isValidEmail => {
           if (!isValidEmail) {
-            res.json({ error: json.error })
+            res.status(400).json({ status: 400, message: "Bad request. Invalid email address. Please check the email address you submitted and try again." })
           } else {
             const formData = {
               fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
@@ -901,7 +903,8 @@ exports.password_reset = (req, res) => {
             fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
               method: "post",
               headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
               },
                 body: JSON.stringify(formData)
               }).then(data => {
@@ -909,9 +912,11 @@ exports.password_reset = (req, res) => {
               }).then(json => {
                 if (!json.error) {
                   res.json({ data: json });
+                } else {
+                  res.status(500).json({ status: 500, message: "Internal server error. An email could not be sent. Please check the email address you entered and try again."});
                 }
               }).catch(error => {
-                res.json({ error });
+                res.status(500).json({ status: 500, message: `Internal server error. ${error}` });
               });
           }
         })
@@ -946,7 +951,8 @@ exports.password_reset = (req, res) => {
         fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
           method: "post",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
           },
             body: JSON.stringify(formData)
           }).then(data => {
@@ -983,3 +989,17 @@ const checkEmail = async email => {
     return false;
   }
 };
+
+// TODO: Split this into a helper function
+const createToken = userId => {
+  return new Promise((resolve, reject) => {
+    jwt.sign(
+      {user: userId},
+      process.env.SECRET,
+      { expiresIn: "1h" },
+      (err, token) => {
+        return err ? reject(err) : resolve(token);
+      }
+    );
+  });
+}
