@@ -57,7 +57,6 @@ const ResetPasswordForm = props => {
         }).then(response => {
           return response.json();
         }).then(data => {
-          console.log("DATA", data);
           if(data.data.status === 200) {
             setIsSuccessHeader("Please Check Your Email");
             setIsSuccessMessage("A message with instructions to reset your password was successfully sent to the email address you entered.");
