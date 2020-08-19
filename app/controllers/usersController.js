@@ -14,6 +14,7 @@ const bcrypt = require("../helpers/bcrypt-module");
 const passwordUpdatedEmail = require("../helpers/password-updated-email");
 const passwordValidate = require("../helpers/password-validate");
 const reverseGeocode = require("../helpers/reverse-geocode");
+const tokens = require("../helpers/tokens");
 
 // Create and Create/Update Modules
 exports.create_user = (req, res) => {
@@ -829,13 +830,14 @@ exports.email_verified_code_delete_by_id = (req, res) => {
 //
 
 // Send Email Verification Code
-exports.email_send_verification = (req, res) => {
+exports.email_send_verification = async (req, res) => {
   const { authorized } = req;
 
   if (authorized) {
     const { email, userId } = req.body;
 
     const newCode = adr.newRandomCode(6);
+    const token = await tokens.create(userId);
   
     // Add the new code and userId to the database
     EmailVerification.create({
@@ -861,7 +863,8 @@ exports.email_send_verification = (req, res) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
       method: "post",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     })
@@ -869,6 +872,7 @@ exports.email_send_verification = (req, res) => {
       if (!response.error) {
         res.json(response);
       }
+      // TODO: Deal with the error
     })
     .catch(error => {
       res.json(error)
@@ -883,7 +887,7 @@ exports.email_send_verification = (req, res) => {
 exports.password_reset = async (req, res) => {
   const { body: { email }, } = req;
   // Check that the email exists
-  const token = await createToken(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
+  const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
 
   fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${email}`).then(data => {
     data.json().then(json => {
@@ -989,17 +993,3 @@ const checkEmail = async email => {
     return false;
   }
 };
-
-// TODO: Split this into a helper function
-const createToken = userId => {
-  return new Promise((resolve, reject) => {
-    jwt.sign(
-      {user: userId},
-      process.env.SECRET,
-      { expiresIn: "1h" },
-      (err, token) => {
-        return err ? reject(err) : resolve(token);
-      }
-    );
-  });
-}

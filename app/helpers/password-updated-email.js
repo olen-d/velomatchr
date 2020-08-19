@@ -1,6 +1,10 @@
 const fetch = require("node-fetch");
 
-const send = (email, firstName, lastName) => {
+const tokens = require("./tokens");
+
+const send = async (email, firstName, lastName) => {
+  const token = await tokens.create(-99); // Use -99 for userId for now. TODO: add special "server" user
+
   const formData = {
     fromAddress: "\"VeloMatchr Password Changed\" <changed@velomatchr.com>", 
     toAddress: email, 
@@ -11,7 +15,8 @@ const send = (email, firstName, lastName) => {
   fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
     method: "post",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
     },
       body: JSON.stringify(formData)
     }).then(data => {
