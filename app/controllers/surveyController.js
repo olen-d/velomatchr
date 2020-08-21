@@ -1,7 +1,8 @@
 const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
 const jwt = require("jsonwebtoken");
-
+// TODO: Destructuring
+// TODO: CreateToken
 
 // Models
 const { Answer, MatchPref, User } = require("../models");
@@ -69,7 +70,7 @@ exports.read_survey_response_by_id = (req, res) => {
 
 exports.read_survey_response_except = (req, res) => {
   const userId = req.params.userid;
-
+console.log("\n\n\USERID:", userId, "\n\n\n");
   const createToken = userId => {
     return new Promise((resolve, reject) => {
       jwt.sign(

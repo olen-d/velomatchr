@@ -1,7 +1,8 @@
 const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
 const jwt = require("jsonwebtoken");
-
+// TODO: Fix CreateToken
+// TODO: Destructuring!
 // Models
 const { MatchPref, User } = require("../models");
 
@@ -76,7 +77,7 @@ exports.calculate_user_matches = (req, res) => {
 
     const urls = [
       `${process.env.REACT_APP_API_URL}/api/survey/user/id/${userId}`,
-      `${process.env.REACT_APP_API_URL}/api/survey/except/${userId}`
+      `${process.env.REACT_APP_API_URL}/api/survey/except/id/${userId}`
     ];
 
     createToken(userId)
