@@ -2,7 +2,6 @@ const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
 const jwt = require("jsonwebtoken");
 // TODO: Fix CreateToken
-// TODO: Destructuring!
 // Models
 const { MatchPref, User } = require("../models");
 
@@ -13,7 +12,7 @@ exports.update_match_preferences = (req, res) => {
   const { authorized } = req;
 
   if (authorized) {
-    const { userId, distance, gender } = req.body;
+    const { body: { userId, distance, gender }, } = req;
     const errors = [];
   
     const checkDistance = distance => {
@@ -157,7 +156,7 @@ exports.calculate_user_matches = (req, res) => {
 
 // Get matches near the user
 exports.read_matches_nearby = (req, res) => {
-  const { lat, long } = req.params;
+  const { params: { lat, long }, } = req;
 
   const latFloat = parseFloat(lat);
   const longFloat = parseFloat(long);
