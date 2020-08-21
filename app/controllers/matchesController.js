@@ -3,7 +3,7 @@ const Sequelize = require("sequelize");
 const jwt = require("jsonwebtoken");
 
 // Models
-const { MatchPref, Relationship, User } = require("../models");
+const { MatchPref, User } = require("../models");
 
 const Op = Sequelize.Op;
 
@@ -174,33 +174,6 @@ exports.read_matches_nearby = (req, res) => {
       longitude: {[Op.between]: [longMinus, longPlus]}
     },
     attributes: ["firstName"]
-  })
-  .then(data => {
-    res.json(data);
-  })
-  .catch(err => {
-    res.send(err);
-  });
-};
-
-// Get the user's matches
-exports.read_user_matches = (req, res) => {
-  const userid = req.params.userid;
-
-  Relationship.findAll({
-    where: {
-      requesterId: userid,
-      status: 2
-    },
-    include: [{ 
-      model: User, 
-      as: "addressee",
-      attributes: { exclude: ["password"]}
-    }],
-    order: [
-      ["matchScore", "ASC"],
-      ["updatedAt", "DESC"]
-    ]
   })
   .then(data => {
     res.json(data);
