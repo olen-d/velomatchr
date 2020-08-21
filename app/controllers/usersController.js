@@ -982,16 +982,10 @@ exports.password_reset = async (req, res) => {
 // Check for MX record
 
 const checkEmail = async email => {
-  const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
-
   const expression = /.+@.+\..+/i;
   
   if(expression.test(String(email).toLowerCase())) {
-    const result = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/check-mx/${email}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const result = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/check-mx/${email}`);
     const data = await result.json();
     const { mxExists } = data;
 
