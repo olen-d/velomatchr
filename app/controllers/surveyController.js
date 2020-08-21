@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
 const jwt = require("jsonwebtoken");
-// TODO: Destructuring
+
 // TODO: CreateToken
 
 // Models
@@ -61,92 +61,98 @@ exports.read_survey_response_by_id = (req, res) => {
       res.json(userAnswers);
     })
     .catch(err => {
-      res.status(500).json(err)
+      res.status(500).json(err);
     });
   } else {
-    res.sendStatus(403)
+    res.sendStatus(403);
   }
 };
 
 exports.read_survey_response_except = (req, res) => {
-  const userId = req.params.userid;
-console.log("\n\n\USERID:", userId, "\n\n\n");
-  const createToken = userId => {
-    return new Promise((resolve, reject) => {
-      jwt.sign(
-        {user: userId},
-        process.env.SECRET,
-        { expiresIn: "1h" },
-        (err, token) => {
-          return err ? reject(err) : resolve(token);
-        }
-      );
-    });
-  }
+  const { authorized } = req;
 
-  createToken(userId)
-  .then(token => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(response => {
-      return response.ok ? response.json() : new Error(response.statusText); 
-    })
-    .then(json => {
-      const { user: { gender, latMinus, latPlus, longMinus, longPlus, userMatchPrefs: { distance, gender: matchGenderPref }, }, } = json; // Nested destructuring. Returns gender, distance and gender. Pretty dope.
-      readAnswersByPrefs(gender, latMinus, latPlus, longMinus, longPlus, distance, matchGenderPref);
-    })
-    .catch(err => {
-      // TODO: do something about the error
-      console.log("surveyController.js ~56 - Error:", err);
-    })
-  
-    const readAnswersByPrefs = (gender, latMinus, latPlus, longMinus, longPlus, distance, matchGenderPref) => {
-      let where;
-      const whereInit = {
-        [Op.not]: [{userId}],
-        "$matchCharacteristics.latitude$": {[Op.between]: [latMinus, latPlus]}, 
-        "$matchCharacteristics.longitude$": {[Op.between]: [longMinus, longPlus]}
-      };
-  
-      // Dynamically build the where clause based on preferences
-      if(matchGenderPref === "any") {
-        const filter = {[Op.or]: [{"$matchPrefs.gender$": "any"}, {"$matchPrefs.gender$": "same", "$matchCharacteristics.gender$": gender }]};
-        where = {...whereInit, ...filter};
-      } else if(matchGenderPref === "same") {
-        const filter = {"$matchCharacteristics.gender$": gender };
-        where = {...whereInit, ...filter};
-      } else {
-        where = whereInit;
-      }
-  
-      Answer.findAll({
-        where,
-        attributes: ["userId", "answers"],
-        include: [
-          {
-            model: User,
-            as: "matchCharacteristics",
-            attributes: ["gender", "latitude", "longitude"]
-          },
-          {
-            model: MatchPref,
-            as: "matchPrefs",
-            attributes: ["distance", "gender"]
+  if (authorized) {
+    const { params: { userid: userId }, } = req;
+
+    const createToken = userId => {
+      return new Promise((resolve, reject) => {
+        jwt.sign(
+          {user: userId},
+          process.env.SECRET,
+          { expiresIn: "1h" },
+          (err, token) => {
+            return err ? reject(err) : resolve(token);
           }
-        ]
-      }).then(otherAnswers => {
-        res.json(otherAnswers);
+        );
+      });
+    }
+  
+    createToken(userId)
+    .then(token => {
+      fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        return response.ok ? response.json() : new Error(response.statusText); 
+      })
+      .then(json => {
+        const { user: { gender, latMinus, latPlus, longMinus, longPlus, userMatchPrefs: { distance, gender: matchGenderPref }, }, } = json; // Nested destructuring. Returns gender, distance and gender. Pretty dope.
+        readAnswersByPrefs(gender, latMinus, latPlus, longMinus, longPlus, distance, matchGenderPref);
       })
       .catch(err => {
-        res.status(500).json({error: err});
-      });
-    }  
-  }).catch(error => {
-    // createToken end
-    console.log(error);
-  });
+        // TODO: do something about the error
+        console.log("surveyController.js ~56 - Error:", err);
+      })
+    
+      const readAnswersByPrefs = (gender, latMinus, latPlus, longMinus, longPlus, distance, matchGenderPref) => {
+        let where;
+        const whereInit = {
+          [Op.not]: [{userId}],
+          "$matchCharacteristics.latitude$": {[Op.between]: [latMinus, latPlus]}, 
+          "$matchCharacteristics.longitude$": {[Op.between]: [longMinus, longPlus]}
+        };
+    
+        // Dynamically build the where clause based on preferences
+        if(matchGenderPref === "any") {
+          const filter = {[Op.or]: [{"$matchPrefs.gender$": "any"}, {"$matchPrefs.gender$": "same", "$matchCharacteristics.gender$": gender }]};
+          where = {...whereInit, ...filter};
+        } else if(matchGenderPref === "same") {
+          const filter = {"$matchCharacteristics.gender$": gender };
+          where = {...whereInit, ...filter};
+        } else {
+          where = whereInit;
+        }
+    
+        Answer.findAll({
+          where,
+          attributes: ["userId", "answers"],
+          include: [
+            {
+              model: User,
+              as: "matchCharacteristics",
+              attributes: ["gender", "latitude", "longitude"]
+            },
+            {
+              model: MatchPref,
+              as: "matchPrefs",
+              attributes: ["distance", "gender"]
+            }
+          ]
+        }).then(otherAnswers => {
+          res.json(otherAnswers);
+        })
+        .catch(err => {
+          res.status(500).json({error: err});
+        });
+      }  
+    }).catch(error => {
+      // createToken end
+      console.log(error);
+    });
+  } else {
+    res.sendStatus(403)
+  }
 };
