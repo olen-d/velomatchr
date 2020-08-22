@@ -1,11 +1,13 @@
 const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
-const jwt = require("jsonwebtoken");
-// TODO: Fix CreateToken
+
 // Models
 const { MatchPref, User } = require("../models");
 
 const Op = Sequelize.Op;
+
+// Helpers
+const tokens = require ("../helpers/tokens");
 
 // Create or update match preferences
 exports.update_match_preferences = (req, res) => {
@@ -54,101 +56,82 @@ exports.update_match_preferences = (req, res) => {
 };
 
 // Calculate user matches and create relationships
-exports.calculate_user_matches = (req, res) => {
+exports.calculate_user_matches = async (req, res) => {
   const { authorized } = req;
 
   if (authorized) {
     const { body: { userId }, } = req;
-
-    // TODO: Split this into a helper function
-    const createToken = userId => {
-      return new Promise((resolve, reject) => {
-        jwt.sign(
-          {user: userId},
-          process.env.SECRET,
-          { expiresIn: "1h" },
-          (err, token) => {
-            return err ? reject(err) : resolve(token);
-          }
-        );
-      });
-    }
 
     const urls = [
       `${process.env.REACT_APP_API_URL}/api/survey/user/id/${userId}`,
       `${process.env.REACT_APP_API_URL}/api/survey/except/id/${userId}`
     ];
 
-    createToken(userId)
-    .then(token => {
-      Promise.all(urls.map(url =>
-        fetch(url, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        .then(response => {
-          return response.ok ? Promise.resolve(response) : Promise.reject(new Error(response.statusText)); 
+    const token = await tokens.create(userId);
+
+    Promise.all(urls.map(url =>
+      fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        return response.ok ? Promise.resolve(response) : Promise.reject(new Error(response.statusText)); 
+      })
+      .then(response => {
+        return response.json();
+      })
+      .catch(err => {
+        // Do something about the error
+        console.log("matchesController.js ~ 92 - ERROR:\n", err);
+      })
+      )).then(data => {
+        let scores = new Map();
+  
+        const newAnswers = data[0].answers.split(",");
+        const otherAnswers = data[1];
+  
+        for (let a of otherAnswers) {
+          let thisAnswers = a.answers.split(",");
+          let diffs = newAnswers.map((w, i) => {
+            let r = Math.abs(w - thisAnswers[i]);
+            return r;
+          });
+  
+          // Calculate the total difference in scores
+          let score = diffs.reduce((a, c) => {
+            let s = a + c;
+            return s;
+          });
+          scores.set(a.userId, score);
+        }
+        return scores;
+      })
+      .then(scores => {
+        const matches = [...scores];
+  
+        fetch(`${process.env.REACT_APP_API_URL}/api/relationships/create`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ matches, userId })
         })
         .then(response => {
           return response.json();
+          // TODO: Fix the relationship controller to actually return the new matches
         })
-        .catch(err => {
-          // Do something about the error
-          console.log("matchesController.js ~ 92 - ERROR:\n", err);
+        .then(data => {
+          res.json(data);
         })
-        )).then(data => {
-          let scores = new Map();
-    
-          const newAnswers = data[0].answers.split(",");
-          const otherAnswers = data[1];
-    
-          for (let a of otherAnswers) {
-            let thisAnswers = a.answers.split(",");
-            let diffs = newAnswers.map((w, i) => {
-              let r = Math.abs(w - thisAnswers[i]);
-              return r;
-            });
-    
-            // Calculate the total difference in scores
-            let score = diffs.reduce((a, c) => {
-              let s = a + c;
-              return s;
-            });
-            scores.set(a.userId, score);
-          }
-          return scores;
-        })
-        .then(scores => {
-          const matches = [...scores];
-    
-          fetch(`${process.env.REACT_APP_API_URL}/api/relationships/create`, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({ matches, userId })
-          })
-          .then(response => {
-            return response.json();
-            // TODO: Fix the relationship controller to actually return the new matches
-          })
-          .then(data => {
-            res.json(data);
-          })
-          .catch(err =>{
-            res.status(500).json({error: err});
-          });
-        })
-        .catch(err => {
+        .catch(err =>{
           res.status(500).json({error: err});
         });
-    })
-    .catch(error => {
-      // TODO: Deal with the error
-      console.log("\nPROMISE ERROR:" + error + "\n\n")
-    });
+      })
+      .catch(err => {
+        res.status(500).json({error: err});
+      });
   } else {
     res.sendStatus(403);
   }
