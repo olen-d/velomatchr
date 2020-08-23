@@ -240,23 +240,26 @@ exports.read_one_email_verification = (req, res) => {
 };
 
 exports.read_one_user_by_username = (req, res) => {
-  const userName = req.params.username;
+  const { authorized } = req;
 
-  User.findOne({
-    where: {
-      name: userName
-    },
-    attributes: { exclude: ["password"]}
-  })
-  .then(resolve => {
-    let userObj = {
-      user: resolve
-    };
-    res.send(userObj);
-  })
-  .catch(err => {
-    res.json(err);
-  });
+  if (authorized) {
+    const { params: { username: name }, } = req;
+
+    User.findOne({
+      where: {
+        name
+      },
+      attributes: { exclude: ["password"]}
+    })
+    .then(data => {
+      res.statis(200).json({ status: 200, message: "ok", data });
+    })
+    .catch(error => {
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    });
+  } else {
+    res.sendStatus(403);
+  }
 };
 
 exports.read_one_user_id_by_email = (req, res) => {
