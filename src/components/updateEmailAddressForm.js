@@ -106,7 +106,11 @@ const UpdateEmailAddressForm = props => {
 
   useEffect(() => {
     const getUserAccount = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/account/id/${userId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await response.json();
 
       if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
@@ -122,7 +126,7 @@ const UpdateEmailAddressForm = props => {
       }
     }
     getUserAccount();
-  }, [userId]);
+  }, [token, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
