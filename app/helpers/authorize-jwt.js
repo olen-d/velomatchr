@@ -17,9 +17,9 @@ module.exports = (req, res, next) => {
       next();
     } catch (error) {
       req.authorized = false;
-      res.status(403).json({ status: 403, message: `Forbidden. ${error}` });
+      res.status(403).json({ status: 403, message: "Forbidden",  error });
     }
   } else {
-    res.status(403).json({ status: 403, message: "Forbidden. A valid access token was not provided." });
+    res.status(403).json({ status: 403, message: "Forbidden", error: "A valid access token was not provided." });
   }
 };
