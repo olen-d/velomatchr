@@ -200,6 +200,7 @@ const UpdateEmailAddressForm = props => {
             header={"Password Required"}
             isOpen={isModalOpen}
             message={"Please enter your password."}
+            token={token}
             userId={userId}
           />
         </Form>
