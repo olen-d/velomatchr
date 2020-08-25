@@ -21,6 +21,7 @@ const ConfirmPasswordModal = props => {
     header,
     isOpen,
     message,
+    token,
     userId 
   } = props;
 
@@ -44,7 +45,8 @@ const ConfirmPasswordModal = props => {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/password/authenticate`, {
         method: "post",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(formData)
       });
@@ -124,8 +126,12 @@ ConfirmPasswordModal.defaultProps = {
   header: "Password Required",
   isOpen: false,
   message: "Please enter your old password.",
+  token: "",
   userId: -99 
 }
+
+// TODO: Destructure PropTypes
+// const { bool, func, number, string } = PropTypes;
 
 ConfirmPasswordModal.propTypes = {
   actionNegative: PropTypes.string,
@@ -135,6 +141,7 @@ ConfirmPasswordModal.propTypes = {
   header: PropTypes.string,
   isOpen: PropTypes.bool,
   message: PropTypes.string,
+  token: PropTypes.string,
   userId: PropTypes.number
 }
 

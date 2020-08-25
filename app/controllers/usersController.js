@@ -312,10 +312,12 @@ exports.read_one_user_by_id = (req, res) => {
   }
 };
 
-exports.read_one_user_password_authenticate = (req, res) => {
-  const { id, password } = req.body;
+exports.read_one_user_password_authenticate = async (req, res) => {
+  const { authorized } = req;
+  
+  if (authorized) {
+    const { body: { id, password }, } = req;
 
-  (async () => {
     const data = await User.findOne({
       where: {
         id
@@ -332,7 +334,9 @@ exports.read_one_user_password_authenticate = (req, res) => {
     } else {
       res.json({ isAuthenticated: false });
     }
-  })();
+  } else {
+    res.sendStatus(403);
+  }
 };
 
 exports.read_one_user_password_reset_by_id = (req, res) => {
