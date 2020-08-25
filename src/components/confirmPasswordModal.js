@@ -130,19 +130,18 @@ ConfirmPasswordModal.defaultProps = {
   userId: -99 
 }
 
-// TODO: Destructure PropTypes
-// const { bool, func, number, string } = PropTypes;
+const { bool, func, number, string } = PropTypes;
 
 ConfirmPasswordModal.propTypes = {
-  actionNegative: PropTypes.string,
-  actionPositive: PropTypes.string,
-  handleClose: PropTypes.func,
-  handleIsPassVerified: PropTypes.func,
-  header: PropTypes.string,
-  isOpen: PropTypes.bool,
-  message: PropTypes.string,
-  token: PropTypes.string,
-  userId: PropTypes.number
+  actionNegative: string,
+  actionPositive: string,
+  handleClose: func,
+  handleIsPassVerified: func,
+  header: string,
+  isOpen: bool,
+  message: string,
+  token: string,
+  userId: number
 }
 
 export default ConfirmPasswordModal;
