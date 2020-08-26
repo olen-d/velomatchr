@@ -267,6 +267,7 @@ const ProfileFullForm = props => {
         formTitle={"Current Photograph"}
         profilePhotoBtnContent={"Upload Profile Photo"}
         photoLink={photoLink}
+        token={token}
         userId={userId}
       />
       <Header
