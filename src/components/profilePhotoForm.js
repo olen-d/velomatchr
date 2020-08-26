@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 
 import {
   Button,
@@ -132,6 +132,17 @@ ProfilePhotoForm.defaultProps = {
   profilePhotoBtnContent: "Upload Profile Photo",
   token: "",
   userId: 0
+}
+
+const { number, string } = PropTypes;
+
+ProfilePhotoForm.propTypes = {
+  colWidth: number,
+  formTitle: string,
+  photoLink: string,
+  profilePhotoBtnContent: string,
+  token: string,
+  userId: number
 }
 
 export default ProfilePhotoForm;
