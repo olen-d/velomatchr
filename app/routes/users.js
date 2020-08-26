@@ -26,7 +26,7 @@ router.post("/users/password/authenticate", authorizeJWT, users_controller.read_
 router.post("/users/password/reset", users_controller.password_reset); // Meant to be used with password reset, authentication not required
 router.post("/users/profile/update/photograph", authorizeJWT, imageUpload, users_controller.profile_update_photograph);
 
-router.put("/users/email/update", users_controller.email_update);
+router.put("/users/email/update", authorizeJWT, users_controller.email_update);
 router.put("/users/email/verified/update", authorizeJWT, users_controller.email_verified_update);
 router.put("/users/password/change", users_controller.password_change);
 router.put("/users/password/update", users_controller.password_update);
