@@ -144,25 +144,31 @@ exports.create_user = (req, res) => {
 };
 
 exports.profile_update_photograph = (req, res) => {
-  if (req.body && req.file) {
-    const { body: { userId: id }, file: { originalname, path } } = req;
+  const { authorized } = req;
 
-    User.update(
-      { photoLink: path },
-      { where: { id }}
-    )
-    .then(data => {
-      if (data[0] === 0) {
-        return res.send({ success: false, error: "The database was not updated." })
-      } else {
-        return res.send({ success: true, originalname, path });
-      }
-    })
-    .catch(error => {
-      return res.status(500).json({ error });
-    });
+  if (authorized) {
+    if (req.body && req.file) {
+      const { body: { userId: id }, file: { originalname, path } } = req;
+  
+      User.update(
+        { photoLink: path },
+        { where: { id }}
+      )
+      .then(data => {
+        if (data[0] === 0) {
+          return res.send({ success: false, error: "The database was not updated." })
+        } else {
+          return res.send({ success: true, originalname, path });
+        }
+      })
+      .catch(error => {
+        return res.status(500).json({ error });
+      });
+    } else {
+      return res.send({ success: false });
+    }
   } else {
-    return res.send({ success: false });
+    res.sendStatus(403);
   }
 };
 
