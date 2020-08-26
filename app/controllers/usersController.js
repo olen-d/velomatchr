@@ -453,31 +453,34 @@ exports.read_login = (req, response) => {
 
 // Update modules
 exports.email_update = (req, res) => {
-  const { userId: id, email } = req.body;
+  const { authorized } = req;
 
-  const errors = [];
+  if (authorized) {
+    const { body: { userId: id, email }, } = req;
 
-  checkEmail(email)
-  .then(isValidEmail => {
-    if (isValidEmail) {
-      User.update(
-        { email },
-        { where: { id } }
-      ).then( data => {
-        res.status(200).json(data);
-      })
-      .catch(error => {
-        res.status(500).json({ error });
-      });
-    } else {
-      errors.push({ email: true });
-      res.json({ errors });
-    }
-  })
-  .catch(error => {
-    // TODO: Deal with the error
-    console.log("usersController.js - user_email_update - checkEmail Error:", error);
-  });
+    checkEmail(email)
+    .then(isValidEmail => {
+      if (isValidEmail) {
+        User.update(
+          { email },
+          { where: { id } }
+        ).then( data => {
+          res.status(200).json({ status: 200, message: "ok", data });
+        })
+        .catch(error => {
+          res.status(500).json({ status: 500, message: "Internal Server Error", error });
+        });
+      } else {
+        res.status(400).json({ status: 400, message: "Bad Request", error: "Invalid Email Address" });
+      }
+    })
+    .catch(error => {
+      // TODO: Deal with the error
+      console.log("usersController.js - user_email_update - checkEmail Error:", error);
+    });
+  } else {
+    res.sendStatus(403);
+  }
 };
 
 exports.email_verified_update = (req, res) => {

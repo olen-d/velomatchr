@@ -60,7 +60,8 @@ const UpdateEmailAddressForm = props => {
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/update`, {
       method: "put",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     })
@@ -68,12 +69,11 @@ const UpdateEmailAddressForm = props => {
       return response.json();
     })
     .then(data => {
-      if (data.errors) {
-        const { errors } = data;
+      if (data.status !== 200) {
         setIsSuccess(false);
         setIsErrorHeader("Unable to Update Email Address");
         setIsErrorMessage("Please enter a valid email address and try again.")
-        handleServerErrors(...errors);
+        handleServerErrors(...[{ email: true }]);
       } else {
         if(submitRedirect) {
           setRedirectURL(submitRedirectURL);
@@ -92,7 +92,7 @@ const UpdateEmailAddressForm = props => {
         errorDetail: error
       })
     });
-  }, [handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
+  }, [handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, token, userId, values]);
 
   const handleIsPassVerified = isAuthenticated => {
     setIsPassVerified(isAuthenticated);
