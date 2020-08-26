@@ -143,7 +143,7 @@ exports.create_user = (req, res) => {
   });
 };
 
-exports.profile_photograph_update = (req, res) => {
+exports.profile_update_photograph = (req, res) => {
   if (req.body && req.file) {
     const { body: { userId: id }, file: { originalname, path } } = req;
 
