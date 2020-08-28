@@ -57,7 +57,8 @@ const UpdatePasswordForm = props => {
     fetch(`${process.env.REACT_APP_API_URL}/api/users/password/change`, {
       method: "put",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     })
@@ -65,12 +66,11 @@ const UpdatePasswordForm = props => {
       return response.json();
     })
     .then(data => {
-      if (data.errors) {
-        const { errors } = data;
+      if (data.status !== 200) {
         setIsSuccess(false);
         setIsErrorHeader("Unable to Change Password");
         setIsErrorMessage("Please enter a valid password and try again.")
-        handleServerErrors(...errors);
+        handleServerErrors(...[{ password: true }]);
       } else {
         if(submitRedirect) {
           setRedirectURL(submitRedirectURL);

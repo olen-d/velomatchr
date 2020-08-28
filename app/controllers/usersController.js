@@ -471,7 +471,7 @@ exports.email_update = (req, res) => {
           res.status(500).json({ status: 500, message: "Internal Server Error", error });
         });
       } else {
-        res.status(400).json({ status: 400, message: "Bad Request", error: "Invalid Email Address" });
+        res.status(400).json({ status: 400, message: "Bad Request", error: "Invalid email address." });
       }
     })
     .catch(error => {
@@ -504,11 +504,12 @@ exports.email_verified_update = (req, res) => {
   }
 };
 
-exports.password_change  = (req, res) => {
-  const { password, userId: id } = req.body;
-  const errors = [];
+exports.password_change  = async (req, res) => {
+  const { authorized } = req;
 
-  const wrapper = async () => {
+  if (authorized) {
+    const { password, userId: id } = req.body;
+  
     const isValid = await passwordValidate.validatePassword(password);
     if (isValid) {
       const encryptPassResult = await bcrypt.newPass(password);
@@ -520,18 +521,16 @@ exports.password_change  = (req, res) => {
           if (data[0] === 1) {
             // passwordUpdatedEmail.send(email, firstName, lastName)
           }
-          res.json({ data });
+          res.status(200).json({ status: 200, message: "ok", data });
         } else {
-          // Send password not encrypted error
+          res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again."})
         }
-    } else {
-      // Set invalid password error
-      errors.push({ password: true });
-      res.json({ errors });
+    } else {;
+      res.status(400).json({ status: 400, message: "Bad Request", error: "Invalid password." });
     }
+  } else {
+    res.sendStatus(403);
   }
-
-  wrapper();
 };
 
 exports.password_update = (req, res) => {
