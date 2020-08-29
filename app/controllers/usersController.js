@@ -444,7 +444,7 @@ exports.read_login = (req, response) => {
           response.json(error);
         });
     } else {
-      return response.status(404).json({
+      return response.status(500).json({
         authenticated: false
       });
     }
