@@ -534,7 +534,7 @@ exports.password_change  = async (req, res) => {
 };
 
 exports.password_update = (req, res) => {
-  const { password: newPassword, token, userId: id, } = req.body;
+  const { body: { password: newPassword, token, userId: id }, } = req;
   const errors = [];
 
   User.findOne({
