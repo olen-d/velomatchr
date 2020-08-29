@@ -389,11 +389,13 @@ ProfileFullForm.defaultProps = {
   submitRedirectURL: "/dashboard"
 }
 
+const { bool, string } = PropTypes;
+
 ProfileFullForm.propTypes = {
-  formTitle: PropTypes.string,
-  submitBtnContent: PropTypes.string,
-  submitRedirect: PropTypes.bool,
-  submitRedirectURL: PropTypes.string
+  formTitle: string,
+  submitBtnContent: string,
+  submitRedirect: bool,
+  submitRedirectURL: string
 }
 
 export default ProfileFullForm;
