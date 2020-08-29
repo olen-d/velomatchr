@@ -89,7 +89,7 @@ const UpdatePasswordForm = props => {
         errorDetail: error
       })
     });
-  }, [handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
+  }, [handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, token, userId, values]);
 
   const handleIsPassVerified = isAuthenticated => {
     setIsPassVerified(isAuthenticated);
