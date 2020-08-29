@@ -182,11 +182,13 @@ ResetPasswordForm.defaultProps = {
   userId: "-99"
 }
 
+const { number, string } = PropTypes;
+
 ResetPasswordForm.propTypes = {
-  colWidth: PropTypes.number,
-  formTitle: PropTypes.string,
-  token: PropTypes.string,
-  userId: PropTypes.string
+  colWidth: number,
+  formTitle: string,
+  token: string,
+  userId: string
 }
 
 export default ResetPasswordForm;

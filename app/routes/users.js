@@ -29,7 +29,7 @@ router.post("/users/profile/update/photograph", authorizeJWT, imageUpload, users
 router.put("/users/email/update", authorizeJWT, users_controller.email_update);
 router.put("/users/email/verified/update", authorizeJWT, users_controller.email_verified_update);
 router.put("/users/password/change", authorizeJWT, users_controller.password_change);
-router.put("/users/password/update", users_controller.password_update);
+router.put("/users/password/update", users_controller.password_update); // Temporary token provided TODO: Require API Key
 router.put("/users/profile/update/full", authorizeJWT, users_controller.profile_update_full);
 router.put("/users/profile/update/required/", authorizeJWT, users_controller.profile_update_required);
 
