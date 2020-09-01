@@ -17,7 +17,8 @@ const reverseGeocode = require("../helpers/reverse-geocode");
 const tokens = require("../helpers/tokens");
 
 // Create and Create/Update Modules
-exports.create_user = (req, res) => {
+exports.create_user = async (req, res) => {
+  const serverToken = await tokens.create(-99);
   const { email, password, latitude, longitude } = req.body;
   const errors = [];
   // TODO: Refactor this mess of spaghetti code to use async/await
@@ -52,8 +53,12 @@ exports.create_user = (req, res) => {
 
                   fetch(`${process.env.REACT_APP_API_URL}/api/countries/alphatwo/${countryCode}`).then(response => {
                     response.json().then(data => {
+                      if (data.name === "SequelizeDatabaseError") {
+                        errors.push({ error: "DBE", message: "Database Error", status: 500 });
+                        res.json({ errors });
+                        // throw new Error("Database fail.");
+                      }
                       const { country: { name: countryName }, } = data;
-
                       User.create({
                         name,
                         password: pwdRes.passwordHash,
@@ -75,7 +80,8 @@ exports.create_user = (req, res) => {
                         fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
                           method: "post",
                           headers: {
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${serverToken}`
                           },
                             body: JSON.stringify(formData)
                           }).then(response => {
@@ -105,8 +111,14 @@ exports.create_user = (req, res) => {
                           // Database error
                           res.json({ error });
                         });
-                    })
-                  })
+                    }).catch(error => {
+                      // TODO: Deal with the error
+                      console.log("Something went wrong with the country.\nError:", error);
+                    });
+                  }).catch(error => {
+                    // TODO: Deal with the error
+                    console.log("Failed to fetch country by code.\nError:", error);
+                  });
                 }).catch(error => {
                   // TODO: Deal with the error
                   console.log("Body.json() failed in fetch state by code.\nError:", error);
@@ -826,6 +838,7 @@ exports.email_verified_code_delete_by_id = (req, res) => {
 
 // Send Email Verification Code
 exports.email_send_verification = async (req, res) => {
+  console.log("Verification Triggered.\nAuthorized:", req.authorized);
   const { authorized } = req;
 
   if (authorized) {
@@ -841,7 +854,7 @@ exports.email_send_verification = async (req, res) => {
       attempts: 0
     })
     .then(data => {
-      // TODO -figure out what to do here
+      console.log("Email Verification Data:", data);
     })
     .catch(error => {
       // TODO - return some sort of useful error

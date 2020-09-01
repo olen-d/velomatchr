@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         len: [1]
       }
     },
-    "alpha-2": {
+    "alpha2": {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         len: [2,2]
       }
     },
-    "alpha-3": {
+    "alpha3": {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         len: [3,3]
       }
     },
-    "country-code": {
+    "countryCode": {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         len: [3,3]
       }
     },
-    "iso_3166-2": {
+    "iso_3166_2": {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -40,29 +40,29 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    "sub-region": {
+    "subRegion": {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    "intermediate-region": {
+    "intermediateRegion": {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    "region-code": {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        len: [0,3]
-      }
-    },
-    "sub-region-code": {
+    "regionCode": {
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
         len: [0,3]
       }
     },
-    "intermediate-region-code": {
+    "subRegionCode": {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        len: [0,3]
+      }
+    },
+    "intermediateRegionCode": {
       type: DataTypes.STRING,
       allowNull: true,
       validate: {

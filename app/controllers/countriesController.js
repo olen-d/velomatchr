@@ -6,7 +6,7 @@ exports.read_one_country_by_alpha_two = (req, res) => {
 
   Country.findOne({
     where: {
-      "alpha-2": alphaTwo
+      "alpha2": alphaTwo
     }
   })
   .then(resolve => {

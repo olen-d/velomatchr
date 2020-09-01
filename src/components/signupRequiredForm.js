@@ -58,7 +58,6 @@ const SignupRequiredForm = props => {
     .then(response => response.json())
     .then(data => {
       if (data.errors) {
-
         // There was a validation issue
         const { errors } = data;
         errors.forEach(e => {
@@ -73,6 +72,11 @@ const SignupRequiredForm = props => {
             formError = true;
           } else {
             setIsPasswordError(false);
+          }
+          if (e["error"] === "DBE") {
+            setIsErrorHeader("Internal Server Error");
+            setIsErrorMessage("Please wait a few minutes and try again.");
+            setIsError(true);
           }
         });
       } else {
@@ -89,10 +93,13 @@ const SignupRequiredForm = props => {
         }          
       }
     }).catch(error => {
-      // Set isError to true
       setIsAuth(false);
       setAuthTokens("");
-      console.log("signupRequiredForm.js ~136 - ERROR:\n", error);
+      console.log("Error:", error);
+      // TODO: Come back and fix this later to give a more specific error
+      // setIsErrorHeader("Internal Server Error");
+      // setIsErrorMessage("Please wait a few minutes and try again.");
+      // setIsError(true);
     });      
   }
   
