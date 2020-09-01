@@ -216,11 +216,13 @@ UpdateEmailAddressForm.defaultProps = {
   submitRedirectURL: ""
 }
 
+const { bool, string } = PropTypes;
+
 UpdateEmailAddressForm.propTypes = {
-  formTitle: PropTypes.string, 
-  submitBtnContent: PropTypes.string,
-  submitRedirect: PropTypes.bool, 
-  submitRedirectURL: PropTypes.string
+  formTitle: string, 
+  submitBtnContent: string,
+  submitRedirect: bool, 
+  submitRedirectURL: string
 }
 
 export default UpdateEmailAddressForm;
