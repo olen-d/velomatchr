@@ -184,11 +184,13 @@ UpdatePasswordForm.defaultProps = {
   submitRedirectURL: ""
 }
 
+const { bool, string } = PropTypes;
+
 UpdatePasswordForm.propTypes = {
-  formTitle: PropTypes.string, 
-  submitBtnContent: PropTypes.string,
-  submitRedirect: PropTypes.bool, 
-  submitRedirectURL: PropTypes.string
+  formTitle: string, 
+  submitBtnContent: string,
+  submitRedirect: bool, 
+  submitRedirectURL: string
 }
 
 export default UpdatePasswordForm;
