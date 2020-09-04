@@ -234,9 +234,11 @@ SignupRequiredForm.defaultProps = {
   formTitle: "Sign Up"
 }
 
+const { number, string } = PropTypes;
+
 SignupRequiredForm.propTypes = {
-  colWidth: PropTypes.number,
-  formTitle: PropTypes.string
+  colWidth: number,
+  formTitle: string
 }
 
 export default SignupRequiredForm;
