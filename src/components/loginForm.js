@@ -171,9 +171,11 @@ LoginForm.defaultProps = {
   formTitle: "Sign In"
 }
 
+const { number, string } = PropTypes;
+
 LoginForm.propTypes = {
-  colWidth: PropTypes.number,
-  formTitle: PropTypes.string
+  colWidth: number,
+  formTitle: string
 }
 
 export default LoginForm;
