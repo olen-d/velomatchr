@@ -29,10 +29,12 @@ ErrorContainer.defaultProps = {
   show: false
 }
 
+const { bool, string } = PropTypes;
+
 ErrorContainer.propTypes = {
-  header: PropTypes.string,
-  message: PropTypes.string,
-  show: PropTypes.bool
+  header: string,
+  message: string,
+  show: bool
 }
 
 export default ErrorContainer;
