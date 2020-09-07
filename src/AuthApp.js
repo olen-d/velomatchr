@@ -12,6 +12,7 @@ import Footer from "./components/footer";
 import NavBar from "./components/navbar";
 
 import Dashboard from "./pages/dashboard";
+import Email from "./pages/email";
 import Home from "./pages/home";
 import Matches from "./pages/matches";
 import Onboarding from "./pages/onboarding";
@@ -43,6 +44,7 @@ const Template = () => {
         <Switch>
           <Route exact path="/" render={ () => ""} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/email" component={Email} />
           <Route path="/home" component={Home} />
           <Route path="/logout" render={ () => "LOGGED OUT"}/>
           <Route path="/matches" component={Matches} />
