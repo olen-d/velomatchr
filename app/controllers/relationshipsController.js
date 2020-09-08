@@ -2,7 +2,47 @@ const Sequelize = require("sequelize");
 // const fn = sequelize.fn;
 const Op = Sequelize.Op;
 
+const { v4: uuidv4 } = require("uuid");
+
 const { Relationship, User } = require("../models");
+
+exports.create_email_proxy = (req, res) => {
+  const { body: { requesterId, addresseeId }, } = req;
+
+  const requesterProxy = uuidv4();
+  const addresseeProxy = uuidv4();
+
+  const requesterUpdate = Relationship.update({ emailProxy: requesterProxy },
+    {
+      where: {
+        requesterId,
+        addresseeId,
+        emailProxy: null
+      }
+    });
+
+  const addresseeUpdate = Relationship.update({ emailProxy: addresseeProxy },
+    {
+      where: {
+        requesterId: addresseeId,
+        addresseeId: requesterId,
+        emailProxy: null
+      }
+    });
+
+  Promise.all([requesterUpdate, addresseeUpdate])
+  .then(values => {
+    console.log(values);
+    if( values[0][0] === 1 && values[1][0] === 1) {
+      res.status(200).send({ status: 200, message: "ok", data: "Anonymized email created. " });
+    } else {
+      res.status(500).send({ status: 500, message: "Internal Server Error", error: "Anonymized email not created. " });
+    }
+  })
+  .catch(error => {
+    res.status(500).send({ status: 500, message: "Internal Server Error", error });
+  })
+};
 
 exports.update_user_relationships = (req, res) => {
   const { authorized } = req;
