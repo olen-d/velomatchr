@@ -15,6 +15,8 @@ import auth from "./auth";
  import MatchCard from "./matchCard";
 
  const MatchesList = props => {
+  const { status } = props;
+
   const [userId, setUserId] = useState(null);
   const [matchesFilteredByStatus, setMatchesFilteredByStatus] = useState([]);
   const [noMatches, setNoMatches] = useState(null);
@@ -24,8 +26,6 @@ import auth from "./auth";
   const { matches, setMatches } = useMatches();
 
   const userInfo = auth.getUserInfo(token);
-
-  let status = parseInt(props.status);
 
   // Set up the action buttons
   let leftBtnIcon = "";
@@ -53,7 +53,7 @@ import auth from "./auth";
       leftBtnIcon = "envelope";
       leftBtnContent = "Email Buddy";
       leftBtnAction = "composeEmail"
-      leftBtnValue = 99;
+      leftBtnValue = 0; // Currently not used
       rightBtnIcon = "minus circle";
       rightBtnContent = "Unfriend";
       rightBtnAction = "updateStatus";
@@ -121,7 +121,7 @@ import auth from "./auth";
             setNoMatches("No buddies were found. "); 
             break;
           default:
-            setNoMatches("No potential matches were found. ");
+            setNoMatches("No potential matches were found. ")
             break;
         }
         const returnedMatches = filteredMatches.length > 10 && status !== 2 ? filteredMatches.slice(0, 10) : filteredMatches;
