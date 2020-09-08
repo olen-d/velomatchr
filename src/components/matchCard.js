@@ -1,6 +1,8 @@
 import React, { useContext, useState } from "react"
 import PropTypes from "prop-types";
 
+import { Redirect } from "react-router-dom";
+
 import {
   Button
  } from "semantic-ui-react";
@@ -45,9 +47,11 @@ import {
     pl = photoLink.replace(pub, "")
   }
 
+  const [executeRedirect, setExecuteRedirect] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
-  const [isErrorMessage, setIsErrorMessage] = useState(null)
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [redirectURI, setRedirectURI] = useState(null);
 
   const postAction = (action, value) => {
     if(action === "updateStatus") {
@@ -91,12 +95,14 @@ import {
           setIsErrorMessage("Something went wrong when fetching data from the server. Please try again later.");
       });
     } else if(action === "composeEmail") {
-      // const addressee = parseInt(value);
+      setRedirectURI(`/email/compose/${addresseeId}`);
+      setExecuteRedirect(true);
     }
   }
 
   return(
     <>
+      { executeRedirect ? <Redirect to={`${redirectURI}`} /> : null }
       <ErrorContainer
         header={isErrorHeader}
         message={isErrorMessage}
