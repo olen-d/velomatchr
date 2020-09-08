@@ -34,7 +34,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
-          len: [1]
+        len: [1]
+      }
+    },
+    emailProxy: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        len: [1]
       }
     }
   });
