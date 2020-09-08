@@ -150,7 +150,7 @@ import auth from "./auth";
     } else {
       return(
         <div className="matches-list">
-          {matchesFilteredByStatus.map(({ id, addressee: { id: addresseeId, firstName, lastName, photoLink, city, stateCode, createdAt}, }) => (
+          {matchesFilteredByStatus.map(({ id, addressee: { id: addresseeId, firstName, lastName, isEmailVerified, photoLink, city, stateCode, createdAt}, }) => (
             <div className="match-card" key={id}>
               <MatchCard
                 requesterId={userId}
@@ -164,6 +164,7 @@ import auth from "./auth";
                   year: "numeric",
                   month: "long"
                 }).format(new Date(createdAt))}
+                leftBtnDisabled={status === 2 && isEmailVerified === 0 ? true : false}
                 leftBtnIcon={leftBtnIcon}
                 leftBtnContent={leftBtnContent}
                 leftBtnAction={leftBtnAction}

@@ -22,6 +22,7 @@ import {
     city,
     stateCode,
     createdAt,
+    leftBtnDisabled,
     leftBtnIcon,
     leftBtnContent,
     leftBtnAction,
@@ -122,6 +123,7 @@ import {
       </div>
       <div className='match-card-actions'>
         <Button
+          disabled={leftBtnDisabled}
           type="button"
           size="tiny"
           color="yellow"
@@ -153,6 +155,7 @@ MatchCard.defaultProps = {
   city: "New York",
   stateCode: "NY",
   createdAt: "March 2019",
+  leftBtnDisabled: false,
   leftBtnIcon: "",
   leftBtnContent: "",
   leftBtnAction: "",
@@ -163,7 +166,7 @@ MatchCard.defaultProps = {
   rightBtnValue: 0
 }
 
-const { number, string } = PropTypes;
+const { bool, number, string } = PropTypes;
 
 MatchCard.propTypes = {
   requesterId: number,
@@ -174,6 +177,7 @@ MatchCard.propTypes = {
   city: string,
   stateCode: string,
   createdAt: string,
+  leftBtnDisabled: bool,
   leftBtnIcon: string,
   leftBtnContent: string,
   leftBtnAction: string,
