@@ -75,6 +75,35 @@ exports.update_user_relationships = (req, res) => {
   }
 };
 
+exports.read_requester_email_proxy_by_id = (req, res) => {
+  const { params: { requesterid: requesterId, addresseeid: addresseeId }, } = req;
+
+  Relationship.findAll({
+    where: {
+      requesterId,
+      addresseeId
+    },
+    attributes: ["emailProxy"]
+  })
+  .then(data => {
+    if (data.length === 0 ) {
+      res.json({
+        status: 404,
+        message: "Not Found",
+        error: "An email proxy for this sender and addressee was not found. "
+      })
+    }
+    res.json({
+      status: 200,
+      message: "ok",
+      data
+    });
+  })
+  .catch(error => {
+    res.status(500).send({ status: 500, message: "Internal Server Error", error });
+  })
+};
+
 exports.read_user_relationships_by_id = (req, res) => {
   const { authorized } = req;
 
