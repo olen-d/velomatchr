@@ -34,7 +34,7 @@ exports.create_email_proxy = (req, res) => {
   .then(values => {
     console.log(values);
     if( values[0][0] === 1 && values[1][0] === 1) {
-      res.status(200).send({ status: 200, message: "ok", data: "Anonymized email created. " });
+      res.status(200).send({ status: 200, message: "ok", data: [{ requesterProxy, addresseeProxy }] });
     } else {
       res.status(500).send({ status: 500, message: "Internal Server Error", error: "Anonymized email not created. " });
     }
@@ -91,13 +91,14 @@ exports.read_requester_email_proxy_by_id = (req, res) => {
         status: 404,
         message: "Not Found",
         error: "An email proxy for this sender and addressee was not found. "
-      })
+      });
+    } else {
+      res.json({
+        status: 200,
+        message: "ok",
+        data
+      });
     }
-    res.json({
-      status: 200,
-      message: "ok",
-      data
-    });
   })
   .catch(error => {
     res.status(500).send({ status: 500, message: "Internal Server Error", error });
