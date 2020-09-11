@@ -62,6 +62,26 @@ const ComposeEmailForm = props => {
 
           if (!emailProxy) {
             // Need to create proxy
+            const formData = { requesterId: userId, addresseeId };
+
+            try {
+              const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy`, {
+                method: "post",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+              });
+              const json = response.ok ? await response.json() : null;
+              const { data: [{ requesterProxy, addresseeProxy }], } = json;
+
+              setAddresseeProxy(addresseeProxy);
+              setRequesterProxy(requesterProxy);
+            } catch(error) {
+              // TODO: deal with the error
+            }
+
             // setRequesterProxy
             // setAddresseeProxy
           } else {
@@ -107,7 +127,7 @@ const ComposeEmailForm = props => {
           handleChange={handleChange}
           values={values}
         />
-      </Form>{userId} <br />{requesterProxy}
+      </Form>{userId} <br />{requesterProxy} <br />{addresseeProxy}
     </Grid.Column>
   );
 }
