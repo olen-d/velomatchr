@@ -32,7 +32,6 @@ exports.create_email_proxy = (req, res) => {
 
   Promise.all([requesterUpdate, addresseeUpdate])
   .then(values => {
-    console.log(values);
     if( values[0][0] === 1 && values[1][0] === 1) {
       res.status(200).send({ status: 200, message: "ok", data: [{ requesterProxy, addresseeProxy }] });
     } else {
