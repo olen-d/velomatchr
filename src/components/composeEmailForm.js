@@ -51,7 +51,7 @@ const ComposeEmailForm = props => {
     if (userId && addresseeId) {
       (async () => {
         try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy/requester/id/${userId}/${addresseeId}`, {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy/id/${userId}/${addresseeId}`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -81,12 +81,26 @@ const ComposeEmailForm = props => {
             } catch(error) {
               // TODO: deal with the error
             }
-
-            // setRequesterProxy
-            // setAddresseeProxy
           } else {
             setRequesterProxy(emailProxy);
-            // Now get the addressee proxy...
+            try {
+              const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy/id/${addresseeId}/${userId}`, {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              });
+      
+              const json = response.ok ? await response.json() : setRequesterProxy("error");
+              const { data: [{ emailProxy }], } = json;
+
+              if (!emailProxy) {
+                // TOTO: Set server errors to return an error, also wire in the front end to show the error
+              } else {
+                setAddresseeProxy(emailProxy);
+              }
+            } catch(error) {
+              // TODO: deal with adressee proxy request error
+            }
           }
         } catch(error) {
           // TODO: deal with the error

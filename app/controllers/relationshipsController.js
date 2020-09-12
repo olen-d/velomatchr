@@ -74,7 +74,8 @@ exports.update_user_relationships = (req, res) => {
   }
 };
 
-exports.read_requester_email_proxy_by_id = (req, res) => {
+// TODO: Add authorization
+exports.read_email_proxy_by_id = (req, res) => {
   const { params: { requesterid: requesterId, addresseeid: addresseeId }, } = req;
 
   Relationship.findAll({
