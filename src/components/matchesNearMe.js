@@ -57,10 +57,12 @@ MatchesNearMe.defaultProps = {
   show: true
 }
 
+const { bool, number } = PropTypes;
+
 MatchesNearMe.propTypes = {
-  latitude: PropTypes.number,
-  longitude: PropTypes.number,
-  show: PropTypes.bool
+  latitude: number,
+  longitude: number,
+  show: bool
 }
 
 export default MatchesNearMe;
