@@ -30,6 +30,7 @@ const ComposeEmailForm = props => {
   const [addresseeId, setAddresseeId] = useState(null);
   const [addresseeProxy, setAddresseeProxy] = useState(null);
   const [flag, setFlag] = useState(true);
+  const [isError, setIsError] = useState(false);
   const [requesterProxy, setRequesterProxy] = useState(null);
   const [userId, setUserId] = useState(null);
 
@@ -43,8 +44,16 @@ const ComposeEmailForm = props => {
 
   const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
+  const handleSubmit = () => {
+    //
+  }
+
   useEffect(() => { setAddresseeId(id); }, [id]);
   useEffect(() => { setUserId(user); }, [user]);
+
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
 
   // Get email proxies
   useEffect(() => {
@@ -141,7 +150,19 @@ const ComposeEmailForm = props => {
           handleChange={handleChange}
           values={values}
         />
-      </Form>{userId} <br />{requesterProxy} <br />{addresseeProxy}
+        <Button
+          disabled={isError || !values.body}
+          className="fluid"
+          type="button"
+          color="red"
+          size="large"
+          icon="paper plane"
+          labelPosition="left"
+          content="Send Message"
+          onClick={handleSubmit}
+        >
+        </Button>
+      </Form>{userId} <br />{requesterProxy} <br />{addresseeProxy} <br />{values.subject} <br />{values.body} <br />
     </Grid.Column>
   );
 }
