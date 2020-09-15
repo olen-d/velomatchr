@@ -48,7 +48,6 @@ const ComposeEmailForm = props => {
   const history = useHistory();
   
   const handleDiscard = () => {
-    console.log(history);
     history.push("/matches");
   }
 
