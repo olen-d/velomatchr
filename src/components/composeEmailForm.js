@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 // import PropTypes from "prop-types";
 
 import {
+  useHistory,
   useParams
 } from "react-router-dom";
 
@@ -43,6 +44,13 @@ const ComposeEmailForm = props => {
   const initialValues = { body: "", subject: "Let's Ride Together" }
 
   const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
+
+  const history = useHistory();
+  
+  const handleDiscard = () => {
+    console.log(history);
+    history.push("/matches");
+  }
 
   const handleSubmit = () => {
     //
@@ -160,6 +168,17 @@ const ComposeEmailForm = props => {
           labelPosition="left"
           content="Send Message"
           onClick={handleSubmit}
+        >
+        </Button>
+        <Button
+          className="fluid"
+          type="button"
+          color="red"
+          size="large"
+          icon="trash"
+          labelPosition="left"
+          content="Discard"
+          onClick={handleDiscard}
         >
         </Button>
       </Form>{userId} <br />{requesterProxy} <br />{addresseeProxy} <br />{values.subject} <br />{values.body} <br />
