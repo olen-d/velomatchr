@@ -51,8 +51,25 @@ const ComposeEmailForm = props => {
     history.push("/matches");
   }
 
-  const handleSubmit = () => {
-    //
+  const handleSubmit = async () => {
+    // Send requester proxy
+    // Send addressee proxy
+    // Send subject
+    // Send message
+    const { body, subject } = values;
+    const formData = { addresseeProxy, body, requesterProxy, subject };
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/match`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+    } catch(error) {
+      // TODO: Deal with the fetch error
+    }
   }
 
   useEffect(() => { setAddresseeId(id); }, [id]);
