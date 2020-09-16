@@ -2,6 +2,19 @@
 const dnsPromises = require("dns").promises;
 const nodemailer = require("nodemailer");
 
+exports.mail_match = async (req, res) => {
+  // Get the items from the body
+  const { body: { addresseeProxy, body: message, requesterProxy, subject }, } = req;
+
+  // Lookup from address using proxy - match code must be 2
+  // Lookup to address using proxy - match code must be 2
+  // Add something to the subject, or not
+  // TODO: Filter the message
+  // Get an auth token
+  // Pass fromAddress, toAddress, subject, message to mail/send
+  res.status(200).json({ status: 200, message: "ok" });
+};
+
 exports.send_mail = (req, res) => {
   const { authorized } = req;
 
