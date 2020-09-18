@@ -1,18 +1,37 @@
 // Packages
 const dnsPromises = require("dns").promises;
+const fetch = require("node-fetch");
 const nodemailer = require("nodemailer");
+
+// Helpers
+const tokens = require ("../helpers/tokens");
 
 exports.mail_match = async (req, res) => {
   // Get the items from the body
   const { body: { addresseeProxy, body: message, requesterProxy, subject }, } = req;
 
-  // Lookup from address using proxy - match code must be 2
+  const token = await tokens.create(-99);
+
   // Lookup to address using proxy - match code must be 2
-  // Add something to the subject, or not
-  // TODO: Filter the message
-  // Get an auth token
-  // Pass fromAddress, toAddress, subject, message to mail/send
-  res.status(200).json({ status: 200, message: "ok" });
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-address/${addresseeProxy}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const json = response.ok ? await response.json() : null;
+    const { data: [{ requester: { email }, }], } = json;
+
+    console.log("Email Address:", email);
+    // TODO: Add something to the subject, or not
+    // TODO: Filter the message
+    // Pass fromAddress, toAddress, subject, message to mail/send
+    res.status(200).json({ status: 200, message: "ok" });
+  } catch(error) {
+    // TODO: deal with the error
+    console.log("Mail Match Fetch Error", error);
+  }
 };
 
 exports.send_mail = (req, res) => {
