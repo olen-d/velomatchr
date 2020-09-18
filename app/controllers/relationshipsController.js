@@ -73,6 +73,33 @@ exports.update_user_relationships = (req, res) => {
     res.sendStatus(403)
   }
 };
+// TODO: Add authorization
+exports.read_email_address_by_proxy = (req, res) => {
+  const { params: { proxy: emailProxy }, } = req;
+
+  Relationship.findAll({
+    where: {
+      emailProxy,
+      status: 2
+    },
+    attributes: [],
+    include: [{
+      model: User,
+      as: "requester",
+      attributes: ["email"]
+    }]
+  })
+  .then(data => {
+    if (data.length === 0) {
+      res.status(404).send({ status: 404, message: "Not Found", error: "The email proxy supplied was invalid or does not exist." });
+    } else {
+      res.status(200).json({ status: 200, message: "ok", data });
+    }
+  })
+  .catch(error => {
+    res.status(500).send({ status: 500, message: "Internal Server Error", error });
+  });
+};
 
 // TODO: Add authorization
 exports.read_email_proxy_by_id = (req, res) => {
