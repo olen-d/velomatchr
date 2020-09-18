@@ -67,6 +67,7 @@ const ComposeEmailForm = props => {
         },
         body: JSON.stringify(formData)
       });
+      // TODO: Deal with the response - set success to ok and redirect...
     } catch(error) {
       // TODO: Deal with the fetch error
     }
