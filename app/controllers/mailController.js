@@ -23,20 +23,38 @@ exports.mail_match = async (req, res) => {
     const json = response.ok ? await response.json() : null;
     const { data: [{ requester: { email }, }], } = json;
 
-    console.log("Email Address:", email);
     // TODO: Add something to the subject, or not
     // TODO: Filter the message
-    // Pass fromAddress, toAddress, subject, message to mail/send
-    res.status(200).json({ status: 200, message: "ok" });
+    const formData = {
+      fromAddress: `"VeloMatchr Buddy" <buddy-${requesterProxy}@velomatchr.com>`, 
+      toAddress: email, 
+      subject, 
+      message
+    }
+
+    const sendResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(formData)
+    });
+
+    const sendJson = sendResponse.ok ? await sendResponse.json() : null;
+
+    if (sendJson.status !== 200) {
+      res.status(500).json(sendJson);
+    } else {
+      res.status(200).json({ status: 200, message: "ok" });
+    }
   } catch(error) {
-    // TODO: deal with the error
-    console.log("Mail Match Fetch Error", error);
+    res.status(500).json({ status: 500, message: "Internal Server Error", error });
   }
 };
 
 exports.send_mail = (req, res) => {
   const { authorized } = req;
-
   if (authorized) {
     const { body: { fromAddress, toAddress, subject, message }, } = req;
 
