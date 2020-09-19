@@ -32,6 +32,8 @@ const ComposeEmailForm = props => {
   const [addresseeProxy, setAddresseeProxy] = useState(null);
   const [flag, setFlag] = useState(true);
   const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [requesterProxy, setRequesterProxy] = useState(null);
   const [userId, setUserId] = useState(null);
 
@@ -67,7 +69,13 @@ const ComposeEmailForm = props => {
         },
         body: JSON.stringify(formData)
       });
-      // TODO: Deal with the response - set success to ok and redirect...
+      const json = response.ok ? await response.json() : null;
+      if (json.errors) {
+        const { errors } = json;
+        handleServerErrors(...errors);
+      } else {
+        // Great success!
+      }
     } catch(error) {
       // TODO: Deal with the fetch error
     }
@@ -143,7 +151,17 @@ const ComposeEmailForm = props => {
     }
   }, [addresseeId, token, userId]);
 
-  
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
+
+  useEffect(() => {
+    if (isError) {
+      setIsErrorHeader("Unable to Send Email");
+      setIsErrorMessage("Please check the values in the fields shown in red.");
+    }
+  }, [isError]);
+
   if (flag) {
     initializeFields(initialValues);
     setFlag(false);
@@ -158,6 +176,11 @@ const ComposeEmailForm = props => {
       >
         {formTitle}
       </Header>
+      <ErrorContainer
+        header={isErrorHeader}
+        message={isErrorMessage}
+        show={isError}>
+      </ErrorContainer>
       <Form size="large">
         <SubjectInput
           errors={errors}
