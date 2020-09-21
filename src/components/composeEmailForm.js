@@ -30,10 +30,12 @@ const ComposeEmailForm = props => {
 
   const [addresseeId, setAddresseeId] = useState(null);
   const [addresseeProxy, setAddresseeProxy] = useState(null);
+  const [addresseeFirstName, setAddresseeFirstName] = useState(null);
   const [flag, setFlag] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [addresseeLastInitial, setAddresseeLastInitial] = useState(null);
   const [requesterProxy, setRequesterProxy] = useState(null);
   const [userId, setUserId] = useState(null);
 
@@ -93,6 +95,18 @@ const ComposeEmailForm = props => {
     if (userId && addresseeId) {
       (async () => {
         try {
+          const responseAddressee = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${addresseeId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          const jsonAddressee = responseAddressee.ok ? await responseAddressee.json() : null;
+          const { user: { firstName, lastName}, } = jsonAddressee;
+          const lastInitial = lastName.slice(0,1);
+          setAddresseeFirstName(firstName);
+          setAddresseeLastInitial(lastInitial);
+
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy/id/${userId}/${addresseeId}`, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -171,7 +185,7 @@ const ComposeEmailForm = props => {
     <Grid.Column width={colWidth}>
       <Header
         as="h2"
-        textAlign="center"
+        textAlign="left"
         color="orange"
       >
         {formTitle}
@@ -181,6 +195,9 @@ const ComposeEmailForm = props => {
         message={isErrorMessage}
         show={isError}>
       </ErrorContainer>
+      <p>
+        To: {addresseeFirstName} {addresseeLastInitial}.
+      </p>
       <Form size="large">
         <SubjectInput
           errors={errors}
@@ -200,28 +217,25 @@ const ComposeEmailForm = props => {
         />
         <Button
           disabled={isError || !values.body}
-          className="fluid"
           type="button"
           color="red"
-          size="large"
+          size="medium"
           icon="paper plane"
           labelPosition="left"
-          content="Send Message"
+          content="Send"
           onClick={handleSubmit}
         >
         </Button>
         <Button
-          className="fluid"
           type="button"
-          color="red"
-          size="large"
+          size="medium"
           icon="trash"
           labelPosition="left"
           content="Discard"
           onClick={handleDiscard}
         >
         </Button>
-      </Form>{userId} <br />{requesterProxy} <br />{addresseeProxy} <br />{values.subject} <br />{values.body} <br />
+      </Form>
     </Grid.Column>
   );
 }

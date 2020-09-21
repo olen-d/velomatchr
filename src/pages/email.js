@@ -17,8 +17,11 @@ const Email = ({ match }) => {
     <Container>
       <Grid stackable>
         <Switch>
-          <Route exact path={`${match.url}/compose/:id`} render={() => <ComposeEmailForm colWidth={6} formTitle={"Email"} />} />
+          <Route exact path={`${match.url}/compose/:id`} render={() => <ComposeEmailForm colWidth={10} formTitle={"Compose an Email"} />} />
         </Switch>
+        <Grid.Column width={6}>
+          &nbsp;
+        </Grid.Column>
       </Grid>
     </Container>
   );
