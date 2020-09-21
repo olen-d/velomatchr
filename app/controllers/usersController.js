@@ -307,7 +307,7 @@ exports.read_one_user_id_by_email = (req, res) => {
 exports.read_one_user_by_id = (req, res) => {
   const { authorized } = req;
 
-  if(authorized) {
+  if (authorized) {
     const userId = req.params.userId;
 
     User.findOne({
