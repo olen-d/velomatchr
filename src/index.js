@@ -11,11 +11,14 @@ import App from './App';
 
 import * as serviceWorker from './serviceWorker';
 
+// Changed from default to add special meaning via the data attribute as opposed to id to seperate concerns
+const rootElement = document.querySelector('[data-role-react-root]');
+
 ReactDOM.render(
   <Router>
     <App />
   </Router>, 
-  document.getElementById('root')
+  rootElement
 );
 
 // If you want your app to work offline and load faster, you can change
