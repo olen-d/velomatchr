@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
+const matchMail = require("./app/utilities/match-mail");
 
 const port =  process.env.PORT || 5000;
 
@@ -33,6 +34,8 @@ app.use("/api", require("./app/routes/relationships"));
 app.use("/api", require("./app/routes/states"));
 app.use("/api", require("./app/routes/survey"));
 app.use("/api", require("./app/routes/users"));
+
+matchMail.listen();
 
 // db.sequelize.sync({ force: true }).then(function() {
   db.sequelize.sync().then(function() {
