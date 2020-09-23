@@ -22,6 +22,7 @@ import {
   import BodyTextarea from "./formFields/bodyTextarea";
   import ErrorContainer from "./errorContainer";
   import SubjectInput from "./formFields/subjectInput";
+  import SuccessContainer from "./successContainer";
 
   import useForm from "./../hooks/useForm";
 
@@ -31,11 +32,15 @@ const ComposeEmailForm = props => {
   const [addresseeId, setAddresseeId] = useState(null);
   const [addresseeProxy, setAddresseeProxy] = useState(null);
   const [addresseeFirstName, setAddresseeFirstName] = useState(null);
+  const [addresseeLastInitial, setAddresseeLastInitial] = useState(null);
   const [flag, setFlag] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
-  const [addresseeLastInitial, setAddresseeLastInitial] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccessHeader, setIsSuccessHeader] = useState(null);
+  const [isSuccessMessage, setIsSuccessMessage] = useState(null);
+  const [isTransportError, setIsTransportError] = useState(null);
   const [requesterProxy, setRequesterProxy] = useState(null);
   const [userId, setUserId] = useState(null);
 
@@ -71,12 +76,24 @@ const ComposeEmailForm = props => {
         },
         body: JSON.stringify(formData)
       });
-      const json = response.ok ? await response.json() : null;
+
+      const json = await response.json();
+
       if (json.errors) {
+        setIsTransportError(false);
         const { errors } = json;
         handleServerErrors(...errors);
+      } else if (json.status !== 200) {
+        setIsErrorHeader("Unable to Send Email");
+        setIsErrorMessage("Something went wrong, but it's probably not your fault. Please try again in a few seconds.");
+        setIsTransportError(true);
       } else {
         // Great success!
+        setIsTransportError(false);
+        setIsSuccessHeader("Email Sent");
+        setIsSuccessMessage(`Your message was successfully sent to ${addresseeFirstName} ${addresseeLastInitial}.`);
+        setIsSuccess(true);
+        // Redirect back to the matches page in like five seconds
       }
     } catch(error) {
       // TODO: Deal with the fetch error
@@ -170,11 +187,11 @@ const ComposeEmailForm = props => {
   }, [errors]);
 
   useEffect(() => {
-    if (isError) {
+    if (isError && !isTransportError) {
       setIsErrorHeader("Unable to Send Email");
       setIsErrorMessage("Please check the values in the fields shown in red.");
     }
-  }, [isError]);
+  }, [isError, isTransportError]);
 
   if (flag) {
     initializeFields(initialValues);
@@ -193,8 +210,15 @@ const ComposeEmailForm = props => {
       <ErrorContainer
         header={isErrorHeader}
         message={isErrorMessage}
-        show={isError}>
+        show={isError || isTransportError }
+      >
       </ErrorContainer>
+      <SuccessContainer
+        header={isSuccessHeader}
+        message={isSuccessMessage}
+        show={isSuccess}
+      >
+      </SuccessContainer>
       <p>
         To: {addresseeFirstName} {addresseeLastInitial}.
       </p>
