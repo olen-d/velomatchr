@@ -43,9 +43,13 @@ const connection = (async () => {
 
 connection.then(async connection => {
   // Process any new mail since the server last started...
-  const newEmails = await matchMail.getNewMail(connection);
-  
-  console.log("NEW:", newEmails);
+  try {
+    const newEmails = await matchMail.getNewMail(connection);
+    matchMail.processMail(newEmails);
+  } catch(error) {
+    // TODO: deal with the error
+    console.log("server-velo // processMail")
+  }
 })
 .catch(error => {
   // TODO: deal with the error
