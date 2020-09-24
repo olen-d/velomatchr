@@ -45,13 +45,14 @@ const getNewMail = async connection => {
 
     const newEmails = results.map(result => {
 
-      const { parts: [{ body: { from: [from], subject: [subject], to: [to] }, }, {body: message}], } = result;
+      const { attributes: { uid }, parts: [{ body: { from: [from], subject: [subject], to: [to] }, }, {body: message}], } = result;
       // console.log(from, to, subject, message);
       // To
       // From
       // Subject
       // Body
-      return {from, to, subject};
+      // uid - useful for deleting the email on the server
+      return {from, to, subject, uid};
     });
 
   // console.log(newEmails);
@@ -62,9 +63,19 @@ const getNewMail = async connection => {
   }
 }
 
-const processMail = async () => {
+const processMail = async emails => {
   // To
   // Split out the UUID
+  try {
+  const testString = emails[0].to;
+  // console.log(testString);
+  const emailProxyStart = "buddy-";
+  const emailProxyStartIndex = testString.indexOf(emailProxyStart);
+  const emailProxyEndIndex = testString.indexOf("@velomatchr.com");
+
+  console.log(testString.slice(emailProxyStartIndex + emailProxyStart.length, emailProxyEndIndex));
+  // console.log("PROCESS PROCESS PROCESS\n", emails);
+
   // Look up the addresee's email address by UUID
   // Look up the addresse's userId by email address
   // From
@@ -74,10 +85,15 @@ const processMail = async () => {
   // Subject
   // Body
   // Send the email
-  // On successful send, delete the original
+  // On successful send, delete the original using the uid
+  } catch (error) {
+    // TODO: deal with the error
+    console.log("match-mail // processMail / ERROR:\n" + error);
+  }
 }
 
 module.exports = {
   connect,
-  getNewMail
+  getNewMail,
+  processMail
 }
