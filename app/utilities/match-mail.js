@@ -1,5 +1,10 @@
 const imaps = require("imap-simple");
 
+
+const processNewMail = async numNewMail => {
+  console.log("NUMBER OF NEW EMAILS:", numNewMail);
+};
+
 const config = {
   imap: {
     user: process.env.REL_SMTP_USER,
@@ -8,12 +13,24 @@ const config = {
     port: process.env.REL_SMTP_PORT,
     tls: process.env.REL_SMTP_SECURE,
     authTimeout: 3000
+  },
+
+  onmail: processNewMail
+};
+
+const connect = async () => {
+  try {
+    const connection = await imaps.connect(config);
+    return connection;    
+  } catch(error) {
+    // TODO: Deal with the error
+    console.log("match-mail // connect / ERROR: ", error);
   }
 };
 
-const listen = async () => {
+const getNewMail = async connection => {
   const searchCriteria = [
-    "UNDELETED"
+    "UNSEEN"
   ];
 
   const fetchOptions = {
@@ -22,30 +39,30 @@ const listen = async () => {
   };
 
   try {
-    const connection = await imaps.connect(config);
-
     await connection.openBox("INBOX");
 
     const results = await connection.search(searchCriteria, fetchOptions);
-    const prts = results.map(r => {
-      return r.parts.filter(p => {
-        return p.which === "HEADER";
-      })[0].body.to[0];
-    })
-console.log("RESULTS\n", prts, "\n");
-    const subjects = results.map(res => {
-      return res.parts.filter(part => {
-        return part.which === "HEADER";
-      })[0].body.subject[0];
-    });
-    console.log("SUBJECTS:\n" + subjects);
-    // return subjects;
-  } catch(error) {
-    console.log("matchMail.listen // ERROR:\n" + error);
-  }
-};
 
-const forward = async () => {
+    const newEmails = results.map(result => {
+
+      const { parts: [{ body: { from: [from], subject: [subject], to: [to] }, }, {body: message}], } = result;
+      // console.log(from, to, subject, message);
+      // To
+      // From
+      // Subject
+      // Body
+      return {from, to, subject};
+    });
+
+  // console.log(newEmails);
+  return newEmails;
+
+  } catch(error) {
+    console.log("matchMail.getNewMail // ERROR:\n" + error);
+  }
+}
+
+const processMail = async () => {
   // To
   // Split out the UUID
   // Look up the addresee's email address by UUID
@@ -57,8 +74,10 @@ const forward = async () => {
   // Subject
   // Body
   // Send the email
-};
+  // On successful send, delete the original
+}
 
 module.exports = {
-  listen
+  connect,
+  getNewMail
 }
