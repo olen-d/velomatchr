@@ -1,5 +1,8 @@
+const fetch = require("node-fetch");
 const imaps = require("imap-simple");
 
+// Helpers
+const tokens = require ("../helpers/tokens");
 
 const processNewMail = async numNewMail => {
   console.log("NUMBER OF NEW EMAILS:", numNewMail);
@@ -64,20 +67,34 @@ const getNewMail = async connection => {
 }
 
 const processMail = async emails => {
-  // To
-  // Split out the UUID
-  try {
-  const testString = emails[0].to;
-  // console.log(testString);
+  const token = await tokens.create(-99);
   const emailProxyStart = "buddy-";
-  const emailProxyStartIndex = testString.indexOf(emailProxyStart);
-  const emailProxyEndIndex = testString.indexOf("@velomatchr.com");
 
-  console.log(testString.slice(emailProxyStartIndex + emailProxyStart.length, emailProxyEndIndex));
-  // console.log("PROCESS PROCESS PROCESS\n", emails);
+  try {
+    for (const email of emails) {
+      const { from, to, subject, uid } = email;
 
-  // Look up the addresee's email address by UUID
-  // Look up the addresse's userId by email address
+      // Get the addressee email address and userId from the proxy
+      // The userId is needed later to get the sender's proxy
+      let emailProxyStartIndex = to.indexOf(emailProxyStart);
+
+      if (emailProxyStartIndex !== -1) {
+        emailProxyStartIndex += emailProxyStart.length;
+        const emailProxyEndIndex = to.indexOf("@velomatchr.com");
+
+        const addresseeProxy = to.slice(emailProxyStartIndex, emailProxyEndIndex);
+  
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-address/${addresseeProxy}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+    
+        const json = response.ok ? await response.json() : null;
+        const { data: [{ requester: { id: addresseeId, email: addresseeEmail }, }], } = json
+      }
+    }
+
   // From
   // Get the from userId by email address
   // Get the sender's email proxy
