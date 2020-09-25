@@ -86,7 +86,7 @@ exports.read_email_address_by_proxy = (req, res) => {
     include: [{
       model: User,
       as: "requester",
-      attributes: ["email"]
+      attributes: ["id", "email"]
     }]
   })
   .then(data => {
