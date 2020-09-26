@@ -234,7 +234,7 @@ const ComposeEmailForm = props => {
         <BodyTextarea
           errors={errors}
           initialValue={values.body}
-          placeholder="Type a message"
+          placeholder="Type a message..."
           handleBlur={handleBlur}
           handleChange={handleChange}
           values={values}

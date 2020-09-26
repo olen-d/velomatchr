@@ -1,5 +1,5 @@
 import React from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 
 import { Form } from "semantic-ui-react";
 
@@ -25,16 +25,17 @@ const BodyTextarea = props => {
   );
 }
 
-// EmailInput.defaultProps = {
-//   placeholder: "Email Address"
-// }
+BodyTextarea.defaultProps = {
+  placeholder: "Type a message..."
+}
 
-// EmailInput.propTypes = {
-//   errors: PropTypes.object,
-//   handleBlur: PropTypes.func,
-//   handleChange: PropTypes.func,
-//   placeholder: PropTypes.string,
-//   values: PropTypes.object
-// }
+const { func, object, string } = PropTypes;
+BodyTextarea.propTypes = {
+  errors: object,
+  handleBlur: func,
+  handleChange: func,
+  placeholder: string,
+  values: object
+}
 
 export default BodyTextarea;
