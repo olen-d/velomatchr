@@ -92,11 +92,19 @@ const processMail = async emails => {
     
         const json = response.ok ? await response.json() : null;
         const { data: [{ requester: { id: addresseeId, email: addresseeEmail }, }], } = json
+
+        // Get the sender userId by email address
+        const expression = /<.+@.+\..+>/i;
+        const senderEmail = from.match(expression)[0].slice(1,-1);
+        
+        const responseSenderId = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${senderEmail}`);
+        const jsonSenderId = responseSenderId.ok ? await responseSenderId.json() : null;
+
+        const { data : { id: senderId }, } = jsonSenderId;
+        console.log(senderId);
       }
     }
 
-  // From
-  // Get the from userId by email address
   // Get the sender's email proxy
   // Build the reply buddy-sender-email-proxy@velomatchr.com
   // Subject
