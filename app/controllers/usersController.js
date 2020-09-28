@@ -283,6 +283,7 @@ exports.read_one_user_by_username = (req, res) => {
 exports.read_one_user_id_by_email = (req, res) => {
   // Note: this does not require authentication
   // Intended to be used with the reset password function
+  // TODO, IMPORTANT add authorization for anything not coming from the password reset form. Probably use a JSON Web Token with attribute for password reset and other.
 
   const email = req.params.email;
 

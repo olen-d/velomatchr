@@ -37,6 +37,7 @@ exports.mail_match = async (req, res) => {
       const { data: [{ requester: { email }, }], } = json;
   
       // TODO: Add something to the subject, or not
+      // TODO: Add sender first name and last initial to "VeloMatchr Buddy"
       // TODO: Filter the message
       const formData = {
         fromAddress: `"VeloMatchr Buddy" <buddy-${requesterProxy}@velomatchr.com>`, 
