@@ -91,7 +91,7 @@ const processMail = async emails => {
         });
     
         const json = response.ok ? await response.json() : null;
-        const { data: [{ requester: { id: addresseeId, email: addresseeEmail }, }], } = json
+        const { data: [{ requester: { id: addresseeId, email: addresseeEmail }, }], } = json;
 
         // Get the sender userId by email address
         const expression = /<.+@.+\..+>/i;
@@ -101,11 +101,22 @@ const processMail = async emails => {
         const jsonSenderId = responseSenderId.ok ? await responseSenderId.json() : null;
 
         const { data : { id: senderId }, } = jsonSenderId;
-        console.log(senderId);
+
+        // Get the sender's email proxy
+
+        console.log(senderId, addresseeId);
+        const responseSenderProxy = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy/id/${senderId}/${addresseeId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const jsonSenderProxy = responseSenderProxy.ok ? await responseSenderProxy.json() : null;
+        const { data: [{ emailProxy: senderProxy }], } = jsonSenderProxy;
+        console.log(senderProxy);
       }
     }
 
-  // Get the sender's email proxy
   // Build the reply buddy-sender-email-proxy@velomatchr.com
   // Subject
   // Body
