@@ -21,17 +21,17 @@ const config = {
   onmail: processNewMail
 };
 
-const connect = async () => {
+const initialize = (async () => {
   try {
     const connection = await imaps.connect(config);
-    return connection;    
+    return connection;
   } catch(error) {
     // TODO: Deal with the error
     console.log("match-mail // connect / ERROR: ", error);
   }
-};
+})();
 
-const getNewMail = async connection => {
+const getNewMail = async () => {
   const searchCriteria = [
     "UNSEEN"
   ];
@@ -41,6 +41,7 @@ const getNewMail = async connection => {
     markSeen: false
   };
 
+  const connection  = await initialize;
   try {
     await connection.openBox("INBOX");
 
@@ -59,14 +60,15 @@ const getNewMail = async connection => {
     });
 
   // console.log(newEmails);
-  return newEmails;
-
+    return newEmails;
   } catch(error) {
+    // TODO: Deal with the error
     console.log("matchMail.getNewMail // ERROR:\n" + error);
   }
 }
 
-const processMail = async (connection, emails) => {
+const processMail = async emails => {
+  const connection = await initialize;
   const token = await tokens.create(-99);
   const emailProxyStart = "buddy-";
 
@@ -132,7 +134,6 @@ const processMail = async (connection, emails) => {
 }
 
 module.exports = {
-  connect,
   getNewMail,
   processMail
 }
