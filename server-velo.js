@@ -8,7 +8,6 @@ const port =  process.env.PORT || 5000;
 
 // Comment out when syncing not needed.
 const db = require("./app/models");
-const { mail_match } = require("./app/controllers/mailController");
 
 if (process.env.ENVIRONMENT === "dev") {
   const cors = require("cors");
@@ -36,25 +35,21 @@ app.use("/api", require("./app/routes/states"));
 app.use("/api", require("./app/routes/survey"));
 app.use("/api", require("./app/routes/users"));
 
-const connection = (async () => {
-  const connection = await matchMail.connect(); // matchMail will automatically listen for and process new emails
-  return connection;
-})();
-
-connection.then(async connection => {
-  // Process any new mail since the server last started...
+// Perform inital check of the buddy mailbox
+// After starting, matchMail will automatically listen for and process new emails
+(async () => {
   try {
-    const newEmails = await matchMail.getNewMail(connection);
-    matchMail.processMail(connection, newEmails);
+    // Check for new emails since the server was last started and proceess them
+    const newEmails = await matchMail.getNewMail();
+    
+    if (newEmails.length > 0) {
+      matchMail.processMail(newEmails);
+    }
   } catch(error) {
     // TODO: deal with the error
     console.log("server-velo // processMail")
   }
-})
-.catch(error => {
-  // TODO: deal with the error
-  console.log("server-velo // process mail / ERROR:", error);
-});
+})();
 
 // db.sequelize.sync({ force: true }).then(function() {
   db.sequelize.sync().then(function() {
