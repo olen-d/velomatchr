@@ -66,13 +66,16 @@ const getNewMail = async connection => {
   }
 }
 
-const processMail = async emails => {
+const processMail = async (connection, emails) => {
   const token = await tokens.create(-99);
   const emailProxyStart = "buddy-";
 
   try {
     for (const email of emails) {
       const { from, to, subject, uid } = email;
+
+      // Mark the email as seen to avoid duplicate processing, but don't delete it until it's successfully forwarded
+      await connection.addFlags(uid, "\\Seen");
 
       // Get the addressee email address and userId from the proxy
       // The userId is needed later to get the sender's proxy
@@ -118,7 +121,7 @@ const processMail = async emails => {
     }
 
   // Build the reply buddy-sender-email-proxy@velomatchr.com
-  // Subject
+  // Subject - check for RE: and add if it doesn't exist
   // Body
   // Send the email
   // On successful send, delete the original using the uid
