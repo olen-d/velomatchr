@@ -56,7 +56,7 @@ const getNewMail = async () => {
       // Subject
       // Body
       // uid - useful for deleting the email on the server
-      return {from, to, subject, uid};
+      return {from, message, to, subject, uid};
     });
 
   // console.log(newEmails);
@@ -74,7 +74,7 @@ const processMail = async emails => {
 
   try {
     for (const email of emails) {
-      const { from, to, subject, uid } = email;
+      const { from, message, to, subject, uid } = email;
 
       // Mark the email as seen to avoid duplicate processing, but don't delete it until it's successfully forwarded
       await connection.addFlags(uid, "\\Seen");
@@ -108,8 +108,6 @@ const processMail = async emails => {
         const { data : { id: senderId }, } = jsonSenderId;
 
         // Get the sender's email proxy
-
-        console.log(senderId, addresseeId);
         const responseSenderProxy = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy/id/${senderId}/${addresseeId}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -118,15 +116,20 @@ const processMail = async emails => {
 
         const jsonSenderProxy = responseSenderProxy.ok ? await responseSenderProxy.json() : null;
         const { data: [{ emailProxy: senderProxy }], } = jsonSenderProxy;
-        console.log(senderProxy);
-      }
-    }
 
-  // Build the reply buddy-sender-email-proxy@velomatchr.com
-  // Subject - check for RE: and add if it doesn't exist
-  // Body
-  // Send the email
-  // On successful send, delete the original using the uid
+        // Data to pass to send endpoint
+        const formData = {
+          fromAddress: `"VeloMatchr Buddy" <buddy-${senderProxy}@velomatchr.com>`, 
+          toAddress: addresseeEmail, 
+          subject, 
+          message
+        }
+
+        // Send the email
+
+        // On successful send, delete the original using the uid
+      }
+    } 
   } catch (error) {
     // TODO: deal with the error
     console.log("match-mail // processMail / ERROR:\n" + error);
