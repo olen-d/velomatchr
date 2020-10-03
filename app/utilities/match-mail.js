@@ -126,8 +126,24 @@ const processMail = async emails => {
         }
 
         // Send the email
+        const responseSendMail = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(formData)
+        });
 
-        // On successful send, delete the original using the uid
+        const jsonSendMail = responseSendMail.ok? await responseSendMail.json() : null;
+        if (jsonSendMail.status !== 200) {
+          // Send an error
+          // TODO: IMPORTANT! Deal with the error - try and resend and/or send a bounce to the sender
+          console.log(jsonSendMail.message);
+        } else {
+          // On successful send, delete the original using the uid
+          console.log(jsonSendMail.success);
+        }
       }
     } 
   } catch (error) {
