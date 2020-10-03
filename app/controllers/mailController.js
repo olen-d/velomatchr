@@ -75,6 +75,9 @@ exports.send_mail = (req, res) => {
   if (authorized) {
     const { body: { fromAddress, toAddress, subject, message }, } = req;
 
+    const subjectPrefix = "[VELOMATCHR]";
+    const subjectProcessed = subject.includes(subjectPrefix) ? subject : `${subjectPrefix} ${subject}`;
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
@@ -89,10 +92,10 @@ exports.send_mail = (req, res) => {
     });
   
     const mailOptions = {
-      from: `${fromAddress}`,
-      to: `${toAddress}`,
-      subject: `[VELOMATCHR] ${subject}`,
-      html: `${message}`
+      from: fromAddress,
+      to: toAddress,
+      subject: subjectProcessed,
+      html: message
     };
   
     transporter.sendMail(mailOptions, (err, success) => {
