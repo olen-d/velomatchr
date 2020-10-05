@@ -189,7 +189,7 @@ exports.read_one_email_verification = (req, res) => {
   const { authorized } = req;
 
   if (authorized) {
-    const { userId, verificationCode } = req.body;
+    const { body: { userId, verificationCode }, } = req;
 
     EmailVerification.findOne({
       where: {
@@ -206,7 +206,7 @@ exports.read_one_email_verification = (req, res) => {
           },
           attributes: { exclude: ["verificationCode"]}
         })
-        .then(data => {
+        .then(async data => {
           // Check to make sure the code hasn't expired
           const expiration = new Date(Date.now() - (24 * 60 * 60 * 1000));
           const createdAt = new Date(data.createdAt);
@@ -215,8 +215,12 @@ exports.read_one_email_verification = (req, res) => {
             res.status(410).json({ error: "Gone", code: "910", message: "The verification code has expired. "});
           } else {
             // Verification was successful, delete the record
-            fetch(`${process.env.REACT_APP_API_URL}/api/users/verification/codes/${userId}`, {
-              method: "delete"
+            const token = await tokens.create(userId);
+            fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/id/${userId}`, {
+              method: "delete",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              }
             })
             .then(response => {
               if(!response.ok) {
@@ -224,6 +228,7 @@ exports.read_one_email_verification = (req, res) => {
               }
             })
             .catch(error => {
+              console.log("Verification Delete ERROR:", error);
               res.json({ error, code: "900", message: "Verification code not deleted" });
             });
             res.json({ data });
@@ -839,7 +844,6 @@ exports.email_verified_code_delete_by_id = (req, res) => {
 
 // Send Email Verification Code
 exports.email_send_verification = async (req, res) => {
-  console.log("Verification Triggered.\nAuthorized:", req.authorized);
   const { authorized } = req;
 
   if (authorized) {
@@ -855,7 +859,7 @@ exports.email_send_verification = async (req, res) => {
       attempts: 0
     })
     .then(data => {
-      console.log("Email Verification Data:", data);
+      // TODO - return some sort of success message
     })
     .catch(error => {
       // TODO - return some sort of useful error
