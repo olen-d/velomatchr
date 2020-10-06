@@ -16,7 +16,7 @@ if (process.env.ENVIRONMENT === "dev") {
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({limit: "5mb"}));
 
 // Set up the static folder for the profile images
 app.use("/public/images-profiles", express.static("public/images-profiles"));
