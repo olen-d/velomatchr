@@ -140,9 +140,19 @@ const processMail = async emails => {
           // Send an error
           // TODO: IMPORTANT! Deal with the error - try and resend and/or send a bounce to the sender
           console.log(jsonSendMail.message);
-        } else {
+        } else { 
           // On successful send, delete the original using the uid
-          console.log(jsonSendMail.success);
+          const {data: { rejected }, } = jsonSendMail;
+          if (rejected.length === 0) {
+            const deleted = await connection.deleteMessage([uid]);
+            console.log("DELETED:", deleted);
+          } else {
+            // Mail was rejected by the receiving server
+            // Log the error
+            // Return a failure notice
+          }
+          // console.log("REJECTED:\n" + rejected, rejected.length +"\n");
+          // console.log(jsonSendMail.success + "\n" + JSON.stringify(jsonSendMail) + "\nUID:", uid);
         }
       }
     } 
