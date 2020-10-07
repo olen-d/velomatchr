@@ -211,8 +211,8 @@ exports.read_one_email_verification = async (req, res) => {
       if (data.attempts >= 3) {
         res.status(429).json({
           status: 429,
-          error: "Too Many Requests", 
-          message: "The number of attempts to verify the email address have exceeded the limit." 
+          message: "Too Many Requests", 
+          error: "The number of attempts to verify the email address have exceeded the limit." 
         });
         return false;
       } else {
@@ -252,6 +252,7 @@ exports.read_one_email_verification = async (req, res) => {
             } else {
               res.status(200).json({
                 status: 200,
+                message: "ok",
                 data: [{ message: "The email address was successfully verified." }]
               });
             }
