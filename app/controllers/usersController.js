@@ -210,10 +210,9 @@ exports.read_one_email_verification = async (req, res) => {
 
       if (data.attempts >= 3) {
         res.status(429).json({
-          // TODO: Refactor to match the standard error. status: "429" message: "Too Many Requests" error: "The number of attempts to verify the email address have exceeded the limit. "
+          status: 429,
           error: "Too Many Requests", 
-          code: "929", 
-          message: "The number of attempts to verify the email address have exceeded the limit. " 
+          message: "The number of attempts to verify the email address have exceeded the limit." 
         });
         return false;
       } else {
@@ -232,8 +231,11 @@ exports.read_one_email_verification = async (req, res) => {
           const createdAt = new Date(dataVerification.createdAt);
           if (createdAt < expiration) {
             // TODO: Delete the record - consider a delete function...
-            // TODO: Refactor to use the standard error status/message/error
-            res.status(410).json({ error: "Gone", code: "910", message: "The verification code has expired. "});
+            res.status(410).json({ 
+              status: 410,
+              message: "Gone",
+              error: "The verification code has expired."
+            });
             return false;
           } else {
             // Verification was successful, delete the record
@@ -248,7 +250,10 @@ exports.read_one_email_verification = async (req, res) => {
               // TODO: deal with the error
               console.log("Email verification code not deleted");
             } else {
-              res.status(200).json({ status: 200, data: [{ message: "The email address was successfully verified." }] });
+              res.status(200).json({
+                status: 200,
+                data: [{ message: "The email address was successfully verified." }]
+              });
             }
           }
         } else {
