@@ -185,78 +185,93 @@ exports.profile_update_photograph = (req, res) => {
 };
 
 // Read Modules
-exports.read_one_email_verification = (req, res) => {
+exports.read_one_email_verification = async (req, res) => {
   const { authorized } = req;
 
   if (authorized) {
     const { body: { userId, verificationCode }, } = req;
 
-    EmailVerification.findOne({
-      where: {
-        userId
-      },
-      attributes: ["attempts"]
-    })
-    .then(data => {
-      if (data.attempts < 3) {
-        EmailVerification.findOne({
+    try {
+      const data = await EmailVerification.findOne({
+        where: {
+          userId
+        },
+        attributes: ["attempts"]
+      });
+
+      if (!data) {
+        res.status(404).json({
+          status: 404,
+          message: "Not Found",
+          error: "There is no record of an email verification code being sent."
+        });
+        return false;
+      }
+
+      if (data.attempts >= 3) {
+        res.status(429).json({
+          // TODO: Refactor to match the standard error. status: "429" message: "Too Many Requests" error: "The number of attempts to verify the email address have exceeded the limit. "
+          error: "Too Many Requests", 
+          code: "929", 
+          message: "The number of attempts to verify the email address have exceeded the limit. " 
+        });
+        return false;
+      } else {
+        const dataVerification = await EmailVerification.findOne({
           where: {
             userId,
             verificationCode
           },
           attributes: { exclude: ["verificationCode"]}
-        })
-        .then(async data => {
+        });
+
+        if (dataVerification && dataVerification.createdAt) {
+  
           // Check to make sure the code hasn't expired
           const expiration = new Date(Date.now() - (24 * 60 * 60 * 1000));
-          const createdAt = new Date(data.createdAt);
+          const createdAt = new Date(dataVerification.createdAt);
           if (createdAt < expiration) {
-            // TODO: Delete the record
+            // TODO: Delete the record - consider a delete function...
+            // TODO: Refactor to use the standard error status/message/error
             res.status(410).json({ error: "Gone", code: "910", message: "The verification code has expired. "});
+            return false;
           } else {
             // Verification was successful, delete the record
             const token = await tokens.create(userId);
-            fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/id/${userId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/id/${userId}`, {
               method: "delete",
               headers: {
                 Authorization: `Bearer ${token}`,
               }
-            })
-            .then(response => {
-              if(!response.ok) {
-                throw new Error ("Network response was not ok.");
-              }
-            })
-            .catch(error => {
-              console.log("Verification Delete ERROR:", error);
-              res.json({ error, code: "900", message: "Verification code not deleted" });
             });
-            res.json({ data });
+            if (!response.ok) {
+              // TODO: deal with the error
+              console.log("Email verification code not deleted");
+            } else {
+              res.status(200).json({ status: 200, data: [{ message: "The email address was successfully verified." }] });
+            }
           }
-        })
-        .catch(error => {
+        } else {
+          // No match was found, increment the attempts counter
           if (userId) {
-            EmailVerification.increment(
+            const incrementResult = await EmailVerification.increment(
               "attempts",
               { where: { userId }}
-            )
-            .then(data => {
-              res.status(403).json({ error: "Code Not Found", code: "903", message: "Verification code did not match." });
+            );
+
+            const error = incrementResult[0][1] === 1 ? "The verification code entered was not correct." : "There is no record of an email verification code being sent.";
+
+            res.status(404).json({
+              status: 404,
+              message: "Not Found",
+              error
             })
-            .catch(error => {
-              res.status(400).json({ error, code: "900", message: "Verification attempts not updated." });
-            });
-          } else {
-            res.status(403).json({ error: "Code Not Found", code: "903", message: "Verification code did not match." });
           }
-        });
-      } else {
-        res.status(429).json({ error: "Too Many Requests", code: "929", message: "The number of attempts to verify the email address have exceeded the limit. " });
+        }
       }
-    })
-    .catch(error => {
-      res.status(404).json({ error, code: "904", message: "No verification code was found. " });
-    });
+    } catch(error) {
+      console.log("EMAIL VERIFICATION ERROR:\n" + error);
+    }
   } else {
     res.sendStatus(403)
   }
@@ -275,7 +290,7 @@ exports.read_one_user_by_username = (req, res) => {
       attributes: { exclude: ["password"]}
     })
     .then(data => {
-      res.statis(200).json({ status: 200, message: "ok", data });
+      res.status(200).json({ status: 200, message: "ok", data });
     })
     .catch(error => {
       res.status(500).json({ status: 500, message: "Internal Server Error", error });

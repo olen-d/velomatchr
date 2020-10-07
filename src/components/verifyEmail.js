@@ -80,6 +80,7 @@ const VerifyEmail = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
+      console.log("DATA:", data);
       if(data.error || data.status === 403) { // TODO: clean up the controller to return a sensible status (e.g. 200 ok) and get rid of the or
         //TODO: Add error, message to the destructuring and show them when user has admin priv
         const { code } = data;
