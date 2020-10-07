@@ -81,8 +81,7 @@ const VerifyEmail = props => {
       return response.json();
     }).then(data => {
       if(data && data.status !== 200) {
-        //TODO: Add error, message to the destructuring and show them when user has admin priv
-        console.log(data);
+        //TODO: Add message to the destructuring and show it when user is logged in as an administrator
         const { status, error } = data;
         const resendMessage = "Please click the \"Resend verification code\" link below to get a new code.";
         const tryAgainMessage = "Please make sure the code we sent is entered correctly and try again."
