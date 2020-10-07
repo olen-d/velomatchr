@@ -267,9 +267,9 @@ exports.read_one_email_verification = async (req, res) => {
 
             const error = incrementResult[0][1] === 1 ? "The verification code entered was not correct." : "There is no record of an email verification code being sent.";
 
-            res.status(404).json({
-              status: 404,
-              message: "Not Found",
+            res.status(400).json({
+              status: 400,
+              message: "Bad Request",
               error
             })
           }
