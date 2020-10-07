@@ -80,30 +80,31 @@ const VerifyEmail = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      console.log("DATA:", data);
-      if(data.error || data.status === 403) { // TODO: clean up the controller to return a sensible status (e.g. 200 ok) and get rid of the or
+      if(data && data.status !== 200) {
         //TODO: Add error, message to the destructuring and show them when user has admin priv
-        const { code } = data;
-        const resendMessage = "Please click the \"Resend verification code\" link below to get a new code. ";
+        console.log(data);
+        const { status, error } = data;
+        const resendMessage = "Please click the \"Resend verification code\" link below to get a new code.";
+        const tryAgainMessage = "Please make sure the code we sent is entered correctly and try again."
 
         setIsError(true);
         setIsErrorHeader("Unable to verify your email address");
-        // TODO: Return sensible error codes from the controller and distinguish between 400/500 series and the codes, also controller should send the resend messages.
-        switch (code) {
-          case "903":
-            setIsErrorMessage("Please make sure the code we sent you is entered correctly and try again.");
+
+        switch (status) {
+          case 400:
+            setIsErrorMessage(`${error} ${tryAgainMessage}`);
             break;
-          case "904":
-            setIsErrorMessage("No verification code was found. " + resendMessage);
+          case 404:
+            setIsErrorMessage(`${error} ${resendMessage}`);
             break;
-          case "910":
-            setIsErrorMessage("The code we sent you has expired. " + resendMessage);
+          case 410:
+            setIsErrorMessage(`${error} ${resendMessage}`);
             break;
-          case "929":
-            setIsErrorMessage("You've entered too many incorrect codes. " + resendMessage);
+          case 429:
+            setIsErrorMessage(`${error} ${resendMessage}`);
             break;
           default:
-            setIsErrorMessage("Please make sure the code we sent you is entered correctly and try again.");
+            setIsErrorMessage(tryAgainMessage);
             break;
         }        
       } else {
