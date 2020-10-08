@@ -884,6 +884,7 @@ exports.email_send_verification = async (req, res) => {
     })
     .catch(error => {
       // TODO - return some sort of useful error
+      console.log("DATABASE ERROR:", error);
     });
     // TODO - if the code isn't unique, generate a new one
     // TODO - if nothing was entered in the database, stop and return an error, don't send a bogus confirmation email
@@ -903,10 +904,17 @@ exports.email_send_verification = async (req, res) => {
       body: JSON.stringify(formData)
     })
     .then(response => {
-      if (!response.error) {
-        res.json(response);
+      if (!response.ok) {
+        // TODO: Deal with the error
+      } else {
+        response.json().then(json => {
+          res.json(json);
+        })
+        .catch(error => {
+          // TODO: Deal with the error
+          console.log(error);
+        })
       }
-      // TODO: Deal with the error
     })
     .catch(error => {
       res.json(error)

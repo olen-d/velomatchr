@@ -15,6 +15,7 @@ import {
 } from "semantic-ui-react";
 
 import ErrorContainer from "./errorContainer";
+import SuccessContainer from "./successContainer";
 
 const resendStyle = {
   background: "none",
@@ -33,6 +34,9 @@ const VerifyEmail = props => {
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccessHeader, setIsSuccessHeader] = useState(null);
+  const [isSuccessMessage, setIsSuccessMessage] = useState(null);
   const [isVerificationCodeError, setIsVerificationCodeError] = useState(false);
   // ...Rest of the State
   const [userId, setUserId] = useState(null);
@@ -146,7 +150,7 @@ const VerifyEmail = props => {
   }
 
   const resendEmail = () => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/delete/id/${userId}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/id/${userId}`, {
       method: "delete",
       headers: {
         Authorization: `Bearer ${token}`
@@ -154,10 +158,14 @@ const VerifyEmail = props => {
     })
     .then(response => {
       if(!response.ok) {
-        throw new Error ("Network response was not ok.");
+        setIsError(true);
+        setIsErrorHeader("Network Error");
+        setIsErrorMessage("The verification code could not be resent because of a connectivity issue. Please try again.");
+        return false;
       }
     })
     .catch(error => {
+      // TODO: Deal with the error
       console.log({ error });
     });
 
@@ -184,8 +192,26 @@ const VerifyEmail = props => {
         .then(response => {
           if(!response.ok) {
             throw new Error ("Network response was not ok.");
+          } else {
+            //TODO Update the success field on resend...
+            response.json().then(jsonSendMail => {
+              const {data: { rejected }, } = jsonSendMail;
+              if (rejected.length === 0) {
+                setIsSuccess(true);
+                setIsSuccessHeader("Verification Code Sent");
+                setIsSuccessMessage("A new verification code was successfully sent to the your email address.");
+              } else {
+                // Mail was rejected by the receiving server
+                // TODO: Log the error
+                setIsError(true);
+                setIsErrorHeader("Email Rejected");
+                setIsErrorMessage("The message containing the verification code was rejected by the email server.");
+              }
+            })
+            .catch(error => {
+              console.log(error)
+            });
           }
-          //TODO Update the success field on resend...
         })
         .catch(error => {
           console.log(error);
@@ -214,6 +240,11 @@ const VerifyEmail = props => {
         header={isErrorHeader}
         message={isErrorMessage}
         show={isError}
+      />
+      <SuccessContainer
+        header={isSuccessHeader}
+        message={isSuccessMessage}
+        show={isSuccess}
       />
       <Segment>
         <Form
