@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 import {
   Button,
@@ -56,6 +57,20 @@ const MatchesNewUser = props => {
       </Grid.Column>
     </MatchesContext.Provider>
   );
+}
+
+MatchesNewUser.defaultProps = {
+  submitBtnContent: "Finished",
+  submitRedirect: true,
+  submitRedirectURL: "/onboarding/verify-email"
+}
+
+const { bool, string } = PropTypes;
+
+MatchesNewUser.propTypes = {
+  submitBtnContent: string,
+  submitRedirect: bool,
+  submitRedirectURL: string
 }
 
 export default MatchesNewUser;
