@@ -120,7 +120,9 @@ const processMail = async emails => {
         const { data: [{ emailProxy: senderProxy }], } = jsonSenderProxy;
 
         // Parse the message
-        const client = mailBodyParser.detectClient(message);
+        console.log(message);
+        const { client } = await mailBodyParser.detectClient(message);
+        console.log(client);
         // TODO: pass the data into the parser and return something useful
 
         // Data to pass to send endpoint
