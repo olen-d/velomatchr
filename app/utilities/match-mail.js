@@ -95,13 +95,14 @@ const processMail = async emails => {
             Authorization: `Bearer ${token}`
           }
         });
-    console.log(response.status);
+
         const json = response.ok ? await response.json() : null
         const { data: [{ requester: { id: addresseeId, email: addresseeEmail }, }], } = json;
 
         // Get the sender userId by email address
         const expression = /<.+@.+\..+>/i;
-        const senderEmail = from.match(expression)[0].slice(1,-1);
+        const fromParts = from.match(expression);
+        const senderEmail = fromParts ? fromParts[0].slice(1,-1) : from;
         
         const responseSenderId = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${senderEmail}`);
         const jsonSenderId = responseSenderId.ok ? await responseSenderId.json() : null;
