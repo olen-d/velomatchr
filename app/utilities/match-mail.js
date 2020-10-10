@@ -1,5 +1,6 @@
 const fetch = require("node-fetch");
 const imaps = require("imap-simple");
+const mailBodyParser = require("mail-body-parser");
 
 // Helpers
 const tokens = require ("../helpers/tokens");
@@ -94,8 +95,8 @@ const processMail = async emails => {
             Authorization: `Bearer ${token}`
           }
         });
-    
-        const json = response.ok ? await response.json() : null;
+    console.log(response.status);
+        const json = response.ok ? await response.json() : null
         const { data: [{ requester: { id: addresseeId, email: addresseeEmail }, }], } = json;
 
         // Get the sender userId by email address
@@ -116,6 +117,10 @@ const processMail = async emails => {
 
         const jsonSenderProxy = responseSenderProxy.ok ? await responseSenderProxy.json() : null;
         const { data: [{ emailProxy: senderProxy }], } = jsonSenderProxy;
+
+        // Parse the message
+        const client = mailBodyParser.detectClient(message);
+        // TODO: pass the data into the parser and return something useful
 
         // Data to pass to send endpoint
         const formData = {
@@ -144,8 +149,8 @@ const processMail = async emails => {
           // On successful send, delete the original using the uid
           const {data: { rejected }, } = jsonSendMail;
           if (rejected.length === 0) {
-            const deleted = await connection.deleteMessage([uid]);
-            console.log("DELETED:", deleted);
+            // const deleted = await connection.deleteMessage([uid]);
+            // console.log("DELETED:", deleted);
           } else {
             // Mail was rejected by the receiving server
             // Log the error
