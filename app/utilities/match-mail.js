@@ -47,17 +47,20 @@ const getNewMail = async () => {
     await connection.openBox("INBOX");
 
     const results = await connection.search(searchCriteria, fetchOptions);
-
+// console.log(results);
+// console.log(results[0].parts[0].body["content-type"]);
     const newEmails = results.map(result => {
 
-      const { attributes: { uid }, parts: [{ body: { from: [from], subject: [subject], to: [to] }, }, {body: message}], } = result;
+      const { attributes: { uid }, parts: [{ body: { "content-type": [contentType], from: [from], subject: [subject], to: [to] }, }, {body: message}], } = result;
       // console.log(from, to, subject, message);
+      // console.log(contentType);
       // To
       // From
       // Subject
+      // Content-Type
       // Body
       // uid - useful for deleting the email on the server
-      return {from, message, to, subject, uid};
+      return {contentType, from, message, to, subject, uid};
     });
 
   // console.log(newEmails);
@@ -75,7 +78,7 @@ const processMail = async emails => {
 
   try {
     for (const email of emails) {
-      const { from, message, to, subject, uid } = email;
+      const { contentType, from, message, to, subject, uid } = email;
 
       // Mark the email as seen to avoid duplicate processing, but don't delete it until it's successfully forwarded
       await connection.addFlags(uid, "\\Seen");
@@ -119,11 +122,12 @@ const processMail = async emails => {
         const jsonSenderProxy = responseSenderProxy.ok ? await responseSenderProxy.json() : null;
         const { data: [{ emailProxy: senderProxy }], } = jsonSenderProxy;
 
-        // Parse the message
-        console.log(message);
-        const { client } = await mailBodyParser.detectClient(message);
-        console.log(client);
-        // TODO: pass the data into the parser and return something useful
+        // Parse the message using mail-body-parser
+        // console.log(message);
+        const boundary = contentType.includes("multipart") ? "--" + contentType.slice(contentType.indexOf("boundary=") + 9) : null;
+        
+        const { parsedBody } = await mailBodyParser.parseBody(boundary, message);
+        console.log(parsedBody);
 
         // Data to pass to send endpoint
         const formData = {
@@ -166,7 +170,7 @@ const processMail = async emails => {
     } 
   } catch (error) {
     // TODO: deal with the error
-    console.log("match-mail // processMail / ERROR:\n" + error);
+    console.log("match-mail // processMail / ERROR:\n" + JSON.stringify(error));
   }
 }
 
