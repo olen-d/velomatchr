@@ -70,7 +70,7 @@ exports.mail_match = async (req, res) => {
   }
 };
 
-exports.send_mail = (req, res) => {
+exports.send_mail = async (req, res) => {
   const { authorized } = req;
   if (authorized) {
     const { body: { fromAddress, toAddress, subject, message }, } = req;
@@ -78,37 +78,42 @@ exports.send_mail = (req, res) => {
     const subjectPrefix = "[VELOMATCHR]";
     const subjectProcessed = subject.includes(subjectPrefix) ? subject : `${subjectPrefix} ${subject}`;
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMPT_PASS
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
-  
     const mailOptions = {
       from: fromAddress,
       to: toAddress,
       subject: subjectProcessed,
       html: message
     };
-  
-    transporter.sendMail(mailOptions, (err, success) => {
-      if (err) {
-        res.status(500).json({ status: 500, message: `Internal server error. ${err}` });
-      } else {
-        res.status(200).json({ status: 200, message: "ok", data: success });
-      }
-    });
+
+    const result = await transportMail(mailOptions);
+    if (result.error) {
+      const { error } = result;
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    } else {
+      const { success } = result;
+      res.status(200).json({ status: 200, data: success });
+    }
   } else {
     res.sendStatus(403);
   }
 };
+
+// exports.send_relationship_mail = (req, res) => {
+//   const { authorized } = req;
+//   if (authorized) {
+//     const { body: { fromAddress, toAddress, subject, message, contentType }, } = req;
+
+// const mailOptions = {
+//   headers: { "content-type": contentType },
+//   from: fromAddress,
+//   to: toAddress,
+//   subject: subjectProcessed,
+//   html: message
+// };
+//   } else {
+//     res.sendStatus(403);
+//   }
+// };
 
 exports.check_mx = (req, res) => {
   // const { authorized } = req; // TODO: update this to use API key when implemented
@@ -151,3 +156,32 @@ exports.check_mx = (req, res) => {
   //   res.sendStatus(403);
   // }
 };
+
+const transportMail = mailOptions => {
+  return new Promise((resolve, reject) => {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        secure: process.env.SMTP_SECURE,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMPT_PASS
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      });
+  
+      transporter.sendMail(mailOptions, (err, success) => {
+        if (err) {
+          resolve({ error: err });
+        } else {
+          resolve({ success });
+        }
+      });
+    } catch(error) {
+      reject({ error });
+    }
+  });
+}

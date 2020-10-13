@@ -124,6 +124,7 @@ const processMail = async emails => {
 
         // Parse the message using mail-body-parser
         // console.log(message);
+        // Get the boundary from the headers, mail-body-parser will need this to split apart multipart messages
         const boundary = contentType.includes("multipart") ? "--" + contentType.slice(contentType.indexOf("boundary=") + 9) : null;
         
         const { parsedBody } = await mailBodyParser.parseBody(boundary, message);
@@ -131,9 +132,10 @@ const processMail = async emails => {
 
         // Data to pass to send endpoint
         const formData = {
-          fromAddress: `"VeloMatchr Buddy" <buddy-${senderProxy}@velomatchr.com>`, 
-          toAddress: addresseeEmail, 
-          subject, 
+          fromAddress: `"VeloMatchr Buddy" <buddy-${senderProxy}@velomatchr.com>`,
+          toAddress: addresseeEmail,
+          subject,
+          contentType,
           message
         }
 
@@ -148,6 +150,7 @@ const processMail = async emails => {
         });
 
         const jsonSendMail = responseSendMail.ok? await responseSendMail.json() : null;
+        console.log("RESULT:", jsonSendMail);
         if (jsonSendMail.status !== 200) {
           // Send an error
           // TODO: IMPORTANT! Deal with the error - try and resend and/or send a bounce to the sender
