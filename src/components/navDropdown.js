@@ -2,6 +2,8 @@ import React, { useContext, useState } from "react";
 
 import { useRouteMatch } from "react-router-dom";
 
+import PropTypes from "prop-types";
+
 import {
   Dropdown
 } from 'semantic-ui-react';
@@ -41,6 +43,18 @@ const NavDropdown = props => {
       onChange={handleDropdown}
     />
   );
+}
+
+NavDropdown.defaultProps = {
+  items: [],
+  title: "No Title Provided"
+}
+
+const { array, string } = PropTypes;
+
+NavDropdown.propTypes = {
+  items: array,
+  title: string
 }
 
 export default NavDropdown;
