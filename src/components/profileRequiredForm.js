@@ -182,13 +182,15 @@ ProfileRequiredForm.defaultProps = {
   submitRedirectURL: "/dashboard"
 }
 
+const { bool, number, string } = PropTypes;
+
 ProfileRequiredForm.propTypes = {
-  colWidth: PropTypes.number,
-  formInstructions: PropTypes.string,
-  formTitle: PropTypes.string,
-  submitBtnContent: PropTypes.string,
-  submitRedirect: PropTypes.bool,
-  submitRedirectURL: PropTypes.string
+  colWidth: number,
+  formInstructions: string,
+  formTitle: string,
+  submitBtnContent: string,
+  submitRedirect: bool,
+  submitRedirectURL: string
 }
 
 export default ProfileRequiredForm;
