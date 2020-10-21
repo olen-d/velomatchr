@@ -29,10 +29,12 @@ SuccessContainer.defaultProps = {
   show: false
 }
 
+const { bool, string } = PropTypes;
+
 SuccessContainer.propTypes = {
-  header: PropTypes.string,
-  message: PropTypes.string,
-  show: PropTypes.bool
+  header: string,
+  message: string,
+  show: bool
 }
 
 export default SuccessContainer;
