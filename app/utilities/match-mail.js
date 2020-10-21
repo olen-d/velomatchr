@@ -127,20 +127,22 @@ const processMail = async emails => {
         // Get the boundary from the headers, mail-body-parser will need this to split apart multipart messages
         const boundary = contentType.includes("multipart") ? "--" + contentType.slice(contentType.indexOf("boundary=") + 9) : null;
         
-        const { parsedBody } = await mailBodyParser.parseBody(boundary, message);
-        console.log(parsedBody);
+        const { bodyParts } = await mailBodyParser.parseBody(boundary, message);
+        
+        const text = bodyParts.text ? bodyParts.text : false;
+        const html = bodyParts.html ? bodyParts.html : false;
 
         // Data to pass to send endpoint
         const formData = {
           fromAddress: `"VeloMatchr Buddy" <buddy-${senderProxy}@velomatchr.com>`,
           toAddress: addresseeEmail,
           subject,
-          contentType,
-          message
+          text,
+          html
         }
 
         // Send the email
-        const responseSendMail = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+        const responseSendMail = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/relationship/send`, {
           method: "post",
           headers: {
             "Content-Type": "application/json",
@@ -150,17 +152,17 @@ const processMail = async emails => {
         });
 
         const jsonSendMail = responseSendMail.ok? await responseSendMail.json() : null;
-        console.log("RESULT:", jsonSendMail);
+        // console.log("RESULT:", jsonSendMail);
         if (jsonSendMail.status !== 200) {
           // Send an error
           // TODO: IMPORTANT! Deal with the error - try and resend and/or send a bounce to the sender
-          console.log(jsonSendMail.message);
+          // console.log(jsonSendMail.message);
         } else { 
           // On successful send, delete the original using the uid
           const {data: { rejected }, } = jsonSendMail;
           if (rejected.length === 0) {
-            // const deleted = await connection.deleteMessage([uid]);
-            // console.log("DELETED:", deleted);
+            await connection.deleteMessage([uid]);
+            // TODO: Figure out if the message was deleted or not. Unfortunately, connection.deleteMessage doesn't seem to return anything.
           } else {
             // Mail was rejected by the receiving server
             // Log the error

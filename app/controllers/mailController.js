@@ -98,22 +98,36 @@ exports.send_mail = async (req, res) => {
   }
 };
 
-// exports.send_relationship_mail = (req, res) => {
-//   const { authorized } = req;
-//   if (authorized) {
-//     const { body: { fromAddress, toAddress, subject, message, contentType }, } = req;
+exports.send_relationship_mail = async (req, res) => {
+  const { authorized } = req;
+  if (authorized) {
+    const { body: { fromAddress, html, text, toAddress, subject }, } = req;
 
-// const mailOptions = {
-//   headers: { "content-type": contentType },
-//   from: fromAddress,
-//   to: toAddress,
-//   subject: subjectProcessed,
-//   html: message
-// };
-//   } else {
-//     res.sendStatus(403);
-//   }
-// };
+    const subjectPrefix = "[VELOMATCHR]";
+    const subjectProcessed = subject.includes(subjectPrefix) ? subject : `${subjectPrefix} ${subject}`;
+
+    const mailOptions = {
+      from: fromAddress,
+      to: toAddress,
+      subject: subjectProcessed,
+    };
+
+    // If different message types exist, add them to mailOptions
+    if (text) { mailOptions.text = text }
+    if (html) { mailOptions.html = html }
+
+    const result = await transportMail(mailOptions);
+    if (result.error) {
+      const { error } = result;
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    } else {
+      const { success } = result;
+      res.status(200).json({ status: 200, data: success });
+    }
+  } else {
+    res.sendStatus(403);
+  }
+};
 
 exports.check_mx = (req, res) => {
   // const { authorized } = req; // TODO: update this to use API key when implemented

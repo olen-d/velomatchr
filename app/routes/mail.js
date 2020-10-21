@@ -11,5 +11,6 @@ router.get("/mail/check-mx/:email", mail_controller.check_mx);
 
 router.post("/mail/match", mail_controller.mail_match);
 router.post("/mail/send", authorizeJWT, mail_controller.send_mail);
+router.post("/mail/relationship/send", authorizeJWT, mail_controller.send_relationship_mail);
 
 module.exports = router;
