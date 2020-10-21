@@ -6,7 +6,10 @@ const mailBodyParser = require("mail-body-parser");
 const tokens = require ("../helpers/tokens");
 
 const processNewMail = async numNewMail => {
-  console.log("NUMBER OF NEW EMAILS:", numNewMail);
+  if (numNewMail > 0) {
+    const newEmails = await getNewMail();
+    processMail(newEmails);
+  }
 };
 
 const config = {
