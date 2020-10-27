@@ -131,7 +131,7 @@ const processMail = async emails => {
         const boundary = contentType.includes("multipart") ? "--" + contentType.slice(contentType.indexOf("boundary=") + 9) : null;
         
         const { bodyParts } = await mailBodyParser.parseBody(boundary, message);
-        
+        // console.log(bodyParts.text);
         const text = bodyParts.text ? bodyParts.text : false;
         const html = bodyParts.html ? bodyParts.html : false;
 
