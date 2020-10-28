@@ -113,7 +113,8 @@ const processMail = async emails => {
         const responseSenderId = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${senderEmail}`);
         const jsonSenderId = responseSenderId.ok ? await responseSenderId.json() : null;
 
-        const { data : { id: senderId }, } = jsonSenderId;
+        const { data : { firstName, id: senderId, lastName }, } = jsonSenderId;
+        const lastInitial = lastName.slice(0, 1) + ".";
 
         // Get the sender's email proxy
         const responseSenderProxy = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy/id/${senderId}/${addresseeId}`, {
@@ -131,13 +132,14 @@ const processMail = async emails => {
         const boundary = contentType.includes("multipart") ? "--" + contentType.slice(contentType.indexOf("boundary=") + 9) : null;
         
         const { bodyParts } = await mailBodyParser.parseBody(boundary, message);
-        // console.log(bodyParts.text);
+        // console.log("TEXT\n", bodyParts.text);
+        // console.log("BP\n" + JSON.stringify(bodyParts));
         const text = bodyParts.text ? bodyParts.text : false;
         const html = bodyParts.html ? bodyParts.html : false;
 
         // Data to pass to send endpoint
         const formData = {
-          fromAddress: `"VeloMatchr Buddy" <buddy-${senderProxy}@velomatchr.com>`,
+          fromAddress: `"VeloMatchr Buddy ${firstName} ${lastInitial}" <buddy-${senderProxy}@velomatchr.com>`,
           toAddress: addresseeEmail,
           subject,
           text,
