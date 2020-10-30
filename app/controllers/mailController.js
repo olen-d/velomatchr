@@ -9,7 +9,6 @@ const tokens = require ("../helpers/tokens");
 exports.mail_match = async (req, res) => {
   // Get the items from the body
   const { body: { addresseeProxy, body: message, requesterProxy, subject, userId: senderId }, } = req;
-
   const token = await tokens.create(-99);
   const errors = [];
 
@@ -44,7 +43,7 @@ exports.mail_match = async (req, res) => {
 
       const senderJson = senderResponse.ok ? await senderResponse.json() : null;
 
-      const { firstName: senderFirstName, lastName: senderLastName } = senderJson;
+      const { user: { firstName: senderFirstName, lastName: senderLastName }, } = senderJson;
       const senderLastInitial = senderLastName.slice(0,1) + ".";
       
   
