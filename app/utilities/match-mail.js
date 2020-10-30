@@ -139,7 +139,7 @@ const processMail = async emails => {
 
         // Data to pass to send endpoint
         const formData = {
-          fromAddress: `"VeloMatchr Buddy ${firstName} ${lastInitial}" <buddy-${senderProxy}@velomatchr.com>`,
+          fromAddress: `"${firstName} ${lastInitial} (VeloMatchr Buddy)" <buddy-${senderProxy}@velomatchr.com>`,
           toAddress: addresseeEmail,
           subject,
           text,

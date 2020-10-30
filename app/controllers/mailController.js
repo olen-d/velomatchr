@@ -8,7 +8,7 @@ const tokens = require ("../helpers/tokens");
 
 exports.mail_match = async (req, res) => {
   // Get the items from the body
-  const { body: { addresseeProxy, body: message, requesterProxy, subject }, } = req;
+  const { body: { addresseeProxy, body: message, requesterProxy, subject, userId: senderId }, } = req;
 
   const token = await tokens.create(-99);
   const errors = [];
@@ -35,12 +35,23 @@ exports.mail_match = async (req, res) => {
   
       const json = response.ok ? await response.json() : null;
       const { data: [{ requester: { email }, }], } = json;
+
+      const senderResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${senderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const senderJson = senderResponse.ok ? await senderResponse.json() : null;
+
+      const { firstName: senderFirstName, lastName: senderLastName } = senderJson;
+      const senderLastInitial = senderLastName.slice(0,1) + ".";
+      
   
       // TODO: Add something to the subject, or not
-      // TODO: Add sender first name and last initial to "VeloMatchr Buddy"
       // TODO: Filter the message
       const formData = {
-        fromAddress: `"VeloMatchr Buddy" <buddy-${requesterProxy}@velomatchr.com>`, 
+        fromAddress: `"${senderFirstName} ${senderLastInitial} (VeloMatchr Buddy)" <buddy-${requesterProxy}@velomatchr.com>`, 
         toAddress: email, 
         subject, 
         message
