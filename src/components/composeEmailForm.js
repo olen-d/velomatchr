@@ -17,14 +17,14 @@ import {
     Segment
   } from "semantic-ui-react";
   
-  import { useAuth } from "../context/authContext";
+import { useAuth } from "../context/authContext";
 
-  import BodyTextarea from "./formFields/bodyTextarea";
-  import ErrorContainer from "./errorContainer";
-  import SubjectInput from "./formFields/subjectInput";
-  import SuccessContainer from "./successContainer";
+import BodyTextarea from "./formFields/bodyTextarea";
+import ErrorContainer from "./errorContainer";
+import SubjectInput from "./formFields/subjectInput";
+import SuccessContainer from "./successContainer";
 
-  import useForm from "./../hooks/useForm";
+import useForm from "./../hooks/useForm";
 
 const ComposeEmailForm = props => {
   const { colWidth, formTitle } = props;
@@ -66,7 +66,7 @@ const ComposeEmailForm = props => {
     // Send subject
     // Send message
     const { body, subject } = values;
-    const formData = { addresseeProxy, body, requesterProxy, subject };
+    const formData = { addresseeProxy, body, requesterProxy, subject, userId };
 
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/match`, {
