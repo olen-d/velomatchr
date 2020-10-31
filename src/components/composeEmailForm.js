@@ -61,12 +61,33 @@ const ComposeEmailForm = props => {
   }
 
   const handleSubmit = async () => {
-    // Send requester proxy
-    // Send addressee proxy
-    // Send subject
-    // Send message
     const { body, subject } = values;
-    const formData = { addresseeProxy, body, requesterProxy, subject, userId };
+
+    // Check for basic HTML tags and add them if they're missing
+    const hasHtml = body.includes("<html>") && body.includes("</html>");
+    const hasBody = body.includes("<body>") && body.includes("</body>");
+    const hasMain = body.includes("<main>") && body.includes("</main>");
+
+    const bodyParts = {};
+
+    if (hasHtml && hasBody && hasMain) {
+      bodyParts.html = body;
+    } else {
+      let htmlMessage = body;
+
+      htmlMessage = hasMain ? htmlMessage : "<main>" + htmlMessage + "</main>";
+      htmlMessage = hasBody ? htmlMessage : "<body>" + htmlMessage + "</body>";
+      htmlMessage = hasHtml ? htmlMessage : "<html>" + htmlMessage + "</html>";
+
+      bodyParts.html = htmlMessage;
+    }
+
+    // TODO: check for tags and strip the html and create a text version if needed
+    // TODO: replace <p> tags with two new lines and <br> with one new line 
+    // for now, just send text as false
+    bodyParts.text = false; // TODO: remove this line when the functionality to strip the html is implemented...
+
+    const formData = { addresseeProxy, bodyParts, requesterProxy, subject, userId };
 
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/match`, {
