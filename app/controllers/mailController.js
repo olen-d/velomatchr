@@ -8,9 +8,8 @@ const tokens = require ("../helpers/tokens");
 
 exports.mail_match = async (req, res) => {
   // Get the items from the body
-  const { body: { addresseeProxy, body: message, requesterProxy, subject, userId: senderId }, } = req;
-  const html = message;
-  const text = false; // TODO: update this to strip the HTML and provide a text-only alternative
+  const { body: { addresseeProxy, bodyParts: { html, text }, requesterProxy, subject, userId: senderId }, } = req;
+
   const token = await tokens.create(-99);
   const errors = [];
 
@@ -23,7 +22,8 @@ exports.mail_match = async (req, res) => {
     }
   };
 
-  const isValidMessage = isValidStringLength(message, "body");
+  const isValidMessage = isValidStringLength(html, "body");
+  // TODO: Also check the text when that functionality is updated...
   const isValidSubject = isValidStringLength(subject, "subject");
 
   if (isValidMessage && isValidSubject) {
@@ -58,7 +58,7 @@ exports.mail_match = async (req, res) => {
         text,
         html
       }
-  
+
       const sendResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/relationship/send`, {
         method: "post",
         headers: {
