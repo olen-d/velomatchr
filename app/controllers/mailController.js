@@ -9,6 +9,8 @@ const tokens = require ("../helpers/tokens");
 exports.mail_match = async (req, res) => {
   // Get the items from the body
   const { body: { addresseeProxy, body: message, requesterProxy, subject, userId: senderId }, } = req;
+  const html = message;
+  const text = false; // TODO: update this to strip the HTML and provide a text-only alternative
   const token = await tokens.create(-99);
   const errors = [];
 
@@ -53,10 +55,11 @@ exports.mail_match = async (req, res) => {
         fromAddress: `"${senderFirstName} ${senderLastInitial} (VeloMatchr Buddy)" <buddy-${requesterProxy}@velomatchr.com>`, 
         toAddress: email, 
         subject, 
-        message
+        text,
+        html
       }
   
-      const sendResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+      const sendResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/relationship/send`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
