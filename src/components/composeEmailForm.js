@@ -63,6 +63,19 @@ const ComposeEmailForm = props => {
   const handleSubmit = async () => {
     const { body, subject } = values;
 
+    // Process new lines
+    // TODO: Find all the single newlines and replace with <br />
+
+    // Automatically wrap blocks terminated with double line breaks in <p> ... </p>
+    // Search for double line breaks \n\n (Unix) or \r\n\r\n (Windows) and replace with a closing paragraph tag
+    const regex = /\n\n|\r\n\r\n/g;
+    const closingParagraphTag = body.replace(regex, "</p>");
+
+    // Add the opening paragraph tags
+    const closingParagraphTags = closingParagraphTag.split("</p>");
+    const paragraphs = closingParagraphTags.map(paragraph => "<p>" + paragraph + "</p>");
+    let htmlMessage = paragraphs.join("");
+
     // Check for basic HTML tags and add them if they're missing
     const hasHtml = body.includes("<html>") && body.includes("</html>");
     const hasBody = body.includes("<body>") && body.includes("</body>");
@@ -71,10 +84,8 @@ const ComposeEmailForm = props => {
     const bodyParts = {};
 
     if (hasHtml && hasBody && hasMain) {
-      bodyParts.html = body;
+      bodyParts.html = htmlMessage;
     } else {
-      let htmlMessage = body;
-
       htmlMessage = hasMain ? htmlMessage : "<main>" + htmlMessage + "</main>";
       htmlMessage = hasBody ? htmlMessage : "<body>" + htmlMessage + "</body>";
       htmlMessage = hasHtml ? htmlMessage : "<html>" + htmlMessage + "</html>";
