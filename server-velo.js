@@ -27,6 +27,7 @@ app.use("/public/images-profiles", express.static("public/images-profiles"));
 //   });
 // const apiRoutes = require("./app/routing/apiRoutes")(app);
 // const htmlRoutes = require("./app/routing/htmlRoutes")(app);
+app.use("/api", require("./app/routes/auth"));
 app.use("/api", require("./app/routes/countries"));
 app.use("/api", require("./app/routes/mail"));
 app.use("/api", require("./app/routes/matches"));
