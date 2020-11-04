@@ -52,7 +52,7 @@ const LoginForm = props => {
         return;
       }
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/login`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/password`, {
       method: "post",
       headers: {
         "Content-Type": "application/json"
@@ -61,14 +61,17 @@ const LoginForm = props => {
     }).then(response => {
       return response.json();
     }).then(data => {
-      if(data.token) {
-        localStorage.setItem("user_token", JSON.stringify(data.token));
-        setIsAuth(data.authenticated);
-        setAuthTokens(data.token);
+      if(data.access_token) {
+        const { access_token: accessToken, refresh_token: refreshToken } = data; // token_type: tokenType 
+        localStorage.setItem("user_token", JSON.stringify(accessToken));
+        localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
+        setIsAuth(true);
+        setAuthTokens(accessToken);
         setRedirectURL("/dashboard");
         setDoRedirect(true);
       } else {
         localStorage.removeItem("user_token");
+        localStorage.removeItem("user_refresh_token");
         setIsErrorHeader("Unable to Sign In");
         setIsErrorMessage("Please check your email address and password and try again.");
         setIsError(true);
