@@ -2,11 +2,11 @@
 const { User } = require("../models");
 
 // Packages
-const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 
 // Helpers
 const bcrypt = require("../helpers/bcrypt-module");
+const tokens = require("../helpers/tokens");
 
 exports.token_grant_type_password = async (req, res) => {
   const { body: { username, pass }, } = req;
@@ -20,7 +20,7 @@ exports.token_grant_type_password = async (req, res) => {
       attributes: ["id", "password"]
     });
   
-    // Check the password
+    // If the user exists, check the password and issue a token if it matches
     if (userData !== null) {
       const { id, password } = userData;
       const { login, status } = await bcrypt.checkPass(pass, password);
@@ -38,35 +38,55 @@ exports.token_grant_type_password = async (req, res) => {
         }
 
         // Issue the token
-        jwt.sign(
-          {user: id},
-          process.env.SECRET,
-          { expiresIn: "1h" },
-          (err, token) => {
-            res.status(200).json({
-              token_type: "bearer",
-              access_token: token,
-              refresh_token: refreshToken
-            });
-          }
-        );
+        const token = await tokens.create(id);
+
+        res.status(200).json({
+          token_type: "bearer",
+          access_token: token,
+          refresh_token: refreshToken
+        });
       } else {
+        // Password was not a match. Return a general error to avoid leaking valid usernames
         res.status(500).json({ status: 500, message: "Internal server error.", authenticated: false });
       }
     } else {
+      // Username was not a match. Return a general error to avoid leaking valid usernames
       res.status(500).json({ status: 500, message: "Internal server error.", authenticated: false });
     }
   } catch(error) {
     // Epic Fail
+    // TODO: Deal with the error
   }
 
 }
 
-exports.token_grant_type_refresh_token = (req, res) => {
+exports.token_grant_type_refresh_token = async (req, res) => {
+  const { body: { userId: id, refreshToken }, } = req;
 
-  // Refreshtoken
-  // Check Refreshtoken against the DB
-  // If match, then we're good, issue a new access token
-  const data = "Refresh Token";
-  res.status(200).json({ status: 200, message: "ok", data });
+  try {
+    const userData = await User.findOne({
+      where: {
+        id,
+        refreshToken
+      },
+      attributes: ["id", "refreshToken"]
+    });
+
+    if (userData !== null) {
+      const { id, refreshToken } = userData;
+
+      const token = await tokens.create(id);
+
+      res.status(200).json({
+        token_type: "bearer",
+        access_token: token,
+        refresh_token: refreshToken
+      });
+    } else {
+      res.status(500).json({ status: 500, message: "Internal server error.", error: `Either the user ${id} does not exist or a refresh token was not found. ` });
+    }
+  } catch(error) {
+    // Epic fail
+    // TODO: Deal with the error
+  }
 }
