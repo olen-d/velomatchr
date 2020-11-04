@@ -21,7 +21,6 @@ router.get("/users/username/:username", authorizeJWT, users_controller.read_one_
 
 router.post("/users/email/verify", authorizeJWT, users_controller.read_one_email_verification);
 router.post("/users/email/send/verification",authorizeJWT, users_controller.email_send_verification);
-router.post("/users/login", users_controller.read_login); // Token hasn't been issued TODO: Require API Key
 router.post("/users/password/authenticate", authorizeJWT, users_controller.read_one_user_password_authenticate);
 router.post("/users/password/reset", users_controller.password_reset); // Meant to be used with password reset, authentication not required
 router.post("/users/profile/update/photograph", authorizeJWT, imageUpload, users_controller.profile_update_photograph);

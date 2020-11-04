@@ -57,8 +57,7 @@ exports.token_grant_type_password = async (req, res) => {
     // Epic Fail
     // TODO: Deal with the error
   }
-
-}
+};
 
 exports.token_grant_type_refresh_token = async (req, res) => {
   const { body: { userId: id, refreshToken }, } = req;
@@ -89,4 +88,18 @@ exports.token_grant_type_refresh_token = async (req, res) => {
     // Epic fail
     // TODO: Deal with the error
   }
-}
+};
+
+exports.refresh_token_update = async (req, res) => {
+  const { body: { id, refreshToken }, } = req;
+  console.log(id, refreshToken);
+  const userUpdate = await User.update(
+    { refreshToken: "NULL" },
+    { where: { id, refreshToken }}
+  );
+  
+  if (userUpdate[0] === 0) {
+    // TODO: Log that there was an error updating the refresh token
+    console.log("AuthController Refresh Token Update Error");
+  }
+};

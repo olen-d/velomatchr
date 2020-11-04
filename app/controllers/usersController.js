@@ -449,48 +449,6 @@ exports.read_one_user_and_matches_preferences = (req, res) => {
   }
 };
 
-exports.read_login = (req, response) => {
-  const { username, pass } = req.body;
-
-  User.findOne({
-    where: {
-      email: username
-    }
-  })
-  .then(user => {
-    if (user != null) {
-      bcrypt
-        .checkPass(pass, user.password)
-        .then(res => {
-          if (res.status === 200 && res.login) {
-            jwt.sign(
-              {user: user.id},
-              process.env.SECRET,
-              { expiresIn: "1h" },
-              (err, token) => {
-                return response.status(200).json({
-                  authenticated: true,
-                  token
-                });
-              }
-            );
-          } else {
-            return response.status(500).json({
-              authenticated: false
-            });
-          }
-        })
-        .catch(error => {
-          response.json(error);
-        });
-    } else {
-      return response.status(500).json({
-        authenticated: false
-      });
-    }
-  });
-};
-
 // Update modules
 exports.email_update = (req, res) => {
   const { authorized } = req;

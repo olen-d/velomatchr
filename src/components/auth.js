@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import jwt from "jsonwebtoken";
 
 class Auth {
@@ -11,7 +12,31 @@ class Auth {
   }
 
   logout() {
+    const refreshToken = this.getRefreshToken().slice(1, -1); // Slice off the spuious ""
+    const token = this.getToken().slice(1, -1);
+    const userInfo = this.getUserInfo(token);
+
     localStorage.removeItem("user_token");
+    localStorage.removeItem("user_refresh_token");
+
+    if (userInfo && refreshToken) {
+      const { user: id } = userInfo;
+      const actionData = { id, refreshToken };
+
+      fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/`, {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(actionData)
+      }).then(result => {
+        console.log("Delete Result", result);
+      }).catch(error => {
+        console.log("Components/Auth.js Error:", error);
+      }) ;
+    }
+
     this.authenticated = false;
     return this.authenticated;
   }
@@ -55,6 +80,10 @@ class Auth {
 
   getToken() {
     return localStorage.getItem("user_token");
+  }
+
+  getRefreshToken() {
+    return localStorage.getItem("user_refresh_token");
   }
 
   decodeToken(token) {
