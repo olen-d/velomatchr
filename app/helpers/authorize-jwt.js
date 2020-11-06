@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
       const { exp } = decoded;
 
       if(exp <= (Math.floor(Date.now() / 1000))) {
-        res.status(400).json({ status: 400, message: "Access token has expired" });
+        res.status(401).json({ status: 401, message: "Unauthorized", error: "Access token has expired" });
       }
       req.authorized = true;
       next();

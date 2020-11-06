@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const create = userId => {
   return new Promise((resolve, reject) => {
     jwt.sign(
-      {user: userId},
+      { user: userId },
       process.env.SECRET,
       { expiresIn: "1h" },
       (error, token) => {
@@ -13,4 +13,16 @@ const create = userId => {
   });
 }
 
-module.exports = { create };
+const createRefresh = clientId => {
+  return new Promise((resolve, reject) => {
+    jwt.sign(
+      { clientId },
+      process.env.SECRET_REFRESH,
+      (error, token) => {
+        return error ? reject(error) : resolve(token);
+      }
+    )
+  })
+};
+
+module.exports = { create, createRefresh };
