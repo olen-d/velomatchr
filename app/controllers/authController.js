@@ -1,8 +1,8 @@
 // Models
-const { User } = require("../models");
+const { User, RefreshToken } = require("../models");
 
 // Packages
-const { v4: uuidv4 } = require("uuid");
+const requestIp = require("request-ip");
 
 // Helpers
 const bcrypt = require("../helpers/bcrypt-module");
@@ -26,13 +26,15 @@ exports.token_grant_type_password = async (req, res) => {
       const { login, status } = await bcrypt.checkPass(pass, password);
       if (status === 200 && login) {
         const refreshToken = await tokens.createRefresh(clientId); 
+        const clientIp = requestIp.getClientIp(req); 
 
-        const userUpdate = await User.update(
-          { refreshToken },
-          { where: { id }}
-        );
-        
-        if (userUpdate[0] === 0) {
+        const refreshTokenCreate = await RefreshToken.create({
+          userId: id,
+          refreshToken,
+          ipAddress: clientIp
+        });
+
+        if (!refreshTokenCreate) {
           // TODO: Log that there was an error creating the refresh token
         }
 
@@ -61,19 +63,22 @@ exports.token_grant_type_password = async (req, res) => {
 exports.token_grant_type_refresh_token = async (req, res) => {
   const { body: { userId: id, refreshToken }, } = req;
 
+  const clientIp = requestIp.getClientIp(req);
+
   try {
-    const userData = await User.findOne({
+    const refreshTokenData = await RefreshToken.findOne({
       where: {
-        id,
-        refreshToken
+        userId: id,
+        refreshToken,
+        ipAddress: clientIp
       },
       attributes: ["id", "refreshToken"]
     });
 
-    if (userData !== null) {
-      const { id, refreshToken } = userData;
+    if (refreshTokenData !== null) {
+      const { userId, refreshToken } = refreshTokenData;
 
-      const token = await tokens.create(id);
+      const token = await tokens.create(userId);
 
       res.status(200).json({
         token_type: "bearer",
