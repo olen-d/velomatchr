@@ -9,7 +9,7 @@ const bcrypt = require("../helpers/bcrypt-module");
 const tokens = require("../helpers/tokens");
 
 exports.token_grant_type_password = async (req, res) => {
-  const { body: { username, pass }, } = req;
+  const { body: { clientId = "www.velomatchr.com", username, pass }, } = req;
 
   try {
     // Get the user id and encrypted password
@@ -25,8 +25,7 @@ exports.token_grant_type_password = async (req, res) => {
       const { id, password } = userData;
       const { login, status } = await bcrypt.checkPass(pass, password);
       if (status === 200 && login) {
-        const regex = /-/g;
-        const refreshToken = uuidv4().replace(regex, "");
+        const refreshToken = await tokens.createRefresh(clientId); 
 
         const userUpdate = await User.update(
           { refreshToken },
@@ -92,7 +91,7 @@ exports.token_grant_type_refresh_token = async (req, res) => {
 
 exports.refresh_token_update = async (req, res) => {
   const { body: { id, refreshToken }, } = req;
-  console.log(id, refreshToken);
+
   const userUpdate = await User.update(
     { refreshToken: "NULL" },
     { where: { id, refreshToken }}
