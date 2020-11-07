@@ -24,7 +24,7 @@ class Auth {
       const actionData = { id, refreshToken };
 
       fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/`, {
-        method: "put",
+        method: "delete",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`

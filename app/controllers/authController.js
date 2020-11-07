@@ -94,16 +94,21 @@ exports.token_grant_type_refresh_token = async (req, res) => {
   }
 };
 
-exports.refresh_token_update = async (req, res) => {
-  const { body: { id, refreshToken }, } = req;
+exports.refresh_token_delete = async (req, res) => {
+  const { body: { id: userId, refreshToken }, } = req;
 
-  const userUpdate = await User.update(
-    { refreshToken: "NULL" },
-    { where: { id, refreshToken }}
-  );
-  
-  if (userUpdate[0] === 0) {
-    // TODO: Log that there was an error updating the refresh token
-    console.log("AuthController Refresh Token Update Error");
+  const ipAddress = requestIp.getClientIp(req);
+
+  try {
+    const refreshTokenDestroy = await RefreshToken.destroy(
+      { where: { userId, ipAddress, refreshToken }}
+    );
+    
+    if (refreshTokenDestroy !== 1) {
+      // TODO: Log that there was an error deleting the refresh token
+      console.log("AuthController Refresh Token Not Deleted");
+    }
+  } catch(error) {
+    console.log("authController.js ERROR:", error);
   }
 };
