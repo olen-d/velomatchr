@@ -9,6 +9,6 @@ const auth_controller = require("../controllers/authController");
 router.post("/auth/token/grant-type/password", auth_controller.token_grant_type_password);
 router.post("/auth/token/grant-type/refresh-token", auth_controller.token_grant_type_refresh_token);
 
-router.put("/auth/token/refresh-token", authorizeJWT, auth_controller.refresh_token_update);
+router.delete("/auth/token/refresh-token", authorizeJWT, auth_controller.refresh_token_delete);
 
 module.exports = router;
