@@ -41,6 +41,49 @@ class Auth {
     return this.authenticated;
   }
 
+  checkExpiration(token, userId) {
+    return this.willExpire(token) ? this.newAccessToken(userId) : { "isNewAccessToken": false, token };
+  }
+
+  // Check to see if the access token is going to expire soon
+  willExpire(token) {
+    const { exp } = jwt.decode(token)
+    const expirationBuffer = 1 * 60;
+    return exp - expirationBuffer < Date.now() / 1000 ? true : false;
+  }
+
+  // If access token is expired, use the refresh token to retrieve a new access
+  newAccessToken(userId) {
+    return new Promise((resolve, reject) => {
+      const refreshToken = localStorage.getItem("user_refresh_token");
+
+      fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/refresh-token`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ userId, refreshToken })
+        })
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          const { access_token: newAccessToken, refresh_token: refreshToken } = data; // token_type: tokenType
+  
+          // Update the refresh in local storage
+          localStorage.setItem("user_refresh_token", refreshToken);
+  
+          // Done, resolve the new access token
+          resolve({ "isNewAccessToken": true, "token": newAccessToken });
+        })
+        .catch(error => {
+          // TODO: deal with the error
+          console.log("useTokens.js // ERROR:", error);
+          reject(error);
+        });
+    });
+  }
+
   isAuthenticated() {
     if (this.tokenExists()) {
       const token = this.getToken();

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 // import PropTypes from "prop-types";
 
+import auth from "./auth";
+
 import {
   useHistory,
   useParams
 } from "react-router-dom";
-
-import auth from "./auth";
 
 import {
     Button,
@@ -46,8 +46,8 @@ const ComposeEmailForm = props => {
 
   const { id } = useParams();
 
-  const { authTokens: token } = useAuth();
-
+  const { authTokens: token, setAuthTokens } = useAuth();
+  
   const { user } = auth.getUserInfo(token);
 
   const initialValues = { body: "", subject: "Let's Ride Together" }
@@ -63,6 +63,8 @@ const ComposeEmailForm = props => {
   const handleSubmit = async () => {
     const { body, subject } = values;
 
+    const { isNewAccessToken, token: newAccessToken } = await auth.checkExpiration(token, user);
+    if (isNewAccessToken) { setAuthTokens(newAccessToken); }
     // Process new lines
     // TODO: Find all the single newlines and replace with <br />
 
@@ -143,6 +145,9 @@ const ComposeEmailForm = props => {
   useEffect(() => {
     if (userId && addresseeId) {
       (async () => {
+        const { isNewAccessToken, token: newAccessToken } = await auth.checkExpiration(token, user);
+        if (isNewAccessToken) { setAuthTokens(newAccessToken); }
+
         try {
           const responseAddressee = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${addresseeId}`, {
             headers: {
@@ -212,7 +217,7 @@ const ComposeEmailForm = props => {
         }
       })()
     }
-  }, [addresseeId, token, userId]);
+  }, [addresseeId, setAuthTokens, token, user, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);

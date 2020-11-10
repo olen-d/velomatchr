@@ -47,7 +47,7 @@ exports.token_grant_type_password = async (req, res) => {
           refresh_token: refreshToken
         });
       } else {
-        // Password was not a match. Return a general error to avoid leaking valid usernames
+        // Password was not a match. Return a general error to avoid leaking valid 
         res.status(500).json({ status: 500, message: "Internal server error.", authenticated: false });
       }
     } else {
@@ -62,6 +62,7 @@ exports.token_grant_type_password = async (req, res) => {
 
 exports.token_grant_type_refresh_token = async (req, res) => {
   const { body: { userId: id, refreshToken }, } = req;
+  const refreshTokenParsed = JSON.parse(refreshToken);
 
   const clientIp = requestIp.getClientIp(req);
 
@@ -69,10 +70,10 @@ exports.token_grant_type_refresh_token = async (req, res) => {
     const refreshTokenData = await RefreshToken.findOne({
       where: {
         userId: id,
-        refreshToken,
+        refreshToken: refreshTokenParsed,
         ipAddress: clientIp
       },
-      attributes: ["id", "refreshToken"]
+      attributes: ["userId", "refreshToken"]
     });
 
     if (refreshTokenData !== null) {
@@ -86,6 +87,8 @@ exports.token_grant_type_refresh_token = async (req, res) => {
         refresh_token: refreshToken
       });
     } else {
+      console.log("Id:", id + "\n\nRT:", refreshToken + "\nIP:", clientIp + "\n" );
+      console.log(JSON.stringify(refreshTokenData));
       res.status(500).json({ status: 500, message: "Internal server error.", error: `Either the user ${id} does not exist or a refresh token was not found. ` });
     }
   } catch(error) {
