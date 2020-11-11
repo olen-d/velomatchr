@@ -2,6 +2,7 @@
 const { User, RefreshToken } = require("../models");
 
 // Packages
+const jwt = require("jsonwebtoken");
 const requestIp = require("request-ip");
 
 // Helpers
@@ -61,39 +62,57 @@ exports.token_grant_type_password = async (req, res) => {
 };
 
 exports.token_grant_type_refresh_token = async (req, res) => {
-  const { body: { userId: id, refreshToken }, } = req;
+  const { body: { userId: id, refreshToken }, headers: { referer }, } = req;
+
   const refreshTokenParsed = JSON.parse(refreshToken);
+  const secret = process.env.SECRET_REFRESH;
 
-  const clientIp = requestIp.getClientIp(req);
+  const verifyRefreshTokenResult = jwt.verify(refreshTokenParsed, secret, (error, decoded) => {
+    return [error, decoded];
+  });
 
-  try {
-    const refreshTokenData = await RefreshToken.findOne({
-      where: {
-        userId: id,
-        refreshToken: refreshTokenParsed,
-        ipAddress: clientIp
-      },
-      attributes: ["userId", "refreshToken"]
-    });
+  const [error, decoded ] = verifyRefreshTokenResult;
 
-    if (refreshTokenData !== null) {
-      const { userId, refreshToken } = refreshTokenData;
-
-      const token = await tokens.create(userId);
-
-      res.status(200).json({
-        token_type: "bearer",
-        access_token: token,
-        refresh_token: refreshToken
-      });
-    } else {
-      console.log("Id:", id + "\n\nRT:", refreshToken + "\nIP:", clientIp + "\n" );
-      console.log(JSON.stringify(refreshTokenData));
-      res.status(500).json({ status: 500, message: "Internal server error.", error: `Either the user ${id} does not exist or a refresh token was not found. ` });
-    }
-  } catch(error) {
-    // Epic fail
+  if (error) {
     // TODO: Deal with the error
+  } else {
+    const { clientId } = decoded;
+    const refererName = referer.split("://")[1].slice(0, -1); // discard http(s):// and the trailing /
+
+    if (clientId === refererName) {
+      // Authorized, issue a new token
+      const clientIp = requestIp.getClientIp(req);
+
+      try {
+        const refreshTokenData = await RefreshToken.findOne({
+          where: {
+            userId: id,
+            refreshToken: refreshTokenParsed,
+            ipAddress: clientIp
+          },
+          attributes: ["userId", "refreshToken"]
+        });
+    
+        if (refreshTokenData !== null) {
+          const { userId, refreshToken } = refreshTokenData;
+    
+          const token = await tokens.create(userId);
+    
+          res.status(200).json({
+            token_type: "bearer",
+            access_token: token,
+            refresh_token: refreshToken
+          });
+        } else {
+          res.status(500).json({ status: 500, message: "Internal server error.", error: `Either the user ${id} does not exist or a refresh token was not found. ` });
+        }
+      } catch(error) {
+        // Epic fail
+        // TODO: Deal with the error
+      }
+    } else {
+      // Not authorized, send a 403 forbidden.
+    }
   }
 };
 

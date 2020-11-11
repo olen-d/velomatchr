@@ -15,6 +15,8 @@ const create = userId => {
 
 const createRefresh = clientId => {
   return new Promise((resolve, reject) => {
+    const clientId = process.env.CLIENT_ID;
+    
     jwt.sign(
       { clientId },
       process.env.SECRET_REFRESH,
