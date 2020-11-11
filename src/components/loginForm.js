@@ -63,14 +63,12 @@ const LoginForm = props => {
     }).then(data => {
       if(data.access_token) {
         const { access_token: accessToken, refresh_token: refreshToken } = data; // token_type: tokenType 
-        localStorage.setItem("user_token", JSON.stringify(accessToken));
         localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
         setIsAuth(true);
         setAuthTokens(accessToken);
         setRedirectURL("/dashboard");
         setDoRedirect(true);
       } else {
-        localStorage.removeItem("user_token");
         localStorage.removeItem("user_refresh_token");
         setIsErrorHeader("Unable to Sign In");
         setIsErrorMessage("Please check your email address and password and try again.");
