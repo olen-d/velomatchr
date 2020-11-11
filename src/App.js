@@ -14,12 +14,6 @@ const App = (props) => {
   const [authTokens, setAuthTokens] = useState(null);
   const [doRedirect, setDoRedirect] = useState(false);
   const [redirectURL, setRedirectURL] = useState(null);
-  // const setTokens = data => {
-  //   console.log("App.js - 23 DATA:\n", data);
-  //   localStorage.setItem("user_token", JSON.stringify(data));
-  //   debugger;
-  //   setAuthTokens(data);
-  // }
   
   return(
     <AuthContext.Provider value={{isAuth, setIsAuth, doRedirect, setDoRedirect, redirectURL, setRedirectURL, authTokens, setAuthTokens}}>
