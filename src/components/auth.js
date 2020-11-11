@@ -16,7 +16,6 @@ class Auth {
     const token = this.getToken().slice(1, -1);
     const userInfo = this.getUserInfo(token);
 
-    localStorage.removeItem("user_token");
     localStorage.removeItem("user_refresh_token");
 
     if (userInfo && refreshToken) {
@@ -127,7 +126,7 @@ class Auth {
   }
 
   getToken() {
-    return localStorage.getItem("user_token");
+    // TODO: remove this, since the token is stored in React Context and should be passed to auth.js by the caller
   }
 
   getRefreshToken() {
