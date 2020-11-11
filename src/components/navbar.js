@@ -26,10 +26,10 @@ const settingsItems = [
 ];
 
 const NavBar = props => {
-  const { setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
+  const { authTokens, setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
 
   const logout = () => {
-    const newAuthStatus = auth.logout();
+    const newAuthStatus = auth.logout(authTokens);
     setIsAuth(newAuthStatus);
     setAuthTokens(null);
     setDoRedirect(false);
