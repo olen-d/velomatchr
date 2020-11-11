@@ -11,10 +11,9 @@ class Auth {
     cb();
   }
 
-  logout() {
+  logout(accessToken) {
     const refreshToken = this.getRefreshToken().slice(1, -1); // Slice off the spuious ""
-    const token = this.getToken().slice(1, -1);
-    const userInfo = this.getUserInfo(token);
+    const userInfo = this.getUserInfo(accessToken);
 
     localStorage.removeItem("user_refresh_token");
 
@@ -26,7 +25,7 @@ class Auth {
         method: "delete",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         },
         body: JSON.stringify(actionData)
       }).then(result => {
