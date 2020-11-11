@@ -81,7 +81,7 @@ const SignupRequiredForm = props => {
         });
       } else {
         if (data.token) {
-          localStorage.setItem("user_token", JSON.stringify(data.token));
+          // localStorage.setItem("user_token", JSON.stringify(data.token));
           setIsAuth(data.authenticated);
           setAuthTokens(data.token);
           setRedirectURL("/onboarding/profile")
