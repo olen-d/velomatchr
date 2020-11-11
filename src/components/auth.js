@@ -50,7 +50,7 @@ class Auth {
     return exp - expirationBuffer < Date.now() / 1000 ? true : false;
   }
 
-  // If access token is expired, use the refresh token to retrieve a new access
+  // If access token is expired, use the refresh token to retrieve a new access token
   newAccessToken(userId) {
     return new Promise((resolve, reject) => {
       const refreshToken = localStorage.getItem("user_refresh_token");
@@ -87,16 +87,6 @@ class Auth {
     });
   }
 
-  isAuthenticated() {
-    if (this.tokenExists()) {
-      const token = this.getToken();
-      if(this.tokenActive(token)) {
-        this.authenticated = true;
-      }
-    } 
-    return this.authenticated;
-  }
-
   getUserInfo(token) {
     if (this.tokenActive(token)) {
       return this.decodeToken(token);
@@ -106,10 +96,6 @@ class Auth {
   }
 
   // Token related methods
-  tokenExists() {
-    return (this.getToken() != null) ? true : false;
-  }
-
   tokenActive(token) {
     try {
       const decodedToken = this.decodeToken(token);
@@ -122,10 +108,6 @@ class Auth {
       console.log("\n-----\nauth.js\n", "Active token check failed. ", err);
       return false;
     }
-  }
-
-  getToken() {
-    // TODO: remove this, since the token is stored in React Context and should be passed to auth.js by the caller
   }
 
   getRefreshToken() {
