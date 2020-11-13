@@ -46,7 +46,7 @@ const ComposeEmailForm = props => {
 
   const { id } = useParams();
 
-  const { authTokens: token, setAuthTokens } = useAuth();
+  const { accessToken: token, setAccessToken } = useAuth();
   
   const { user } = auth.getUserInfo(token);
 
@@ -64,7 +64,7 @@ const ComposeEmailForm = props => {
     const { body, subject } = values;
 
     const { isNewAccessToken, token: newAccessToken } = await auth.checkExpiration(token, user);
-    if (isNewAccessToken) { setAuthTokens(newAccessToken); }
+    if (isNewAccessToken) { setAccessToken(newAccessToken); }
     // Process new lines
     // TODO: Find all the single newlines and replace with <br />
 
@@ -146,7 +146,7 @@ const ComposeEmailForm = props => {
     if (userId && addresseeId) {
       (async () => {
         const { isNewAccessToken, token: newAccessToken } = await auth.checkExpiration(token, user);
-        if (isNewAccessToken) { setAuthTokens(newAccessToken); }
+        if (isNewAccessToken) { setAccessToken(newAccessToken); }
 
         try {
           const responseAddressee = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${addresseeId}`, {
@@ -217,7 +217,7 @@ const ComposeEmailForm = props => {
         }
       })()
     }
-  }, [addresseeId, setAuthTokens, token, user, userId]);
+  }, [addresseeId, setAccessToken, token, user, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);

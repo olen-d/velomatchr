@@ -34,7 +34,7 @@ const SignupRequiredForm = props => {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
 
-  const { setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
+  const { setIsAuth, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
   useEffect(() => {
     locator.locator().then(locatorRes => {
@@ -83,18 +83,18 @@ const SignupRequiredForm = props => {
         if (data.token) {
           // localStorage.setItem("user_token", JSON.stringify(data.token));
           setIsAuth(data.authenticated);
-          setAuthTokens(data.token);
+          setAccessToken(data.token);
           setRedirectURL("/onboarding/profile")
           setDoRedirect(true);
         } else {
           setIsAuth(false);
-          setAuthTokens("");
+          setAccessToken("");
           console.log("signupRequiredForm.js ~129 - ERROR: Missing Token");
         }          
       }
     }).catch(error => {
       setIsAuth(false);
-      setAuthTokens("");
+      setAccessToken("");
       console.log("Error:", error);
       // TODO: Come back and fix this later to give a more specific error
       // setIsErrorHeader("Internal Server Error");

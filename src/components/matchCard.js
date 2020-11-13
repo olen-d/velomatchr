@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types";
 
 import { Redirect } from "react-router-dom";
@@ -7,7 +7,7 @@ import {
   Button
  } from "semantic-ui-react";
 
- import { AuthContext } from "../context/authContext";
+ import { useAuth } from "../context/authContext";
  import { useMatches } from "../context/matchesContext";
 
  import ErrorContainer from "./errorContainer";
@@ -33,8 +33,7 @@ import {
     rightBtnValue
   } = props;
   
-  const context = useContext(AuthContext);
-  const {authTokens: token } = context;
+  const {accessToken: token } = useAuth();
 
   const { matches, setMatches } = useMatches();
 

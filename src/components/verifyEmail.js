@@ -42,7 +42,7 @@ const VerifyEmail = props => {
   const [userId, setUserId] = useState(null);
   const [verificationCode, setVerificationCode] = useState(""); // React gets grumpy if the default is null
 
-  const { authTokens: token, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
 
   const userInfo = auth.getUserInfo(token);
 
