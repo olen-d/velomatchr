@@ -33,7 +33,7 @@ const LoginForm = props => {
   const [pass, setPass] = useState("");
   const [username, setUsername] = useState("");
 
-  const { setIsAuth, setAuthTokens, setDoRedirect, setRedirectURL } = useAuth();
+  const { setIsAuth, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
   const postLogin = () => {
     const formData = { 
@@ -65,7 +65,7 @@ const LoginForm = props => {
         const { access_token: accessToken, refresh_token: refreshToken } = data; // token_type: tokenType 
         localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
         setIsAuth(true);
-        setAuthTokens(accessToken);
+        setAccessToken(accessToken);
         setRedirectURL("/dashboard");
         setDoRedirect(true);
       } else {
