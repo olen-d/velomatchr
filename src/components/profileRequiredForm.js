@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 import auth from "./auth";
@@ -12,7 +12,7 @@ import {
   Segment
 } from "semantic-ui-react";
 
-import { AuthContext } from "../context/authContext";
+import { useAuth } from "../context/authContext";
 
 import ErrorContainer from "./errorContainer";
 import FullnameInput from "./formFields/fullnameInput";
@@ -30,10 +30,7 @@ const ProfileRequiredForm = props => {
   
   const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
-  const context = useContext(AuthContext);
-  const token = context.authTokens;
-  const setDoRedirect = context.setDoRedirect;
-  const setRedirectURL = context.setRedirectURL;
+  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
 
   const userInfo = auth.getUserInfo(token);
 

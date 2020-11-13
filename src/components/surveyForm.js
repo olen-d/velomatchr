@@ -48,7 +48,7 @@ const SurveyForm = props => {
   } = props;
 
   // Get items from context
-  const { authTokens: token, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
   const { user } = auth.getUserInfo(token);
 
   // Set up the State for form error handling

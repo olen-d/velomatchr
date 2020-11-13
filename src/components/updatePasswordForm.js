@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 import auth from "./auth";
 
 import { Button, Form, Header, Segment } from "semantic-ui-react";
 
-import { AuthContext } from "../context/authContext";
+import { useAuth } from "../context/authContext";
 
 import ConfirmPasswordModal from "./confirmPasswordModal";
 import ErrorContainer from "./errorContainer";
@@ -35,10 +35,7 @@ const UpdatePasswordForm = props => {
     values
   } = useForm();
 
-  const context = useContext(AuthContext);
-  const token = context.authTokens;
-  const setDoRedirect = context.setDoRedirect;
-  const setRedirectURL = context.setRedirectURL;
+  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
 
   const userInfo = auth.getUserInfo(token);
 
