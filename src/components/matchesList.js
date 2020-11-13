@@ -22,7 +22,7 @@ import auth from "./auth";
   const [noMatches, setNoMatches] = useState(null);
 
   // Get items from context
-  const { authTokens: token } = useAuth();
+  const { accessToken: token } = useAuth();
   const { matches, setMatches } = useMatches();
 
   const userInfo = auth.getUserInfo(token);

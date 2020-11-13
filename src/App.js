@@ -9,14 +9,14 @@ import { AuthContext } from "./context/authContext";
 const AuthApp = lazy(() => import("./AuthApp"));
 const UnAuthApp = lazy(() => import("./UnAuthApp"));
 
-const App = (props) => {
+const App = () => {
   const [isAuth, setIsAuth] = useState(false);
-  const [authTokens, setAuthTokens] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
   const [doRedirect, setDoRedirect] = useState(false);
   const [redirectURL, setRedirectURL] = useState(null);
   
   return(
-    <AuthContext.Provider value={{isAuth, setIsAuth, doRedirect, setDoRedirect, redirectURL, setRedirectURL, authTokens, setAuthTokens}}>
+    <AuthContext.Provider value={{isAuth, setIsAuth, doRedirect, setDoRedirect, redirectURL, setRedirectURL, accessToken, setAccessToken}}>
       <AuthContext.Consumer>
         {({ isAuth }) => (
           isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>

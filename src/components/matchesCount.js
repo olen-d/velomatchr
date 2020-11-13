@@ -11,7 +11,7 @@ import "./matchesCount.css";
 
 const MatchesCount = () => {
   // Get items from context
-  const { authTokens: token } = useAuth();
+  const { accessToken: token } = useAuth();
   const { user } = auth.getUserInfo(token);
 
   // Set up the state
