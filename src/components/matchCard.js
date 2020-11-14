@@ -12,6 +12,8 @@ import {
 
  import ErrorContainer from "./errorContainer";
 
+ import auth from "./auth";
+
  const MatchCard = props => {
   const {
     requesterId,
@@ -33,7 +35,7 @@ import {
     rightBtnValue
   } = props;
   
-  const { accessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
 
   const { matches, setMatches } = useMatches();
 
@@ -53,7 +55,10 @@ import {
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [redirectURI, setRedirectURI] = useState(null);
 
-  const postAction = (action, value) => {
+  const postAction = async (action, value) => {
+    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, requesterId);
+    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
     if(action === "updateStatus") {
       const status = parseInt(value);
       // TODO: Need to update context based on status...

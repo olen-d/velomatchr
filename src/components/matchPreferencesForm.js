@@ -41,9 +41,9 @@ const MatchPreferencesForm = props => {
 
   const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
-  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(accessToken);
+  const { user } = auth.getUserInfo(accessToken);
 
   const ConfirmUpdateModal = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -196,10 +196,13 @@ const MatchPreferencesForm = props => {
     });
   }
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+  useEffect(() => { setUserId(user) }, [user]);
 
   useEffect(() => {
     const getUserMatchPrefs = async () => {
+      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`, 
       {
         headers: {
@@ -215,7 +218,7 @@ const MatchPreferencesForm = props => {
       }
     }
     getUserMatchPrefs();
-  }, [accessToken, userId]);
+  }, [accessToken, setAccessToken, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);

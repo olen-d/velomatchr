@@ -11,7 +11,7 @@ import "./matchesCount.css";
 
 const MatchesCount = () => {
   // Get items from context
-  const { accessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
   const { user } = auth.getUserInfo(accessToken);
 
   // Set up the state
@@ -23,6 +23,9 @@ const MatchesCount = () => {
   useEffect(() => {
     (async() => {
       try {
+        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/matched/count/user/id/${userId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`
@@ -37,7 +40,7 @@ const MatchesCount = () => {
         return err;
       }
     })()
-  }, [accessToken, setTotalMatches, userId]);
+  }, [accessToken, setAccessToken, setTotalMatches, userId]);
 
   return(
     <div className="matches-count">
