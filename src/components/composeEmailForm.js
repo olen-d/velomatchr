@@ -46,9 +46,9 @@ const ComposeEmailForm = props => {
 
   const { id } = useParams();
 
-  const { accessToken: token, setAccessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
   
-  const { user } = auth.getUserInfo(token);
+  const { user } = auth.getUserInfo(accessToken);
 
   const initialValues = { body: "", subject: "Let's Ride Together" }
 
@@ -63,7 +63,7 @@ const ComposeEmailForm = props => {
   const handleSubmit = async () => {
     const { body, subject } = values;
 
-    const { isNewAccessToken, token: newAccessToken } = await auth.checkExpiration(token, user);
+    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
     if (isNewAccessToken) { setAccessToken(newAccessToken); }
     // Process new lines
     // TODO: Find all the single newlines and replace with <br />
@@ -145,13 +145,13 @@ const ComposeEmailForm = props => {
   useEffect(() => {
     if (userId && addresseeId) {
       (async () => {
-        const { isNewAccessToken, token: newAccessToken } = await auth.checkExpiration(token, user);
+        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
         if (isNewAccessToken) { setAccessToken(newAccessToken); }
 
         try {
           const responseAddressee = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${addresseeId}`, {
             headers: {
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${accessToken}`
             }
           });
 
@@ -163,7 +163,7 @@ const ComposeEmailForm = props => {
 
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy/id/${userId}/${addresseeId}`, {
             headers: {
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${accessToken}`
             }
           });
   
@@ -178,7 +178,7 @@ const ComposeEmailForm = props => {
               const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy`, {
                 method: "post",
                 headers: {
-                  Authorization: `Bearer ${token}`,
+                  Authorization: `Bearer ${accessToken}`,
                   "Content-Type": "application/json"
                 },
                 body: JSON.stringify(formData)
@@ -196,7 +196,7 @@ const ComposeEmailForm = props => {
             try {
               const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/email-proxy/id/${addresseeId}/${userId}`, {
                 headers: {
-                  Authorization: `Bearer ${token}`
+                  Authorization: `Bearer ${accessToken}`
                 }
               });
       
@@ -217,7 +217,7 @@ const ComposeEmailForm = props => {
         }
       })()
     }
-  }, [addresseeId, setAccessToken, token, user, userId]);
+  }, [accessToken, addresseeId, setAccessToken, user, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);

@@ -21,7 +21,7 @@ const ConfirmPasswordModal = props => {
     header,
     isOpen,
     message,
-    token,
+    accessToken,
     userId 
   } = props;
 
@@ -46,7 +46,7 @@ const ConfirmPasswordModal = props => {
         method: "post",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         },
         body: JSON.stringify(formData)
       });
@@ -126,7 +126,7 @@ ConfirmPasswordModal.defaultProps = {
   header: "Password Required",
   isOpen: false,
   message: "Please enter your old password.",
-  token: "",
+  accessToken: "",
   userId: -99 
 }
 
@@ -140,7 +140,7 @@ ConfirmPasswordModal.propTypes = {
   header: string,
   isOpen: bool,
   message: string,
-  token: string,
+  accessToken: string,
   userId: number
 }
 

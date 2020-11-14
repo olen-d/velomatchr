@@ -22,10 +22,10 @@ import auth from "./auth";
   const [noMatches, setNoMatches] = useState(null);
 
   // Get items from context
-  const { accessToken: token } = useAuth();
+  const { accessToken } = useAuth();
   const { matches, setMatches } = useMatches();
 
-  const userInfo = auth.getUserInfo(token);
+  const userInfo = auth.getUserInfo(accessToken);
 
   // Set up the action buttons
   let leftBtnIcon = "";
@@ -72,7 +72,7 @@ import auth from "./auth";
       try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/user/id/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${accessToken}`
           }
         });
 
@@ -82,7 +82,7 @@ import auth from "./auth";
         setMatches({ error, matchesResult: [], isLoading: false });;
       }
     })()
-  }, [setMatches, token, userId]);
+  }, [accessToken, setMatches, userId]);
 
   useEffect(() => {
     const { error, matchesResult } = matches;

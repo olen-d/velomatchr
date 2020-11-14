@@ -39,8 +39,8 @@ class Auth {
     return this.authenticated;
   }
 
-  checkExpiration(token, userId) {
-    return this.willExpire(token) ? this.newAccessToken(userId) : { "isNewAccessToken": false, token };
+  checkAccessTokenExpiration(accessToken, userId) {
+    return this.willExpire(accessToken) ? this.newAccessToken(userId) : { "isNewAccessToken": false, "newAccessToken": accessToken };
   }
 
   // Check to see if the access token is going to expire soon
@@ -73,7 +73,7 @@ class Auth {
             localStorage.setItem("user_refresh_token", refreshToken);
     
             // Done, resolve the new access token
-            resolve({ "isNewAccessToken": true, "token": newAccessToken });
+            resolve({ "isNewAccessToken": true, newAccessToken });
           })
           .catch(error => {
             // TODO: deal with the error

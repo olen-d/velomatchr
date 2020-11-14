@@ -33,7 +33,7 @@ import {
     rightBtnValue
   } = props;
   
-  const {accessToken: token } = useAuth();
+  const { accessToken } = useAuth();
 
   const { matches, setMatches } = useMatches();
 
@@ -68,7 +68,7 @@ import {
         method: "put",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         },
         body: JSON.stringify(actionData)
       }).then(response => {
