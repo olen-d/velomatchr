@@ -50,9 +50,9 @@ const ProfileFullForm = props => {
     values
   } = useForm();
 
-  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(token);
+  const userInfo = auth.getUserInfo(accessToken);
 
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
@@ -61,7 +61,7 @@ const ProfileFullForm = props => {
       const getUserProfile = async () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${accessToken}`
           }
         });
   
@@ -112,7 +112,7 @@ const ProfileFullForm = props => {
       }
       getUserProfile();
     }
-  }, [token, userId]);
+  }, [accessToken, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
@@ -221,7 +221,7 @@ const ProfileFullForm = props => {
       method: "put",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${accessToken}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
@@ -264,7 +264,7 @@ const ProfileFullForm = props => {
         formTitle={"Current Photograph"}
         profilePhotoBtnContent={"Upload Profile Photo"}
         photoLink={photoLink}
-        token={token}
+        accessToken={accessToken}
         userId={userId}
       />
       <Header

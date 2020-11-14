@@ -38,9 +38,9 @@ const UpdateEmailAddressForm = props => {
     values
   } = useForm();
 
-  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(token);
+  const userInfo = auth.getUserInfo(accessToken);
   
   const handleSubmit = () => {
     if (!isError) {
@@ -58,7 +58,7 @@ const UpdateEmailAddressForm = props => {
       method: "put",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${accessToken}`
       },
       body: JSON.stringify(formData)
     })
@@ -89,7 +89,7 @@ const UpdateEmailAddressForm = props => {
         errorDetail: error
       })
     });
-  }, [handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, token, userId, values]);
+  }, [accessToken, handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
 
   const handleIsPassVerified = isAuthenticated => {
     setIsPassVerified(isAuthenticated);
@@ -105,7 +105,7 @@ const UpdateEmailAddressForm = props => {
     const getUserAccount = async () => {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         }
       });
       const data = await response.json();
@@ -123,7 +123,7 @@ const UpdateEmailAddressForm = props => {
       }
     }
     getUserAccount();
-  }, [token, userId]);
+  }, [accessToken, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
@@ -197,7 +197,7 @@ const UpdateEmailAddressForm = props => {
             header={"Password Required"}
             isOpen={isModalOpen}
             message={"Please enter your password."}
-            token={token}
+            accessToken={accessToken}
             userId={userId}
           />
         </Form>

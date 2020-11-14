@@ -42,9 +42,9 @@ const VerifyEmail = props => {
   const [userId, setUserId] = useState(null);
   const [verificationCode, setVerificationCode] = useState(""); // React gets grumpy if the default is null
 
-  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(token);
+  const userInfo = auth.getUserInfo(accessToken);
 
   const postVerifyEmail = () => {
     const formData = {
@@ -78,7 +78,7 @@ const VerifyEmail = props => {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${accessToken}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
@@ -120,7 +120,7 @@ const VerifyEmail = props => {
           method: "put",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${accessToken}`
           },
           body: JSON.stringify(formData)
         })
@@ -153,7 +153,7 @@ const VerifyEmail = props => {
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/id/${userId}`, {
       method: "delete",
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${accessToken}`
       }
     })
     .then(response => {
@@ -171,7 +171,7 @@ const VerifyEmail = props => {
 
     fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${accessToken}`
       }
     })
       .then(response => {
@@ -185,7 +185,7 @@ const VerifyEmail = props => {
           method: "post",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${accessToken}`
           },
           body: JSON.stringify(formData)
         })

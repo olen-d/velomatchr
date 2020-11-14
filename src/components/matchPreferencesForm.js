@@ -41,9 +41,9 @@ const MatchPreferencesForm = props => {
 
   const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
-  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(token);
+  const userInfo = auth.getUserInfo(accessToken);
 
   const ConfirmUpdateModal = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -61,7 +61,7 @@ const MatchPreferencesForm = props => {
       fetch(`${process.env.REACT_APP_API_URL}/api/relationships/delete/requester/id/${userId}`, {
         method: "delete",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         }
       })
       .then(async response => {
@@ -144,7 +144,7 @@ const MatchPreferencesForm = props => {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${accessToken}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
@@ -170,7 +170,7 @@ const MatchPreferencesForm = props => {
             method: "post",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${accessToken}`
             },
             body: JSON.stringify({ userId })
           }).then(response => {
@@ -203,7 +203,7 @@ const MatchPreferencesForm = props => {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`, 
       {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         }
       });
       const data = await response.json();
@@ -215,7 +215,7 @@ const MatchPreferencesForm = props => {
       }
     }
     getUserMatchPrefs();
-  }, [token, userId]);
+  }, [accessToken, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);

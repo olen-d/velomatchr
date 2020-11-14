@@ -13,7 +13,7 @@ import ErrorContainer from "./errorContainer";
 import SuccessContainer from "./successContainer";
 
 const ProfilePhotoForm = props => {
-  const { formTitle, photoLink, profilePhotoBtnContent, token, userId } = props;
+  const { formTitle, photoLink, profilePhotoBtnContent, accessToken, userId } = props;
 
   // Error container items
   const [isError, setIsError] = useState(false);
@@ -41,7 +41,7 @@ const ProfilePhotoForm = props => {
       fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/photograph`, {
         method: "post",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         },
         body: formData
       }).then(response => {
@@ -71,7 +71,7 @@ const ProfilePhotoForm = props => {
         setIsError(true);
       });
     }
-  }, [profilePhotographFile, token, userId]);
+  }, [accessToken, profilePhotographFile, userId]);
 
   useEffect (() => {
     if (photoLink) {
@@ -130,7 +130,7 @@ ProfilePhotoForm.defaultProps = {
   formTitle: "Current Photograph",
   photoLink: null,
   profilePhotoBtnContent: "Upload Profile Photo",
-  token: "",
+  accessToken: "",
   userId: 0
 }
 
@@ -141,7 +141,7 @@ ProfilePhotoForm.propTypes = {
   formTitle: string,
   photoLink: string,
   profilePhotoBtnContent: string,
-  token: string,
+  accessToken: string,
   userId: number
 }
 

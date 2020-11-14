@@ -30,9 +30,9 @@ const ProfileRequiredForm = props => {
   
   const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
-  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(token);
+  const userInfo = auth.getUserInfo(accessToken);
 
   useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
 
@@ -40,7 +40,7 @@ const ProfileRequiredForm = props => {
     const getUserProfile = async () => {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         }
       });
       const data = await response.json();
@@ -53,7 +53,7 @@ const ProfileRequiredForm = props => {
       }
     }
     getUserProfile();
-  }, [token, userId]);
+  }, [accessToken, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
@@ -85,7 +85,7 @@ const ProfileRequiredForm = props => {
       method: "put",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${accessToken}`
       },
       body: JSON.stringify(formData)
     }).then(response => {

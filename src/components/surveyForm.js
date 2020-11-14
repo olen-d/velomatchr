@@ -48,8 +48,8 @@ const SurveyForm = props => {
   } = props;
 
   // Get items from context
-  const { accessToken: token, setDoRedirect, setRedirectURL } = useAuth();
-  const { user } = auth.getUserInfo(token);
+  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
+  const { user } = auth.getUserInfo(accessToken);
 
   // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
@@ -85,7 +85,7 @@ const SurveyForm = props => {
       fetch(`${process.env.REACT_APP_API_URL}/api/relationships/delete/requester/id/${userId}`, {
         method: "delete",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         }
       })
       .then(async response => {
@@ -202,7 +202,7 @@ const SurveyForm = props => {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${accessToken}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
@@ -224,7 +224,7 @@ const SurveyForm = props => {
           method: "post",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${accessToken}`
           },
           body: JSON.stringify({ userId })
         }).then(response => {
@@ -255,7 +255,7 @@ const SurveyForm = props => {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/survey/user/id/${userId}`,
       {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         }
       });
 
@@ -273,7 +273,7 @@ const SurveyForm = props => {
     if (userId) {
       getUserAnswers();
     }
-  }, [answers, token, userId]);
+  }, [accessToken, answers, userId]);
 
   useEffect(() => {
     if (savedAnswers.length > 0 && !isInitialized) {
@@ -287,7 +287,7 @@ const SurveyForm = props => {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/user/id/${userId}`, 
       {
         headers: { 
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${accessToken}`
         }
       });
       const result = await response.json();
@@ -301,7 +301,7 @@ const SurveyForm = props => {
     if (userId) { // Don't hit the API if the userId hasn't been set yet
       getUserMatchPrefs();
     }
-  }, [token, userId]);
+  }, [accessToken, userId]);
 
   return(
     <>
