@@ -22,10 +22,10 @@ import auth from "./auth";
   const [noMatches, setNoMatches] = useState(null);
 
   // Get items from context
-  const { accessToken } = useAuth();
+  const { accessToken, setAccessToken } = useAuth();
   const { matches, setMatches } = useMatches();
 
-  const userInfo = auth.getUserInfo(accessToken);
+  const { user } = auth.getUserInfo(accessToken);
 
   // Set up the action buttons
   let leftBtnIcon = "";
@@ -62,7 +62,7 @@ import auth from "./auth";
     default:
   }
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user])
+  useEffect(() => { setUserId(user) }, [user])
 
   // Fetch Matches Hook
   useEffect(() => {
@@ -70,6 +70,9 @@ import auth from "./auth";
 
     (async () => {
       try {
+        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/user/id/${userId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`
@@ -82,7 +85,7 @@ import auth from "./auth";
         setMatches({ error, matchesResult: [], isLoading: false });;
       }
     })()
-  }, [accessToken, setMatches, userId]);
+  }, [accessToken, setAccessToken, setMatches, userId]);
 
   useEffect(() => {
     const { error, matchesResult } = matches;

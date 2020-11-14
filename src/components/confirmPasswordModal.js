@@ -37,32 +37,30 @@ const ConfirmPasswordModal = props => {
     values
   } = useForm();
 
-  const handleConfirm = () => {
-    (async () => {
-      const password = values.passwordVerify;
-      const formData = { id: userId, password }
+  const handleConfirm = async () => {
+    const password = values.passwordVerify;
+    const formData = { id: userId, password }
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/password/authenticate`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(formData)
-      });
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/password/authenticate`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(formData)
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      const { isAuthenticated } = data;
+    const { isAuthenticated } = data;
 
-      handleIsPassVerified(isAuthenticated);
+    handleIsPassVerified(isAuthenticated);
 
-      if (isAuthenticated) {
-        handleClose();
-      } else {
-        handleServerErrors({ passwordVerify: true });
-      }
-    })();
+    if (isAuthenticated) {
+      handleClose();
+    } else {
+      handleServerErrors({ passwordVerify: true });
+    }
   }
 
   useEffect(() => {
