@@ -50,15 +50,18 @@ const ProfileFullForm = props => {
     values
   } = useForm();
 
-  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(accessToken);
+  const { user } = auth.getUserInfo(accessToken);
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+  useEffect(() => { setUserId(user) }, [user]);
 
   useEffect(() => {
     if (userId) {
       const getUserProfile = async () => {
+        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+        
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`
@@ -112,7 +115,7 @@ const ProfileFullForm = props => {
       }
       getUserProfile();
     }
-  }, [accessToken, userId]);
+  }, [accessToken, setAccessToken, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
@@ -131,8 +134,8 @@ const ProfileFullForm = props => {
           } = location
 
           Promise.all([
-            fetch(`http://localhost:5000/api/states/code/${stateCode}`),
-            fetch(`http://localhost:5000/api/countries/alphatwo/${countryCode}`)
+            fetch(`${process.env.REACT_APP_API_URL}/api/states/code/${stateCode}`),
+            fetch(`${process.env.REACT_APP_API_URL}/api/countries/alphatwo/${countryCode}`)
           ])
           .then(responses => {
             const data = responses.map(response => response.json());
@@ -185,7 +188,10 @@ const ProfileFullForm = props => {
     }
   }
 
-  const postProfileUpdate = () => {
+  const postProfileUpdate = async () => {
+    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
+    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
     const {
       city,
       country,
