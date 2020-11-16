@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
+import auth from "./auth";
+
 import {
   Button,
   Form,
@@ -9,11 +11,13 @@ import {
   Image
 } from "semantic-ui-react";
 
+import { useAuth } from "../context/authContext";
+
 import ErrorContainer from "./errorContainer";
 import SuccessContainer from "./successContainer";
 
 const ProfilePhotoForm = props => {
-  const { formTitle, photoLink, profilePhotoBtnContent, accessToken, userId } = props;
+  const { formTitle, photoLink, profilePhotoBtnContent } = props;
 
   // Error container items
   const [isError, setIsError] = useState(false);
@@ -27,51 +31,63 @@ const ProfilePhotoForm = props => {
   const [photoLinkImage, setPhotoLinkImage] = useState(null);
   const [profilePhotographFile, setProfilePhotographFile] = useState(null);
   const [showUserIcon, setShowUserIcon] = useState(true);
+  const [userId, setUserId] = useState(null);
+
+  const { accessToken, setAccessToken } = useAuth();
+  
+  const { user } = auth.getUserInfo(accessToken);
 
   const uploadFile = e => {
     setProfilePhotographFile(e.target.files[0]);
   }
 
+  useEffect(() => { setUserId(user); }, [user]);
+
   useEffect (() => {
     if (profilePhotographFile && userId) {
-      const formData = new FormData();
-      formData.append("userId", userId);
-      formData.append("profilePhotographFile", profilePhotographFile);
-
-      fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/photograph`, {
-        method: "post",
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        },
-        body: formData
-      }).then(response => {
-        if(!response.ok) {
+      (async () => {
+        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+  
+        const formData = new FormData();
+        formData.append("userId", userId);
+        formData.append("profilePhotographFile", profilePhotographFile);
+  
+        fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/photograph`, {
+          method: "post",
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          },
+          body: formData
+        }).then(response => {
+          if(!response.ok) {
+            setIsErrorHeader("Profile Photograph Not Uploaded");
+            setIsErrorMessage("The network response was not ok. Please check your internet connection and try again. ");
+            setIsError(true);
+          }
+          return response.json();
+        }).then(data => {
+          if (data && data.success) {
+            const { originalname, path } = data;
+  
+            setShowUserIcon(false);
+            setPhotoLinkImage(`${process.env.REACT_APP_API_URL}/${path}`);
+            setIsSuccessHeader("Profile Photograph Uploaded");
+            setIsSuccessMessage("\"" + originalname + "\" was successfully uploaded. ");
+            setIsSuccess(true);
+          } else {
+            setIsErrorHeader("Profile Photograph Not Uploaded");
+            setIsErrorMessage("The database was not updated. Please try again. ");
+            setIsError(true);
+          }
+        }).catch(error => {
           setIsErrorHeader("Profile Photograph Not Uploaded");
-          setIsErrorMessage("The network response was not ok. Please check your internet connection and try again. ");
+          setIsErrorMessage("Something went terribly awry and your photograph was not uploaded. Please try again. ");
           setIsError(true);
-        }
-        return response.json();
-      }).then(data => {
-        if (data && data.success) {
-          const { originalname, path } = data;
-
-          setShowUserIcon(false);
-          setPhotoLinkImage(`${process.env.REACT_APP_API_URL}/${path}`);
-          setIsSuccessHeader("Profile Photograph Uploaded");
-          setIsSuccessMessage("\"" + originalname + "\" was successfully uploaded. ");
-          setIsSuccess(true);
-        } else {
-          setIsErrorHeader("Profile Photograph Not Uploaded");
-          setIsErrorMessage("The database was not updated. Please try again. ");
-          setIsError(true);
-        }
-      }).catch(error => {
-        setIsErrorHeader("Profile Photograph Not Uploaded");
-        setIsErrorMessage("Something went terribly awry and your photograph was not uploaded. Please try again. ");
-        setIsError(true);
-      });
+        });
+      })()
     }
-  }, [accessToken, profilePhotographFile, userId]);
+  }, [accessToken, profilePhotographFile, setAccessToken, userId]);
 
   useEffect (() => {
     if (photoLink) {
@@ -130,8 +146,6 @@ ProfilePhotoForm.defaultProps = {
   formTitle: "Current Photograph",
   photoLink: null,
   profilePhotoBtnContent: "Upload Profile Photo",
-  accessToken: "",
-  userId: 0
 }
 
 const { number, string } = PropTypes;
@@ -141,8 +155,6 @@ ProfilePhotoForm.propTypes = {
   formTitle: string,
   photoLink: string,
   profilePhotoBtnContent: string,
-  accessToken: string,
-  userId: number
 }
 
 export default ProfilePhotoForm;

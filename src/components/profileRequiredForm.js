@@ -30,14 +30,17 @@ const ProfileRequiredForm = props => {
   
   const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
-  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(accessToken);
+  const { user } = auth.getUserInfo(accessToken);
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+  useEffect(() => { setUserId(user) }, [user]);
 
   useEffect(() => {
     const getUserProfile = async () => {
+      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`
@@ -53,7 +56,7 @@ const ProfileRequiredForm = props => {
       }
     }
     getUserProfile();
-  }, [accessToken, userId]);
+  }, [accessToken, setAccessToken, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
@@ -72,7 +75,7 @@ const ProfileRequiredForm = props => {
     }
   }
 
-  const postProfileRequired = () => {
+  const postProfileRequired = async () => {
     const { fullname, gender } = values;
 
     const formData = {
@@ -80,6 +83,9 @@ const ProfileRequiredForm = props => {
       fullname, 
       gender,
     };
+
+    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+    if (isNewAccessToken) { setAccessToken(newAccessToken); }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/required`, {
       method: "put",
