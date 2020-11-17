@@ -38,9 +38,9 @@ const UpdateEmailAddressForm = props => {
     values
   } = useForm();
 
-  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
-  const userInfo = auth.getUserInfo(accessToken);
+  const { user } = auth.getUserInfo(accessToken);
   
   const handleSubmit = () => {
     if (!isError) {
@@ -54,42 +54,47 @@ const UpdateEmailAddressForm = props => {
     const { email } = values;
     const formData = { userId, email };
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/email/update`, {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => {
-      return response.json();
-    })
-    .then(data => {
-      if (data.status !== 200) {
-        setIsSuccess(false);
-        setIsErrorHeader("Unable to Update Email Address");
-        setIsErrorMessage("Please enter a valid email address and try again.")
-        handleServerErrors(...[{ email: true }]);
-      } else {
-        if(submitRedirect) {
-          setRedirectURL(submitRedirectURL);
-          setDoRedirect(true);
-        } else {
-          setIsSuccessHeader("Your Email Address was Successfully Updated");
-          setIsSuccessMesssage("You can now login using your updated email address.");
-          setIsSuccess(true);
-        }
-      }
-    })
-    .catch(error => {
-      return ({
-        errorCode: 500,
-        errorMsg: "Internal Server Error",
-        errorDetail: error
+    (async () => {
+      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
+      fetch(`${process.env.REACT_APP_API_URL}/api/users/email/update`, {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(formData)
       })
-    });
-  }, [accessToken, handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        if (data.status !== 200) {
+          setIsSuccess(false);
+          setIsErrorHeader("Unable to Update Email Address");
+          setIsErrorMessage("Please enter a valid email address and try again.")
+          handleServerErrors(...[{ email: true }]);
+        } else {
+          if(submitRedirect) {
+            setRedirectURL(submitRedirectURL);
+            setDoRedirect(true);
+          } else {
+            setIsSuccessHeader("Your Email Address was Successfully Updated");
+            setIsSuccessMesssage("You can now login using your updated email address.");
+            setIsSuccess(true);
+          }
+        }
+      })
+      .catch(error => {
+        return ({
+          errorCode: 500,
+          errorMsg: "Internal Server Error",
+          errorDetail: error
+        })
+      });
+    })();
+  }, [accessToken, handleServerErrors, setAccessToken, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
 
   const handleIsPassVerified = isAuthenticated => {
     setIsPassVerified(isAuthenticated);
@@ -99,10 +104,13 @@ const UpdateEmailAddressForm = props => {
     setIsModalOpen(false);
   }
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+  useEffect(() => { setUserId(user) }, [user]);
 
   useEffect(() => {
     const getUserAccount = async () => {
+      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+      
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`
@@ -123,7 +131,7 @@ const UpdateEmailAddressForm = props => {
       }
     }
     getUserAccount();
-  }, [accessToken, userId]);
+  }, [accessToken, setAccessToken, userId]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
