@@ -45,8 +45,6 @@ const VerifyEmail = props => {
   const [userId, setUserId] = useState(user);
   const [verificationCode, setVerificationCode] = useState(""); // React gets grumpy if the default is null
 
-console.log("INFO\n" + JSON.stringify(auth.getUserInfo(accessToken)));
-
   const postVerifyEmail = () => {
     const formData = {
       userId,
