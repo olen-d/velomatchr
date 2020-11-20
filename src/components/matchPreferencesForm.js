@@ -56,7 +56,10 @@ const MatchPreferencesForm = props => {
       setIsOpen(false);
     }
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
+      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
+      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
       setIsOpen(false);
       fetch(`${process.env.REACT_APP_API_URL}/api/relationships/delete/requester/id/${userId}`, {
         method: "delete",
@@ -126,7 +129,7 @@ const MatchPreferencesForm = props => {
     }
   }
 
-  const postMatchPreferences = () => {
+  const postMatchPreferences = async () => {
     const { matchProximityPref: distance, matchGenderPref: gender } = values;
 
     const formData = { 
@@ -139,6 +142,9 @@ const MatchPreferencesForm = props => {
       setRedirectURL(submitRedirectURL);
       setDoRedirect(true);
     }
+
+    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
+    if (isNewAccessToken) { setAccessToken(newAccessToken); }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/submit`, {
       method: "post",
@@ -217,7 +223,7 @@ const MatchPreferencesForm = props => {
         setHasMatchPreferences(true);
       }
     }
-    getUserMatchPrefs();
+    if (userId) { getUserMatchPrefs(); }
   }, [accessToken, setAccessToken, userId]);
 
   useEffect(() => {
