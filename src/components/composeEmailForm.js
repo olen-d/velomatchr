@@ -145,7 +145,7 @@ const ComposeEmailForm = props => {
   useEffect(() => {
     if (userId && addresseeId) {
       (async () => {
-        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
+        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
         if (isNewAccessToken) { setAccessToken(newAccessToken); }
 
         try {

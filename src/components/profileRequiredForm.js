@@ -55,7 +55,7 @@ const ProfileRequiredForm = props => {
         setInitialValues({ fullname, gender });
       }
     }
-    getUserProfile();
+    if (userId) { getUserProfile(); }
   }, [accessToken, setAccessToken, userId]);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ const ProfileRequiredForm = props => {
       gender,
     };
 
-    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
     if (isNewAccessToken) { setAccessToken(newAccessToken); }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/required`, {

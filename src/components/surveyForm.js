@@ -83,7 +83,7 @@ const SurveyForm = props => {
     const handleConfirm = async () => {
       setIsOpen(false);
 
-      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
       if (isNewAccessToken) { setAccessToken(newAccessToken); }
 
       fetch(`${process.env.REACT_APP_API_URL}/api/relationships/delete/requester/id/${userId}`, {
@@ -202,7 +202,7 @@ const SurveyForm = props => {
       }
     });
 
-    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
     if (isNewAccessToken) { setAccessToken(newAccessToken); }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/survey/submit`, {
@@ -280,9 +280,7 @@ const SurveyForm = props => {
         setSavedAnswers(initialAnswers);
       }
     }
-    if (userId) {
-      getUserAnswers();
-    }
+    if (userId) { getUserAnswers(); }
   }, [accessToken, answers, setAccessToken, userId]);
 
   useEffect(() => {
@@ -311,9 +309,7 @@ const SurveyForm = props => {
       }
     }
 
-    if (userId) { // Don't hit the API if the userId hasn't been set yet
-      getUserMatchPrefs();
-    }
+    if (userId) { getUserMatchPrefs(); } // Don't hit the API if the userId hasn't been set yet
   }, [accessToken, setAccessToken, userId]);
 
   return(

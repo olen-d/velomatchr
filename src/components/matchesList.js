@@ -68,23 +68,25 @@ import auth from "./auth";
   useEffect(() => {
     setMatches({isLoading: true});
 
-    (async () => {
-      try {
-        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-        if (isNewAccessToken) { setAccessToken(newAccessToken); }
-
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/user/id/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        });
-
-        const json = response.ok ? await response.json() : setMatches({ error: response.statusText, matchesResult: [], isLoading: false }); 
-        setMatches({ matchesResult: json, isLoading: false });
-      } catch(error) {
-        setMatches({ error, matchesResult: [], isLoading: false });;
-      }
-    })()
+    if (userId) {
+      (async () => {
+        try {
+          const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+          if (isNewAccessToken) { setAccessToken(newAccessToken); }
+  
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/user/id/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          });
+  
+          const json = response.ok ? await response.json() : setMatches({ error: response.statusText, matchesResult: [], isLoading: false }); 
+          setMatches({ matchesResult: json, isLoading: false });
+        } catch(error) {
+          setMatches({ error, matchesResult: [], isLoading: false });;
+        }
+      })()
+    }
   }, [accessToken, setAccessToken, setMatches, userId]);
 
   useEffect(() => {

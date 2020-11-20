@@ -13,15 +13,15 @@ const MatchesCount = () => {
   // Get items from context
   const { accessToken, setAccessToken } = useAuth();
   const { user } = auth.getUserInfo(accessToken);
-
+ 
   // Set up the state
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(user);
   const [totalMatches, setTotalMatches] = useState(null);
 
   useEffect(() => { setUserId(user) }, [user])
 
   useEffect(() => {
-    (async() => {
+    const getMatchesCount = async () => {
       try {
         const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
         if (isNewAccessToken) { setAccessToken(newAccessToken); }
@@ -39,7 +39,9 @@ const MatchesCount = () => {
       } catch(err) {
         return err;
       }
-    })()
+    };
+
+    if (userId) { getMatchesCount() }
   }, [accessToken, setAccessToken, setTotalMatches, userId]);
 
   return(

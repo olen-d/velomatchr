@@ -63,7 +63,6 @@ exports.token_grant_type_password = async (req, res) => {
 
 exports.token_grant_type_refresh_token = async (req, res) => {
   const { body: { userId: id, refreshToken }, headers: { referer }, } = req;
-
   const refreshTokenParsed = JSON.parse(refreshToken);
   const secret = process.env.SECRET_REFRESH;
 
@@ -75,6 +74,7 @@ exports.token_grant_type_refresh_token = async (req, res) => {
 
   if (error) {
     // TODO: Deal with the error
+    console.log("authController.js / token_grant_type_refresh_token\nERROR:", error);
   } else {
     const { clientId } = decoded;
     const refererName = referer.split("://")[1].slice(0, -1); // discard http(s):// and the trailing /
@@ -97,7 +97,7 @@ exports.token_grant_type_refresh_token = async (req, res) => {
           const { userId, refreshToken } = refreshTokenData;
     
           const token = await tokens.create(userId);
-    
+
           res.status(200).json({
             token_type: "bearer",
             access_token: token,
