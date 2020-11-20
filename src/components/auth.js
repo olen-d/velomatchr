@@ -29,7 +29,10 @@ class Auth {
         },
         body: JSON.stringify(actionData)
       }).then(result => {
-        console.log("Delete Result", result);
+        // console.log("Delete Result", result);
+        return result.json;
+      }).then(data => {
+        console.log("Delete Result:", JSON.stringify(data));
       }).catch(error => {
         console.log("Components/Auth.js Error:", error);
       }) ;
@@ -68,7 +71,7 @@ class Auth {
           })
           .then(data => {
             const { access_token: newAccessToken, refresh_token: refreshToken } = data; // token_type: tokenType
-    
+
             // Update the refresh in local storage
             localStorage.setItem("user_refresh_token", refreshToken);
     
@@ -88,15 +91,11 @@ class Auth {
   }
 
   getUserInfo(token) {
-    if (this.tokenActive(token)) {
-      return this.decodeToken(token);
-    } else {
-      return false;
-    }
+    return { ...this.decodeToken(token), isActive: this.isTokenActive(token) };
   }
 
   // Token related methods
-  tokenActive(token) {
+  isTokenActive(token) {
     try {
       const decodedToken = this.decodeToken(token);
       if (decodedToken.exp > Date.now() / 1000) {

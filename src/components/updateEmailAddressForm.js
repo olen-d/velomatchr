@@ -17,6 +17,10 @@ import useForm from "../hooks/useForm";
 const UpdateEmailAddressForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
+  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
+
+  const { user } = auth.getUserInfo(accessToken);
+
   const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
@@ -27,7 +31,7 @@ const UpdateEmailAddressForm = props => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessHeader, setIsSuccessHeader] = useState(null);
   const [isSuccessMessage, setIsSuccessMesssage] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(user);
 
   const {
     errors,
@@ -37,10 +41,6 @@ const UpdateEmailAddressForm = props => {
     initializeFields,
     values
   } = useForm();
-
-  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
-
-  const { user } = auth.getUserInfo(accessToken);
   
   const handleSubmit = () => {
     if (!isError) {
@@ -52,48 +52,51 @@ const UpdateEmailAddressForm = props => {
   
   const postUpdate = useCallback(() => {
     const { email } = values;
-    const formData = { userId, email };
 
-    (async () => {
-      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+    if (userId) {
+      const formData = { userId, email };
 
-      fetch(`${process.env.REACT_APP_API_URL}/api/users/email/update`, {
-        method: "put",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(formData)
-      })
-      .then(response => {
-        return response.json();
-      })
-      .then(data => {
-        if (data.status !== 200) {
-          setIsSuccess(false);
-          setIsErrorHeader("Unable to Update Email Address");
-          setIsErrorMessage("Please enter a valid email address and try again.")
-          handleServerErrors(...[{ email: true }]);
-        } else {
-          if(submitRedirect) {
-            setRedirectURL(submitRedirectURL);
-            setDoRedirect(true);
-          } else {
-            setIsSuccessHeader("Your Email Address was Successfully Updated");
-            setIsSuccessMesssage("You can now login using your updated email address.");
-            setIsSuccess(true);
-          }
-        }
-      })
-      .catch(error => {
-        return ({
-          errorCode: 500,
-          errorMsg: "Internal Server Error",
-          errorDetail: error
+      (async () => {
+        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+  
+        fetch(`${process.env.REACT_APP_API_URL}/api/users/email/update`, {
+          method: "put",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`
+          },
+          body: JSON.stringify(formData)
         })
-      });
-    })();
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          if (data.status !== 200) {
+            setIsSuccess(false);
+            setIsErrorHeader("Unable to Update Email Address");
+            setIsErrorMessage("Please enter a valid email address and try again.")
+            handleServerErrors(...[{ email: true }]);
+          } else {
+            if(submitRedirect) {
+              setRedirectURL(submitRedirectURL);
+              setDoRedirect(true);
+            } else {
+              setIsSuccessHeader("Your Email Address was Successfully Updated");
+              setIsSuccessMesssage("You can now login using your updated email address.");
+              setIsSuccess(true);
+            }
+          }
+        })
+        .catch(error => {
+          return ({
+            errorCode: 500,
+            errorMsg: "Internal Server Error",
+            errorDetail: error
+          })
+        });
+      })();
+    }
   }, [accessToken, handleServerErrors, setAccessToken, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
 
   const handleIsPassVerified = isAuthenticated => {
@@ -130,7 +133,7 @@ const UpdateEmailAddressForm = props => {
         });
       }
     }
-    getUserAccount();
+    if (userId) { getUserAccount(); }
   }, [accessToken, setAccessToken, userId]);
 
   useEffect(() => {

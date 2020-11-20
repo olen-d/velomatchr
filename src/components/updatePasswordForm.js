@@ -17,6 +17,10 @@ import useForm from "../hooks/useForm";
 const UpdatePasswordForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
+  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
+
+  const { user } = auth.getUserInfo(accessToken);
+
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
@@ -25,7 +29,7 @@ const UpdatePasswordForm = props => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessHeader, setIsSuccessHeader] = useState(null);
   const [isSuccessMessage, setIsSuccessMesssage] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(user);
 
   const {
     errors,
@@ -34,10 +38,6 @@ const UpdatePasswordForm = props => {
     handleServerErrors,
     values
   } = useForm();
-
-  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
-
-  const userInfo = auth.getUserInfo(accessToken);
 
   const handleSubmit = () => {
     if (!isError) {
@@ -49,44 +49,52 @@ const UpdatePasswordForm = props => {
   
   const postUpdate = useCallback(() => {
     const { password } = values;
-    const formData = { userId, password };
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/password/change`, {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => {
-      return response.json();
-    })
-    .then(data => {
-      if (data.status !== 200) {
-        setIsSuccess(false);
-        setIsErrorHeader("Unable to Change Password");
-        setIsErrorMessage("Please enter a valid password and try again.")
-        handleServerErrors(...[{ password: true }]);
-      } else {
-        if(submitRedirect) {
-          setRedirectURL(submitRedirectURL);
-          setDoRedirect(true);
-        } else {
-          setIsSuccessHeader("Your Password was Successfully Changed");
-          setIsSuccessMesssage("You can now login using your new password.");
-          setIsSuccess(true);
-        }
-      }
-    })
-    .catch(error => {
-      return ({
-        errorCode: 500,
-        errorMsg: "Internal Server Error",
-        errorDetail: error
-      })
-    });
-  }, [accessToken, handleServerErrors, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
+    if (userId) {
+      (async () => {
+        const formData = { userId, password };
+  
+        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+  
+        fetch(`${process.env.REACT_APP_API_URL}/api/users/password/change`, {
+          method: "put",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          if (data.status !== 200) {
+            setIsSuccess(false);
+            setIsErrorHeader("Unable to Change Password");
+            setIsErrorMessage("Please enter a valid password and try again.")
+            handleServerErrors(...[{ password: true }]);
+          } else {
+            if(submitRedirect) {
+              setRedirectURL(submitRedirectURL);
+              setDoRedirect(true);
+            } else {
+              setIsSuccessHeader("Your Password was Successfully Changed");
+              setIsSuccessMesssage("You can now login using your new password.");
+              setIsSuccess(true);
+            }
+          }
+        })
+        .catch(error => {
+          return ({
+            errorCode: 500,
+            errorMsg: "Internal Server Error",
+            errorDetail: error
+          })
+        });
+      })();
+    }
+  }, [accessToken, handleServerErrors, setAccessToken, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
 
   const handleIsPassVerified = isAuthenticated => {
     setIsPassVerified(isAuthenticated);
@@ -96,7 +104,7 @@ const UpdatePasswordForm = props => {
     setIsModalOpen(false);
   }
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+  useEffect(() => { setUserId(user) }, [user]);
 
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);

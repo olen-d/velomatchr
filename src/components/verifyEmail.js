@@ -30,6 +30,9 @@ const resendStyle = {
 const VerifyEmail = props => {
   const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
+  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
+  const { user } = auth.getUserInfo(accessToken);
+
   // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
@@ -39,12 +42,10 @@ const VerifyEmail = props => {
   const [isSuccessMessage, setIsSuccessMessage] = useState(null);
   const [isVerificationCodeError, setIsVerificationCodeError] = useState(false);
   // ...Rest of the State
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(user);
   const [verificationCode, setVerificationCode] = useState(""); // React gets grumpy if the default is null
 
-  const { accessToken, setDoRedirect, setRedirectURL } = useAuth();
-
-  const userInfo = auth.getUserInfo(accessToken);
+console.log("INFO\n" + JSON.stringify(auth.getUserInfo(accessToken)));
 
   const postVerifyEmail = () => {
     const formData = {
@@ -73,7 +74,10 @@ const VerifyEmail = props => {
       }
   }
 
-  const processForm = (formData) => {
+  const processForm = async formData => {
+    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
+    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verify`, {
       method: "post",
       headers: {
@@ -149,7 +153,10 @@ const VerifyEmail = props => {
     });
   }
 
-  const resendEmail = () => {
+  const resendEmail = async () => {
+    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
+    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/id/${userId}`, {
       method: "delete",
       headers: {
@@ -178,7 +185,7 @@ const VerifyEmail = props => {
         return response.ok ? response.json() : setIsErrorMessage({ error: response.statusText }); 
       })
       .then(json => {
-        const { user: { email },} = json;
+        const { user: { email }, } = json;
         const formData = ({ email, userId });
 
         fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
@@ -222,7 +229,7 @@ const VerifyEmail = props => {
       })
     }
 
-  useEffect(() => { setUserId(userInfo.user) }, [userInfo.user]);
+  useEffect(() => { setUserId(user) }, [user]);
 
   return(
     <Grid.Column width={colWidth}>
