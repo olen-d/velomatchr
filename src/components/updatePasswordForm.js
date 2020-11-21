@@ -54,14 +54,14 @@ const UpdatePasswordForm = props => {
       (async () => {
         const formData = { userId, password };
   
-        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+        const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(token); }
   
         fetch(`${process.env.REACT_APP_API_URL}/api/users/password/change`, {
           method: "put",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(formData)
         })

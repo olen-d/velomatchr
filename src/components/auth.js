@@ -43,13 +43,13 @@ class Auth {
   }
 
   checkAccessTokenExpiration(accessToken, userId) {
-    return this.willExpire(accessToken) ? this.newAccessToken(userId) : { "isNewAccessToken": false, "newAccessToken": accessToken };
+    return this.willExpire(accessToken) ? this.newAccessToken(userId) : { "isNewAccessToken": false, accessToken };
   }
 
   // Check to see if the access token is going to expire soon
   willExpire(token) {
     const { exp } = jwt.decode(token)
-    const expirationBuffer = 1 * 60;
+    const expirationBuffer = 1 * 10;
     return exp - expirationBuffer < Date.now() / 1000 ? true : false;
   }
 
@@ -70,13 +70,13 @@ class Auth {
             return response.json();
           })
           .then(data => {
-            const { access_token: newAccessToken, refresh_token: refreshToken } = data; // token_type: tokenType
+            const { access_token: accessToken, refresh_token: refreshToken } = data; // token_type: tokenType
 
             // Update the refresh in local storage
-            localStorage.setItem("user_refresh_token", refreshToken);
+            localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
     
             // Done, resolve the new access token
-            resolve({ "isNewAccessToken": true, newAccessToken });
+            resolve({ "isNewAccessToken": true, accessToken });
           })
           .catch(error => {
             // TODO: deal with the error

@@ -73,14 +73,14 @@ const VerifyEmail = props => {
   }
 
   const processForm = async formData => {
-    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
-    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+    const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
+    if (isNewAccessToken) { setAccessToken(token); }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verify`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
@@ -122,7 +122,7 @@ const VerifyEmail = props => {
           method: "put",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(formData)
         })
@@ -152,13 +152,13 @@ const VerifyEmail = props => {
   }
 
   const resendEmail = async () => {
-    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
-    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+    const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
+    if (isNewAccessToken) { setAccessToken(token); }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/id/${userId}`, {
       method: "delete",
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token}`
       }
     })
     .then(response => {
@@ -176,7 +176,7 @@ const VerifyEmail = props => {
 
     fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token}`
       }
     })
       .then(response => {
@@ -190,7 +190,7 @@ const VerifyEmail = props => {
           method: "post",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(formData)
         })

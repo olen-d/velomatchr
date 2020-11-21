@@ -57,14 +57,14 @@ const MatchPreferencesForm = props => {
     }
 
     const handleConfirm = async () => {
-      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
-      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+      const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
+      if (isNewAccessToken) { setAccessToken(token); }
 
       setIsOpen(false);
       fetch(`${process.env.REACT_APP_API_URL}/api/relationships/delete/requester/id/${userId}`, {
         method: "delete",
         headers: {
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${token}`
         }
       })
       .then(async response => {
@@ -143,14 +143,14 @@ const MatchPreferencesForm = props => {
       setDoRedirect(true);
     }
 
-    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
-    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+    const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
+    if (isNewAccessToken) { setAccessToken(token); }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/submit`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
@@ -176,7 +176,7 @@ const MatchPreferencesForm = props => {
             method: "post",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`
+              Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({ userId })
           }).then(response => {
@@ -206,13 +206,13 @@ const MatchPreferencesForm = props => {
 
   useEffect(() => {
     const getUserMatchPrefs = async () => {
-      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+      const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+      if (isNewAccessToken) { setAccessToken(token); }
 
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/matches/preferences/${userId}`, 
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${token}`
         }
       });
       const data = await response.json();
