@@ -56,8 +56,8 @@ import {
   const [redirectURI, setRedirectURI] = useState(null);
 
   const postAction = async (action, value) => {
-    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, requesterId);
-    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+    const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, requesterId);
+    if (isNewAccessToken) { setAccessToken(token); }
 
     if(action === "updateStatus") {
       const status = parseInt(value);
@@ -73,7 +73,7 @@ import {
         method: "put",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(actionData)
       }).then(response => {

@@ -59,12 +59,12 @@ const ProfileFullForm = props => {
   useEffect(() => {
     if (userId) {
       const getUserProfile = async () => {
-        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+        const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(token); }
         
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${token}`
           }
         });
   
@@ -189,8 +189,8 @@ const ProfileFullForm = props => {
   }
 
   const postProfileUpdate = async () => {
-    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
-    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+    const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
+    if (isNewAccessToken) { setAccessToken(token); }
 
     const {
       city,
@@ -227,7 +227,7 @@ const ProfileFullForm = props => {
       method: "put",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     }).then(response => {

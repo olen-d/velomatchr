@@ -83,13 +83,13 @@ const SurveyForm = props => {
     const handleConfirm = async () => {
       setIsOpen(false);
 
-      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
-      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+      const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
+      if (isNewAccessToken) { setAccessToken(token); }
 
       fetch(`${process.env.REACT_APP_API_URL}/api/relationships/delete/requester/id/${userId}`, {
         method: "delete",
         headers: {
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${token}`
         }
       })
       .then(async response => {
@@ -202,14 +202,14 @@ const SurveyForm = props => {
       }
     });
 
-    const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, user);
-    if (isNewAccessToken) { setAccessToken(newAccessToken); }
+    const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
+    if (isNewAccessToken) { setAccessToken(token); }
 
     fetch(`${process.env.REACT_APP_API_URL}/api/survey/submit`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     }).then(response => {
@@ -231,7 +231,7 @@ const SurveyForm = props => {
           method: "post",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({ userId })
         }).then(response => {
@@ -259,13 +259,13 @@ const SurveyForm = props => {
 
   useEffect(() => {
     const getUserAnswers = async () => {
-      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+      const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+      if (isNewAccessToken) { setAccessToken(token); }
 
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/survey/user/id/${userId}`,
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${token}`
         }
       });
 
@@ -292,13 +292,13 @@ const SurveyForm = props => {
 
   useEffect(() => {
     const getUserMatchPrefs = async () => {
-      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+      const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+      if (isNewAccessToken) { setAccessToken(token); }
       
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/matches/preferences/user/id/${userId}`, 
       {
         headers: { 
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${token}`
         }
       });
       const result = await response.json();

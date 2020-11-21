@@ -46,8 +46,8 @@ const ProfilePhotoForm = props => {
   useEffect (() => {
     if (profilePhotographFile && userId) {
       (async () => {
-        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+        const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(token); }
   
         const formData = new FormData();
         formData.append("userId", userId);
@@ -56,7 +56,7 @@ const ProfilePhotoForm = props => {
         fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/update/photograph`, {
           method: "post",
           headers: {
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${token}`
           },
           body: formData
         }).then(response => {

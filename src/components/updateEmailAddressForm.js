@@ -57,14 +57,14 @@ const UpdateEmailAddressForm = props => {
       const formData = { userId, email };
 
       (async () => {
-        const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-        if (isNewAccessToken) { setAccessToken(newAccessToken); }
+        const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(token); }
   
         fetch(`${process.env.REACT_APP_API_URL}/api/users/email/update`, {
           method: "put",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(formData)
         })
@@ -111,12 +111,12 @@ const UpdateEmailAddressForm = props => {
 
   useEffect(() => {
     const getUserAccount = async () => {
-      const { isNewAccessToken, newAccessToken } = await auth.checkAccessTokenExpiration(accessToken, userId);
-      if (isNewAccessToken) { setAccessToken(newAccessToken); }
+      const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+      if (isNewAccessToken) { setAccessToken(token); }
       
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
         headers: {
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${token}`
         }
       });
       const data = await response.json();

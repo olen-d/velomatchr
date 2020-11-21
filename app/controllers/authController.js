@@ -63,6 +63,7 @@ exports.token_grant_type_password = async (req, res) => {
 
 exports.token_grant_type_refresh_token = async (req, res) => {
   const { body: { userId: id, refreshToken }, headers: { referer }, } = req;
+
   const refreshTokenParsed = JSON.parse(refreshToken);
   const secret = process.env.SECRET_REFRESH;
 

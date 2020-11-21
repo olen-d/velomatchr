@@ -5,7 +5,7 @@ const create = userId => {
     jwt.sign(
       { user: userId },
       process.env.SECRET,
-      { expiresIn: "2m" },
+      { expiresIn: "1m" },
       (error, token) => {
         return error ? reject(error) : resolve(token);
       }
