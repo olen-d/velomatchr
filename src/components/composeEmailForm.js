@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 // import PropTypes from "prop-types";
 
-import auth from "./auth";
+import * as auth from "./auth";
 
 import {
   useHistory,
@@ -63,7 +63,7 @@ const ComposeEmailForm = props => {
   const handleSubmit = async () => {
     const { body, subject } = values;
 
-    const { isNewAccessToken,accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
+    const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
     if (isNewAccessToken) { setAccessToken(token); }
     // Process new lines
     // TODO: Find all the single newlines and replace with <br />

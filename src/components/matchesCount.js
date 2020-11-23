@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import auth from "./auth";
+import * as auth from "./auth";
 
 import { useAuth } from "../context/authContext";
 
