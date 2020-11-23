@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types"
 
+import auth from "./auth";
+
 import { Button, Form, Icon, Modal } from "semantic-ui-react";
+
+import { useAuth } from "../context/authContext";
 
 import ErrorContainer from "./errorContainer";
 import PasswordVerifyInput from "./formFields/passwordVerifyInput";
@@ -21,13 +25,14 @@ const ConfirmPasswordModal = props => {
     header,
     isOpen,
     message,
-    accessToken,
     userId 
   } = props;
 
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
+
+  const { accessToken, setAccessToken } = useAuth();
 
   const {
     errors,
@@ -41,11 +46,14 @@ const ConfirmPasswordModal = props => {
     const password = values.passwordVerify;
     const formData = { id: userId, password }
 
+    const { isNewAccessToken,accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+    if (isNewAccessToken) { setAccessToken(token); }
+
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/password/authenticate`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData)
     });
@@ -124,7 +132,6 @@ ConfirmPasswordModal.defaultProps = {
   header: "Password Required",
   isOpen: false,
   message: "Please enter your old password.",
-  accessToken: "",
   userId: -99 
 }
 
@@ -138,7 +145,6 @@ ConfirmPasswordModal.propTypes = {
   header: string,
   isOpen: bool,
   message: string,
-  accessToken: string,
   userId: number
 }
 

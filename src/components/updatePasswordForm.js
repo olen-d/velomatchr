@@ -173,7 +173,6 @@ const UpdatePasswordForm = props => {
             header={"Password Required"}
             isOpen={isModalOpen}
             message={"Please enter your old password."}
-            accessToken={accessToken}
             userId={userId}
           />
         </Form>
