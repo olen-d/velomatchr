@@ -1,5 +1,5 @@
 import React from "react";
-import auth from "./auth";
+import * as auth from "./auth";
 
 import {
   Link, 

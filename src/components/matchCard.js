@@ -12,7 +12,7 @@ import {
 
  import ErrorContainer from "./errorContainer";
 
- import auth from "./auth";
+ import * as auth from "./auth";
 
  const MatchCard = props => {
   const {

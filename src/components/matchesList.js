@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 
-import auth from "./auth";
+import * as auth from "./auth";
 
 // import {
 //   Container,

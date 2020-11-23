@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
-import auth from "./auth";
+import * as auth from "./auth";
 
 import {
   Button,
