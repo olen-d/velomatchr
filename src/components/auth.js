@@ -1,32 +1,35 @@
 import fetch from "node-fetch";
 import jwt from "jsonwebtoken";
 
-const logout = accessToken => {
+const logout = async accessToken => {
   const refreshToken = getRefreshToken().slice(1, -1); // Slice off the spuious ""
   const userInfo = getUserInfo(accessToken);
-
-  localStorage.removeItem("user_refresh_token");
 
   if (userInfo && refreshToken) {
     const { user: id } = userInfo;
     const actionData = { id, refreshToken };
 
+    const { accessToken: token } = await checkAccessTokenExpiration(accessToken, id);
+
     fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/`, {
       method: "delete",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(actionData)
     }).then(result => {
       // console.log("Delete Result", result);
       return result.json;
     }).then(data => {
-      console.log("Delete Result:", JSON.stringify(data));
+      return data;
+      // console.log("Delete Result:", JSON.stringify(data));
     }).catch(error => {
       console.log("Components/Auth.js Error:", error);
     }) ;
   }
+
+  localStorage.removeItem("user_refresh_token");
 
   return false;
 }
