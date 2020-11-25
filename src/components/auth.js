@@ -41,7 +41,7 @@ const checkAccessTokenExpiration = (accessToken, userId) => {
 // Check to see if the access token is going to expire soon
 const willExpire = token => {
   const { exp } = jwt.decode(token)
-  const expirationBuffer = 1 * 10;
+  const expirationBuffer = 5 * 60;  // Within 5 minutes of expiration
   return exp - expirationBuffer < Date.now() / 1000 ? true : false;
 }
 
