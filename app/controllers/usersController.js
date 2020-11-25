@@ -185,6 +185,34 @@ exports.profile_update_photograph = (req, res) => {
 };
 
 // Read Modules
+exports.read_email_is_available = async (req, res) => {
+  const { authorized } = req;
+
+  if (authorized) {
+    // Check for the email address
+    const { params: { email }, }= req;
+
+    try {
+      const data = await User.findOne({
+        where: {
+          email
+        },
+        attributes: ["email"]
+      });
+
+      const responseObj = { status: 200, data: { isAvailable: null } };
+      responseObj.data.isAvailable = data ? false : true;
+      res.status(200).json(responseObj);
+
+    } catch(error) {
+      console.log(error);
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    }
+  } else {
+    res.sendStatus(403);
+  }
+};
+
 exports.read_one_email_verification = async (req, res) => {
   const { authorized } = req;
 
