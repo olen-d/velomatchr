@@ -8,16 +8,20 @@ import {
   Form,
   Grid, 
   Header,
-  Popup,
   Segment
 } from "semantic-ui-react";
 
+// Components
+import EmailInput from "./formFields/emailInput";
 import ErrorContainer from "./errorContainer";
 import MatchesNearMe from "./matchesNearMe";
-import PasswordRequirements from "./passwordRequirements";
+import PasswordInput from "./formFields/passwordInput"
 
+// Helpers
 import locator from "../helpers/locator";
-import passwordValidate from "../helpers/password-validate";
+
+// Hooks
+import useForm from "../hooks/useForm";
 
 const SignupRequiredForm = props => {
   const { colWidth, formTitle } = props;
@@ -26,13 +30,17 @@ const SignupRequiredForm = props => {
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
-  const [isEmailError, setIsEmailError] = useState(false);
-  const [isPasswordError, setIsPasswordError] = useState(false);
   // ...Rest of the State
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
+
+  const {
+    errors,
+    handleBlur,
+    handleChange,
+    handleServerErrors,
+    values
+  } = useForm();
 
   const { setIsAuth, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
@@ -47,43 +55,28 @@ const SignupRequiredForm = props => {
     });
   }, []);
 
-  const createUser = formData => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.errors) {
-        // There was a validation issue
-        const { errors } = data;
-        errors.forEach(e => {
-          if (e["error"] === "IVE") {
-            setIsEmailError(true);
-            formError = true;
-          } else {
-            setIsEmailError(false);
-          }
-          if (e["error"] === "IVP") {
-            setIsPasswordError(true);
-            formError = true;
-          } else {
-            setIsPasswordError(false);
-          }
-          if (e["error"] === "DBE") {
-            setIsErrorHeader("Internal Server Error");
-            setIsErrorMessage("Please wait a few minutes and try again.");
-            setIsError(true);
-          }
+  const createUser = async formData => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/create`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+      const data = await response.json();
+  
+      if (data.status !== 200) {
+        const { errors: serverErrors } = data;
+        serverErrors.forEach(error => {
+          handleServerErrors(...[error]);
         });
       } else {
         if (data.token) {
           // localStorage.setItem("user_token", JSON.stringify(data.token));
-          setIsAuth(data.authenticated);
-          setAccessToken(data.token);
+          const { authenticated, token } = data;
+          setIsAuth(authenticated);
+          setAccessToken(token);
           setRedirectURL("/onboarding/profile")
           setDoRedirect(true);
         } else {
@@ -91,69 +84,46 @@ const SignupRequiredForm = props => {
           setAccessToken("");
           console.log("signupRequiredForm.js ~129 - ERROR: Missing Token");
         }          
-      }
-    }).catch(error => {
+      }    
+    } catch(error) {
       setIsAuth(false);
       setAccessToken("");
       console.log("Error:", error);
-      // TODO: Come back and fix this later to give a more specific error
-      // setIsErrorHeader("Internal Server Error");
-      // setIsErrorMessage("Please wait a few minutes and try again.");
-      // setIsError(true);
-    });      
+    }
   }
-  
-  const postSignup = () => {
-    validateForm();
-  }
-  // Form Validation
-  let formError = false;
 
-  const checkEmail = async () => {
-    const expression = /.+@.+\..+/i;
-    if(expression.test(String(email).toLowerCase())) {
-      const result = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/check-mx/${email}`);
-      const data = await result.json();
-      const { mxExists } = data;
+  const handleSubmit = () => {
+    if (!isError) {
+      const { email, password } = values;
 
-      if(mxExists) {
-        setIsEmailError(false);
-      } else {
-        setIsEmailError(true);
-        formError = true
+      const formData = { 
+        email: email.toLowerCase(),
+        password,
+        latitude,
+        longitude
       }
-    } else {
-      setIsEmailError(true);
-      formError = true;
-    }
-  };
-
-  const validateForm = async() => {
-    const formData = { 
-      email: email.toLowerCase(),
-      password,
-      latitude,
-      longitude
-    };
-
-    await checkEmail();
-    const isValid = await passwordValidate.validatePassword(password);
-    if (isValid) {
-      setIsPasswordError(false);
-    } else {
-      setIsPasswordError(true);
-      formError = true;        
-    }
-
-    if (formError) {
-      setIsErrorHeader("Unable to Sign Up");
-      setIsErrorMessage("Please check the fields in red and try again.");
-      setIsError(true);
-      return;
-    } else {
       createUser(formData);
+    } else {
+      // TODO: Consider shaking the screen or some other visual notification that the form didn't validate
     }
   }
+
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
+
+  useEffect(() => {
+    if (isError) {
+      if (errors.email) {
+        setIsErrorHeader("Invalid Email Address");
+        setIsErrorMessage("Please check the email address you entered and try again.");
+      }
+      if (errors.password) {
+        setIsErrorHeader("Invalid Password");
+        setIsErrorMessage("Please make sure the password you entered meets the requirements and try again. ");
+      }
+    }
+  }, [errors.email, errors.password, isError]);
 
   return(
     <Grid.Column width={colWidth}>
@@ -173,41 +143,24 @@ const SignupRequiredForm = props => {
         <Form
           size="large"
         >
-          <Form.Input
-            className="fluid"
-            icon="envelope"
-            iconPosition="left"
-            name="email"
-            value={email}
+          <EmailInput 
+            errors={errors}
+            initialValue={values.email}
             placeholder="Email Address"
-            type="email"
-            error={isEmailError}
-            onChange={e => {
-              setEmail(e.target.value)
-            }}
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
           />
-          <Popup
-            trigger={
-              <Form.Input
-              className="fluid"
-              icon="lock"
-              iconPosition="left"
-              name="password"
-              value={password}
-              placeholder="Password"
-              type="password"
-              error={isPasswordError}
-              onChange={e => {
-                setPassword(e.target.value)
-              }}
-            />
-            }
-            header="Password Requirements"
-            content={PasswordRequirements}
-            on="focus"
+          <PasswordInput 
+            errors={errors}
+            initialValue={values.password}
+            placeholder="Password"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
           />
           <Button
-            disabled={!email || !password}
+            disabled={!values.email || !values.password}
             className="fluid"
             type="button"
             color="red"
@@ -215,7 +168,7 @@ const SignupRequiredForm = props => {
             icon="check circle"
             labelPosition="left"
             content="Sign Up"
-            onClick={postSignup}
+            onClick={handleSubmit}
           >
           </Button>
         </Form>

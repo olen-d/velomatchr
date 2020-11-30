@@ -21,6 +21,24 @@ exports.create_user = async (req, res) => {
   const serverToken = await tokens.create(-99);
   const { email, password, latitude, longitude } = req.body;
   const errors = [];
+
+  const validations = await Promise.all([
+    checkEmail(email),
+    passwordValidate.validatePassword(password)
+  ]);
+
+  const isValid = validations.every(validation => validation === true);
+
+  if (!isValid) {
+    const keys = [ "email", "password" ];
+    validations.forEach((validation, i) => {
+      if (!validation) { errors.push({ [keys[i]]: true }) }
+    });
+    res.status(500).json({ status: 500, errors });
+  } else {
+    // Do stuff
+  }
+
   // TODO: Refactor this mess of spaghetti code to use async/await
   reverseGeocode.reverseGeocode(latitude, longitude).then(locationRes => {
     locationRes.json().then(locationRes => {
@@ -28,17 +46,6 @@ exports.create_user = async (req, res) => {
       const { adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000"} = location;
 
       // TODO: At some point fix this and the front end to flag all applicable errors rather than just bailing if the email is invalid
-      checkEmail(email)
-        .then(result => {
-          if (!result) {
-            errors.push({ error: "IVE", message: "Invalid Email Address", status: 500 });
-            res.json({ errors })
-          } 
-        })
-        .catch(error => {
-          errors.push({ error: "IVE", message: "Invalid Email Address", extra: error, status: 500 });
-          res.json({ errors })
-        });
 
       passwordValidate.validatePassword(password).then(isValid => {
         if (isValid) {
@@ -92,6 +99,7 @@ exports.create_user = async (req, res) => {
                                 { expiresIn: "1h" },
                                 (err, token) => {
                                   return res.status(200).json({
+                                    status: 200,
                                     authenticated: true,
                                     token
                                   });
@@ -136,8 +144,7 @@ exports.create_user = async (req, res) => {
             res.json({ error })
           });
         } else {
-          errors.push({ error: "IVP", message: "Invalid Password", status: 500 });
-          res.json({ errors });
+          errors.push({ password: true });
         }
       })
       .catch(error => {
