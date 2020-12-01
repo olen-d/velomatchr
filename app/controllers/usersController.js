@@ -8,12 +8,11 @@ const { EmailVerification, MatchPref, User } = require("../models");
 const jwt = require("jsonwebtoken");
 
 // Helpers
-// const auth = require("../helpers/auth-module");
 const adr = require ("../helpers/arbitrary-digit-random");
 const bcrypt = require("../helpers/bcrypt-module");
 const passwordUpdatedEmail = require("../helpers/password-updated-email");
-const passwordValidate = require("../helpers/password-validate");
-const reverseGeocode = require("../helpers/reverse-geocode");
+const { validatePassword} = require("../helpers/password-validate");
+const { reverseGeocode } = require("../helpers/reverse-geocode");
 const tokens = require("../helpers/tokens");
 
 // Create and Create/Update Modules
@@ -24,7 +23,7 @@ exports.create_user = async (req, res) => {
 
   const validations = await Promise.all([
     checkEmail(email),
-    passwordValidate.validatePassword(password)
+    validatePassword(password)
   ]);
 
   const isValid = validations.every(validation => validation === true);
@@ -35,131 +34,92 @@ exports.create_user = async (req, res) => {
       if (!validation) { errors.push({ [keys[i]]: true }) }
     });
     res.status(500).json({ status: 500, errors });
+    return;
   } else {
-    // Do stuff
-  }
+    try {
+      const locationResponse = await reverseGeocode(latitude, longitude);
+      const location = await locationResponse.json();
+  
+      // Destructure the first location returned
+      const { results: [{ locations: [{ adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000" }], }], } = location;
 
-  // TODO: Refactor this mess of spaghetti code to use async/await
-  reverseGeocode.reverseGeocode(latitude, longitude).then(locationRes => {
-    locationRes.json().then(locationRes => {
-      const location = locationRes.results[0].locations[0];
-      const { adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000"} = location;
+      // Get the full names of the state and country based on the codes returned
+      const geographyFullNamesResponse = await Promise.all([
+        fetch(`${process.env.REACT_APP_API_URL}/api/states/code/${stateCode}`),
+        fetch(`${process.env.REACT_APP_API_URL}/api/countries/alphatwo/${countryCode}`)
+      ]);
 
-      // TODO: At some point fix this and the front end to flag all applicable errors rather than just bailing if the email is invalid
+      const geographyFullNames = await Promise.all(geographyFullNamesResponse.map(fullName => { return fullName.json() }));
+      
+      const [ { state: { name: stateName }, }, { country: { name: countryName }, }] = geographyFullNames;
 
-      passwordValidate.validatePassword(password).then(isValid => {
-        if (isValid) {
-          bcrypt.newPass(password).then(pwdRes => {
-            if(pwdRes.status === 200) {
-              const emailParts = email.split("@");
-              const name = emailParts[0];
+      // Check to see if the password is valid
+      const isValidPassword = await validatePassword(password);
 
-              fetch(`${process.env.REACT_APP_API_URL}/api/states/code/${stateCode}`).then(response => {
-                response.json().then(data => {
-                  const { state: { name: stateName }, } = data;
+      if (isValidPassword) {
+        const newPassResult = await bcrypt.newPass(password);
 
-                  fetch(`${process.env.REACT_APP_API_URL}/api/countries/alphatwo/${countryCode}`).then(response => {
-                    response.json().then(data => {
-                      if (data.name === "SequelizeDatabaseError") {
-                        errors.push({ error: "DBE", message: "Database Error", status: 500 });
-                        res.json({ errors });
-                        // throw new Error("Database fail.");
-                      }
-                      const { country: { name: countryName }, } = data;
-                      User.create({
-                        name,
-                        password: pwdRes.passwordHash,
-                        email,
-                        emailIsVerified: 0,
-                        latitude,
-                        longitude,
-                        city,
-                        state: stateName,
-                        stateCode,
-                        country: countryName,
-                        countryCode,
-                        postalCode
-                      }).then(user => {
-                        const formData = {
-                          email,
-                          userId: user.id
-                        }
-                        fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
-                          method: "post",
-                          headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${serverToken}`
-                          },
-                            body: JSON.stringify(formData)
-                          }).then(response => {
-                            if (!response.error) {
-                              jwt.sign(
-                                {user: user.id},
-                                process.env.SECRET,
-                                { expiresIn: "1h" },
-                                (err, token) => {
-                                  return res.status(200).json({
-                                    status: 200,
-                                    authenticated: true,
-                                    token
-                                  });
-                                });
-                            } else {
-                              console.log("\n\nusersController.js ~85 ERROR:", response);
-                              // TODO, parse response.error and provide a more useful error message
-                            }
-                          }).catch(error => {
-                            return ({
-                              type: "error",
-                              message: "Internal server error.",
-                              error: error
-                            })
-                          });
-                        }).catch(error => {
-                          // Database error
-                          res.json({ error });
-                        });
-                    }).catch(error => {
-                      // TODO: Deal with the error
-                      console.log("Something went wrong with the country.\nError:", error);
-                    });
-                  }).catch(error => {
-                    // TODO: Deal with the error
-                    console.log("Failed to fetch country by code.\nError:", error);
-                  });
-                }).catch(error => {
-                  // TODO: Deal with the error
-                  console.log("Body.json() failed in fetch state by code.\nError:", error);
-                });
-              }).catch(error => {
-                // TODO: Deal with the error
-                console.log("Fetch state by code failed.\nError:", error)
-              });
+        if(newPassResult.status === 200) {
+          const emailParts = email.split("@");
+          const name = emailParts[0];
 
-              } else {
-                res.status(500).json({ error: "userController ~100" });
-              }
-          })
-          .catch(error => {
-            res.json({ error })
+          // Actually create the user
+          const createUserResult = await User.create({
+            name,
+            password: newPassResult.passwordHash,
+            email,
+            emailIsVerified: 0,
+            latitude,
+            longitude,
+            city,
+            state: stateName,
+            stateCode,
+            country: countryName,
+            countryCode,
+            postalCode
           });
+
+          const formData = {
+            email,
+            userId: createUserResult.id
+          }
+
+          const sendVerificationEmailReponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${serverToken}`
+            },
+              body: JSON.stringify(formData)
+            });
+
+            if (!sendVerificationEmailReponse.error) {
+              jwt.sign(
+                {user: createUserResult.id},
+                process.env.SECRET,
+                { expiresIn: "1h" },
+                (err, token) => {
+                  return res.status(200).json({
+                    status: 200,
+                    authenticated: true,
+                    token
+                  });
+                });
+            } else {
+              console.log("\n\nusersController.js ~85 ERROR:", sendVerificationEmailReponse);
+              // TODO, parse response.error and provide a more useful error message
+            }
         } else {
-          errors.push({ password: true });
+          // Password was not encrypted
+          // TODO: Deal with the error...
         }
-      })
-      .catch(error => {
-        errors.push({ error, message: "Invalid Password", status: 500 });
-        res.json({ errors });
-      });
-    })
-    .catch(err => {
-      // TODO: do something with the error
-      console.log("ERROR - usersController.js ~ 135", err);
-    });
-  })
-  .catch(error => {
-    res.json({ error });
-  });
+      } else {
+        errors.push({ password: true });
+      }
+    } catch(error) {
+      // TODO: Deal with the error...
+    }
+  }
 };
 
 exports.profile_update_photograph = (req, res) => {
@@ -543,7 +503,7 @@ exports.password_change  = async (req, res) => {
   if (authorized) {
     const { password, userId: id } = req.body;
   
-    const isValid = await passwordValidate.validatePassword(password);
+    const isValid = await validatePassword(password);
     if (isValid) {
       const encryptPassResult = await bcrypt.newPass(password);
         if (encryptPassResult.status === 200) {
@@ -585,7 +545,7 @@ exports.password_update = (req, res) => {
       if (error) {
         res.json({ error });
       } else if (decoded) {
-        passwordValidate.validatePassword(newPassword).then(isValid => {
+        validatePassword(newPassword).then(isValid => {
           if (isValid) {
             bcrypt.newPass(newPassword).then(pwdRes => {
               if(pwdRes.status === 200) {    
