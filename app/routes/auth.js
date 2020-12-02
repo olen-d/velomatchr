@@ -6,6 +6,7 @@ const authorizeJWT = require("../helpers/authorize-jwt");
 
 const auth_controller = require("../controllers/authController");
 
+router.post("/auth/token/grant-type/client-credentials", auth_controller.token_grant_type_client_credentials);
 router.post("/auth/token/grant-type/password", auth_controller.token_grant_type_password);
 router.post("/auth/token/grant-type/refresh-token", auth_controller.token_grant_type_refresh_token);
 

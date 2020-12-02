@@ -9,6 +9,34 @@ const requestIp = require("request-ip");
 const bcrypt = require("../helpers/bcrypt-module");
 const tokens = require("../helpers/tokens");
 
+exports.token_grant_type_client_credentials = async (req, res) => {
+  const { body: { clientId, clientSecret, endUserId, endUserIp }, } = req;
+
+  // TODO: Move these to the database and update this section
+  const storedClientId = process.env.CLIENT_ID;
+  const storedClientSecret = process.env.CLIENT_SECRET;
+
+  try {
+    // If the clientId exists, check the client secret and issue a token if it matches
+    // TODO: move the storedClientId and storedClientSecret to the database and update this section
+    if (clientId === storedClientId) {
+      if (clientSecret === storedClientSecret) {
+        const tokens = await createTokens(clientId, endUserIp, endUserId);
+        res.status(200).json(tokens);
+      } else {
+      // ClientSecret was not a match. Return a general error to avoid leaking valid client ids
+      res.status(500).json({ status: 500, message: "Internal server error.", authenticated: false });        
+      }
+    } else {
+      // ClientId was not a match. Return a general error to avoid leaking valid client ids
+      res.status(500).json({ status: 500, message: "Internal server error.", authenticated: false });
+    }
+  } catch(error) {
+    // TODO: Deal with the error...
+
+  }
+};
+
 exports.token_grant_type_password = async (req, res) => {
   const { body: { clientId = "www.velomatchr.com", username, pass }, } = req;
 
@@ -135,3 +163,33 @@ exports.refresh_token_delete = async (req, res) => {
     console.log("authController.js ERROR:", error);
   }
 };
+
+// Functions
+const createTokens = (clientId, clientIp, userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const refreshToken = await tokens.createRefresh(clientId); 
+
+      const refreshTokenCreate = await RefreshToken.create({
+        userId,
+        refreshToken,
+        ipAddress: clientIp
+      });
+  
+      if (!refreshTokenCreate) {
+        // TODO: Log that there was an error creating the refresh token
+      }
+  
+      // Issue the token
+      const token = await tokens.create(userId);
+  
+      resolve({
+        token_type: "bearer",
+        access_token: token,
+        refresh_token: refreshToken
+      });
+    } catch(error) {
+      reject(error);
+    }
+  })
+}
