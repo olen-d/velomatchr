@@ -149,7 +149,6 @@ exports.refresh_token_delete = async (req, res) => {
   const { body: { id: userId, refreshToken }, } = req;
 
   const ipAddress = requestIp.getClientIp(req);
-
   try {
     const refreshTokenDestroy = await RefreshToken.destroy(
       { where: { userId, ipAddress, refreshToken }}

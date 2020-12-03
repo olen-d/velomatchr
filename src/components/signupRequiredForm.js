@@ -72,9 +72,11 @@ const SignupRequiredForm = props => {
           handleServerErrors(...[error]);
         });
       } else {
-        if (data.token) {
-          // localStorage.setItem("user_token", JSON.stringify(data.token));
-          const { authenticated, token } = data;
+        if (data.tokens) {
+          const { authenticated, tokens: { access_token: token, refresh_token: refreshToken }, } = data; // token_type: tokenType
+
+          localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
+          
           setIsAuth(authenticated);
           setAccessToken(token);
           setRedirectURL("/onboarding/profile")
