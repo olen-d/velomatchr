@@ -6,6 +6,7 @@ const { EmailVerification, MatchPref, User } = require("../models");
 
 // Packages
 const jwt = require("jsonwebtoken");
+const requestIp = require("request-ip");
 
 // Helpers
 const adr = require ("../helpers/arbitrary-digit-random");
@@ -51,7 +52,7 @@ exports.create_user = async (req, res) => {
 
       const geographyFullNames = await Promise.all(geographyFullNamesResponse.map(fullName => { return fullName.json() }));
       
-      const [ { state: { name: stateName }, }, { country: { name: countryName }, }] = geographyFullNames;
+      const [{ state: { name: stateName }, }, { country: { name: countryName }, }] = geographyFullNames;
 
       // Check to see if the password is valid
       const isValidPassword = await validatePassword(password);
@@ -94,17 +95,33 @@ exports.create_user = async (req, res) => {
             });
 
             if (!sendVerificationEmailReponse.error) {
-              jwt.sign(
-                {user: createUserResult.id},
-                process.env.SECRET,
-                { expiresIn: "1h" },
-                (err, token) => {
-                  return res.status(200).json({
-                    status: 200,
-                    authenticated: true,
-                    token
-                  });
-                });
+              const clientId = process.env.CLIENT_ID;
+              const clientSecret = process.env.CLIENT_SECRET;
+              const { id: endUserId } = createUserResult;
+              const endUserIp = requestIp.getClientIp(req);
+
+              const clientCredentialsData = {
+                clientId, 
+                clientSecret, 
+                endUserId, 
+                endUserIp
+              };
+
+              const tokensResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/client-credentials`, {
+                method: "post",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(clientCredentialsData)
+              });
+
+              const tokens = await tokensResponse.json();
+
+              return res.status(200).json({
+                status: 200,
+                authenticated: true,
+                tokens
+              })
             } else {
               console.log("\n\nusersController.js ~85 ERROR:", sendVerificationEmailReponse);
               // TODO, parse response.error and provide a more useful error message
