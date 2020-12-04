@@ -11,5 +11,6 @@ router.post("/auth/token/grant-type/password", auth_controller.token_grant_type_
 router.post("/auth/token/grant-type/refresh-token", auth_controller.token_grant_type_refresh_token);
 
 router.delete("/auth/token/refresh-token", authorizeJWT, auth_controller.refresh_token_delete);
+router.delete("/auth/token/refresh-token/all", authorizeJWT, auth_controller.refresh_token_delete_all);
 
 module.exports = router;

@@ -530,8 +530,10 @@ exports.password_change  = async (req, res) => {
           )
           if (data[0] === 1) {
             // passwordUpdatedEmail.send(email, firstName, lastName)
+            // Delete all refresh tokens (api/auth/token/refresh-token/all)
+            // Get a new refresh token (api/auth/grant-type/client-credentials)
           }
-          res.status(200).json({ status: 200, message: "ok", data });
+          res.status(200).json({ status: 200, message: "ok", data }); // return the tokens!
         } else {
           res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again."})
         }
