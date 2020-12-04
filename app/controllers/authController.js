@@ -145,6 +145,7 @@ exports.token_grant_type_refresh_token = async (req, res) => {
   }
 };
 
+// Delete
 exports.refresh_token_delete = async (req, res) => {
   const { body: { id: userId, refreshToken }, } = req;
 
@@ -163,6 +164,22 @@ exports.refresh_token_delete = async (req, res) => {
   }
 };
 
+exports.refresh_token_delete_all = async (req, res) => {
+  const { body: { id: userId }, } = req;
+console.log("\nUSERID", userId);
+  try {
+    const refreshTokenDestroyAll = await RefreshToken.destroy(
+      { where: { userId} }
+    );
+    if (refreshTokenDestroyAll === 0) {
+      console.log("AuthController Refresh Tokens Not Deleted");
+    } else {
+      res.status(200).json({ status: 200, message: "ok", data: { refreshTokensDestroyed: refreshTokenDestroyAll } });
+    }
+  } catch(error) {
+    console.log("authcontroller.js ERROR:", error);
+  }
+}
 // Functions
 const createTokens = (clientId, clientIp, userId) => {
   return new Promise(async (resolve, reject) => {
