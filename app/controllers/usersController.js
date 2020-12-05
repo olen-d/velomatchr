@@ -115,12 +115,12 @@ exports.create_user = async (req, res) => {
                 body: JSON.stringify(clientCredentialsData)
               });
 
-              const tokens = await tokensResponse.json();
+              const newTokens = await tokensResponse.json();
 
               return res.status(200).json({
                 status: 200,
                 authenticated: true,
-                tokens
+                tokens: newTokens
               })
             } else {
               console.log("\n\nusersController.js ~85 ERROR:", sendVerificationEmailReponse);
@@ -255,7 +255,7 @@ exports.read_one_email_verification = async (req, res) => {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/id/${userId}`, {
               method: "delete",
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`
               }
             });
             if (!response.ok) {
@@ -529,11 +529,47 @@ exports.password_change  = async (req, res) => {
             { where: { id }}
           )
           if (data[0] === 1) {
-            // passwordUpdatedEmail.send(email, firstName, lastName)
+            const token = await tokens.create(-99);
+
+            // TODO: Send an email letting the user know the password has been updated passwordUpdatedEmail.send(email, firstName, lastName)
             // Delete all refresh tokens (api/auth/token/refresh-token/all)
-            // Get a new refresh token (api/auth/grant-type/client-credentials)
+
+            const refreshTokensDestroyed = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/all/${id}`, {
+              method: "delete",
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+            if (refreshTokensDestroyed === 0) {
+              // Error!
+            }
+            const clientId = process.env.CLIENT_ID;
+            const clientSecret = process.env.CLIENT_SECRET;
+            const endUserIp = requestIp.getClientIp(req);
+
+            const clientCredentialsData = {
+              clientId, 
+              clientSecret, 
+              endUserId: id, 
+              endUserIp
+            };
+
+            const tokensResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/client-credentials`, {
+              method: "post",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(clientCredentialsData)
+            });
+
+            const newTokens = await tokensResponse.json();
+
+            return res.status(200).json({
+              status: 200,
+              authenticated: true,
+              tokens: newTokens
+            });
           }
-          res.status(200).json({ status: 200, message: "ok", data }); // return the tokens!
         } else {
           res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again."})
         }
