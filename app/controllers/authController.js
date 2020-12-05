@@ -160,13 +160,13 @@ exports.refresh_token_delete = async (req, res) => {
       console.log("AuthController Refresh Token Not Deleted");
     }
   } catch(error) {
-    console.log("authController.js ERROR:", error);
+    console.log("authController.js\nRefresh Token Delete\nERROR:", error);
   }
 };
 
 exports.refresh_token_delete_all = async (req, res) => {
-  const { body: { id: userId }, } = req;
-console.log("\nUSERID", userId);
+  const { params: { userId }, } = req;
+  
   try {
     const refreshTokenDestroyAll = await RefreshToken.destroy(
       { where: { userId} }
@@ -177,7 +177,7 @@ console.log("\nUSERID", userId);
       res.status(200).json({ status: 200, message: "ok", data: { refreshTokensDestroyed: refreshTokenDestroyAll } });
     }
   } catch(error) {
-    console.log("authcontroller.js ERROR:", error);
+    console.log("authcontroller.js\nRefresh Token Delete All\nERROR:", error);
   }
 }
 // Functions

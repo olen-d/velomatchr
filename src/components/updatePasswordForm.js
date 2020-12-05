@@ -17,7 +17,7 @@ import useForm from "../hooks/useForm";
 const UpdatePasswordForm = props => {
   const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
-  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
+  const { accessToken, setAccessToken, setDoRedirect, setIsAuth, setRedirectURL } = useAuth();
 
   const { user } = auth.getUserInfo(accessToken);
 
@@ -75,6 +75,14 @@ const UpdatePasswordForm = props => {
             setIsErrorMessage("Please enter a valid password and try again.")
             handleServerErrors(...[{ password: true }]);
           } else {
+            if (data.tokens) {
+              const { authenticated, tokens: { access_token: token, refresh_token: refreshToken }, } = data; // token_type: tokenType
+    
+              localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
+              
+              setIsAuth(authenticated);
+              setAccessToken(token);
+            }
             if(submitRedirect) {
               setRedirectURL(submitRedirectURL);
               setDoRedirect(true);
@@ -94,7 +102,7 @@ const UpdatePasswordForm = props => {
         });
       })();
     }
-  }, [accessToken, handleServerErrors, setAccessToken, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
+  }, [accessToken, handleServerErrors, setAccessToken, setDoRedirect, setIsAuth, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
 
   const handleIsPassVerified = isAuthenticated => {
     setIsPassVerified(isAuthenticated);
