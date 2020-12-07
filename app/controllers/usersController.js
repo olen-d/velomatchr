@@ -571,13 +571,13 @@ exports.password_change  = async (req, res) => {
               });
             }
           } else {
-            res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again."})
+            res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again."});
           }
       } else {
         res.status(400).json({ status: 400, message: "Bad Request", error: "Invalid password." });
       }
     } catch(error) {
-      res.sendStatus(500).json({ status: 500, message: "Internal Server Error", error });
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
     }
   } else {
     res.sendStatus(403);
@@ -585,66 +585,59 @@ exports.password_change  = async (req, res) => {
 };
 
 exports.password_update = async (req, res) => {
+  // TODO: IMMEDIATE - delete refresh tokens on password change
   const { body: { password: newPassword, token, userId: id }, } = req;
-  const errors = [];
 
-  User.findOne({
+  try {
+
+  } catch(error) {
+    res.status(500).json({ status: 500, message: "Internal Server Error", error });
+  }
+
+  const data = await User.findOne({
     where: {
       id
     },
     attributes: [ "createdAt", "email", "firstName", "lastName", "password"]
-  })
-  .then(data => {
-    const { createdAt, email, firstName, lastName, password } = data;
-    const created = new Date(createdAt);
-    const secret = password + created.getTime();
-
-    jwt.verify(token, secret, (error, decoded) => {
-      if (error) {
-        res.json({ error });
-      } else if (decoded) {
-        validatePassword(newPassword).then(isValid => {
-          if (isValid) {
-            bcrypt.newPass(newPassword).then(pwdRes => {
-              if(pwdRes.status === 200) {    
-                User.update(
-                  { password: pwdRes.passwordHash },
-                  { where: {id }}
-                ).then(data => {
-                  if (data[0] === 1) {
-                    // Send password has been reset email
-                    // TODO: fix this so it doesn't crash if the passwordUpdatedEmail craps out
-                    // TODO: log somewhere if the email fails...
-                    passwordUpdatedEmail.send(email, firstName, lastName);
-                  }
-                  res.json({ data });
-                })
-                .catch(error => {
-                  // TODO - return some sort of useful error
-                  res.json({ error });
-                });
-              } else {
-                // TODO: Throw useful error. 
-                // Unable to hash password.
-              }
-            });
-          } else {
-            // Invalid Password
-            errors.push({ error: "IVP", message: "Invalid Password", status: 500 });
-            res.json({ errors });
-          }
-        }).catch(error => {
-          // TODO - return some sort of useful error
-          res.json({ error });
-        });
-      }
-    });
-  })
-  .catch(error => {
-    // TODO Throw useful error.
-    // Couldn't find users
   });
-};
+
+  const { createdAt, email, firstName, lastName, password } = data;
+  const created = new Date(createdAt);
+  const secret = password + created.getTime();
+
+  jwt.verify(token, secret, async (error, decoded) => {
+    if (error) {
+      res.json({ error });
+    } else if (decoded) {
+      const isValid = await validatePassword(newPassword);
+      if (isValid) {
+        const encryptPassResult = await bcrypt.newPass(newPassword);
+        if(encryptPassResult.status === 200) {    
+        const updateData = await User.update(
+          { password: encryptPassResult.passwordHash },
+          { where: {id }}
+        );
+        if (updateData[0] === 1) {
+          // Send password has been reset email
+          // TODO: fix this so it doesn't crash if the passwordUpdatedEmail craps out
+          // TODO: log somewhere if the email fails...
+          passwordUpdatedEmail.send(email, firstName, lastName);
+      
+          res.json({ data: updateData });
+        } else {
+          // TODO: Throw useful error. 
+          // Unable to hash password.
+        }
+      } else {
+        res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again."})
+      }
+    } else {
+      // Invalid Password
+      res.status(400).json({ status: 400, message: "Bad Request", error: "Invalid password." });
+    }
+  }
+  });
+}
 
 exports.profile_update_full = (req, res) => {
   const { authorized } = req;
