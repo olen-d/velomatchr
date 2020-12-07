@@ -520,68 +520,71 @@ exports.password_change  = async (req, res) => {
   if (authorized) {
     const { password, userId: id } = req.body;
   
-    const isValid = await validatePassword(password);
-    if (isValid) {
-      const encryptPassResult = await bcrypt.newPass(password);
-        if (encryptPassResult.status === 200) {
-          const data = await User.update(
-            { password: encryptPassResult.passwordHash },
-            { where: { id }}
-          )
-          if (data[0] === 1) {
-            const token = await tokens.create(-99);
-
-            // TODO: Send an email letting the user know the password has been updated passwordUpdatedEmail.send(email, firstName, lastName)
-            // Delete all refresh tokens (api/auth/token/refresh-token/all)
-
-            const refreshTokensDestroyed = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/all/${id}`, {
-              method: "delete",
-              headers: {
-                Authorization: `Bearer ${token}`
+    try {
+      const isValid = await validatePassword(password);
+      if (isValid) {
+        const encryptPassResult = await bcrypt.newPass(password);
+          if (encryptPassResult.status === 200) {
+            const data = await User.update(
+              { password: encryptPassResult.passwordHash },
+              { where: { id }}
+            )
+            if (data[0] === 1) {
+              const token = await tokens.create(-99);
+  
+              // TODO: Send an email letting the user know the password has been updated passwordUpdatedEmail.send(email, firstName, lastName)
+              // Delete all refresh tokens (api/auth/token/refresh-token/all)
+              const refreshTokensDestroyed = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/all/${id}`, {
+                method: "delete",
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              });
+              if (refreshTokensDestroyed === 0) {
+                // Error!
               }
-            });
-            if (refreshTokensDestroyed === 0) {
-              // Error!
+              const clientId = process.env.CLIENT_ID;
+              const clientSecret = process.env.CLIENT_SECRET;
+              const endUserIp = requestIp.getClientIp(req);
+  
+              const clientCredentialsData = {
+                clientId, 
+                clientSecret, 
+                endUserId: id, 
+                endUserIp
+              };
+  
+              const tokensResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/client-credentials`, {
+                method: "post",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(clientCredentialsData)
+              });
+  
+              const newTokens = await tokensResponse.json();
+  
+              return res.status(200).json({
+                status: 200,
+                authenticated: true,
+                tokens: newTokens
+              });
             }
-            const clientId = process.env.CLIENT_ID;
-            const clientSecret = process.env.CLIENT_SECRET;
-            const endUserIp = requestIp.getClientIp(req);
-
-            const clientCredentialsData = {
-              clientId, 
-              clientSecret, 
-              endUserId: id, 
-              endUserIp
-            };
-
-            const tokensResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/client-credentials`, {
-              method: "post",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(clientCredentialsData)
-            });
-
-            const newTokens = await tokensResponse.json();
-
-            return res.status(200).json({
-              status: 200,
-              authenticated: true,
-              tokens: newTokens
-            });
+          } else {
+            res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again."})
           }
-        } else {
-          res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again."})
-        }
-    } else {;
-      res.status(400).json({ status: 400, message: "Bad Request", error: "Invalid password." });
+      } else {
+        res.status(400).json({ status: 400, message: "Bad Request", error: "Invalid password." });
+      }
+    } catch(error) {
+      res.sendStatus(500).json({ status: 500, message: "Internal Server Error", error });
     }
   } else {
     res.sendStatus(403);
   }
 };
 
-exports.password_update = (req, res) => {
+exports.password_update = async (req, res) => {
   const { body: { password: newPassword, token, userId: id }, } = req;
   const errors = [];
 
