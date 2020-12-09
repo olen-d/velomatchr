@@ -11,37 +11,46 @@ const tokens = require("./tokens");
  * @returns {Promise} Promise object represents success or an error code if the email was not sent
  */
 
-const send = async (email, firstName, lastName) => {
-  const token = await tokens.create(-99); // Use -99 for userId for now. TODO: add special "server" user
+const send = (email, firstName, lastName) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const token = await tokens.create(-99); // Use -99 for userId for now. TODO: add special "server" user
 
-  const formData = {
-    fromAddress: "\"VeloMatchr Password Changed\" <changed@velomatchr.com>", 
-    toAddress: email, 
-    subject: "Your Password Has Been Changed", 
-    message: `<p>Hi ${firstName} ${lastName},</p><p>Your VeloMatchr Password was recently changed. If you did not change your password, please conact us at <a href="mailto:support@velomatchr.com">support@velomatchr.com</a> to secure your account.</p>`
-  }
-
-  // Send the email
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify(formData)
-  });
-  
-  const json = response.ok ? await response.json() : false;
-  if (!json) {
-    return ({
-      error: {
+      const formData = {
+        fromAddress: "\"VeloMatchr Password Changed\" <changed@velomatchr.com>", 
+        toAddress: email, 
+        subject: "Your Password Has Been Changed", 
+        message: `<p>Hi ${firstName} ${lastName},</p><p>Your VeloMatchr Password was recently changed. If you did not change your password, please conact us at <a href="mailto:support@velomatchr.com">support@velomatchr.com</a> to secure your account.</p>`
+      }
+    
+      // Send the email
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      const json = response.ok ? await response.json() : false;
+      if (!json) {
+        resolve({
+          status: 500,
+          message: "Internal Server Error",
+          error: "Something went horribly awry." 
+        });
+      } else {
+        resolve(json);
+      }
+    } catch(error) {
+      reject({
         status: 500,
-        message: "Internal Server Error"
-      } 
-    });
-  } else {
-    return json;
-  }
+        message: "Internal Server Error",
+        error
+      });
+    }
+  });
 }
 
 module.exports = {
