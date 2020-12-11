@@ -9,29 +9,29 @@ const logout = async accessToken => {
     const { user: id } = userInfo;
     const actionData = { id, refreshToken };
 
-    const { accessToken: token } = await checkAccessTokenExpiration(accessToken, id);
+    try {
+      const { accessToken: token } = await checkAccessTokenExpiration(accessToken, id);
 
-    fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/`, {
-      method: "delete",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(actionData)
-    }).then(result => {
-      // result.status should equal 204
-      return result.json;
-    }).then(data => {
-      // There shouldn't be any data, if there is, it's an error, so trap it
-      return data;
-    }).catch(error => {
-      console.log("Components/Auth.js Error:", error);
-    }) ;
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/`, {
+        method: "delete",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(actionData)
+      });
+      
+      if (response.status !== 204) {
+        const json = await response.json();
+        return json;
+      } else {
+        localStorage.removeItem("user_refresh_token");
+        return false;
+      }
+    } catch(error) {
+      return error;
+    }
   }
-
-  localStorage.removeItem("user_refresh_token");
-
-  return false;
 }
 
 const checkAccessTokenExpiration = (accessToken, userId) => {
