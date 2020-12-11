@@ -19,11 +19,11 @@ const logout = async accessToken => {
       },
       body: JSON.stringify(actionData)
     }).then(result => {
-      // console.log("Delete Result", result);
+      // result.status should equal 204
       return result.json;
     }).then(data => {
+      // There shouldn't be any data, if there is, it's an error, so trap it
       return data;
-      // console.log("Delete Result:", JSON.stringify(data));
     }).catch(error => {
       console.log("Components/Auth.js Error:", error);
     }) ;
