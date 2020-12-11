@@ -157,10 +157,12 @@ exports.refresh_token_delete = async (req, res) => {
     
     if (refreshTokenDestroy !== 1) {
       // TODO: Log that there was an error deleting the refresh token
-      console.log("AuthController Refresh Token Not Deleted");
+      res.status(500).json({ status: 500, message: "Internal Server Error", error: "The refresh token was not deleted." });
+    } else {
+      res.status(204).end();
     }
   } catch(error) {
-    console.log("authController.js\nRefresh Token Delete\nERROR:", error);
+    res.status(500).json({ status: 500, message: "Internal Server Error", error });
   }
 };
 

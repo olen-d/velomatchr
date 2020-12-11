@@ -25,15 +25,23 @@ const settingsItems = [
   { key: "account", text: "Account", value: "/settings/account"}
 ];
 
-const NavBar = props => {
+const NavBar = () => {
   const { accessToken, setIsAuth, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
   const logout = async () => {
     const newAuthStatus = await auth.logout(accessToken);
     setIsAuth(newAuthStatus);
-    setAccessToken(null);
-    setDoRedirect(false);
-    setRedirectURL(null);
+
+    if (newAuthStatus) {
+      // Logout failed
+      // TODO: Set an error notification letting the user know they were not logged out.
+    } else {
+      setAccessToken(null);
+      setDoRedirect(false);
+      setRedirectURL(null);
+    }
+
+    return null;
   }
 
   return(
