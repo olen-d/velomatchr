@@ -175,6 +175,7 @@ exports.refresh_token_delete_all = async (req, res) => {
     );
     if (refreshTokenDestroyAll === 0) {
       console.log("AuthController Refresh Tokens Not Deleted");
+      // TODO res.status(500).json({ status: 500, message: "Internal Server Error", error: "Refresh tokens wwere not deleted." });
     } else {
       res.status(200).json({ status: 200, message: "ok", data: { refreshTokensDestroyed: refreshTokenDestroyAll } });
     }

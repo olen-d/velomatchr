@@ -617,17 +617,27 @@ exports.password_update = async (req, res) => {
               const emailResult = await passwordUpdatedEmail.send(email, firstName, lastName);
               if (emailResult.status !== 200) {
                 // TODO: log somewhere if the email fails...
+              }  
+
+              const accessToken = await tokens.create(-99)
+              // Delete all refresh tokens - this logs the user out on ALL devices
+              const refreshTokensDestroyed = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/all/${id}`, {
+                method: "delete",
+                headers: {
+                  Authorization: `Bearer ${accessToken}`
+                }
+              });
+              if (refreshTokensDestroyed === 0) {
+                // Error! TODO: Figure this out, refreshTokensDestroyed is returning: {"size":0,"timeout":0}
               }
-              res.json({ data: updateData });
+              res.status(200).json({ data: updateData });
             } else {
-              // TODO: Throw useful error. 
-              // Unable to hash password.
+              res.status(500).json({ status: 500, message: "Internal Server Error", error: "Database error, unable to update password. Please try again." });
             }
           } else {
-            res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again."})
+            res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password. Please try again." });
           }
         } else {
-          // Invalid Password
           res.status(400).json({ status: 400, message: "Bad Request", error: "Invalid password." });
         }
       }
