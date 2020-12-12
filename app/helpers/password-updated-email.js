@@ -11,7 +11,7 @@ const tokens = require("./tokens");
  * @returns {Promise} Promise object represents success or an error code if the email was not sent
  */
 
-const send = (email, firstName, lastName) => {
+const updated = (email, firstName, lastName) => {
   return new Promise(async (resolve, reject) => {
     try {
       const token = await tokens.create(-99); // Use -99 for userId for now. TODO: add special "server" user
@@ -54,5 +54,5 @@ const send = (email, firstName, lastName) => {
 }
 
 module.exports = {
-  send
+  updated
 }

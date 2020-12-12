@@ -532,7 +532,7 @@ exports.password_change  = async (req, res) => {
             if (data[0] === 1) {
               const token = await tokens.create(-99);
   
-              // TODO: Send an email letting the user know the password has been updated passwordUpdatedEmail.send(email, firstName, lastName)
+              // TODO: Send an email letting the user know the password has been updated passwordUpdatedEmail.updated(email, firstName, lastName)
               // Delete all refresh tokens (api/auth/token/refresh-token/all)
               const refreshTokensDestroyed = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/all/${id}`, {
                 method: "delete",
@@ -614,7 +614,7 @@ exports.password_update = async (req, res) => {
             );
             if (updateData[0] === 1) {
               // Send password has been reset email
-              const emailResult = await passwordUpdatedEmail.send(email, firstName, lastName);
+              const emailResult = await passwordUpdatedEmail.updated(email, firstName, lastName);
               if (emailResult.status !== 200) {
                 // TODO: log somewhere if the email fails...
               }  
@@ -941,6 +941,7 @@ exports.email_send_verification = async (req, res) => {
 
 exports.password_reset = async (req, res) => {
   const { body: { email }, } = req;
+
   // Check that the email exists
   const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
 
@@ -970,7 +971,7 @@ exports.password_reset = async (req, res) => {
                 return data.json();
               }).then(json => {
                 if (!json.error) {
-                  res.json({ data: json });
+                  res.status(200).json({ status: 200, message: "ok", data: json });
                 } else {
                   res.status(500).json({ status: 500, message: "Internal server error. An email could not be sent. Please check the email address you entered and try again."});
                 }
@@ -1018,19 +1019,19 @@ exports.password_reset = async (req, res) => {
             return data.json();
           }).then(json => {
             if (!json.error) {
-              res.json({ data: json });
+              res.status(200).json({ status: 200, message: "ok", data: json });
             }
           }).catch(error => {
-            res.json({ error });
+            res.status(500).json({ status: 500, message: "Internal Server Error", error });
           });
         }
       })
       .catch(error => {
-        res.json({ error });
+        res.status(500).json({ status: 500, message: "Internal Server Error", error });
       });
     })
     .catch(error => {
-      res.json({ error });
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
     });
 };
 
