@@ -173,12 +173,13 @@ exports.refresh_token_delete_all = async (req, res) => {
     const refreshTokenDestroyAll = await RefreshToken.destroy(
       { where: { userId} }
     );
+
     if (refreshTokenDestroyAll === 0) {
-      console.log("AuthController Refresh Tokens Not Deleted");
-      // TODO res.status(500).json({ status: 500, message: "Internal Server Error", error: "Refresh tokens wwere not deleted." });
-    } else {
-      res.status(200).json({ status: 200, message: "ok", data: { refreshTokensDestroyed: refreshTokenDestroyAll } });
+      // TODO: Consider logging that no refresh tokens were deleted. This isn't necessarily an error, since if a user was logged out, there would be no refresh tokens to destroy.
     }
+
+    res.status(200).json({ status: 200, message: "ok", data: { refreshTokensDestroyed: refreshTokenDestroyAll } });
+
   } catch(error) {
     console.log("authcontroller.js\nRefresh Token Delete All\nERROR:", error);
   }

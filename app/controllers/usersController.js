@@ -630,7 +630,7 @@ exports.password_update = async (req, res) => {
               if (refreshTokensDestroyed === 0) {
                 // Error! TODO: Figure this out, refreshTokensDestroyed is returning: {"size":0,"timeout":0}
               }
-              res.status(200).json({ data: updateData });
+              res.status(200).json({ status: 200, message: "ok", data: updateData });
             } else {
               res.status(500).json({ status: 500, message: "Internal Server Error", error: "Database error, unable to update password. Please try again." });
             }
