@@ -40,7 +40,7 @@ exports.create_user = async (req, res) => {
     try {
       const locationResponse = await reverseGeocode(latitude, longitude);
       const location = await locationResponse.json();
-  
+
       // Destructure the first location returned
       const { results: [{ locations: [{ adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000" }], }], } = location;
 
@@ -134,7 +134,12 @@ exports.create_user = async (req, res) => {
         errors.push({ password: true });
       }
     } catch(error) {
-      // TODO: Deal with the error...
+      // TODO: Deal with the errors...
+      // Check for unique constraint violation
+      if (error.name === "SequelizeUniqueConstraintError") {
+        errors.push({ email: true });
+        res.status(400).json({ status: 400, message: "Bad Request", errors })
+      }
     }
   }
 };

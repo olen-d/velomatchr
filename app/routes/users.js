@@ -6,12 +6,6 @@ const authorizeJWT = require("../helpers/authorize-jwt");
 const imageUpload = require("../helpers/upload-image");
 
 const users_controller = require("../controllers/usersController");
-// TODO: Fix this to no longer require imageUpload, since no image is uploaded on the initial user creation.
-router.post(
-    "/users/create",
-    imageUpload,
-    users_controller.create_user
-  );
 
 router.get("/users/email/is-available/:email", authorizeJWT, users_controller.read_email_is_available);
 router.get("/users/email/:email", users_controller.read_one_user_id_by_email); // Meant to be used with password reset, authorization not required
@@ -20,6 +14,7 @@ router.get("/users/matches/preferences/:userId", authorizeJWT, users_controller.
 router.get("/users/password/reset/:id/:token", users_controller.read_one_user_password_reset_by_id); // Meant to be used with password reset, authentication not required
 router.get("/users/username/:username", authorizeJWT, users_controller.read_one_user_by_username);
 
+router.post("/users/create", users_controller.create_user); // TODO: Require API Key
 router.post("/users/email/verify", authorizeJWT, users_controller.read_one_email_verification);
 router.post("/users/email/send/verification",authorizeJWT, users_controller.email_send_verification);
 router.post("/users/password/authenticate", authorizeJWT, users_controller.read_one_user_password_authenticate);

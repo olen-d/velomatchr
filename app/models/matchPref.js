@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
     const MatchPref = sequelize.define("MatchPref", {
       userId: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
         unique: true,
         validate: {
