@@ -9,11 +9,12 @@ exports.read_one_country_by_alpha_two = (req, res) => {
       "alpha2": alphaTwo
     }
   })
-  .then(resolve => {
-    let countryObj = {
-      country: resolve
-    };
-    res.send(countryObj);
+  .then(result => {
+    if (result) {
+      res.send({ country: result });
+    } else {
+      res.send({ country: { name: "error" } });
+    }
   })
   .catch(err => {
     res.json(err);

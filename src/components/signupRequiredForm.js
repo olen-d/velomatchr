@@ -65,7 +65,7 @@ const SignupRequiredForm = props => {
         body: JSON.stringify(formData)
       });
       const data = await response.json();
-  
+
       if (data.status !== 200) {
         const { errors: serverErrors } = data;
         serverErrors.forEach(error => {
