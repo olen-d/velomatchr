@@ -22,6 +22,22 @@ exports.create_user = async (req, res) => {
   const { email, password, latitude, longitude } = req.body;
   const errors = [];
 
+  const isAvailableResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/is-available/${email}`, {
+    headers: {
+      Authorization: `Bearer ${serverToken}`
+    }
+  });
+
+  const isAvailableJson = isAvailableResponse.ok ? await isAvailableResponse.json() : null;
+
+  const { status: isAvailableStatus, data: { isAvailable }, } = isAvailableJson;
+
+  if (isAvailableStatus === 200 && !isAvailable ) {
+    errors.push({ email: true });
+    res.status(400).json({ status: 400, message: "Bad Request", errors });
+    return false;
+  }
+
   const validations = await Promise.all([
     checkEmail(email),
     validatePassword(password)
@@ -179,7 +195,7 @@ exports.read_email_is_available = async (req, res) => {
 
   if (authorized) {
     // Check for the email address
-    const { params: { email }, }= req;
+    const { params: { email }, } = req;
 
     try {
       const data = await User.findOne({

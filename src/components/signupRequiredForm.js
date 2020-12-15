@@ -26,14 +26,14 @@ import useForm from "../hooks/useForm";
 const SignupRequiredForm = props => {
   const { colWidth, formTitle } = props;
   
-  // Set up the State for form error handling
+  // State
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
-  // ...Rest of the State
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
 
+  // Hooks
   const {
     errors,
     handleBlur,
