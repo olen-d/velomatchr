@@ -56,19 +56,19 @@ const UpdatePasswordForm = props => {
   
         const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
         if (isNewAccessToken) { setAccessToken(token); }
+        
+        try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/password/change`, {
+            method: "put",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(formData)
+          });
   
-        fetch(`${process.env.REACT_APP_API_URL}/api/users/password/change`, {
-          method: "put",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify(formData)
-        })
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
+          const data = response.ok ? await response.json() : null;
+  
           if (data.status !== 200) {
             setIsSuccess(false);
             setIsErrorHeader("Unable to Change Password");
@@ -92,14 +92,13 @@ const UpdatePasswordForm = props => {
               setIsSuccess(true);
             }
           }
-        })
-        .catch(error => {
+        } catch(error) {
           return ({
-            errorCode: 500,
-            errorMsg: "Internal Server Error",
-            errorDetail: error
+            status: 500,
+            message: "Internal Server Error",
+            error
           })
-        });
+        }
       })();
     }
   }, [accessToken, handleServerErrors, setAccessToken, setDoRedirect, setIsAuth, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
