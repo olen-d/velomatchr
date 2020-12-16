@@ -42,11 +42,36 @@ const UpdateEmailAddressForm = props => {
     values
   } = useForm();
   
-  const handleSubmit = () => {
-    if (!isError) {
-      setIsModalOpen(true);
-    } else {
-      // TODO: return failure
+  const handleSubmit = async () => {
+    const { email } = values;
+
+    const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+    if (isNewAccessToken) { setAccessToken(token); }
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/is-available/${email}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    
+      const isAvailableData = response.ok ? await response.json() : null;
+    
+      const { status: isAvailableStatus, data: { isAvailable }, } = isAvailableData;
+  
+      if (isAvailableStatus === 200 && !isAvailable) { handleServerErrors(...[{ email: true }]) }
+  
+      if (!isError && isAvailable) {
+        setIsModalOpen(true);
+      } else {
+        // TODO: return failure
+      }
+    } catch(error) {
+      return ({
+        status: 500,
+        message: "Internal Server Error",
+        error
+      });
     }
   }
   
@@ -60,18 +85,18 @@ const UpdateEmailAddressForm = props => {
         const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
         if (isNewAccessToken) { setAccessToken(token); }
   
-        fetch(`${process.env.REACT_APP_API_URL}/api/users/email/update`, {
-          method: "put",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify(formData)
-        })
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
+        try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/update`, {
+            method: "put",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(formData)
+          });
+  
+          const data = response.ok ? await response.json() : null;
+  
           if (data.status !== 200) {
             setIsSuccess(false);
             setIsErrorHeader("Unable to Update Email Address");
@@ -87,14 +112,13 @@ const UpdateEmailAddressForm = props => {
               setIsSuccess(true);
             }
           }
-        })
-        .catch(error => {
-          return ({
-            errorCode: 500,
-            errorMsg: "Internal Server Error",
-            errorDetail: error
-          })
-        });
+        } catch(error) {
+            return ({
+              status: 500,
+              message: "Internal Server Error",
+              error
+            });
+        }
       })();
     }
   }, [accessToken, handleServerErrors, setAccessToken, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
@@ -141,7 +165,8 @@ const UpdateEmailAddressForm = props => {
   }, [errors]);
 
   useEffect(() => {
-    if (isError && errors.email) {
+    if (isError) { setIsSuccess(false); }
+    if (errors.email) {
       setIsErrorHeader("Invalid Email Address");
       setIsErrorMessage("Please check the email address you entered and try again.");
     }
