@@ -110,7 +110,7 @@ exports.create_user = async (req, res) => {
               body: JSON.stringify(formData)
             });
 
-            if (!sendVerificationEmailReponse.error) {
+            if (sendVerificationEmailReponse.ok) {
               const clientId = process.env.CLIENT_ID;
               const clientSecret = process.env.CLIENT_SECRET;
               const { id: endUserId } = createUserResult;
