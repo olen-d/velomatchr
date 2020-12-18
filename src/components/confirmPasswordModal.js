@@ -38,6 +38,7 @@ const ConfirmPasswordModal = props => {
     errors,
     handleBlur,
     handleChange,
+    handleClearInput,
     handleServerErrors,
     values
   } = useForm();
@@ -65,6 +66,7 @@ const ConfirmPasswordModal = props => {
     handleIsPassVerified(isAuthenticated);
 
     if (isAuthenticated) {
+      handleClearInput("passwordVerify");
       handleClose();
     } else {
       handleServerErrors({ passwordVerify: true });

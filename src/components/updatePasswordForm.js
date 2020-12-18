@@ -35,6 +35,7 @@ const UpdatePasswordForm = props => {
     errors,
     handleBlur,
     handleChange,
+    handleClearInput,
     handleServerErrors,
     values
   } = useForm();
@@ -68,6 +69,8 @@ const UpdatePasswordForm = props => {
           });
   
           const data = response.ok ? await response.json() : null;
+
+          handleClearInput("password");
   
           if (data.status !== 200) {
             setIsSuccess(false);
@@ -101,7 +104,7 @@ const UpdatePasswordForm = props => {
         }
       })();
     }
-  }, [accessToken, handleServerErrors, setAccessToken, setDoRedirect, setIsAuth, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
+  }, [accessToken, handleClearInput, handleServerErrors, setAccessToken, setDoRedirect, setIsAuth, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
 
   const handleIsPassVerified = isAuthenticated => {
     setIsPassVerified(isAuthenticated);
@@ -118,7 +121,10 @@ const UpdatePasswordForm = props => {
   }, [errors]);
 
   useEffect(() => {
-    if (isError && errors.password) {
+    if (isError) {
+      setIsSuccess(false);
+    }
+    if (errors.password) {
       setIsErrorHeader("Invalid Password");
       setIsErrorMessage("Please entered a valid password and try again.");
     }
