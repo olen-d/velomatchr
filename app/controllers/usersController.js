@@ -907,52 +907,46 @@ exports.email_send_verification = async (req, res) => {
     const newCode = adr.newRandomCode(6);
     const token = await tokens.create(userId);
   
-    // Add the new code and userId to the database
-    EmailVerification.create({
-      userId,
-      verificationCode: newCode,
-      attempts: 0
-    })
-    .then(data => {
-      // TODO - return some sort of success message
-    })
-    .catch(error => {
-      // TODO - return some sort of useful error
-      console.log("DATABASE ERROR:", error);
-    });
-    // TODO - if the code isn't unique, generate a new one
-    // TODO - if nothing was entered in the database, stop and return an error, don't send a bogus confirmation email
-    const formData = {
-      fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
-      toAddress: email, 
-      subject: "Confirm Your Email Address", 
-      message: `<p>Almost there! Please confirm your email address by entering the following code: <b>${newCode}</b></p>`
-    }
-
-    fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => {
-      if (!response.ok) {
-        // TODO: Deal with the error
-      } else {
-        response.json().then(json => {
-          res.json(json);
-        })
-        .catch(error => {
-          // TODO: Deal with the error
-          console.log(error);
-        })
+    try {
+      // Add the new code and userId to the database
+      const createEmailVerificationResult = await EmailVerification.create({
+        userId,
+        verificationCode: newCode,
+        attempts: 0
+      });
+      console.log("\nCreate Email Verification REsult", createEmailVerificationResult + "\n\n");
+      // TODO - if the code isn't unique, generate a new one
+      // TODO - if nothing was entered in the database, stop and return an error, don't send a bogus confirmation email
+      const formData = {
+        fromAddress: "\"VeloMatchr Email Confirmation\" <confirm@velomatchr.com>", 
+        toAddress: email, 
+        subject: "Confirm Your Email Address", 
+        message: `<p>Almost there! Please confirm your email address by entering the following code: <b>${newCode}</b></p>`
       }
-    })
-    .catch(error => {
-      res.json(error)
-    });
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const json = response.ok ? await response.json() : null;
+
+      if (json) {
+        if (json.status !== 200) {
+          res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to send verification email."});
+        } else {
+          res.status(200).json({ status: 200, message: "ok" });
+        }
+      } else {
+        res.status(500).json({ status: 500, message: "Internal Server Error "})
+      }
+    } catch (error) {
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    }
   } else {
     res.sendStatus(403);
   }
