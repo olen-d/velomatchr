@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 const useForm = () => {
-  const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
+  const [values, setValues] = useState({});
 
   const handleBlur = async (isError, event) => {
     const { target: { name }, } = event;
@@ -23,12 +23,11 @@ const useForm = () => {
     });
   }
 
-  const handleUpdateValues = newValues => {
+  const handleClearInput = name => {
     setValues({
       ...values,
-      ...newValues
+      [name]: null
     })
-
   }
 
   const handleServerErrors = serverErrors => {
@@ -38,6 +37,14 @@ const useForm = () => {
     })
   }
 
+  const handleUpdateValues = newValues => {
+    setValues({
+      ...values,
+      ...newValues
+    })
+
+  }
+
   const initializeFields = initialValues => {
     setValues({
       ...initialValues
@@ -45,13 +52,14 @@ const useForm = () => {
   }
 
   return {
-    values,
     errors,
     handleBlur,
     handleChange,
+    handleClearInput,
     handleServerErrors,
     handleUpdateValues,
-    initializeFields
+    initializeFields,
+    values
   }
 }
 
