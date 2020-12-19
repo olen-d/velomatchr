@@ -100,6 +100,7 @@ const Onboarding = ({ match }) => {
                   colWidth={6}
                   formInstructions={"We sent a six digit code to your email address. Please enter it below to verify you have access to the account."}
                   formTitle={"Verify Your Email Address"}
+                  show={true}
                   submitBtnContent={"Verify Email"}
                   submitRedirect={true}
                   submitRedirectURL={"/dashboard"}
