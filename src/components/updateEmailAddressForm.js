@@ -15,7 +15,7 @@ import SuccessContainer from "./successContainer";
 import useForm from "../hooks/useForm";
 
 const UpdateEmailAddressForm = props => {
-  const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+  const { formTitle, handleVerifyEmailFormVisibility, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
   const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
@@ -103,6 +103,41 @@ const UpdateEmailAddressForm = props => {
             setIsErrorMessage("Please enter a valid email address and try again.")
             handleServerErrors(...[{ email: true }]);
           } else {
+            // Set isVerified to 0
+            const isVerifiedFormData = {
+              id: userId,
+              isEmailVerified: 0
+            }
+    
+            const isVerifiedResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verified/update`, {
+              method: "put",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              },
+              body: JSON.stringify(isVerifiedFormData)
+            });
+
+            if (isVerifiedResponse !== 200) {
+              //TODO: Deal with the error...
+            }
+
+            // Send verification to the new email address
+            const sendVerificationEmailResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
+              method: "post",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              },
+                body: JSON.stringify(formData)
+              });
+            if (sendVerificationEmailResponse.ok) {
+              // Display the verification form
+              handleVerifyEmailFormVisibility(true);
+            } else {
+              // Email sending failure
+              // Some kind of try again message
+            }
             if(submitRedirect) {
               setRedirectURL(submitRedirectURL);
               setDoRedirect(true);
@@ -121,7 +156,7 @@ const UpdateEmailAddressForm = props => {
         }
       })();
     }
-  }, [accessToken, handleServerErrors, setAccessToken, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
+  }, [accessToken, handleServerErrors, handleVerifyEmailFormVisibility, setAccessToken, setDoRedirect, setRedirectURL, submitRedirect, submitRedirectURL, userId, values]);
 
   const handleIsPassVerified = isAuthenticated => {
     setIsPassVerified(isAuthenticated);
@@ -248,12 +283,13 @@ UpdateEmailAddressForm.defaultProps = {
   submitRedirectURL: ""
 }
 
-const { bool, string } = PropTypes;
+const { bool, func, string } = PropTypes;
 
 UpdateEmailAddressForm.propTypes = {
-  formTitle: string, 
+  formTitle: string,
+  handleVerifyEmailFormVisibility: func,
   submitBtnContent: string,
-  submitRedirect: bool, 
+  submitRedirect: bool,
   submitRedirectURL: string
 }
 

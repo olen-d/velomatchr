@@ -28,7 +28,7 @@ const resendStyle = {
 }
 
 const VerifyEmail = props => {
-  const { colWidth, formInstructions, formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+  const { colWidth, formInstructions, formTitle, handleVerifyEmailFormVisibility, show, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
   const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
   const { user } = auth.getUserInfo(accessToken);
@@ -137,6 +137,9 @@ const VerifyEmail = props => {
           if(submitRedirect) {
             setRedirectURL(submitRedirectURL);
             setDoRedirect(true);
+          } else {
+            // Success! Hide the form.
+            handleVerifyEmailFormVisibility(false);
           }
         })
         .catch(error => {
@@ -229,85 +232,92 @@ const VerifyEmail = props => {
 
   useEffect(() => { setUserId(user) }, [user]);
 
-  return(
-    <Grid.Column width={colWidth}>
-      <Header 
-        as="h2" 
-        textAlign="center"
-        color="grey"
-      >
-        {formTitle}
-      </Header>
-      <Message>
-        {formInstructions}
-      </Message>
-      <ErrorContainer
-        header={isErrorHeader}
-        message={isErrorMessage}
-        show={isError}
-      />
-      <SuccessContainer
-        header={isSuccessHeader}
-        message={isSuccessMessage}
-        show={isSuccess}
-      />
-      <Segment>
-        <Form
-          size="large"
+  if (show) {
+    return(
+      <Grid.Column width={colWidth}>
+        <Header 
+          as="h2" 
+          textAlign="center"
+          color="grey"
         >
-          <Form.Input
-            className="fluid"
-            icon="lock"
-            iconPosition="left"
-            name="verificationCode"
-            value={verificationCode}
-            placeholder="Verification Code"
-            type="text"
-            error={isVerificationCodeError}
-            onChange={e => {
-              setVerificationCode(e.target.value)
-            }}
-          />
-          <Button
-            disabled={!verificationCode}
-            className="fluid"
-            type="button"
-            color="red"
+          {formTitle}
+        </Header>
+        <Message>
+          {formInstructions}
+        </Message>
+        <ErrorContainer
+          header={isErrorHeader}
+          message={isErrorMessage}
+          show={isError}
+        />
+        <SuccessContainer
+          header={isSuccessHeader}
+          message={isSuccessMessage}
+          show={isSuccess}
+        />
+        <Segment>
+          <Form
             size="large"
-            icon="check circle"
-            labelPosition="left"
-            content={submitBtnContent}
-            onClick={postVerifyEmail}
+          >
+            <Form.Input
+              className="fluid"
+              icon="lock"
+              iconPosition="left"
+              name="verificationCode"
+              value={verificationCode}
+              placeholder="Verification Code"
+              type="text"
+              error={isVerificationCodeError}
+              onChange={e => {
+                setVerificationCode(e.target.value)
+              }}
+            />
+            <Button
+              disabled={!verificationCode}
+              className="fluid"
+              type="button"
+              color="red"
+              size="large"
+              icon="check circle"
+              labelPosition="left"
+              content={submitBtnContent}
+              onClick={postVerifyEmail}
+            >
+            </Button>
+          </Form>
+          <Button
+            style={resendStyle}
+            as="a"
+            content="Resend verification code"
+            onClick={resendEmail}
           >
           </Button>
-        </Form>
-        <Button
-          style={resendStyle}
-          as="a"
-          content="Resend verification code"
-          onClick={resendEmail}
-        >
-        </Button>
-      </Segment>
-    </Grid.Column>
-  );
+        </Segment>
+      </Grid.Column>
+    );     
+  } else {
+    return (null);
+  }
 }
 
 VerifyEmail.defaultProps = {
   colWidth: 6,
   formInstructions: "We sent a six digit code to your email address. Please enter it below to verify you have access to the account.",
   formTitle: "Verify Your Email Address",
+  show: true,
   submitBtnContent: "Verify Email",
   submitRedirect: true,
   submitRedirectURL: "/dashboard"
 }
 
-const { bool, number, string } = PropTypes;
+const { bool, func, number, string } = PropTypes;
 
 VerifyEmail.propTypes = {
   colWidth: number,
   formInstructions: string,
   formTitle: string,
+  handleVerifyEmailFormVisibility: func,
+  show: bool,
   submitBtnContent: string,
   submitRedirect: bool,
   submitRedirectURL: string
