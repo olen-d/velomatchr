@@ -92,8 +92,8 @@ const VerifyEmail = props => {
         const resendMessage = "Please click the \"Resend verification code\" link below to get a new code.";
         const tryAgainMessage = "Please make sure the code we sent is entered correctly and try again."
 
-        setIsError(true);
         setIsErrorHeader("Unable to verify your email address");
+        setIsError(true);
 
         switch (status) {
           case 400:
@@ -138,15 +138,16 @@ const VerifyEmail = props => {
             setRedirectURL(submitRedirectURL);
             setDoRedirect(true);
           } else {
-            // Success! Hide the form.
+            // Success! Reset the input and hide the form.
+            setVerificationCode("");
             handleVerifyEmailFormVisibility(false);
           }
         })
         .catch(error => {
-          setIsError(true);
           setIsErrorHeader("Internal Server Error");
           setIsErrorMessage("The verification code you entered was correct. However there was a problem with the server and your email address has not been verified.")
-         });
+          setIsError(true);
+        });
       }
     }).catch(error => {
       // Set isError to true
@@ -166,9 +167,9 @@ const VerifyEmail = props => {
     })
     .then(response => {
       if(!response.ok) {
-        setIsError(true);
         setIsErrorHeader("Network Error");
         setIsErrorMessage("The verification code could not be resent because of a connectivity issue. Please try again.");
+        setIsError(true);
         return false;
       }
     })
@@ -205,15 +206,15 @@ const VerifyEmail = props => {
             response.json().then(jsonSendMail => {
               const {data: { rejected }, } = jsonSendMail;
               if (rejected.length === 0) {
-                setIsSuccess(true);
                 setIsSuccessHeader("Verification Code Sent");
                 setIsSuccessMessage("A new verification code was successfully sent to the your email address.");
+                setIsSuccess(true);
               } else {
                 // Mail was rejected by the receiving server
                 // TODO: Log the error
-                setIsError(true);
                 setIsErrorHeader("Email Rejected");
                 setIsErrorMessage("The message containing the verification code was rejected by the email server.");
+                setIsError(true);
               }
             })
             .catch(error => {
