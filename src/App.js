@@ -1,5 +1,7 @@
 import React, { lazy, Suspense, useState } from "react";
 
+import { decodeToken, getRefreshToken, newAccessToken } from "./components/auth";
+
 import "./style.css";
 
 import LoadingSpinner from "./components/loadingSpinner";
@@ -15,6 +17,30 @@ const App = () => {
   const [doRedirect, setDoRedirect] = useState(false);
   const [redirectURL, setRedirectURL] = useState(null);
   
+  (async () => {
+    if (!isAuth) {
+      try {
+        // Check localstorage for a refresh token
+        const refreshToken = await JSON.parse(getRefreshToken());
+        
+        // If it exists, use it to get a valid token
+        if (refreshToken) {
+          const { userId } = decodeToken(refreshToken);
+
+          const { isNewAccessToken, accessToken: token } = await newAccessToken(userId);
+
+          if (isNewAccessToken) {
+            setAccessToken(token);
+            setIsAuth(true);
+          }
+        }
+      } catch (error) {
+        // TODO: Deal with the error
+        console.log(error);
+      }
+    }
+  })();
+
   return(
     <AuthContext.Provider value={{isAuth, setIsAuth, doRedirect, setDoRedirect, redirectURL, setRedirectURL, accessToken, setAccessToken}}>
       <AuthContext.Consumer>

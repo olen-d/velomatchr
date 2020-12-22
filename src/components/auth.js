@@ -115,6 +115,9 @@ const decodeToken = token => {
 
 export {
   checkAccessTokenExpiration,
+  decodeToken,
+  getRefreshToken,
   getUserInfo,
-  logout
+  logout,
+  newAccessToken
 }

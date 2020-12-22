@@ -914,7 +914,6 @@ exports.email_send_verification = async (req, res) => {
         verificationCode: newCode,
         attempts: 0
       });
-      console.log("\nCreate Email Verification REsult", createEmailVerificationResult + "\n\n");
       // TODO - if the code isn't unique, generate a new one
       // TODO - if nothing was entered in the database, stop and return an error, don't send a bogus confirmation email
       const formData = {
