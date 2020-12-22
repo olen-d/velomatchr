@@ -13,12 +13,14 @@ const create = userId => {
   });
 }
 
-const createRefresh = clientId => {
+const createRefresh = userId => {
   return new Promise((resolve, reject) => {
     const clientId = process.env.CLIENT_ID;
     
-    jwt.sign(
-      { clientId },
+    jwt.sign({ 
+        clientId,
+        userId
+      },
       process.env.SECRET_REFRESH,
       (error, token) => {
         return error ? reject(error) : resolve(token);

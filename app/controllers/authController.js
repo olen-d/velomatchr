@@ -38,7 +38,7 @@ exports.token_grant_type_client_credentials = async (req, res) => {
 };
 
 exports.token_grant_type_password = async (req, res) => {
-  const { body: { clientId = "www.velomatchr.com", username, pass }, } = req;
+  const { body: { username, pass }, } = req;
 
   try {
     // Get the user id and encrypted password
@@ -54,7 +54,7 @@ exports.token_grant_type_password = async (req, res) => {
       const { id, password } = userData;
       const { login, status } = await bcrypt.checkPass(pass, password);
       if (status === 200 && login) {
-        const refreshToken = await tokens.createRefresh(clientId); 
+        const refreshToken = await tokens.createRefresh(id); 
         const clientIp = requestIp.getClientIp(req); 
 
         const refreshTokenCreate = await RefreshToken.create({
@@ -188,7 +188,7 @@ exports.refresh_token_delete_all = async (req, res) => {
 const createTokens = (clientId, clientIp, userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const refreshToken = await tokens.createRefresh(clientId); 
+      const refreshToken = await tokens.createRefresh(userId); 
 
       const refreshTokenCreate = await RefreshToken.create({
         userId,
