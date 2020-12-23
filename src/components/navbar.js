@@ -37,8 +37,8 @@ const NavBar = () => {
       // TODO: Set an error notification letting the user know they were not logged out.
     } else {
       setAccessToken(null);
-      setDoRedirect(false);
-      setRedirectURL(null);
+      setRedirectURL("/home");
+      setDoRedirect(true);
     }
 
     return null;
@@ -59,7 +59,7 @@ const NavBar = () => {
             Messages
           </Menu.Item>
           <NavDropdown title="Settings" items={ settingsItems } />
-          <Menu.Item as={ NavLink } to="/" onClick={logout}>
+          <Menu.Item onClick={logout}>
             Sign Out
           </Menu.Item>
         </Menu.Menu>
