@@ -30,6 +30,7 @@ BodyTextarea.defaultProps = {
 }
 
 const { func, object, string } = PropTypes;
+
 BodyTextarea.propTypes = {
   errors: object,
   handleBlur: func,

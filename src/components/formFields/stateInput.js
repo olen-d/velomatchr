@@ -31,12 +31,14 @@ StateInput.defaultProps = {
   placeholder: "State"
 }
 
+const { func, string, object } = PropTypes;
+
 StateInput.propTypes = {
-  errors: PropTypes.object,
-  handleBlur: PropTypes.func,
-  handleChange: PropTypes.func,
-  placeholder: PropTypes.string,
-  values: PropTypes.object
+  errors: object,
+  handleBlur: func,
+  handleChange: func,
+  placeholder: string,
+  values: object
 }
 
 export default StateInput;
