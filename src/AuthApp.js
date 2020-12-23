@@ -42,7 +42,7 @@ const Template = () => {
         }
       </AuthContext.Consumer>
         <Switch>
-          <Route exact path="/" render={ () => ""} />
+          <Route exact path="/" render={ () => <Redirect to="/dashboard" />} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/email" component={Email} />
           <Route path="/home" component={Home} />
