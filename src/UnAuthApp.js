@@ -1,6 +1,7 @@
 import React from "react";
 
-import { 
+import {
+  Redirect, 
   Route,
   Switch
 } from "react-router-dom";
@@ -14,7 +15,16 @@ import Home from "./pages/home";
 import LoginPage from "./pages/login";
 import Signup from "./pages/signup";
 
+import { useAuth } from "./context/authContext";
+
 const UnAuthApp = () => {
+  const { doRedirect, redirectURL, setDoRedirect } = useAuth();
+
+  if (doRedirect) {
+    setDoRedirect(false);
+    return (<Redirect to={`${redirectURL}`} />);
+  }
+
   return (
     <>
       <LoginBar />
