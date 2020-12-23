@@ -49,11 +49,13 @@ const GenderInput = props => {
   );
 }
 
+const { func, object } = PropTypes;
+
 GenderInput.propTypes = {
-  errors: PropTypes.object,
-  handleBlur: PropTypes.func,
-  handleChange: PropTypes.func,
-  values: PropTypes.object
+  errors: object,
+  handleBlur: func,
+  handleChange: func,
+  values: object
 }
 
 export default GenderInput;

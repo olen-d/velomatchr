@@ -31,12 +31,14 @@ CityInput.defaultProps = {
   placeholder: "City"
 }
 
+const { func, object, string } = PropTypes;
+
 CityInput.propTypes = {
-  errors: PropTypes.object,
-  handleBlur: PropTypes.func,
-  handleChange: PropTypes.func,
-  placeholder: PropTypes.string,
-  values: PropTypes.object
+  errors: object,
+  handleBlur: func,
+  handleChange: func,
+  placeholder: string,
+  values: object
 }
 
 export default CityInput;
