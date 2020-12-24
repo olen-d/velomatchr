@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import PropTypes from "prop-types";
 
 import * as auth from "./auth";
 
@@ -161,7 +162,7 @@ import * as auth from "./auth";
                 requesterId={userId}
                 addresseeId={addresseeId}
                 firstName={firstName}
-                lastName={lastName.substring(0,1) + "."}
+                lastName={lastName ? lastName.substring(0,1) + "." : "N."}
                 photoLink={photoLink}
                 city={city}
                 stateCode={stateCode}
@@ -187,7 +188,17 @@ import * as auth from "./auth";
   }
 }
 
- export default MatchesList;
+MatchesList.defaultProps = {
+  status: -99
+};
+
+const { number } = PropTypes;
+
+MatchesList.propTypes = {
+  status: number
+}
+
+export default MatchesList;
 
  // Loading spinner
  // Check for matches

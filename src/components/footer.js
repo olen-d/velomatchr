@@ -9,7 +9,7 @@ import {
 import "./footer.css";
 
 const Footer = () => {
-  let dark = {
+  const dark = {
     "marginTop": "6rem",
     "paddingTop": "4rem",
     "backgroundColor": "#2c2c2c",
