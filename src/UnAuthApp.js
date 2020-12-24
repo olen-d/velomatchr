@@ -11,6 +11,7 @@ import "./style.css";
 import LoginBar from "./components/loginBar"
 import Footer from "./components/footer"
 
+import FourZeroFour from "./pages/fourZeroFour";
 import Home from "./pages/home";
 import LoginPage from "./pages/login";
 import Signup from "./pages/signup";
@@ -33,7 +34,7 @@ const UnAuthApp = () => {
         <Route exact path="/home" component={Home} />
         <Route path="/login" component={LoginPage} />
         <Route path="/signup" component={Signup} />
-        <Route path="*" render={ () => "404 NOT FOUND" } />
+        <Route path="*" component={FourZeroFour} />
       </Switch>
       <Footer />
     </>
