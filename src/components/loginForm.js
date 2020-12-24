@@ -77,7 +77,7 @@ const LoginForm = props => {
       }
     }).catch(error => {
         setIsErrorHeader("Unable to Sign In");
-        setIsErrorMessage("Please check your email address and password and try again.");
+        setIsErrorMessage("The server appears to be down or unavailable. Please wait a few minutes and try again.");
         setIsError(true);
     });
   }
