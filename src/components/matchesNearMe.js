@@ -33,7 +33,7 @@ const MatchesNearMe = props => {
       setMatches({ matchesResult: json, totalMatches, isLoading: false });
     })
     .catch(error => {
-      setMatches({ error, matchesResult: [], isLoading: false });;
+      setMatches({ error, matchesResult: [], totalMatches: "an unkown number of", isLoading: false });;
     });
   }, [latitude, longitude]);
 
