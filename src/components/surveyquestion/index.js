@@ -86,13 +86,15 @@ SurveyQuestion.defaultProps = {
   validate: false
 }
 
+const { array, bool, func, number, string } = PropTypes;
+
 SurveyQuestion.propTypes = {
-  answer: PropTypes.array,
-  id: PropTypes.number,
-  number: PropTypes.number,
-  onChange: PropTypes.func,
-  text: PropTypes.string,
-  validate: PropTypes.bool
+  answer: array,
+  id: number,
+  number: number,
+  onChange: func,
+  text: string,
+  validate: bool
 }
 
 export default SurveyQuestion;

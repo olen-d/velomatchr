@@ -19,9 +19,11 @@ LikertItem.defaultProps = {
   text: "Error: No answer was specified."
 }
 
+const { number, string } = PropTypes;
+
 LikertItem.propTypes = {
-  number: PropTypes.number,
-  text: PropTypes.string
+  number: number,
+  text: string
 }
 
 export default LikertItem;
