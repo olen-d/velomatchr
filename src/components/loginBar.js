@@ -15,16 +15,31 @@ import {
 import SignUpButton from "./signupButton";
 
 const LoginButton = props => {
-  return (
-    <Button as={Link} to="/login" color="red">
-      Sign In
-    </Button>
-  );
+  const { buttonColor, buttonType } = props;
+
+  if(buttonType === "basic") {
+    return (
+      <Button basic as={Link} to="/login" color={buttonColor}>
+        Sign In
+      </Button>
+    );
+  } else {
+    return (
+      <Button as={Link} to="/login" color={buttonColor}>
+        Sign In
+      </Button>
+    );
+  }
 }
 
 const LoginControl = () => {
-  const match = useRouteMatch("/login");
-  const button = (match && match.isExact) ? <SignUpButton buttonColor="red" buttonType="basic" /> : <LoginButton />;
+  const matchHome = useRouteMatch("/home");
+  const matchLogin = useRouteMatch("/login");
+  const matchRoot = useRouteMatch("/");
+
+  const loginButtonType = (matchHome && matchHome.isExact) || (matchRoot && matchRoot.isExact) ? "standard" : "basic";
+
+  const button = (matchLogin && matchLogin.isExact) ? <SignUpButton buttonColor="red" buttonType="basic" /> : <LoginButton buttonColor="red" buttonType={loginButtonType} />;
   return button;
 }
 
