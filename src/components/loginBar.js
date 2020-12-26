@@ -12,6 +12,8 @@ import {
   Button
 } from 'semantic-ui-react';
 
+import SignUpButton from "./signupButton";
+
 const LoginButton = props => {
   return (
     <Button as={Link} to="/login" color="red">
@@ -20,17 +22,9 @@ const LoginButton = props => {
   );
 }
 
-const SignUpButton = props => {
-  return (
-    <Button as={Link} to="/signup" basic color="red">
-      Sign Up
-    </Button>
-  );
-}
-
 const LoginControl = () => {
   const match = useRouteMatch("/login");
-  const button = (match && match.isExact) ? <SignUpButton /> : <LoginButton />;
+  const button = (match && match.isExact) ? <SignUpButton buttonColor="red" buttonType="basic" /> : <LoginButton />;
   return button;
 }
 

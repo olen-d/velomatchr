@@ -3,10 +3,17 @@ import React from "react";
 import {
   Container,
   Grid,
+  Icon,
   Header
 } from "semantic-ui-react";
 
+import FourZeroFourUnAuth from "../components/fourZeroFourUnAuth";
+
+import { useAuth } from "../context/authContext";
+
 const FourZeroFour = () => {
+
+  const { isAuth } = useAuth();
 
   return(
     <Container>
@@ -16,15 +23,19 @@ const FourZeroFour = () => {
             as="h1"
             color="orange"
           >
-            Page Has Bonked
+            <Icon name="exclamation triangle" /> Page Has Been Dropped
           </Header>
           <Header
             as="h3"
             color="grey"
           >
-            The page you are looking for has been dropped and cannot be found.
+            The page you are looking for is off the back and did not make the time cut.
           </Header>
+          <p>
+            Grab a sticky bottle from the team car and we'll help you get back on terms with the peloton.
+          </p>
         </Grid.Column>
+        {isAuth ? null : <FourZeroFourUnAuth colWidth={16} />}
       </Grid>
     </Container>
   )
