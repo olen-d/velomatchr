@@ -33,9 +33,14 @@ const App = () => {
             setAccessToken(token);
             setIsAuth(true);
           }
+        } else {
+          setIsAuth(false);
         }
       } catch (error) {
-        // TODO: Deal with the error
+        // Something went really wrong, either the refresh token doesn't exist or is invalid (e.g. undefined)
+        // Delete the refresh token
+        localStorage.removeItem("user_refresh_token");
+        setIsAuth(false);
         console.log(error);
       }
     }

@@ -7,6 +7,7 @@ import {
   Header
 } from "semantic-ui-react";
 
+import FourZeroFourAuth from "../components/fourZeroFourAuth";
 import FourZeroFourUnAuth from "../components/fourZeroFourUnAuth";
 
 import { useAuth } from "../context/authContext";
@@ -35,7 +36,7 @@ const FourZeroFour = () => {
             Grab a sticky bottle from the team car and we'll help you get back on terms with the peloton.
           </p>
         </Grid.Column>
-        {isAuth ? null : <FourZeroFourUnAuth colWidth={16} />}
+        {isAuth ? <FourZeroFourAuth colWidth={16} /> : <FourZeroFourUnAuth colWidth={16} />}
       </Grid>
     </Container>
   )

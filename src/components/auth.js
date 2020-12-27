@@ -65,7 +65,7 @@ const newAccessToken = userId => {
           const { access_token: accessToken, refresh_token: refreshToken } = data; // token_type: tokenType
 
           // Update the refresh in local storage
-          localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
+          if (refreshToken) { localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken)) }
   
           // Done, resolve the new access token
           resolve({ "isNewAccessToken": true, accessToken });
