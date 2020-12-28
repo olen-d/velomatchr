@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 
 import { Button, Grid } from "semantic-ui-react";
 
+import ContactForm from "./contactForm";
+
 const FourZeroFourAuth = props => {
   const { colWidth } = props;
 
@@ -61,6 +63,7 @@ const FourZeroFourAuth = props => {
           Placeholder Message
         </Grid.Column>
       </Grid.Row>
+      <ContactForm mailbox={process.env.REACT_APP_FOURZEROFOUR_MAILBOX} />
     </> 
   );
 }
