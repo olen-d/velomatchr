@@ -90,7 +90,10 @@ const SignupRequiredForm = props => {
     } catch(error) {
       setIsAuth(false);
       setAccessToken("");
-      console.log("Error:", error);
+      setIsErrorHeader("Unable to Create New Account");
+      setIsErrorMessage("The server appears to be down or unavailable. Please wait a few minutes and try again.");
+      setIsError(true);
+      console.log("ERROR\nComponent: signupRequiredForm\nDescription:", error);
     }
   }
 
