@@ -7,12 +7,16 @@ const useForm = () => {
   const handleBlur = async (isError, event) => {
     const { target: { name }, } = event;
 
-    const isErrorResult = await isError;
+    try {
+      const isErrorResult = await isError;
     
-    setErrors({
-      ...errors,
-      [name]: isErrorResult
-    });
+      setErrors({
+        ...errors,
+        [name]: isErrorResult
+      });
+    } catch(error) {
+      console.log(error);
+    }
   }
 
   const handleChange = event => {
