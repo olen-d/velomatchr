@@ -200,7 +200,7 @@ const ContactForm = props => {
 ContactForm.defaultProps = {
   colWidth: 16,
   mailbox: null,
-  messageBody: "The content, name, or URL you were looking for or action you were trying to take.",
+  messageBody: "The content, name of the page, or URL you were looking for.",
   messageHeader: "What were you looking for?"
 };
 

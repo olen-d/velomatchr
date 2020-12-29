@@ -89,7 +89,7 @@ const getUserInfo = token => {
 const isTokenActive = token => {
   try {
     const decodedToken = decodeToken(token);
-    if (decodedToken.exp > Date.now() / 1000) {
+    if (decodedToken && decodedToken.exp > Date.now() / 1000) { // Short circuit to avoid TypeError if exp is undefined or null
       return true;
     } else {
       return false;
