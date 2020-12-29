@@ -12,11 +12,15 @@ const EmailInput = props => {
     const expression = /.+@.+\..+/i;
 
     if(expression.test(String(values[name]).toLowerCase())) {
-      const result = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/check-mx/${values[name]}`);
-      const data = await result.json();
-      const { mxExists } = data;
-
-      return mxExists ? false : true;
+      try {
+        const result = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/check-mx/${values[name]}`);
+        const data = await result.json();
+        const { mxExists } = data;
+  
+        return mxExists ? false : true;
+      } catch {
+        return false;
+      }
     } else {
       return true;
     }
