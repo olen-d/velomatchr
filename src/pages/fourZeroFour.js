@@ -36,7 +36,7 @@ const FourZeroFour = () => {
             Grab a sticky bottle from the team car and we'll help you get back on terms with the peloton.
           </p>
         </Grid.Column>
-        {isAuth ? <FourZeroFourAuth colWidth={16} /> : <FourZeroFourUnAuth colWidth={16} />}
+        {isAuth ? <FourZeroFourAuth colWidth={12} /> : <FourZeroFourUnAuth colWidth={16} />}
       </Grid>
     </Container>
   )

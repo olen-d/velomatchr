@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { Link } from "react-router-dom";
 
-import { Button, Grid } from "semantic-ui-react";
+import { Button, Grid, Header } from "semantic-ui-react";
 
 import ContactForm from "./contactForm";
 
@@ -60,10 +60,23 @@ const FourZeroFourAuth = props => {
       </Grid.Row>
       <Grid.Row>
         <Grid.Column width={colWidth}>
-          Placeholder Message
+          <Header
+            as="h3"
+            color="grey"
+          >
+            Still Haven't Found What You're Looking For?
+          </Header>
+          <p>
+            Please use the contact form below to let us know which page you were looking for and we will do our best to locate it and send you an updated link. To help us find the information you are looking for, please describe the content or the URL of the page you were trying to view.
+          </p>
         </Grid.Column>
       </Grid.Row>
-      <ContactForm mailbox={process.env.REACT_APP_FOURZEROFOUR_MAILBOX} />
+      <ContactForm
+        colWidth={12}
+        mailbox={process.env.REACT_APP_FOURZEROFOUR_MAILBOX}
+        messageBody="The content, name of the page, or URL you were looking for."
+        messageHeader="What were you looking for?"
+      />
     </> 
   );
 }
