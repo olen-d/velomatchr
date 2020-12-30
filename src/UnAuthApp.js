@@ -10,6 +10,7 @@ import "./style.css";
 
 import LoginBar from "./components/loginBar"
 import Footer from "./components/footer"
+import FourZeroFourUnAuth from "./components/fourZeroFourUnAuth";
 
 import FourZeroFour from "./pages/fourZeroFour";
 import Home from "./pages/home";
@@ -34,7 +35,7 @@ const UnAuthApp = () => {
         <Route exact path="/home" component={Home} />
         <Route path="/login" component={LoginPage} />
         <Route path="/signup" component={Signup} />
-        <Route path="*" component={FourZeroFour} />
+        <Route path="*" render={() => (<FourZeroFour><FourZeroFourUnAuth /></FourZeroFour>)} />
       </Switch>
       <Footer />
     </>
