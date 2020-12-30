@@ -7,14 +7,7 @@ import {
   Header
 } from "semantic-ui-react";
 
-import FourZeroFourAuth from "../components/fourZeroFourAuth";
-import FourZeroFourUnAuth from "../components/fourZeroFourUnAuth";
-
-import { useAuth } from "../context/authContext";
-
-const FourZeroFour = () => {
-
-  const { isAuth } = useAuth();
+const FourZeroFour = props => {
 
   return(
     <Container>
@@ -36,7 +29,7 @@ const FourZeroFour = () => {
             Grab a sticky bottle from the team car and we'll help you get back on terms with the peloton.
           </p>
         </Grid.Column>
-        {isAuth ? <FourZeroFourAuth colWidth={12} /> : <FourZeroFourUnAuth colWidth={16} />}
+        {props.children /* Render the authorized or unauthorized component passed from the route */}
       </Grid>
     </Container>
   )

@@ -9,6 +9,7 @@ import {
 import "./style.css";
 
 import Footer from "./components/footer";
+import FourZeroFourAuth from "./components/fourZeroFourAuth";
 import NavBar from "./components/navbar";
 
 import Dashboard from "./pages/dashboard";
@@ -52,7 +53,7 @@ const Template = () => {
           <Route path="/onboarding" component={Onboarding} />
           <Route path="/settings" component={Settings} />
           <Route path="/survey" component={Survey} />
-          <Route path="*" component={FourZeroFour} />
+          <Route path="*" render={() => (<FourZeroFour><FourZeroFourAuth /></FourZeroFour>)} />
         </Switch>
       <Footer />
     </>
