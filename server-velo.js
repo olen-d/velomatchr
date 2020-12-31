@@ -53,6 +53,7 @@ app.use("/api", require("./app/routes/users"));
 })();
 
 // db.sequelize.sync({ force: true }).then(function() {
+  // db.sequelize.sync({ alter: true }).then(function() {
   db.sequelize.sync().then(function() {
     app.listen(port, () => console.log(`VeloMatchr API is listening on port ${port}!`));
   });
