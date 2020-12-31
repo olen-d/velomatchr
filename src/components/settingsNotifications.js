@@ -20,7 +20,7 @@ const SettingsNotifications = () => {
       >
         Email Me When
       </Header>
-      <EmailNotificationForm />
+      <EmailNotificationForm submitBtnContent="Update Email Notifications" />
     </Grid.Column>
   );
 }

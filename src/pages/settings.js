@@ -11,6 +11,8 @@ import {
   Header
  } from "semantic-ui-react";
 
+import FourZeroFour from "./fourZeroFour";
+import FourZeroFourAuth from "../components/fourZeroFourAuth";
 import SettingsAccount from "../components/settingsAccount";
 import SettingsNotifications from "../components/settingsNotifications";
 import SettingsProfile from "../components/settingsProfile";
@@ -33,6 +35,7 @@ const Settings = ({ match }) => {
             <Route exact path={`${match.url}/profile`} component={SettingsProfile} />
             <Route exact path={`${match.url}/notifications`} component={SettingsNotifications} />
             <Route path={`${match.url}/account`} component={SettingsAccount} />
+            <Route path="*" render={() => (<FourZeroFour><FourZeroFourAuth /></FourZeroFour>)} />
           </Switch>
         </Grid.Column>
         <Grid.Column width={4}>

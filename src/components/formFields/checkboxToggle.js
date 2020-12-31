@@ -3,10 +3,10 @@ import React from "react";
 import { Checkbox } from "semantic-ui-react";
 
 const checkboxToggle = props => {
-  const { labelText } = props;
+  const { handleChange, label, name, style } = props;
 
   return(
-    <Checkbox toggle label={{ children: labelText }} />
+    <><Checkbox toggle style={style} name={name} label={{ children: label }} onChange={handleChange} /><br /></>
   );
 }
 

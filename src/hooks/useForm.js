@@ -27,6 +27,13 @@ const useForm = () => {
     });
   }
 
+  const handleCheckboxChange = (e, { checked, name }) => {
+    setValues({
+      ...values,
+      [name]: checked
+    });
+  }
+
   const handleClearInput = name => {
     setValues({
       ...values,
@@ -59,6 +66,7 @@ const useForm = () => {
     errors,
     handleBlur,
     handleChange,
+    handleCheckboxChange,
     handleClearInput,
     handleServerErrors,
     handleUpdateValues,
