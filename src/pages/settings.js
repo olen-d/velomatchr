@@ -12,6 +12,7 @@ import {
  } from "semantic-ui-react";
 
 import SettingsAccount from "../components/settingsAccount";
+import SettingsNotifications from "../components/settingsNotifications";
 import SettingsProfile from "../components/settingsProfile";
 
 const Settings = ({ match }) => {
@@ -30,6 +31,7 @@ const Settings = ({ match }) => {
           </Header>
         <Switch>
             <Route exact path={`${match.url}/profile`} component={SettingsProfile} />
+            <Route exact path={`${match.url}/notifications`} component={SettingsNotifications} />
             <Route path={`${match.url}/account`} component={SettingsAccount} />
           </Switch>
         </Grid.Column>
