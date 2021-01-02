@@ -35,5 +35,27 @@ exports.create_notification_preferences = async (req, res) => {
 
 // Update Notification Preferences
 exports.update_notification_preferences = async (req, res) => {
-  //
+  // const { authorized } = req;
+  const authorized = true;
+
+  if (authorized) {
+    const { body: { userId, code, email, sms }, } = req;
+
+    try {
+      const updateResult = await NotificationPref.update(
+        { email, sms },
+        { where: { userId, code }
+      });
+      console.log(updateResult);
+      if (updateResult[0] === 0 ) {
+        res.status(500).json({ status: 500, message: "Internal Server Error" });
+      } else {
+        res.status(200).json({ status: 200, message: "ok" });
+      }
+    } catch(error) {
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    }
+  } else {
+    res.sendStatus(403);
+  }
 }
