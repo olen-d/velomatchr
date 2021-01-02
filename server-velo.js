@@ -31,6 +31,7 @@ app.use("/api", require("./app/routes/auth"));
 app.use("/api", require("./app/routes/countries"));
 app.use("/api", require("./app/routes/mail"));
 app.use("/api", require("./app/routes/matches"));
+app.use("/api", require("./app/routes/notifications"));
 app.use("/api", require("./app/routes/relationships"));
 app.use("/api", require("./app/routes/states"));
 app.use("/api", require("./app/routes/survey"));
