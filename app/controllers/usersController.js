@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 const Sequelize = require("sequelize");
 
 // Models
-const { EmailVerification, MatchPref, User } = require("../models");
+const { EmailVerification, MatchPref, NotificationPref, User } = require("../models");
 
 // Packages
 const jwt = require("jsonwebtoken");
@@ -479,6 +479,31 @@ exports.read_one_user_and_matches_preferences = (req, res) => {
     });
   } else {
     res.sendStatus(403)
+  }
+};
+
+exports.read_one_user_and_notifications_preferences = async (req, res) => {
+  // const { authorized } = req;
+  const authorized = true;
+
+  const { params: { userId }, } = req;
+
+  if (authorized) {
+    const data = await User.findOne({
+      where: { id: userId },
+      attributes: ["id"],
+      include: [{
+        model: NotificationPref,
+        as: "userNotificationPrefs",
+        attributes: ["code", "email", "sms"]
+      }]
+    });
+
+    const { code, email, sms } = data;
+
+    console.log("Code", code, "Email", email, "SMS", sms);
+  } else {
+    res.sendStatus(403);
   }
 };
 

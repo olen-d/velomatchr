@@ -123,6 +123,11 @@ module.exports = (sequelize, DataTypes) => {
       as: "userMatchPrefs",
       foreignKey: "userId"
     });
+    // Associate the User with their notification preferences
+    User.hasOne(models.NotificationPref, {
+      as: "userNotificationPrefs",
+      foreignKey: "userId"
+    });
     // Associating User with Relationships
     // When an User is deleted, also delete any associated Relationships
     User.hasMany(models.Relationship, {
