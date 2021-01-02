@@ -483,25 +483,30 @@ exports.read_one_user_and_matches_preferences = (req, res) => {
 };
 
 exports.read_one_user_and_notifications_preferences = async (req, res) => {
-  // const { authorized } = req;
-  const authorized = true;
-
-  const { params: { userId }, } = req;
+  const { authorized } = req;
 
   if (authorized) {
-    const data = await User.findOne({
-      where: { id: userId },
-      attributes: ["id"],
-      include: [{
-        model: NotificationPref,
-        as: "userNotificationPrefs",
-        attributes: ["code", "email", "sms"]
-      }]
-    });
+    const { params: { userId }, } = req;
 
-    const { code, email, sms } = data;
+    try{
+      const data = await User.findOne({
+        where: { id: userId },
+        attributes: ["id"],
+        include: [{
+          model: NotificationPref,
+          as: "userNotificationPrefs",
+          attributes: ["code", "email", "sms"]
+        }]
+      });
 
-    console.log("Code", code, "Email", email, "SMS", sms);
+      if (data) {
+        res.status(200).json({ status: 200, message: "ok", data });
+      } else {
+        res.status(500).json({ status: 500, message: "Internal Server Error" });
+      }
+    } catch(error) {
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    }
   } else {
     res.sendStatus(403);
   }
