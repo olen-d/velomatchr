@@ -124,7 +124,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "userId"
     });
     // Associate the User with their notification preferences
-    User.hasOne(models.NotificationPref, {
+    User.hasMany(models.NotificationPref, {
       as: "userNotificationPrefs",
       foreignKey: "userId"
     });
