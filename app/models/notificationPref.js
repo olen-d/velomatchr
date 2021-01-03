@@ -17,18 +17,12 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       type: DataTypes.BOOLEAN,
       defaultValue: 0,
-      allowNull: false,
-      validate: {
-        is: /[01]/,
-      }
+      allowNull: false
     },
     sms: {
       type: DataTypes.BOOLEAN,
       defaultValue: 0,
-      allowNull: false,
-      validate: {
-        is: /[01]/,
-      }
+      allowNull: false
     }
   });
 
