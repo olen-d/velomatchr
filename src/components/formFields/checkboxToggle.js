@@ -6,7 +6,10 @@ const checkboxToggle = props => {
   const { handleChange, label, name, style } = props;
 
   return(
-    <><Checkbox toggle style={style} name={name} label={{ children: label }} onChange={handleChange} /><br /></>
+    <>
+      <Checkbox toggle style={style} name={name} label={{ children: label }} onChange={handleChange} />
+      <br />
+    </>
   );
 }
 

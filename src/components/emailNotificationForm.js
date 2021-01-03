@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
+import * as auth from "./auth";
+
 import { Button } from "semantic-ui-react";
+
+import { useAuth } from "../context/authContext";
 
 import CheckboxToggle from "./formFields/checkboxToggle";
 
@@ -12,10 +16,64 @@ const checkboxStyle = { marginBottom: "1rem" }
 const EmailNotificationCheckboxes = props => {
   const { submitBtnContent } = props;
 
+  const { accessToken, setAccessToken } = useAuth(); // setDoRedirect, setRedirectURL 
+
+  const { user } = auth.getUserInfo(accessToken);
+
+  const [userId, setUserId] = useState(user);
+
   const { handleCheckboxChange, values } = useForm();
 
-  const handleSubmit = () => {
-    //
+  const handleSubmit = async () => {
+    const updateResult = await postUpdate();
+    // TODO: Actually handle the errors and success using the error and success message components
+    console.log(updateResult.length === 0 ? "Great Success!" : "Epic Fail!");
+  }
+
+  const postUpdate = () => {
+    return new Promise(async (resolve, reject) => {
+      const updateErrors = [];
+
+      const updateNotificationPrefs = async code => {
+        const setting = values[code];
+
+        const formData = {
+          userId,
+          code,
+          email: setting
+        };
+
+        try {
+          const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+          if (isNewAccessToken) { setAccessToken(token); }
+
+          const updateResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/preferences`, {
+            method: "put",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(formData)
+          });
+  
+          const updateData = updateResponse.ok ? await updateResponse.json() : false;
+  
+          return (updateData && updateData.status === 200 ? true : false); 
+        } catch(error) {
+          // TODO: Deal with the error using the error message component
+          console.log("ERROR\nemailNotificationForm.js\n", error);
+          return (false);
+        }
+      }
+
+      const newBuddyResult = await updateNotificationPrefs("newBuddy");
+      if (!newBuddyResult) { updateErrors.push("newBuddy") }
+      const newMatchResult = await updateNotificationPrefs("newMatch");
+      if (!newMatchResult) { updateErrors.push("newMatch") }
+      const newRequestResult = await updateNotificationPrefs("newRequest");
+      if (!newRequestResult) { updateErrors.push("newReauest") }
+      resolve(updateErrors);
+    });
   }
 
   const options = [
@@ -23,6 +81,8 @@ const EmailNotificationCheckboxes = props => {
     ["newMatch", "I have new potential matches"],
     ["newBuddy", "Someone accepts my riding buddy request"]
   ]
+
+  useEffect(() => { setUserId(user) }, [user]);
 
   return(
       <div>
