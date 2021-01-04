@@ -8,6 +8,7 @@ import { Button } from "semantic-ui-react";
 import { useAuth } from "../context/authContext";
 
 import CheckboxToggle from "./formFields/checkboxToggle";
+import ErrorContainer from "./errorContainer";
 
 import useForm from "../hooks/useForm";
 
@@ -20,13 +21,17 @@ const EmailNotificationCheckboxes = props => {
 
   const { user } = auth.getUserInfo(accessToken);
 
+  const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [userId, setUserId] = useState(user);
 
   const { handleCheckboxChange, values } = useForm();
 
   const handleSubmit = async () => {
     const updateResult = await postUpdate();
-    // TODO: Actually handle the errors and success using the error and success message components
+    // TODO: Actually handle the errors and success using the error and success message component
+    updateResult.length === 0 ? setIsErrorMessage("Success") : setIsErrorMessage(updateResult.join(" "));
     console.log(updateResult.length === 0 ? "Great Success!" : "Epic Fail!");
   }
 
@@ -71,7 +76,7 @@ const EmailNotificationCheckboxes = props => {
       const newMatchResult = await updateNotificationPrefs("newMatch");
       if (!newMatchResult) { updateErrors.push("newMatch") }
       const newRequestResult = await updateNotificationPrefs("newRequest");
-      if (!newRequestResult) { updateErrors.push("newReauest") }
+      if (!newRequestResult) { updateErrors.push("newRequest") }
       resolve(updateErrors);
     });
   }
@@ -84,8 +89,15 @@ const EmailNotificationCheckboxes = props => {
 
   useEffect(() => { setUserId(user) }, [user]);
 
+  useEffect(() => { isErrorMessage ? setIsError(true) : setIsError(false)}, [isErrorMessage]);
+  
   return(
       <div>
+        <ErrorContainer
+          header={isErrorHeader}
+          message={isErrorMessage}
+          show={isError}
+        />
         {
           options.map(([name, label], index) => (
             <CheckboxToggle label={label} style={checkboxStyle} name={name} handleChange={handleCheckboxChange} key={`checkbox${index}`} />
