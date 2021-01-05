@@ -9,6 +9,7 @@ import { useAuth } from "../context/authContext";
 
 import CheckboxToggle from "./formFields/checkboxToggle";
 import ErrorContainer from "./errorContainer";
+import SuccessContainer from "./successContainer";
 
 import useForm from "../hooks/useForm";
 
@@ -26,6 +27,9 @@ const EmailNotificationCheckboxes = props => {
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [isInitialValuesSet, setIsInitialValuesSet] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccessHeader, setIsSuccessHeader] = useState(null);
+  const [isSuccessMessage, setIsSuccessMessage] = useState(null);
   const [userId, setUserId] = useState(user);
 
   const { handleCheckboxChange, initializeFields, values } = useForm();
@@ -40,7 +44,8 @@ const EmailNotificationCheckboxes = props => {
     // TODO: Actually handle the errors and success using the error and success message component
     const updateResultCount = updateResult ? updateResult.length : null; 
     if (updateResultCount > 0) {
-      // setIsSuccess(false);
+      setIsSuccess(false);
+
       // Check for fetch issues
       if (updateResult[0] === "fetchFail") {
 
@@ -62,54 +67,53 @@ const EmailNotificationCheckboxes = props => {
       }
     } else {
       setIsError(false);
-      // setIsSuccessMessage("Success") : ;
+      setIsSuccessHeader("Preferences Updated")
+      setIsSuccessMessage("Your email notification preferences were successfuly updated.");
+      setIsSuccess(true);
     }
   }
 
   const postUpdate = async () => {
-    // return new Promise(async (resolve, reject) => {
-      const updateErrors = [];
+    const updateErrors = [];
 
-      const updateNotificationPrefs = async code => {
-        const setting = values[code];
+    const updateNotificationPrefs = async code => {
+      const setting = values[code];
 
-        const formData = {
-          userId,
-          code,
-          email: setting
-        };
+      const formData = {
+        userId,
+        code,
+        email: setting
+      };
 
-        try {
-          const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
-          if (isNewAccessToken) { setAccessToken(token); }
+      try {
+        const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(token); }
 
-          const updateResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/preferences`, {
-            method: "put",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(formData)
-          });
-  
-          const updateData = updateResponse.ok ? await updateResponse.json() : false;
-  
-          return (updateData && updateData.status === 200 ? true : false); 
-        } catch(error) {
-          if (updateErrors[0] !== "fetchFail") { updateErrors.unshift("fetchFail") };
-          return (false);
-        }
+        const updateResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/preferences`, {
+          method: "put",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const updateData = updateResponse.ok ? await updateResponse.json() : false;
+
+        return (updateData && updateData.status === 200 ? true : false); 
+      } catch(error) {
+        if (updateErrors[0] !== "fetchFail") { updateErrors.unshift("fetchFail") };
+        return (false);
       }
+    }
 
-      const newBuddyResult = await updateNotificationPrefs("newBuddy");
-      if (!newBuddyResult) { updateErrors.push("Someone accepts my riding buddy request") }
-      const newMatchResult = await updateNotificationPrefs("newMatch");
-      if (!newMatchResult) { updateErrors.push("I have new potential matches") }
-      const newRequestResult = await updateNotificationPrefs("newRequest");
-      if (!newRequestResult) { updateErrors.push("I have new riding buddy requests") }
-      return(updateErrors);
-      // resolve(updateErrors);
-    // });
+    const newBuddyResult = await updateNotificationPrefs("newBuddy");
+    if (!newBuddyResult) { updateErrors.push("Someone accepts my riding buddy request") }
+    const newMatchResult = await updateNotificationPrefs("newMatch");
+    if (!newMatchResult) { updateErrors.push("I have new potential matches") }
+    const newRequestResult = await updateNotificationPrefs("newRequest");
+    if (!newRequestResult) { updateErrors.push("I have new riding buddy requests") }
+    return(updateErrors);
   }
 
   const options = [
@@ -166,6 +170,11 @@ const EmailNotificationCheckboxes = props => {
           header={isErrorHeader}
           message={isErrorMessage}
           show={isError}
+        />
+        <SuccessContainer
+          header={isSuccessHeader}
+          message={isSuccessMessage}
+          show={isSuccess}
         />
         {
           options.map(([name, label], index) => (
