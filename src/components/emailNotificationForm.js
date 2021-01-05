@@ -21,12 +21,14 @@ const EmailNotificationCheckboxes = props => {
 
   const { user } = auth.getUserInfo(accessToken);
 
+  const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isInitialValuesSet, setIsInitialValuesSet] = useState(false);
   const [userId, setUserId] = useState(user);
 
-  const { handleCheckboxChange, values } = useForm();
+  const { handleCheckboxChange, initializeFields, values } = useForm();
 
   const handleSubmit = async () => {
     const updateResult = await postUpdate();
@@ -91,6 +93,46 @@ const EmailNotificationCheckboxes = props => {
 
   useEffect(() => { isErrorMessage ? setIsError(true) : setIsError(false)}, [isErrorMessage]);
   
+  // Get notification settings from the database
+  useEffect(() => {
+    const getUserPrefs = async () => {
+      try {
+        const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(token); }
+        
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/notifications/preferences/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = response.ok ? await response.json() : false;
+
+        if (!data) {
+          // There was an issue fetching the data
+          // TODO: Deal with the error
+        } else {
+          const { data: { userNotificationPrefs }, } = data;
+          const emailNotificationPrefs = {};
+
+          userNotificationPrefs.forEach(pref => {
+            const { code, email } = pref;
+            emailNotificationPrefs[code] = email;
+          })
+          setInitialValues(emailNotificationPrefs);
+        }
+      } catch(error) {
+        // TODO: Deal with the error
+      }
+    };
+    if (userId) { getUserPrefs(); }
+  }, [accessToken, setAccessToken, userId]);
+  
+  if (Object.keys(initialValues).length > 0 && !isInitialValuesSet) {
+    initializeFields(initialValues);
+    setIsInitialValuesSet(true);
+  }
+
   return(
       <div>
         <ErrorContainer
@@ -100,7 +142,7 @@ const EmailNotificationCheckboxes = props => {
         />
         {
           options.map(([name, label], index) => (
-            <CheckboxToggle label={label} style={checkboxStyle} name={name} handleChange={handleCheckboxChange} key={`checkbox${index}`} />
+            <CheckboxToggle label={label} style={checkboxStyle} name={name} handleChange={handleCheckboxChange} checked={values[name]} key={`checkbox${index}`} />
           ))
         }
         <Button

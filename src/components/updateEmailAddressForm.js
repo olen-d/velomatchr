@@ -25,7 +25,7 @@ const UpdateEmailAddressForm = props => {
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
-  const [isInitialValuesSet, setIsInitalValuesSet] = useState(false);
+  const [isInitialValuesSet, setIsInitialValuesSet] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPassVerified, setIsPassVerified] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -216,7 +216,7 @@ const UpdateEmailAddressForm = props => {
 
   if (Object.keys(initialValues).length > 0 && !isInitialValuesSet) {
     initializeFields(initialValues);
-    setIsInitalValuesSet(true);
+    setIsInitialValuesSet(true);
   }
 
   return(
