@@ -31,14 +31,43 @@ const EmailNotificationCheckboxes = props => {
   const { handleCheckboxChange, initializeFields, values } = useForm();
 
   const handleSubmit = async () => {
+    const buildUpdateErrorString = updateErrors => {
+      const updateErrorsJoin = updateErrors.join(", ");
+      const updateErrorsString = updateErrorsJoin.replace(/,\s([^,]+)$/, ' and $1');
+      return updateErrorsString;
+    }
     const updateResult = await postUpdate();
     // TODO: Actually handle the errors and success using the error and success message component
-    updateResult.length === 0 ? setIsErrorMessage("Success") : setIsErrorMessage(updateResult.join(" "));
-    console.log(updateResult.length === 0 ? "Great Success!" : "Epic Fail!");
+    const updateResultCount = updateResult ? updateResult.length : null; 
+    if (updateResultCount > 0) {
+      // setIsSuccess(false);
+      // Check for fetch issues
+      if (updateResult[0] === "fetchFail") {
+
+        updateResult.shift();
+
+        const updateResultString = buildUpdateErrorString(updateResult);
+        const wasWere = updateResult.length > 1 ? "were" : "was";
+        
+        setIsErrorHeader("Unable to Update Email Notification Preferences");
+        setIsErrorMessage(`The server appears to be down or unavailable. Please wait a few minutes and try again. ${updateResultString} ${wasWere} not updated.`);
+        setIsError(true);
+      } else {
+        const errorHeaderText = updateResultCount > 1 ? "The Following Preferences Were Not Updated" : "The Following Preference Was Not Updated";
+
+        setIsErrorHeader(errorHeaderText);
+        const updateResultString = buildUpdateErrorString(updateResult);
+        setIsErrorMessage(updateResultString);
+        setIsError(true);
+      }
+    } else {
+      setIsError(false);
+      // setIsSuccessMessage("Success") : ;
+    }
   }
 
-  const postUpdate = () => {
-    return new Promise(async (resolve, reject) => {
+  const postUpdate = async () => {
+    // return new Promise(async (resolve, reject) => {
       const updateErrors = [];
 
       const updateNotificationPrefs = async code => {
@@ -67,20 +96,20 @@ const EmailNotificationCheckboxes = props => {
   
           return (updateData && updateData.status === 200 ? true : false); 
         } catch(error) {
-          // TODO: Deal with the error using the error message component
-          console.log("ERROR\nemailNotificationForm.js\n", error);
+          if (updateErrors[0] !== "fetchFail") { updateErrors.unshift("fetchFail") };
           return (false);
         }
       }
 
       const newBuddyResult = await updateNotificationPrefs("newBuddy");
-      if (!newBuddyResult) { updateErrors.push("newBuddy") }
+      if (!newBuddyResult) { updateErrors.push("Someone accepts my riding buddy request") }
       const newMatchResult = await updateNotificationPrefs("newMatch");
-      if (!newMatchResult) { updateErrors.push("newMatch") }
+      if (!newMatchResult) { updateErrors.push("I have new potential matches") }
       const newRequestResult = await updateNotificationPrefs("newRequest");
-      if (!newRequestResult) { updateErrors.push("newRequest") }
-      resolve(updateErrors);
-    });
+      if (!newRequestResult) { updateErrors.push("I have new riding buddy requests") }
+      return(updateErrors);
+      // resolve(updateErrors);
+    // });
   }
 
   const options = [
@@ -90,8 +119,6 @@ const EmailNotificationCheckboxes = props => {
   ]
 
   useEffect(() => { setUserId(user) }, [user]);
-
-  useEffect(() => { isErrorMessage ? setIsError(true) : setIsError(false)}, [isErrorMessage]);
   
   // Get notification settings from the database
   useEffect(() => {
