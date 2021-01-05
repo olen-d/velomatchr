@@ -51,7 +51,7 @@ exports.update_notification_preferences = async (req, res) => {
         fields,
         { where: { userId, code }
       });
-      console.log(updateResult);
+
       if (updateResult[0] === 0 ) {
         res.status(500).json({ status: 500, message: "Internal Server Error" });
       } else {
