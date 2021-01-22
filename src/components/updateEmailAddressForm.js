@@ -135,6 +135,12 @@ const UpdateEmailAddressForm = props => {
               // Display the verification form
               handleVerifyEmailFormVisibility(true);
             } else {
+              const sendVerificationEmailData = await sendVerificationEmailResponse.json();
+              if (sendVerificationEmailData.status === 400) {
+                setIsErrorHeader("Database Error");
+                setIsErrorMessage("Could not update database. Verification code not sent. Please try again later.");
+                setIsError(true);
+              }
               // Email sending failure
               // Some kind of try again message
             }

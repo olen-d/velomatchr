@@ -974,6 +974,10 @@ exports.email_send_verification = async (req, res) => {
         res.status(500).json({ status: 500, message: "Internal Server Error "})
       }
     } catch (error) {
+      // Check for unique constraint violation
+      if (error.name === "SequelizeUniqueConstraintError") {
+        res.status(400).json({ status: 400, message: "Bad Request" });
+      }
       res.status(500).json({ status: 500, message: "Internal Server Error", error });
     }
   } else {
