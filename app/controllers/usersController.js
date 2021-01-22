@@ -938,12 +938,21 @@ exports.email_send_verification = async (req, res) => {
     const token = await tokens.create(userId);
   
     try {
+      // Delete any old codes
+      await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/verification/codes/id/${userId}`, {
+        method: "delete",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
       // Add the new code and userId to the database
       const createEmailVerificationResult = await EmailVerification.create({
         userId,
         verificationCode: newCode,
         attempts: 0
       });
+      // TODO - deal with result of create email verification result
       // TODO - if the code isn't unique, generate a new one
       // TODO - if nothing was entered in the database, stop and return an error, don't send a bogus confirmation email
       const formData = {
