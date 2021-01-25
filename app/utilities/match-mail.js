@@ -52,7 +52,15 @@ const getNewMail = async () => {
     const results = await connection.search(searchCriteria, fetchOptions);
 // console.log(results);
 // console.log(results[0].parts[0].body["content-type"]);
+// console.log("CONNECTION SEARCH\n" + JSON.stringify(results, null, 2));
     const newEmails = results.map(result => {
+      // Check for content-transfer-encoding in the header
+      let contentTransferEncoding = null;
+      try {
+        ({ contentTransferEncoding } = { parts: [{ body: { "content-transfer-encoding": [contentTransferEncoding] }, }], } = result);
+      } catch {
+        contentTransferEncoding = null
+      }
 
       const { attributes: { uid }, parts: [{ body: { "content-type": [contentType], from: [from], subject: [subject], to: [to] }, }, {body: message}], } = result;
       // console.log(from, to, subject, message);
@@ -63,7 +71,7 @@ const getNewMail = async () => {
       // Content-Type
       // Body
       // uid - useful for deleting the email on the server
-      return {contentType, from, message, to, subject, uid};
+      return {contentTransferEncoding, contentType, from, message, to, subject, uid};
     });
 
   // console.log(newEmails);
@@ -81,8 +89,9 @@ const processMail = async emails => {
 
   try {
     for (const email of emails) {
-      const { contentType, from, message, to, subject, uid } = email;
-
+      const { contentTransferEncoding, contentType, from, message, to, subject, uid } = email;
+// console.log("\n----------\nMESSAGE\n", message + "\nCONTENT TYPE\n" + contentType + "\n");
+// console.log("\n-----message-----\n" + message + "\n----end message----\n");
       // Mark the email as seen to avoid duplicate processing, but don't delete it until it's successfully forwarded
       await connection.addFlags(uid, "\\Seen");
 
@@ -127,16 +136,42 @@ const processMail = async emails => {
         const { data: [{ emailProxy: senderProxy }], } = jsonSenderProxy;
 
         // Parse the message using mail-body-parser
-        // console.log(message);
-        // Get the boundary from the headers, mail-body-parser will need this to split apart multipart messages
-        const boundary = contentType.includes("multipart") ? "--" + contentType.slice(contentType.indexOf("boundary=") + 9) : null;
+        // Determine if this is a multi-part message
+        const isMultiPart = contentType.includes("multipart");
+        let boundary = null;
+        const headers = [];
+
+        if (isMultiPart) {
+          // Get the boundary from the headers, mail-body-parser will need this to split apart multipart messages
+          // Check to see if the boundary value is enclosed in quotes
+          let re = /boundary="[\n\r\S]*"/gmi;
+
+          const isQuoted = re.test(contentType);
+          const boundaryIndex = contentType.indexOf("boundary=");
+          boundary = isQuoted ?  "--" + contentType.slice(boundaryIndex + 10, -1) : "--" + contentType.slice(boundaryIndex + 9)
+        } else {
+          // If the format is not multi-part, build a headers array to pass them to mail-body-parser, since headers won't be included in the body
+          if (contentTransferEncoding) { headers.push(`content-transefer-encoding: ${contentTransferEncoding}`) }
+          if (contentType) { headers.push(`content-type: ${contentType}`) }
+        }
+
+        // const boundary = contentType.includes("multipart") ? "--" + contentType.slice(contentType.indexOf("boundary=") + 9) : null;
+// console.log("BOUNDARY\n" + boundary);
+        // If multipart, header should be null.
+        // If not, build the header
         
-        const { bodyParts } = await mailBodyParser.parseBody(boundary, message);
+
+        const header = headers.length > 0 ? headers.join("\r\n") : null;
+// console.log("BOUNDARY:\n" + boundary + "\nHEADER:\n" + header + "\nMESSAGE:\n" + message + "\n\n");
+        // const { bodyParts } = await mailBodyParser.parseBody(boundary, header, message);
+        const bodyParts = await mailBodyParser.parseBody(boundary, header, message);
+        // ! TODO: Error trap this - currently just crashes if mailBodyParser returns an error
+// console.log("\n----- RESULT ----", JSON.stringify(bodyParts, null, 2));
         // console.log("TEXT\n", bodyParts.text);
         // console.log("BP\n" + JSON.stringify(bodyParts));
         const text = bodyParts.text ? bodyParts.text : false;
         const html = bodyParts.html ? bodyParts.html : false;
-
+// TODO: IMPORTANT if text and html are both false, bail and send an error back
         // Data to pass to send endpoint
         const formData = {
           fromAddress: `"${firstName} ${lastInitial} (VeloMatchr Buddy)" <buddy-${senderProxy}@velomatchr.com>`,
@@ -145,7 +180,7 @@ const processMail = async emails => {
           text,
           html
         }
-
+// console.log("TEXT\n" + text + "\nHTML\n" + html + "\n");
         // Send the email
         const responseSendMail = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/relationship/send`, {
           method: "post",
