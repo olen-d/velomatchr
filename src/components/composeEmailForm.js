@@ -65,6 +65,8 @@ const ComposeEmailForm = props => {
 
     const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
     if (isNewAccessToken) { setAccessToken(token); }
+
+    // ! TODO: Check for blocked user
     // Process new lines
     // TODO: Find all the single newlines and replace with <br />
 
