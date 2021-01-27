@@ -50,9 +50,7 @@ const getNewMail = async () => {
     await connection.openBox("INBOX");
 
     const results = await connection.search(searchCriteria, fetchOptions);
-// console.log(results);
-// console.log(results[0].parts[0].body["content-type"]);
-// console.log("CONNECTION SEARCH\n" + JSON.stringify(results, null, 2));
+
     const newEmails = results.map(result => {
       // Check for content-transfer-encoding in the header
       let contentTransferEncoding = null;
@@ -63,18 +61,9 @@ const getNewMail = async () => {
       }
 
       const { attributes: { uid }, parts: [{ body: { "content-type": [contentType], from: [from], subject: [subject], to: [to] }, }, {body: message}], } = result;
-      // console.log(from, to, subject, message);
-      // console.log(contentType);
-      // To
-      // From
-      // Subject
-      // Content-Type
-      // Body
-      // uid - useful for deleting the email on the server
+
       return {contentTransferEncoding, contentType, from, message, to, subject, uid};
     });
-
-  // console.log(newEmails);
     return newEmails;
   } catch(error) {
     // TODO: Deal with the error
@@ -90,8 +79,7 @@ const processMail = async emails => {
   try {
     for (const email of emails) {
       const { contentTransferEncoding, contentType, from, message, to, subject, uid } = email;
-// console.log("\n----------\nMESSAGE\n", message + "\nCONTENT TYPE\n" + contentType + "\n");
-// console.log("\n-----message-----\n" + message + "\n----end message----\n");
+
       // Mark the email as seen to avoid duplicate processing, but don't delete it until it's successfully forwarded
       await connection.addFlags(uid, "\\Seen");
 
@@ -155,23 +143,13 @@ const processMail = async emails => {
           if (contentType) { headers.push(`content-type: ${contentType}`) }
         }
 
-        // const boundary = contentType.includes("multipart") ? "--" + contentType.slice(contentType.indexOf("boundary=") + 9) : null;
-// console.log("BOUNDARY\n" + boundary);
-        // If multipart, header should be null.
-        // If not, build the header
-        
-
         const header = headers.length > 0 ? headers.join("\r\n") : null;
-// console.log("BOUNDARY:\n" + boundary + "\nHEADER:\n" + header + "\nMESSAGE:\n" + message + "\n\n");
-        // const { bodyParts } = await mailBodyParser.parseBody(boundary, header, message);
         const bodyParts = await mailBodyParser.parseBody(boundary, header, message);
         // ! TODO: Error trap this - currently just crashes if mailBodyParser returns an error
-// console.log("\n----- RESULT ----", JSON.stringify(bodyParts, null, 2));
-        // console.log("TEXT\n", bodyParts.text);
-        // console.log("BP\n" + JSON.stringify(bodyParts));
+
         const text = bodyParts.text ? bodyParts.text : false;
         const html = bodyParts.html ? bodyParts.html : false;
-// TODO: IMPORTANT if text and html are both false, bail and send an error back
+        // ! TODO: if text and html are both false, bail and send an error back
         // Data to pass to send endpoint
         const formData = {
           fromAddress: `"${firstName} ${lastInitial} (VeloMatchr Buddy)" <buddy-${senderProxy}@velomatchr.com>`,
@@ -180,7 +158,7 @@ const processMail = async emails => {
           text,
           html
         }
-// console.log("TEXT\n" + text + "\nHTML\n" + html + "\n");
+
         // Send the email
         const responseSendMail = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/relationship/send`, {
           method: "post",
@@ -192,11 +170,10 @@ const processMail = async emails => {
         });
 
         const jsonSendMail = responseSendMail.ok? await responseSendMail.json() : null;
-        // console.log("RESULT:", jsonSendMail);
+
         if (jsonSendMail.status !== 200) {
           // Send an error
-          // TODO: IMPORTANT! Deal with the error - try and resend and/or send a bounce to the sender
-          // console.log(jsonSendMail.message);
+          // ! TODO: Deal with the error - try and resend and/or send a bounce to the sender
         } else { 
           // On successful send, delete the original using the uid
           const {data: { rejected }, } = jsonSendMail;

@@ -132,6 +132,38 @@ exports.read_email_proxy_by_id = (req, res) => {
   })
 };
 
+exports.read_relationship_status_by_id = async (req, res) => {
+  const { authorized } = req;
+
+  if (authorized) {
+    try {
+      const { query: { requesterid: requesterId, addresseeid: addresseeId }, } = req;
+
+      if (requesterId === undefined) { throw new Error("The parameter 'requesterid' is required") }
+      if (addresseeId === undefined) { throw new Error("The parameter 'addresseeid' is required") }
+
+      const data = await Relationship.findOne({
+        where: { 
+          requesterId,
+          addresseeId
+        },
+        attributes: ["status"]
+      });
+
+      if (data) {
+        res.json({ status: 200, message: "ok", data });
+      } else {
+        res.json({ status: 404, message: "Not Found" });
+      }
+    } catch(error) {
+      const { message: errorMessage } = error
+      res.json({ status: 500, message: "Internal  Server Error", error: errorMessage });
+    }
+  } else {
+    res.sendStatus(403);
+  }
+};
+
 exports.read_user_relationships_by_id = (req, res) => {
   const { authorized } = req;
 
