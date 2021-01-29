@@ -67,72 +67,102 @@ const ComposeEmailForm = props => {
     if (isNewAccessToken) { setAccessToken(token); }
 
     // ! TODO: Check for blocked user
-    // Process new lines
-    // TODO: Find all the single newlines and replace with <br />
-
-    // Automatically wrap blocks terminated with double line breaks in <p> ... </p>
-    // Search for double line breaks \n\n (Unix) or \r\n\r\n (Windows) and replace with a closing paragraph tag
-    const regex = /\n\n|\r\n\r\n/g;
-    const closingParagraphTag = body.replace(regex, "</p>");
-
-    // Add the opening paragraph tags
-    const closingParagraphTags = closingParagraphTag.split("</p>");
-    const paragraphs = closingParagraphTags.map(paragraph => "<p>" + paragraph + "</p>");
-    let htmlMessage = paragraphs.join("");
-
-    // Check for basic HTML tags and add them if they're missing
-    const hasHtml = body.includes("<html>") && body.includes("</html>");
-    const hasBody = body.includes("<body>") && body.includes("</body>");
-    const hasMain = body.includes("<main>") && body.includes("</main>");
-
-    const bodyParts = {};
-
-    if (hasHtml && hasBody && hasMain) {
-      bodyParts.html = htmlMessage;
-    } else {
-      htmlMessage = hasMain ? htmlMessage : "<main>" + htmlMessage + "</main>";
-      htmlMessage = hasBody ? htmlMessage : "<body>" + htmlMessage + "</body>";
-      htmlMessage = hasHtml ? htmlMessage : "<html>" + htmlMessage + "</html>";
-
-      bodyParts.html = htmlMessage;
-    }
-
-    // TODO: check for tags and strip the html and create a text version if needed
-    // TODO: replace <p> tags with two new lines and <br> with one new line 
-    // for now, just send text as false
-    bodyParts.text = false; // TODO: remove this line when the functionality to strip the html is implemented...
-
-    const formData = { addresseeProxy, bodyParts, requesterProxy, subject, userId };
-
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/match`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const json = await response.json();
-
-      if (json.errors) {
-        setIsTransportError(false);
-        const { errors } = json;
-        handleServerErrors(...errors);
-      } else if (json.status !== 200) {
-        setIsErrorHeader("Unable to Send Email");
-        setIsErrorMessage("Something went wrong, but it's probably not your fault. Please try again in a few seconds.");
-        setIsTransportError(true);
-      } else {
-        // Great success!
-        setIsTransportError(false);
-        setIsSuccessHeader("Email Sent");
-        setIsSuccessMessage(`Your message was successfully sent to ${addresseeFirstName} ${addresseeLastInitial}.`);
-        setIsSuccess(true);
-        // Redirect back to the matches page in like five seconds
+    const responseRelationshipStatus = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/status/ids/?requesterid=${userId}&addresseeid=${addresseeId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    } catch(error) {
-      // TODO: Deal with the fetch error
+    });
+
+    const responseRelationshipJson = responseRelationshipStatus.ok ? await responseRelationshipStatus.json() : null;
+
+    if (responseRelationshipJson && responseRelationshipJson.status === 200) {
+      const { data: { status }, } = responseRelationshipJson;
+      if (status !== 2) {
+        // Check for blocked user
+        if (status === 4) {
+          // Fake success
+          setIsTransportError(false);
+          setIsSuccessHeader("Email Sent TEST");
+          setIsSuccessMessage(`Your message was successfully sent to ${addresseeFirstName} ${addresseeLastInitial}.`);
+          setIsSuccess(true);
+          return;
+        } else {
+          setIsErrorHeader("Unable to Send Email");
+          setIsErrorMessage("You are not matched with the recipient. They may have left VeloMatchr or unfriended you.");
+          setIsTransportError(true);
+          return;
+        }
+      } else {
+        // Process new lines
+        // TODO: Find all the single newlines and replace with <br />
+
+        // Automatically wrap blocks terminated with double line breaks in <p> ... </p>
+        // Search for double line breaks \n\n (Unix) or \r\n\r\n (Windows) and replace with a closing paragraph tag
+        const regex = /\n\n|\r\n\r\n/g;
+        const closingParagraphTag = body.replace(regex, "</p>");
+
+        // Add the opening paragraph tags
+        const closingParagraphTags = closingParagraphTag.split("</p>");
+        const paragraphs = closingParagraphTags.map(paragraph => "<p>" + paragraph + "</p>");
+        let htmlMessage = paragraphs.join("");
+
+        // Check for basic HTML tags and add them if they're missing
+        const hasHtml = body.includes("<html>") && body.includes("</html>");
+        const hasBody = body.includes("<body>") && body.includes("</body>");
+        const hasMain = body.includes("<main>") && body.includes("</main>");
+
+        const bodyParts = {};
+
+        if (hasHtml && hasBody && hasMain) {
+          bodyParts.html = htmlMessage;
+        } else {
+          htmlMessage = hasMain ? htmlMessage : "<main>" + htmlMessage + "</main>";
+          htmlMessage = hasBody ? htmlMessage : "<body>" + htmlMessage + "</body>";
+          htmlMessage = hasHtml ? htmlMessage : "<html>" + htmlMessage + "</html>";
+
+          bodyParts.html = htmlMessage;
+        }
+
+        // TODO: check for tags and strip the html and create a text version if needed
+        // TODO: replace <p> tags with two new lines and <br> with one new line 
+        // for now, just send text as false
+        bodyParts.text = false; // TODO: remove this line when the functionality to strip the html is implemented...
+
+        const formData = { addresseeProxy, bodyParts, requesterProxy, subject, userId };
+
+        try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/match`, {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const json = await response.json();
+
+          if (json.errors) {
+            setIsTransportError(false);
+            const { errors } = json;
+            handleServerErrors(...errors);
+          } else if (json.status !== 200) {
+            setIsErrorHeader("Unable to Send Email");
+            setIsErrorMessage("Something went wrong, but it's probably not your fault. Please try again in a few seconds.");
+            setIsTransportError(true);
+          } else {
+            // Great success!
+            setIsTransportError(false);
+            setIsSuccessHeader("Email Sent");
+            setIsSuccessMessage(`Your message was successfully sent to ${addresseeFirstName} ${addresseeLastInitial}.`);
+            setIsSuccess(true);
+            // Redirect back to the matches page in like five seconds
+          }
+        } catch(error) {
+          // TODO: Deal with the fetch error
+        }
+      }
+    } else {
+      throw new Error("Could not get relationship status.");
     }
   }
 
@@ -159,7 +189,7 @@ const ComposeEmailForm = props => {
 
           const jsonAddressee = responseAddressee.ok ? await responseAddressee.json() : null;
           const { user: { firstName, lastName}, } = jsonAddressee;
-          const lastInitial = lastName.slice(0,1);
+          const lastInitial = lastName ? lastName.slice(0,1) : "N."; // Avoid an error if attempting to slice null or undefined
           setAddresseeFirstName(firstName);
           setAddresseeLastInitial(lastInitial);
 
