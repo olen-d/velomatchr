@@ -13,6 +13,7 @@ import {
     Form,
     Grid,
     Header,
+    Icon,
     Message,
     Segment
   } from "semantic-ui-react";
@@ -25,6 +26,39 @@ import SubjectInput from "./formFields/subjectInput";
 import SuccessContainer from "./successContainer";
 
 import useForm from "./../hooks/useForm";
+
+const ComposeEmailError = props => {
+  const { header, message } = props;
+
+  const history = useHistory();
+
+  const handleReturn = () => {
+    history.push("/matches");
+  }
+
+  return(
+    <Grid.Column width={16}>
+      <Header
+        as="h2"
+        textAlign="left"
+        color="orange"
+      >
+        <Icon name="exclamation triangle" /> { header }
+      </Header>
+      <Message>
+        { message }
+      </Message>
+      <Button
+        type="button"
+        size="medium"
+        color="orange"
+        onClick={handleReturn}
+      >
+        Return to Matches
+      </Button>
+    </Grid.Column>
+  );
+}
 
 const ComposeEmailForm = props => {
   const { colWidth, formTitle } = props;
@@ -42,6 +76,7 @@ const ComposeEmailForm = props => {
   const [isSuccessMessage, setIsSuccessMessage] = useState(null);
   const [isTransportError, setIsTransportError] = useState(null);
   const [requesterProxy, setRequesterProxy] = useState(null);
+  const [showComposeEmailError, setShowComposeEmailError] = useState(false);
   const [userId, setUserId] = useState(null);
 
   const { id } = useParams();
@@ -188,6 +223,10 @@ const ComposeEmailForm = props => {
           });
 
           const jsonAddressee = responseAddressee.ok ? await responseAddressee.json() : null;
+          if (jsonAddressee.user === null) {
+            setShowComposeEmailError(true);
+            return;
+          }
           const { user: { firstName, lastName}, } = jsonAddressee;
           const lastInitial = lastName ? lastName.slice(0,1) : "N."; // Avoid an error if attempting to slice null or undefined
           setAddresseeFirstName(firstName);
@@ -267,70 +306,79 @@ const ComposeEmailForm = props => {
     setFlag(false);
   }
 
-  return(
-    <Grid.Column width={colWidth}>
-      <Header
-        as="h2"
-        textAlign="left"
-        color="orange"
-      >
-        {formTitle}
-      </Header>
-      <ErrorContainer
-        header={isErrorHeader}
-        message={isErrorMessage}
-        show={isError || isTransportError }
-      >
-      </ErrorContainer>
-      <SuccessContainer
-        header={isSuccessHeader}
-        message={isSuccessMessage}
-        show={isSuccess}
-      >
-      </SuccessContainer>
-      <p>
-        To: {addresseeFirstName} {addresseeLastInitial}.
-      </p>
-      <Form size="large">
-        <SubjectInput
-          errors={errors}
-          initialValue={values.subject}
-          placeholder="Add a subject"
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-        <BodyTextarea
-          errors={errors}
-          initialValue={values.body}
-          placeholder="Type a message..."
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          values={values}
-        />
-        <Button
-          disabled={isError || !values.body}
-          type="button"
-          color="red"
-          size="medium"
-          icon="paper plane"
-          labelPosition="left"
-          content="Send"
-          onClick={handleSubmit}
+  if(showComposeEmailError) {
+    return(
+      <ComposeEmailError
+        header="Error: Your Buddy has Abandoned the Race"
+        message="The buddy you are trying to contact could not be found. This is likely because they deleted their account."
+      />
+    );
+  } else {
+    return(
+      <Grid.Column width={colWidth}>
+        <Header
+          as="h2"
+          textAlign="left"
+          color="orange"
         >
-        </Button>
-        <Button
-          type="button"
-          size="medium"
-          icon="trash"
-          labelPosition="left"
-          content="Discard"
-          onClick={handleDiscard}
+          {formTitle}
+        </Header>
+        <ErrorContainer
+          header={isErrorHeader}
+          message={isErrorMessage}
+          show={isError || isTransportError }
         >
-        </Button>
-      </Form>
-    </Grid.Column>
-  );
+        </ErrorContainer>
+        <SuccessContainer
+          header={isSuccessHeader}
+          message={isSuccessMessage}
+          show={isSuccess}
+        >
+        </SuccessContainer>
+        <p>
+          To: {addresseeFirstName} {addresseeLastInitial}.
+        </p>
+        <Form size="large">
+          <SubjectInput
+            errors={errors}
+            initialValue={values.subject}
+            placeholder="Add a subject"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          <BodyTextarea
+            errors={errors}
+            initialValue={values.body}
+            placeholder="Type a message..."
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
+          <Button
+            disabled={isError || !values.body}
+            type="button"
+            color="red"
+            size="medium"
+            icon="paper plane"
+            labelPosition="left"
+            content="Send"
+            onClick={handleSubmit}
+          >
+          </Button>
+          <Button
+            type="button"
+            size="medium"
+            icon="trash"
+            labelPosition="left"
+            content="Discard"
+            onClick={handleDiscard}
+          >
+          </Button>
+        </Form>
+      </Grid.Column>
+    );
+  }
 }
 
 export default ComposeEmailForm;
