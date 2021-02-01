@@ -56,19 +56,6 @@ import {
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [redirectURI, setRedirectURI] = useState(null);
 
-  // const handleError = (header, message) => {
-  //   setIsError(true);
-  //   setIsErrorHeader(header);
-  //   setIsErrorMessage(message);
-  // }
-
-  // Stub-out for future success handler
-  // const handleSuccess = (header, message) => {
-  //   setIsSuccess(true);
-  //   setIsSuccessHeader(header);
-  //   setIsSuccessMessage(message)
-  // }
-
   const postAction = async (action, value) => {
     const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, requesterId);
     if (isNewAccessToken) { setAccessToken(token); }
