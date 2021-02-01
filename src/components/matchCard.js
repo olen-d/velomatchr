@@ -10,6 +10,7 @@ import {
  import { useAuth } from "../context/authContext";
  import { useMatches } from "../context/matchesContext";
 
+ import BlockUserButton from "./blockUserButton";
  import ErrorContainer from "./errorContainer";
 
  import * as auth from "./auth";
@@ -54,6 +55,19 @@ import {
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [redirectURI, setRedirectURI] = useState(null);
+
+  // const handleError = (header, message) => {
+  //   setIsError(true);
+  //   setIsErrorHeader(header);
+  //   setIsErrorMessage(message);
+  // }
+
+  // Stub-out for future success handler
+  // const handleSuccess = (header, message) => {
+  //   setIsSuccess(true);
+  //   setIsSuccessHeader(header);
+  //   setIsSuccessMessage(message)
+  // }
 
   const postAction = async (action, value) => {
     const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, requesterId);
@@ -145,6 +159,9 @@ import {
           onClick={() => postAction(rightBtnAction, rightBtnValue)}
         >
         </Button>
+        <BlockUserButton
+          postAction={postAction}
+        />
       </div>
     </>
   )
