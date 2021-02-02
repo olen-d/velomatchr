@@ -173,7 +173,7 @@ exports.read_user_relationships_by_id = (req, res) => {
     Relationship.findAll({
       where: {
         requesterId: userid,
-        status: {[Op.not]: 3 }
+        status: {[Op.not]: [3, 4] }
       },
       include: [{ 
         model: User, 
