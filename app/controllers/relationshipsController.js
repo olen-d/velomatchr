@@ -196,6 +196,44 @@ exports.read_user_relationships_by_id = (req, res) => {
   }
 };
 
+exports.read_user_relationships_blocked_by_id = async (req, res) => {
+  const { authorized } = req;
+
+  if (authorized) {
+    const { params: { userid }, } = req;
+
+    try {
+      const data = await Relationship.findAll({
+        where: {
+          requesterId: userid,
+          status: 4,
+          actionUserId: userid
+        },
+        include: [{ 
+          model: User, 
+          as: "addressee",
+          attributes: { exclude: ["password"]}
+        }],
+        order: [
+          ["matchScore", "ASC"],
+          ["updatedAt", "DESC"]
+        ]
+      });
+
+      if (data) {
+        res.send({ status: 200, message: "ok", data });
+      } else {
+        res.send({ status: 404, message: "Not Found" });
+      }
+    } catch (error) {
+      res.send({ status: 500, message: "Internal Server Error", error });
+    }
+  } else {
+    res.sendStatus(403);
+  }
+
+};
+
 exports.read_user_matched_count_by_id = (req, res) => {
   const { authorized } = req;
 
