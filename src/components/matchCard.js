@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 import { Redirect } from "react-router-dom";
@@ -43,10 +43,9 @@ import {
   let pl = null;
 
   if(photoLink) {
-    let pub = null;
     const slash = photoLink.indexOf("/");
 
-    slash === -1 ? pub = "public\\" : pub = "public/";
+    const pub = slash === -1 ? "public\\" : "public/";
     pl = photoLink.replace(pub, "")
   }
 
@@ -126,7 +125,7 @@ import {
       <div className="match-card-joined">
         Member Since: {createdAt}
       </div>
-      <div className='match-card-actions'>
+      <div className="match-card-actions">
         <Button
           disabled={leftBtnDisabled}
           type="button"
