@@ -13,6 +13,7 @@ import {
   Header,
 } from "semantic-ui-react";
 
+import BlockedList from "./../components/blockedList";
 import MatchesList from "./../components/matchesList";
 import MatchPreferences from "./../components/matchPreferences";
 
@@ -64,6 +65,7 @@ const Matches = ({ match }) => {
         </Grid.Row>
           <Switch>
             <Route exact path={`${match.url}/`} component={MatchLists} />
+            <Route path={`${match.url}/manage-blocked`} component={BlockedList} />
             <Route path={`${match.url}/preferences`} component={MatchPreferences} />
           </Switch>
       </Grid>
