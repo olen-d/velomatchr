@@ -17,6 +17,7 @@ import NavDropdown from "./navDropdown";
 
 const matchesItems = [
   { key: "matches", text: "All Matches", value: "/matches"},
+  { key: "manage-blocked", text: "Manage Blocking", value: "/matches/manage-blocked"},
   { key: "preferences", text: "Preferences", value: "/matches/preferences" }
 ];
 
