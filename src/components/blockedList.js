@@ -63,28 +63,38 @@ const BlockedList = () => {
       </p>
     );
   } else {
-    return(
-      <div className="blocked-users-list">
-      {blockedUsers.map(({ id, addressee: { id: addresseeId, firstName, lastName, isEmailVerified, photoLink, city, stateCode, createdAt}, }) => (
-        <div className="blocked-card-wrapper" key={id}>
-          <BlockedCard
-            requesterId={userId}
-            addresseeId={addresseeId}
-            firstName={firstName}
-            lastName={lastName ? lastName.substring(0,1) + "." : "N."}
-            photoLink={photoLink}
-            city={city}
-            stateCode={stateCode}
-            createdAt={new Intl.DateTimeFormat("en-US", {
-              year: "numeric",
-              month: "long"
-            }).format(new Date(createdAt))}
-            updateBlockedUsers={updateBlockedUsers}
-          />
+    if (blockedUsers.length === 0) {
+      return(
+        <div className="none">
+          <p>
+            You have not blocked any users.
+          </p>
         </div>
-      ))}
-      </div>
-    );
+      );
+    } else {
+      return(
+        <div className="blocked-users-list">
+          {blockedUsers.map(({ id, addressee: { id: addresseeId, firstName, lastName, isEmailVerified, photoLink, city, stateCode, createdAt}, }) => (
+            <div className="blocked-card-wrapper" key={id}>
+              <BlockedCard
+                requesterId={userId}
+                addresseeId={addresseeId}
+                firstName={firstName}
+                lastName={lastName ? lastName.substring(0,1) + "." : "N."}
+                photoLink={photoLink}
+                city={city}
+                stateCode={stateCode}
+                createdAt={new Intl.DateTimeFormat("en-US", {
+                  year: "numeric",
+                  month: "long"
+                }).format(new Date(createdAt))}
+                updateBlockedUsers={updateBlockedUsers}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    }
   }
 
 }
