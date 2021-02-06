@@ -14,8 +14,7 @@ import {
     Grid,
     Header,
     Icon,
-    Message,
-    Segment
+    Message
   } from "semantic-ui-react";
   
 import { useAuth } from "../context/authContext";
@@ -101,7 +100,7 @@ const ComposeEmailForm = props => {
     const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
     if (isNewAccessToken) { setAccessToken(token); }
 
-    // ! TODO: Check for blocked user
+    // Get relationship status, since only approved matches can email each other
     const responseRelationshipStatus = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/status/ids/?requesterid=${userId}&addresseeid=${addresseeId}`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -117,7 +116,7 @@ const ComposeEmailForm = props => {
         if (status === 4) {
           // Fake success
           setIsTransportError(false);
-          setIsSuccessHeader("Email Sent TEST");
+          setIsSuccessHeader("Email Sent");
           setIsSuccessMessage(`Your message was successfully sent to ${addresseeFirstName} ${addresseeLastInitial}.`);
           setIsSuccess(true);
           return;
