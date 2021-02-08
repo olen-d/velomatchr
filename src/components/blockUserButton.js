@@ -1,5 +1,5 @@
 import React from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 
 import { Button } from "semantic-ui-react";
 
@@ -19,7 +19,10 @@ const BlockUserButton = props => {
   )
 }
 
-// Default Props
-// Prop Types
+const { func } = PropTypes;
+
+BlockUserButton.propTypes = {
+  postAction: func
+}
 
 export default BlockUserButton;
