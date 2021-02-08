@@ -80,7 +80,10 @@ exports.read_email_address_by_proxy = (req, res) => {
   Relationship.findAll({
     where: {
       emailProxy,
-      status: 2
+      [Op.or]: [
+        { status: 2 },
+        { status: 4 }
+      ]
     },
     attributes: [],
     include: [{
