@@ -77,6 +77,7 @@ const processMail = async emails => {
   const emailProxyStart = "buddy-";
 
   try {
+    
     for (const email of emails) {
       const { contentTransferEncoding, contentType, from, message, to, subject, uid } = email;
 
@@ -100,13 +101,15 @@ const processMail = async emails => {
         });
 
         const json = response.ok ? await response.json() : null
-console.log("MINUS ONE");
-        // ! TODO: This returns null if match status is not 2
+        
+        //This returns null if match status is not 2 or 4
         if (!json) {
-          throw new Error("Could not get addressee email address.");
+          // ! TODO: Send a bounce email
+          await connection.deleteMessage([uid]);
+          continue; // Go on to the next email in the list
         }
         const { data: [{ requester: { id: addresseeId, email: addresseeEmail }, }], } = json;
-console.log("ZERO");
+
         // Get the sender userId by email address
         const expression = /<.+@.+\..+>/i;
         const fromParts = from.match(expression);
@@ -114,16 +117,13 @@ console.log("ZERO");
         
         const responseSenderId = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${senderEmail}`);
         const jsonSenderId = responseSenderId.ok ? await responseSenderId.json() : null;
-console.log("ONE");
+
         const { data : { firstName, id: senderId, lastName }, } = jsonSenderId;
-console.log("TWO");
+
         const lastInitial = lastName.slice(0, 1) + ".";
-console.log("THREE");
-        // ! TODO Check relationship status to make sure sending is allowed - only a match status of 2 can send
+
         // Get relationship status, since only approved matches can email each other
-        // TODO: Send a bounce if status is anything but 4
-        // TODO: Fail silently if status is 4
-        console.log("SENDER", senderId, "ADDRESSEE", addresseeId);
+        // Fail silently if the sender has been blocked by the recipient
         const responseRelationshipStatus = await fetch(`${process.env.REACT_APP_API_URL}/api/relationships/status/ids/?requesterid=${senderId}&addresseeid=${addresseeId}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -131,20 +131,19 @@ console.log("THREE");
         });
 
         const responseRelationshipJson = responseRelationshipStatus.ok ? await responseRelationshipStatus.json() : null;
-        
+
         if (responseRelationshipJson && responseRelationshipJson.status === 200) {
           const { data: { status }, } = responseRelationshipJson;
           if (status !== 2) {
-            if (status !== 4) {
-              // Send bounce message; silently fail if the status is 4
-              // TODO: Send bounce message
-            }
-            // Throw exception
-            throw new Error("Must be matched to send email");
+            // /api/relationships/email-address/:addresseeProxy will only return relationships with a status of 2 or 4
+            // Therefore, status is 4 (blocked), so terminate, but don't send a bounce email to the sender, so they won't know
+            // they are blocked.
+            await connection.deleteMessage([uid]);
+            continue;
           } 
         } else {
           // Couldn't get status
-          // ! TODO Deal with the error
+          // ! TODO Deal with the no status error
           // Try again? Send bounce email to sender?
         }
 
@@ -227,11 +226,6 @@ console.log("THREE");
     } 
   } catch (error) {
     // TODO: deal with the error
-    console.log(error.message);
-    if (error.message === "Must be matched to send email") {
-      // ! TODO: Delete the email
-      console.log("match-mail // proccessMail / ERROR:\nMatch status invalid, email not sent");
-    }
     console.log("match-mail // processMail / ERROR:\n" + JSON.stringify(error));
   }
 }
