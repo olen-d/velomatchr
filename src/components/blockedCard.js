@@ -1,5 +1,5 @@
 import React from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 
 import { checkAccessTokenExpiration } from "./auth";
 
@@ -87,6 +87,31 @@ const BlockedCard = props => {
       </div>
     </div>
   );
+}
+
+BlockedCard.defaultProps = {
+  requesterId: -99,
+  addresseeId: -99,
+  firstName: "John",
+  lastName: "Doe",
+  photoLink: "",
+  city: "New York",
+  stateCode: "NY",
+  createdAt: "March 2019"
+}
+
+const { func, number, string } = PropTypes;
+
+BlockedCard.propTypes = {
+  requesterId: number,
+  addresseeId: number,
+  firstName: string,
+  lastName: string,
+  photoLink: string,
+  city: string,
+  stateCode: string,
+  createdAt: string,
+  updateBlockedUsers: func
 }
 
 export default BlockedCard;
