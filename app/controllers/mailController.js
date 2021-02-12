@@ -142,43 +142,35 @@ exports.send_relationship_mail = async (req, res) => {
   }
 };
 
-exports.check_mx = (req, res) => {
+exports.check_mx = async (req, res) => {
   // const { authorized } = req; // TODO: update this to use API key when implemented
 
   // if (authorized) {
     const { email } = req.params;
   
-    const mxExists = emailAddress => {
-      return new Promise ((resolve, reject) => {
-        const hostname = emailAddress.split("@")[1];
+    const mxExists = async emailAddress => {
+      const hostname = emailAddress.split("@")[1];
     
-        try {
-          dnsPromises.resolveMx(hostname).then(addresses => {
-            if (addresses && addresses.length > 0) {
-              addresses[0].exchange ? resolve(true) : resolve(false);
-            }
-          })
-          .catch(err => {
-            // TODO: Deal with the error
-            console.log("mailController.js - resolveMx ERROR:\n" + err);
-            resolve(false);        
-          });
-        } catch (err) {
-          // TODO: Deal with the error
-          console.log("mailController.js ERROR:\n" + err);
-          reject(false);
-        }
-      });
+      try {
+        const addresses = await dnsPromises.resolveMx(hostname);
+
+          if (addresses && addresses.length > 0) {
+            return addresses[0].exchange ? true : false;
+          }
+      } catch (error) {
+        // TODO: Deal with the error
+        console.log("mailController.js ERROR:\n" + error);
+        return false;
+      }
     }
   
-    mxExists(email).then(result => {
+    try {
+      const result = await mxExists(email);
       res.status(200).json({ status:200, message: "ok", mxExists: result});
-    })
-    .catch(err => {
-      // TODO: Deal with the error
-      console.log("mailController.js Error\n" + err);
-      res.status(403).json({ status: 500, message: "Internal Server Error", mxExists: false});
-    });
+    } catch(error) {
+      console.log("mailController.js Error\n" + error);
+      res.status(500).json({ status: 500, message: "Internal Server Error", mxExists: false});
+    }
   // } else {
   //   res.sendStatus(403);
   // }
