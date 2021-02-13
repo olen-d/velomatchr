@@ -1000,96 +1000,89 @@ exports.password_reset = async (req, res) => {
   const { body: { email }, } = req;
 
   // Check that the email exists
-  const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
+  try {
+    const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
 
-  fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${email}`).then(data => {
-    data.json().then(json => {
-      if (json.error) {
-        checkEmail(email)
-        .then(isValidEmail => {
-          if (!isValidEmail) {
-            res.status(400).json({ status: 400, message: "Bad request. Invalid email address. Please check the email address you submitted and try again." })
-          } else {
-            const formData = {
-              fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
-              toAddress: email, 
-              subject: "Password Reset Attempted", 
-              message: `<p>We received a request to reset your VeloMatchr password. However, there is no VeloMatchr account associated with this email address. </p><p>If you have a VeloMatchr account and were expecting this email, please try again with the address you provided when signing up. </p><p>If you don't have a VeloMatchr account, please ignore this email. </p><p>Regards, </p><p>The VeloMatchr Support Team </p>`
-            }
-            // Send the email
-            fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
-              method: "post",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-              },
-                body: JSON.stringify(formData)
-              }).then(data => {
-                return data.json();
-              }).then(json => {
-                if (!json.error) {
-                  res.status(200).json({ status: 200, message: "ok", data: json });
-                } else {
-                  res.status(500).json({ status: 500, message: "Internal server error. An email could not be sent. Please check the email address you entered and try again."});
-                }
-              }).catch(error => {
-                res.status(500).json({ status: 500, message: `Internal server error. ${error}` });
-              });
-          }
-        })
-        .catch(error => {
-          res.json({ error });
-        });
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${email}`);
+    const json = response.ok ? await response.json() : null;
+  
+    if (json.error) {
+      const isValidEmail = await checkEmail(email);
+  
+      if (!isValidEmail) {
+        res.status(400).json({ status: 400, message: "Bad request. Invalid email address. Please check the email address you submitted and try again." })
       } else {
-        const {id, password, firstName, lastName, createdAt } = json.data;
-        const payload = {
-          id,
-          email
-        };
-        const created = new Date(createdAt);
-        const secret = password + created.getTime();
-
-        const tempToken = jwt.sign(
-          {payload},
-          secret,
-          { expiresIn: "1h" },
-        );
-
-        // Create the password reset link
-        const passwordResetLink = `${process.env.REACT_APP_URL}/login/reset-password/${id}/${tempToken}`;
-        // Create the email
         const formData = {
           fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
           toAddress: email, 
-          subject: "Reset Your Password", 
-          message: `<p>Hi ${firstName} ${lastName},</p><p>We received a request to reset your VeloMatchr password. If it wasn't you, don't worry, your password is safe and you can ignore this email. </p><p>To reset your password use the following link: <a href=${passwordResetLink}>Reset My Password</a>. </p><p>The password reset link will expire in one hour. </p>`
+          subject: "Password Reset Attempted", 
+          message: `<p>We received a request to reset your VeloMatchr password. However, there is no VeloMatchr account associated with this email address. </p><p>If you have a VeloMatchr account and were expecting this email, please try again with the address you provided when signing up. </p><p>If you don't have a VeloMatchr account, please ignore this email. </p><p>Regards, </p><p>The VeloMatchr Support Team </p>`
         }
+  
         // Send the email
-        fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+        const sendResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
           method: "post",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
           },
             body: JSON.stringify(formData)
-          }).then(data => {
-            return data.json();
-          }).then(json => {
-            if (!json.error) {
-              res.status(200).json({ status: 200, message: "ok", data: json });
-            }
-          }).catch(error => {
-            res.status(500).json({ status: 500, message: "Internal Server Error", error });
           });
+  
+        const sendJson = sendResponse.ok ? await sendResponse.json() : null;
+  
+        if (sendJson && !sendJson.error) {
+          res.status(200).json({ status: 200, message: "ok", data: sendJson });
+        } else {
+          res.status(500).json({ status: 500, message: "Internal server error. An email could not be sent. Please check the email address you entered and try again."});
         }
-      })
-      .catch(error => {
-        res.status(500).json({ status: 500, message: "Internal Server Error", error });
-      });
-    })
-    .catch(error => {
-      res.status(500).json({ status: 500, message: "Internal Server Error", error });
-    });
+      }
+    } else {
+      const {id, password, firstName, lastName, createdAt } = json.data;
+      const payload = {
+        id,
+        email
+      };
+      const created = new Date(createdAt);
+      const secret = password + created.getTime();
+  
+      const tempToken = jwt.sign(
+        {payload},
+        secret,
+        { expiresIn: "1h" },
+      );
+  
+      // Create the password reset link
+      const passwordResetLink = `${process.env.REACT_APP_URL}/login/reset-password/${id}/${tempToken}`;
+  
+      // Create the email
+      const formData = {
+        fromAddress: "\"VeloMatchr Password Reset\" <reset@velomatchr.com>", 
+        toAddress: email, 
+        subject: "Reset Your Password", 
+        message: `<p>Hi ${firstName} ${lastName},</p><p>We received a request to reset your VeloMatchr password. If it wasn't you, don't worry, your password is safe and you can ignore this email. </p><p>To reset your password use the following link: <a href=${passwordResetLink}>Reset My Password</a>. </p><p>The password reset link will expire in one hour. </p>`
+      }
+      // Send the email
+      const sendResetResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+          body: JSON.stringify(formData)
+        });
+
+      const sendResetJson = sendResetResponse.ok ? await sendResetResponse.json() : null;
+
+      if (sendResetJson && !sendResetJson.error) {
+        res.status(200).json({ status: 200, message: "ok", data: json });
+      } else {
+        res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not send email." });
+      }
+    }
+  } catch(error) {
+    res.status(500).json({ status: 500, message: "Internal Server Error", error });
+  }
 };
 
 // Check for MX record
