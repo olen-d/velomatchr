@@ -62,7 +62,15 @@ const getNewMail = async () => {
 
       const { attributes: { uid }, parts: [{ body: { "content-type": [contentType], from: [from], subject: [subject], to: [to] }, }, {body: message}], } = result;
 
-      return {contentTransferEncoding, contentType, from, message, to, subject, uid};
+      return {
+        contentTransferEncoding,
+        contentType,
+        from,
+        message,
+        to,
+        subject,
+        uid 
+      };
     });
     return newEmails;
   } catch(error) {
@@ -77,12 +85,16 @@ const processMail = async emails => {
   const emailProxyStart = "buddy-";
 
   try {
-    
     for (const email of emails) {
       const { contentTransferEncoding, contentType, from, message, to, subject, uid } = email;
 
       // Mark the email as seen to avoid duplicate processing, but don't delete it until it's successfully forwarded
       await connection.addFlags(uid, "\\Seen");
+
+      // Extract name@example.com and assign it to senderEmail
+      const expression = /<.+@.+\..+>/i;
+      const fromParts = from.match(expression);
+      const senderEmail = fromParts ? fromParts[0].slice(1,-1) : from;
 
       // Get the addressee email address and userId from the proxy
       // The userId is needed later to get the sender's proxy
@@ -105,16 +117,55 @@ const processMail = async emails => {
         //This returns null if match status is not 2 or 4
         if (!json) {
           // ! TODO: Send a bounce email
+          const subject = "[VELOMATCHR] Undeliverable Email";
+          const text = "Your buddy seems to have abandoned the race. This is likely because they have deleted their account or unfriended you.";
+          const html = `<html><p>${text}</p></html>`;
+
+          const formData = {
+            fromAddress: `"VeloMatchr Undeliverable Email" <dropped@velomatchr.com>`,
+            toAddress: senderEmail,
+            subject,
+            text,
+            html
+          }
+  
+          // Send the email
+          const responseSendMail = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/relationship/send`, {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const jsonSendMail = responseSendMail.ok? await responseSendMail.json() : null;
+
+          if (jsonSendMail.status !== 200) {
+            // Send an error
+            // ! TODO: Deal with the error - try and resend and/or send a bounce to the sender
+          } else { 
+            // On successful send, delete the original using the uid
+            // const {data: { rejected }, } = jsonSendMail;
+            // if (rejected.length === 0) {
+            //   await connection.deleteMessage([uid]);
+              // TODO: Figure out if the message was deleted or not. Unfortunately, connection.deleteMessage doesn't seem to return anything.
+            // } else {
+              // Mail was rejected by the receiving server
+              // Log the error
+              // Return a failure notice
+            // }
+            // console.log("REJECTED:\n" + rejected, rejected.length +"\n");
+            // console.log(jsonSendMail.success + "\n" + JSON.stringify(jsonSendMail) + "\nUID:", uid);
+          }
+// END BOUNCE SENDING
           await connection.deleteMessage([uid]);
           continue; // Go on to the next email in the list
         }
+        // Match was legitimate, carry on
         const { data: [{ requester: { id: addresseeId, email: addresseeEmail }, }], } = json;
 
         // Get the sender userId by email address
-        const expression = /<.+@.+\..+>/i;
-        const fromParts = from.match(expression);
-        const senderEmail = fromParts ? fromParts[0].slice(1,-1) : from;
-        
         const responseSenderId = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/${senderEmail}`);
         const jsonSenderId = responseSenderId.ok ? await responseSenderId.json() : null;
 
@@ -193,7 +244,7 @@ const processMail = async emails => {
           html
         }
 
-        // Send the email
+        // Send the email ! TODO: Split this out into a function
         const responseSendMail = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/relationship/send`, {
           method: "post",
           headers: {
