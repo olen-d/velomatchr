@@ -50,7 +50,7 @@ const MatchesCount = () => {
        {totalMatches}
       </Header>
       <p>
-        <Link to="/matches">Buddies</Link>
+        <Link to="/matches">{totalMatches === 1 ? "Buddy" : "Buddies"}</Link>
       </p>
     </div>
   );
