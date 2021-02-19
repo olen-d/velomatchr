@@ -10,23 +10,33 @@ import * as auth from "./auth";
 //   Icon
 //  } from "semantic-ui-react";
 
- import { useMatches } from "../context/matchesContext";
- import { useAuth } from "../context/authContext";
+import { useMatches } from "../context/matchesContext";
+import { useAuth } from "../context/authContext";
 
- import MatchCard from "./matchCard";
+import MatchCard from "./matchCard";
 
- const MatchesList = props => {
-  const { status } = props;
+import "./matchesList.css";
 
-  const [userId, setUserId] = useState(null);
+const MatchesList = props => {
+  const { showNoMatches, status } = props;
+
   const [matchesFilteredByStatus, setMatchesFilteredByStatus] = useState([]);
   const [noMatches, setNoMatches] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   // Get items from context
   const { accessToken, setAccessToken } = useAuth();
   const { matches, setMatches } = useMatches();
 
   const { user } = auth.getUserInfo(accessToken);
+
+  // Styles
+  const headlineStyle = {
+    marginBottom: "2rem",
+    fontSize: "1.5rem",
+    fontWeight: 500,
+    color: "#f2711c"
+  };
 
   // Set up the action buttons
   let leftBtnIcon = "";
@@ -37,9 +47,20 @@ import * as auth from "./auth";
   let rightBtnContent = "";
   let rightBtnAction = "";
   let rightBtnValue = 0;
+  let headline="";
 
   switch(status) {
     case 0:
+      leftBtnIcon = "user plus";
+      leftBtnContent = "Add Buddy";
+      leftBtnAction = "updateStatus";
+      leftBtnValue = status + 1;
+      rightBtnIcon = "ban";
+      rightBtnContent = "Decline";
+      rightBtnAction = "updateStatus";
+      rightBtnValue = 3;
+      headline = "Potential Matches";
+      break;
     case 1:
       leftBtnIcon = "user plus";
       leftBtnContent = "Add Buddy";
@@ -49,6 +70,7 @@ import * as auth from "./auth";
       rightBtnContent = "Decline";
       rightBtnAction = "updateStatus";
       rightBtnValue = 3;
+      headline="New Buddy Requests";
       break;
     case 2:
       leftBtnIcon = "envelope";
@@ -59,6 +81,7 @@ import * as auth from "./auth";
       rightBtnContent = "Unfriend";
       rightBtnAction = "updateStatus";
       rightBtnValue = 3;
+      headline="Buddies";
       break;
     default:
   }
@@ -115,6 +138,7 @@ import * as auth from "./auth";
           filteredMatches = matchesResult.filter(
             match => match.status === status 
           );
+          setNoMatches("No buddies were found. ");
         }
         switch(status) {
           case 0:
@@ -141,11 +165,20 @@ import * as auth from "./auth";
 
   if (matchesFilteredByStatus.length === 0)
   {
-    return(
-      <div className="no-matches-found">
-        {noMatches}
-      </div>
-    )
+    if (showNoMatches) {
+      return(
+        <div className="matches-list">
+          <div style={headlineStyle}>
+            {headline}
+          </div>
+          <div className="no-matches-found">
+            {noMatches}
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
   } else {
     if (matches.isLoading) {
       return(
@@ -156,6 +189,9 @@ import * as auth from "./auth";
     } else {
       return(
         <div className="matches-list">
+          <div style={headlineStyle}>
+            {headline}
+          </div>
           {matchesFilteredByStatus.map(({ id, addressee: { id: addresseeId, firstName, lastName, isEmailVerified, photoLink, city, stateCode, createdAt}, }) => (
             <div className="match-card" key={id}>
               <MatchCard
@@ -189,12 +225,14 @@ import * as auth from "./auth";
 }
 
 MatchesList.defaultProps = {
+  showNoMatches: true,
   status: -99
 };
 
-const { number } = PropTypes;
+const { bool, number } = PropTypes;
 
 MatchesList.propTypes = {
+  showNoMatches: bool,
   status: number
 }
 
