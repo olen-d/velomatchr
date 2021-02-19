@@ -1,10 +1,4 @@
-.profile-card {
-  width: 100%;
-  margin-top: 3rem;
-  text-align: center;
-}
-
-.profile-full-name {
+.profile-card-full-name {
   margin-top: 1rem;
   margin-bottom: 1rem;
   font-size: 150%;
@@ -12,11 +6,11 @@
   color: #5d5d5d;
 }
 
-.profile-full-name a:link,
-.profile-full-name a:visited {
+.profile-card-full-name a:link,
+.profile-card-full-name a:visited {
   color: #5d5d5d;
 }
 
-.profile-full-name a:hover {
+.profile-card-full-name a:hover {
   color: #5d5d5d;
 }

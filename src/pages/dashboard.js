@@ -23,7 +23,7 @@ const Dashboard = () => {
     <Container>
       <Grid stackable>
         <Grid.Column width="4">
-          <ProfileCard />
+          <ProfileCard marginTop="0rem" />
         </Grid.Column>
         <Grid.Column width="8">
           <Header 
