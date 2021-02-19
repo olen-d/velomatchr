@@ -104,8 +104,8 @@ const MatchesList = props => {
             }
           });
   
-          const json = response.ok ? await response.json() : setMatches({ error: response.statusText, matchesResult: [], isLoading: false }); 
-          setMatches({ matchesResult: json, isLoading: false });
+          const json = response.ok ? await response.json() : null; 
+          json ? setMatches({ error: false, isLoading: false, matchesResult: json }) : setMatches({ error: true, isLoading: false, matchesResult: [] });
         } catch(error) {
           setMatches({ error, matchesResult: [], isLoading: false });;
         }
@@ -118,10 +118,10 @@ const MatchesList = props => {
     let mounted = true;
 
 
-    if(error) {
+    if (error) {
       // TODO: Do something about the error
     } else {
-      if(Array.isArray(matchesResult) && matchesResult.length) {
+      if(Array.isArray(matchesResult)) {
         let filteredMatches = [];
 
         if (status === 0) {
@@ -133,12 +133,10 @@ const MatchesList = props => {
           filteredMatches = matchesResult.filter(
             match => match.status === status && match.actionUserId !== userId && match.matchScore < 20
           );
-          setNoMatches("No buddy requests were found. ");
         } else if (status === 2) {
           filteredMatches = matchesResult.filter(
             match => match.status === status 
           );
-          setNoMatches("No buddies were found. ");
         }
         switch(status) {
           case 0:

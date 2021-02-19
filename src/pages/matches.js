@@ -28,21 +28,9 @@ const Matches = ({ match }) => {
             &nbsp;
           </Grid.Column>
           <Grid.Column width={8}>
-            <Header
-              as="h2"
-              color="orange"
-            >
-              Buddies
-            </Header>
             <MatchesList status={2} />
           </Grid.Column>
           <Grid.Column width={4}>
-            <Header
-              as="h2"
-              color="orange"
-            >
-              Potential Matches
-            </Header>
             <MatchesList status={0} />
           </Grid.Column>
         </Grid.Row>
