@@ -2,11 +2,11 @@ import React, { lazy, Suspense, useState } from "react";
 
 import { decodeToken, getRefreshToken, newAccessToken } from "./components/auth";
 
-import "./style.css";
-
 import LoadingSpinner from "./components/loadingSpinner";
 
 import { AuthContext } from "./context/authContext";
+
+import "./App.css";
 
 const AuthApp = lazy(() => import("./AuthApp"));
 const UnAuthApp = lazy(() => import("./UnAuthApp"));
