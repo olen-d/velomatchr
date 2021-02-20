@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 
 import LoginBar from "./components/loginBar"
-import Footer from "./components/footer"
 import FourZeroFourUnAuth from "./components/fourZeroFourUnAuth";
 
 import FourZeroFour from "./pages/fourZeroFour";
@@ -35,7 +34,6 @@ const UnAuthApp = () => {
         <Route path="/signup" component={Signup} />
         <Route path="*" render={() => (<FourZeroFour><FourZeroFourUnAuth /></FourZeroFour>)} />
       </Switch>
-      <Footer />
     </>
   );
 }
