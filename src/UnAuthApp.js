@@ -6,8 +6,6 @@ import {
   Switch
 } from "react-router-dom";
 
-import "./style.css";
-
 import LoginBar from "./components/loginBar"
 import Footer from "./components/footer"
 import FourZeroFourUnAuth from "./components/fourZeroFourUnAuth";
