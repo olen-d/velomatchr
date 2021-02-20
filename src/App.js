@@ -6,6 +6,8 @@ import LoadingSpinner from "./components/loadingSpinner";
 
 import { AuthContext } from "./context/authContext";
 
+import Footer from "./components/footer";
+
 import "./App.css";
 
 const AuthApp = lazy(() => import("./AuthApp"));
@@ -53,6 +55,7 @@ const App = () => {
           isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
         )}
       </AuthContext.Consumer>
+      <Footer />
     </AuthContext.Provider>
   );
 };
