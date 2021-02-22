@@ -113,10 +113,10 @@ const processMail = async emails => {
         });
 
         const json = response.ok ? await response.json() : null
-        
-        //This returns null if match status is not 2 or 4
+        //This returns null if match status is not 2 (matched) or 4 (blocked)
+
         if (!json) {
-          // ! TODO: Send a bounce email
+          // Send a bounce email letting the sender know the email could not be sent
           const subject = "[VELOMATCHR] Undeliverable Email";
           const text = "Your buddy seems to have abandoned the race. This is likely because they have deleted their account or unfriended you.";
           const html = `<html><p>${text}</p></html>`;
@@ -143,22 +143,11 @@ const processMail = async emails => {
 
           if (jsonSendMail.status !== 200) {
             // Send an error
-            // ! TODO: Deal with the error - try and resend and/or send a bounce to the sender
+            // ! TODO: Log the error
           } else { 
-            // On successful send, delete the original using the uid
-            // const {data: { rejected }, } = jsonSendMail;
-            // if (rejected.length === 0) {
-            //   await connection.deleteMessage([uid]);
-              // TODO: Figure out if the message was deleted or not. Unfortunately, connection.deleteMessage doesn't seem to return anything.
-            // } else {
-              // Mail was rejected by the receiving server
-              // Log the error
-              // Return a failure notice
-            // }
-            // console.log("REJECTED:\n" + rejected, rejected.length +"\n");
-            // console.log(jsonSendMail.success + "\n" + JSON.stringify(jsonSendMail) + "\nUID:", uid);
+            // ! TODO: Log success
           }
-// END BOUNCE SENDING
+
           await connection.deleteMessage([uid]);
           continue; // Go on to the next email in the list
         }
@@ -193,9 +182,11 @@ const processMail = async emails => {
             continue;
           } 
         } else {
-          // Couldn't get status
+          // Couldn't get status, log the error, remove the \Seen flag and try again
           // ! TODO Deal with the no status error
-          // Try again? Send bounce email to sender?
+          // Log the error
+          await connection.delFlags(uid, "\\Seen");
+          continue;
         }
 
         // Get the sender's email proxy
