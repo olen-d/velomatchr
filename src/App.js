@@ -49,14 +49,16 @@ const App = () => {
   })();
 
   return(
-    <AuthContext.Provider value={{isAuth, setIsAuth, doRedirect, setDoRedirect, redirectURL, setRedirectURL, accessToken, setAccessToken}}>
-      <AuthContext.Consumer>
-        {({ isAuth }) => (
-          isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
-        )}
-      </AuthContext.Consumer>
-      <Footer />
-    </AuthContext.Provider>
+    <div className="AppContainer">
+      <AuthContext.Provider value={{isAuth, setIsAuth, doRedirect, setDoRedirect, redirectURL, setRedirectURL, accessToken, setAccessToken}}>
+        <AuthContext.Consumer>
+          {({ isAuth }) => (
+            isAuth ? <Suspense fallback={<LoadingSpinner />}><AuthApp /></Suspense> : <Suspense fallback={<LoadingSpinner />}><UnAuthApp /></Suspense>
+          )}
+        </AuthContext.Consumer>
+        <Footer />
+      </AuthContext.Provider>
+    </div>
   );
 };
 

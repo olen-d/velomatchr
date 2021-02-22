@@ -1,3 +1,8 @@
+footer {
+  flex: 1;
+  padding-bottom: 3rem;
+}
+
 .madeWithList, .socializeList {
   list-style: none;
   padding-left: 0rem;
