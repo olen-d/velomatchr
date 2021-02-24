@@ -126,6 +126,30 @@ const EmailNotificationCheckboxes = props => {
   
   // Get notification settings from the database
   useEffect(() => {
+    const createNotificationPrefs = async () => {
+      const formData = { userId };
+  
+      try {
+        const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(token); }
+  
+        const createResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/preferences`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(formData)
+        });
+  
+        const createData = createResponse.ok ? await createResponse.json() : false;
+  
+        return (createData && createData.status === 201 ? true : false); 
+      } catch(error) {
+        return (false);
+      }
+    };
+
     const getUserPrefs = async () => {
       try {
         const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
@@ -142,15 +166,26 @@ const EmailNotificationCheckboxes = props => {
         if (!data) {
           // There was an issue fetching the data
           // TODO: Deal with the error
+          if (response.status === 404) {
+            // No preferences were found, we will need to create them
+            const createResult = await createNotificationPrefs();
+            if (!createResult) {
+              // TODO: Failed to create. Deal with the error.
+            }
+          }
         } else {
-          const { data: { userNotificationPrefs }, } = data;
-          const emailNotificationPrefs = {};
-
-          userNotificationPrefs.forEach(pref => {
-            const { code, email } = pref;
-            emailNotificationPrefs[code] = email;
-          })
-          setInitialValues(emailNotificationPrefs);
+          if (data.status === 200) {
+            const { data: { userNotificationPrefs }, } = data;
+            const emailNotificationPrefs = {};
+  
+            userNotificationPrefs.forEach(pref => {
+              const { code, email } = pref;
+              emailNotificationPrefs[code] = email;
+            });
+            setInitialValues(emailNotificationPrefs);
+          } else {
+            // TODO: deal with the error
+          }
         }
       } catch(error) {
         // TODO: Deal with the error
