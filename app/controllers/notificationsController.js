@@ -5,20 +5,22 @@ const { NotificationPref } = require("../models");
 
 // Create Notification Preferences
 exports.create_notification_preferences = async (req, res) => {
-  // const { authorized } = req;
-  const authorized = true;
+  const { authorized } = req;
 
   if (authorized) {
     try {
-      const { body: { userId, code, email, sms }, } = req;
+      const { body: { userId }, } = req;
+      const email = 0;
+      const sms = 0;
 
-      const createResult = await NotificationPref.create({
-        userId,
-        code,
-        email,
-        sms
-      });
-      console.log(JSON.stringify(createResult));
+      const codes = ["newRequest", "newMatch", "newBuddy"];
+
+      const createResult = await NotificationPref.bulkCreate([
+        { userId, code: codes[0], email, sms },
+        { userId, code: codes[1], email, sms },
+        { userId, code: codes[2], email, sms}
+      ]);
+
       if (createResult) {
         res.status(201).json({ status: 201, message: "Created"});
       } else {
@@ -35,8 +37,7 @@ exports.create_notification_preferences = async (req, res) => {
 
 // Update Notification Preferences
 exports.update_notification_preferences = async (req, res) => {
-  // const { authorized } = req;
-  const authorized = true;
+  const { authorized } = req;
 
   if (authorized) {
     const { body: { userId, code, email, sms }, } = req;
@@ -53,6 +54,7 @@ exports.update_notification_preferences = async (req, res) => {
       });
 
       if (updateResult[0] === 0 ) {
+        console.log("Update Result 0", )
         res.status(500).json({ status: 500, message: "Internal Server Error" });
       } else {
         res.status(200).json({ status: 200, message: "ok" });
