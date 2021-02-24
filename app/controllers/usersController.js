@@ -499,10 +499,10 @@ exports.read_one_user_and_notifications_preferences = async (req, res) => {
         }]
       });
 
-      if (data) {
+      if (data && data.userNotificationPrefs.length > 0) {
         res.status(200).json({ status: 200, message: "ok", data });
       } else {
-        res.status(500).json({ status: 500, message: "Internal Server Error" });
+        res.status(404).json({ status: 404, message: "Not Found" });
       }
     } catch(error) {
       res.status(500).json({ status: 500, message: "Internal Server Error", error });
@@ -1038,7 +1038,7 @@ exports.password_reset = async (req, res) => {
         }
       }
     } else {
-      const {id, password, firstName, lastName, createdAt } = json.data;
+      const { id, password, firstName, lastName, createdAt } = json.data; // TODO: Fix this, should be { data: {...}, } = json
       const payload = {
         id,
         email
