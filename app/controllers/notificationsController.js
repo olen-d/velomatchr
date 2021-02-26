@@ -1,4 +1,6 @@
 // const Sequelize = require("sequelize");
+const fetch = require("node-fetch");
+const tokens = require("../helpers/tokens");
 
 //Models
 const { NotificationPref } = require("../models");
@@ -62,6 +64,48 @@ exports.update_notification_preferences = async (req, res) => {
     } catch(error) {
       console.log(error);
       res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    }
+  } else {
+    res.sendStatus(403);
+  }
+};
+
+// New Buddy Request Notification
+
+exports.send_new_match_request = async (req, res) => {
+  const { authorized } = req;
+
+  if (authorized) {
+    const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
+
+    const { body: { addresseeEmail, addresseeFirstName, addresseeLastName, requesterFirstName, requesterLastName }, } = req;
+
+    const matchRequestLink = "";
+    const requesterLastInitial = requesterLastName ? requesterLastName.slice(0,1) : "N.";
+
+    // Create the email
+    const formData = {
+      fromAddress: "\"VeloMatchr New Buddy Request\" <new-buddy@velomatchr.com>", 
+      toAddress: addresseeEmail, 
+      subject: `New Buddy Request From: ${requesterFirstName} ${requesterLastInitial}.`, 
+      message: `<p>Hi ${addresseeFirstName} ${addresseeLastName},</p><p>${requesterFirstName} ${requesterLastInitial}. has sent you a new buddy request. <a href=${matchRequestLink}>Respond to the Request</a>. </p>`
+    }
+    // Send the email
+    const sendNewMatchRequestResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+        body: JSON.stringify(formData)
+      });
+
+    const sendNewMatchRequestJson = sendNewMatchRequestResponse.ok ? await sendNewMatchRequestResponse.json() : null;
+
+    if (sendNewMatchRequestJson && !sendNewMatchRequestJson.error) {
+      res.status(200).json({ status: 200, message: "ok", data: sendNewMatchRequestJson });
+    } else {
+      res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not send email." });
     }
   } else {
     res.sendStatus(403);
