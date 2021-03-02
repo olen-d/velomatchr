@@ -70,43 +70,95 @@ exports.update_notification_preferences = async (req, res) => {
   }
 };
 
-// New Buddy Request Notification
+// New Match Request Notification
 
 exports.send_new_match_request = async (req, res) => {
   const { authorized } = req;
 
   if (authorized) {
-    const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
+    try {
+      const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
 
-    const { body: { addresseeEmail, addresseeFirstName, addresseeLastName, requesterFirstName, requesterLastName }, } = req;
+      const { query: { addresseeid: addresseeId, requesterid: requesterId }, } = req;
+      if (addresseeId === undefined) { throw new Error("The parameter 'addresseeid' is required") }
+      if (requesterId === undefined) { throw new Error("The parameter 'requesterid' is required") }
 
-    const matchRequestLink = "";
-    const requesterLastInitial = requesterLastName ? requesterLastName.slice(0,1) : "N.";
+      // Check to see if the addressee wants a notification
 
-    // Create the email
-    const formData = {
-      fromAddress: "\"VeloMatchr New Buddy Request\" <new-buddy@velomatchr.com>", 
-      toAddress: addresseeEmail, 
-      subject: `New Buddy Request From: ${requesterFirstName} ${requesterLastInitial}.`, 
-      message: `<p>Hi ${addresseeFirstName} ${addresseeLastName},</p><p>${requesterFirstName} ${requesterLastInitial}. has sent you a new buddy request. <a href=${matchRequestLink}>Respond to the Request</a>. </p>`
-    }
-    // Send the email
-    const sendNewMatchRequestResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-        body: JSON.stringify(formData)
+      const addresseeNotificationPrefsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/notifications/preferences/${addresseeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
 
-    const sendNewMatchRequestJson = sendNewMatchRequestResponse.ok ? await sendNewMatchRequestResponse.json() : null;
+      const addresseeNotificationPrefsJson = addresseeNotificationPrefsResponse.ok ? await addresseeNotificationPrefsResponse.json() : null;
 
-    if (sendNewMatchRequestJson && !sendNewMatchRequestJson.error) {
-      res.status(200).json({ status: 200, message: "ok", data: sendNewMatchRequestJson });
-    } else {
-      res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not send email." });
+      if (!addresseeNotificationPrefsJson) { throw new Error("Could not get notification preferences.") }
+
+      const { data: { userNotificationPrefs }, } = addresseeNotificationPrefsJson;
+
+      const indexNewRequest = userNotificationPrefs.findIndex(item => item.code === "newRequest");
+
+      const { email } = userNotificationPrefs[indexNewRequest]; // TODO: add sms to destructuring
+
+      const addresseeUserResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${addresseeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const addresseeUserJson = addresseeUserResponse.ok ? await addresseeUserResponse.json() : null;
+      if (!addresseeUserJson) { throw new Error("Could not get user information for addressee.") }
+
+      const requesterUserResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${requesterId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const requesterUserJson = requesterUserResponse.ok ? await requesterUserResponse.json() : null;
+      if (!requesterUserJson) { throw new Error("Could not get user information for requester.") }
+
+      const { user: { email: addresseeEmail, firstName: addresseeFirstName, lastName: addresseeLastName }, } = addresseeUserJson; // TODO: add phone: addresseePhone to destructuring
+      const { user: { firstName: requesterFirstName, lastName: requesterLastName }, } = requesterUserJson;
+
+      const requesterLastInitial = requesterLastName ? requesterLastName.slice(0,1) : "N.";
+
+      const matchRequestLink = ""; // ! TODO: Set up a link to directly respond to the match request.
+
+      if (email) {
+        // Create the email
+        const formData = {
+          fromAddress: "\"VeloMatchr New Buddy Request\" <new-buddy@velomatchr.com>", 
+          toAddress: addresseeEmail, 
+          subject: `New Buddy Request From: ${requesterFirstName} ${requesterLastInitial}.`, 
+          message: `<p>Hi ${addresseeFirstName} ${addresseeLastName},</p><p>${requesterFirstName} ${requesterLastInitial}. has sent you a new buddy request. <a href=${matchRequestLink}>Respond to the Request</a>. </p>`
+        }
+        // Send the email
+        const sendNewMatchRequestResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+            body: JSON.stringify(formData)
+          });
+    
+        const sendNewMatchRequestJson = sendNewMatchRequestResponse.ok ? await sendNewMatchRequestResponse.json() : null;
+    
+        if (sendNewMatchRequestJson && !sendNewMatchRequestJson.error) {
+          res.status(200).json({ status: 200, message: "ok", data: sendNewMatchRequestJson });
+        } else {
+          res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not send email." });
+        }
+      } else {
+        res.sendStatus(200); // TODO: Eliminate this block when SMS is implemented and check for email || sms at the beginning and bail if both false
+      }
+    } catch(error) {
+      const { message: errorMessage } = error
+      res.json({ status: 500, message: "Internal  Server Error", error: errorMessage });
     }
+
   } else {
     res.sendStatus(403);
   }
