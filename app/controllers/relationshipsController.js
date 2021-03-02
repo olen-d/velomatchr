@@ -2,6 +2,9 @@ const Sequelize = require("sequelize");
 // const fn = sequelize.fn;
 const Op = Sequelize.Op;
 
+const fetch = require("node-fetch");
+const tokens = require("../helpers/tokens");
+
 const { v4: uuidv4 } = require("uuid");
 
 const { Relationship, User } = require("../models");
@@ -271,12 +274,40 @@ exports.update_user_relationship_status = (req, res) => {
       { status, actionUserId },
       { returning: true, where: {[Op.or]: [{[Op.and]: [{requesterId}, {addresseeId}]}, {[Op.and]: [{addresseeId: requesterId}, {requesterId: addresseeId}]}]}}
     )
-    .then(data => {
+    .then(async data => {
       const [ , rows ] = data;
 
       if (rows !== 2 ) {  // Two and only two rows should be updated (the requester and the addressee)
         res.status(500).json({ status: 500, message: "Internal server error. Something went wrong and the relationship was not updated." });
       } else {
+        const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
+
+        // Send a notification to the addressee based on the status
+        // The notification controller handles checking if notifications are enabled or disabled by the addressee
+        switch (status) {
+          case 1:
+            // Pending, new match request
+            const notifyNewMatchRequestResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/send/new-match-request/ids/?requesterid=${requesterId}&addresseeid=${addresseeId}`, {
+              method: "post",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              }
+            });
+        
+            const notifyNewMatchRequestJson = notifyNewMatchRequestResponse.ok ? await notifyNewMatchRequestResponse.json() : null;
+            if (notifyNewMatchRequestJson.status === 200) {
+              // TODO: Log the success
+            } else {
+              // TODO: Log the error
+            }
+            break;
+          default:
+            // noop
+            break;
+        }
+        // Send the requester and addressee ids to the notifications route notifications/send/new-match-request
+        // Check for status 2 (accepted)
         res.status(200).json({ status: 200, message: "ok", data });
       }
     })
