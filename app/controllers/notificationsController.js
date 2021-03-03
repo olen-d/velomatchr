@@ -70,7 +70,69 @@ exports.update_notification_preferences = async (req, res) => {
   }
 };
 
-// New Match accepted
+// New Match Accepted Notification
+exports.send_new_match_accepted = async (req, res) => {
+  const { authorized } = req;
+
+  if (authorized) {
+    try {
+      const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
+
+      const { query: { addresseeid: addresseeId, requesterid: requesterId }, } = req;
+      if (addresseeId === undefined) { throw new Error("The parameter 'addresseeid' is required") }
+      if (requesterId === undefined) { throw new Error("The parameter 'requesterid' is required") }
+
+      const matchAttributes = await getMatchAttributes(addresseeId, "newBuddy", requesterId)
+      const { 
+        addresseeEmail,
+        addresseeFirstName,
+        addresseeLastName,
+        email,
+        requesterFirstName,
+        requesterLastName
+      } = matchAttributes;
+      
+      const requesterLastInitial = requesterLastName ? requesterLastName.slice(0,1) : "N";
+
+      const newMatchLink = ""; // ! TODO: Set up a link to directly respond to the new match.
+
+      if (email) {
+        // Create the email
+        const formData = {
+          fromAddress: "\"VeloMatchr New Buddy Accepted\" <new-buddy-accepted@velomatchr.com>", 
+          toAddress: addresseeEmail, 
+          subject: `Buddy Request Accepted by ${requesterFirstName} ${requesterLastInitial}.`, 
+          message: `<p>Hi ${addresseeFirstName} ${addresseeLastName},</p><p>${requesterFirstName} ${requesterLastInitial}. has accepted your buddy request. <a href=${newMatchLink}>Contact your new buddy now</a>! </p>`
+        }
+        // Send the email
+        const sendNewMatchAcceptedResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+            body: JSON.stringify(formData)
+          });
+    
+        const sendNewMatchAcceptedJson = sendNewMatchAcceptedResponse.ok ? await sendNewMatchAcceptedResponse.json() : null;
+    
+        if (sendNewMatchAcceptedJson && !sendNewMatchAcceptedJson.error) {
+          res.status(200).json({ status: 200, message: "ok", data: sendNewMatchAcceptedJson });
+        } else {
+          res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not send email." });
+        }
+      } else {
+        res.sendStatus(200); // TODO: Eliminate this block when SMS is implemented and check for email || sms at the beginning and bail if both false
+      }
+    } catch(error) {
+      const { message: errorMessage } = error
+      res.json({ status: 500, message: "Internal  Server Error", error: errorMessage });
+    }
+
+  } else {
+    res.sendStatus(403);
+  }
+};
 
 // New Match Request Notification
 
@@ -102,7 +164,7 @@ exports.send_new_match_request = async (req, res) => {
       if (email) {
         // Create the email
         const formData = {
-          fromAddress: "\"VeloMatchr New Buddy Request\" <new-buddy@velomatchr.com>", 
+          fromAddress: "\"VeloMatchr New Buddy Request\" <new-buddy-request@velomatchr.com>", 
           toAddress: addresseeEmail, 
           subject: `New Buddy Request From: ${requesterFirstName} ${requesterLastInitial}.`, 
           message: `<p>Hi ${addresseeFirstName} ${addresseeLastName},</p><p>${requesterFirstName} ${requesterLastInitial}. has sent you a new buddy request. <a href=${matchRequestLink}>Respond to the Request</a>. </p>`

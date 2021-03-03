@@ -305,12 +305,33 @@ exports.update_user_relationship_status = (req, res) => {
               }
             })
             .catch(error => {
-              console.log("\n\nNOTIFICATION FETCH FAILURE:\n" + error + "\n" + error.message + "\n\n");
+              // TODO: Log the error
             });
             break;
-          default:
-            // noop
+          case 2:
+            // Accepted, matched
+            // Use a promise instead of async/await because an error in sending the notification does not
+            // affect the data being returned, so there is no need to await.
+            fetch(`${process.env.REACT_APP_API_URL}/api/notifications/send/new-match-accepted/ids/?requesterid=${requesterId}&addresseeid=${addresseeId}`, {
+              method: "post",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              }
+            })
+            .then(response => response.json())
+            .then(json => {
+              if (json.status === 200) {
+                // TODO: Log the success
+              } else {
+                // TODO: Log the error
+              }
+            })
+            .catch(error => {
+              // TODO: Log the error
+            });
             break;
+          // no default
         }
         // Send the requester and addressee ids to the notifications route notifications/send/new-match-request
         // Check for status 2 (accepted)
