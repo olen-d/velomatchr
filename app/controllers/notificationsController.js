@@ -122,7 +122,7 @@ exports.send_new_match_request = async (req, res) => {
       const { user: { email: addresseeEmail, firstName: addresseeFirstName, lastName: addresseeLastName }, } = addresseeUserJson; // TODO: add phone: addresseePhone to destructuring
       const { user: { firstName: requesterFirstName, lastName: requesterLastName }, } = requesterUserJson;
 
-      const requesterLastInitial = requesterLastName ? requesterLastName.slice(0,1) : "N.";
+      const requesterLastInitial = requesterLastName ? requesterLastName.slice(0,1) : "N";
 
       const matchRequestLink = ""; // ! TODO: Set up a link to directly respond to the match request.
 
