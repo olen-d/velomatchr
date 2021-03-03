@@ -70,6 +70,8 @@ exports.update_notification_preferences = async (req, res) => {
   }
 };
 
+// New Match accepted
+
 // New Match Request Notification
 
 exports.send_new_match_request = async (req, res) => {
@@ -83,45 +85,16 @@ exports.send_new_match_request = async (req, res) => {
       if (addresseeId === undefined) { throw new Error("The parameter 'addresseeid' is required") }
       if (requesterId === undefined) { throw new Error("The parameter 'requesterid' is required") }
 
-      // Check to see if the addressee wants a notification
-
-      const addresseeNotificationPrefsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/notifications/preferences/${addresseeId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      const addresseeNotificationPrefsJson = addresseeNotificationPrefsResponse.ok ? await addresseeNotificationPrefsResponse.json() : null;
-
-      if (!addresseeNotificationPrefsJson) { throw new Error("Could not get notification preferences.") }
-
-      const { data: { userNotificationPrefs }, } = addresseeNotificationPrefsJson;
-
-      const indexNewRequest = userNotificationPrefs.findIndex(item => item.code === "newRequest");
-
-      const { email } = userNotificationPrefs[indexNewRequest]; // TODO: add sms to destructuring
-
-      const addresseeUserResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${addresseeId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      const addresseeUserJson = addresseeUserResponse.ok ? await addresseeUserResponse.json() : null;
-      if (!addresseeUserJson) { throw new Error("Could not get user information for addressee.") }
-
-      const requesterUserResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${requesterId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      const requesterUserJson = requesterUserResponse.ok ? await requesterUserResponse.json() : null;
-      if (!requesterUserJson) { throw new Error("Could not get user information for requester.") }
-
-      const { user: { email: addresseeEmail, firstName: addresseeFirstName, lastName: addresseeLastName }, } = addresseeUserJson; // TODO: add phone: addresseePhone to destructuring
-      const { user: { firstName: requesterFirstName, lastName: requesterLastName }, } = requesterUserJson;
-
+      const matchAttributes = await getMatchAttributes(addresseeId, "newRequest", requesterId)
+      const { 
+        addresseeEmail,
+        addresseeFirstName,
+        addresseeLastName,
+        email,
+        requesterFirstName,
+        requesterLastName
+      } = matchAttributes;
+      
       const requesterLastInitial = requesterLastName ? requesterLastName.slice(0,1) : "N";
 
       const matchRequestLink = ""; // ! TODO: Set up a link to directly respond to the match request.
@@ -161,5 +134,63 @@ exports.send_new_match_request = async (req, res) => {
 
   } else {
     res.sendStatus(403);
+  }
+}
+
+// Helpers
+
+const getMatchAttributes = async (addresseeId, notificationType, requesterId) => {
+  try {
+    const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
+
+      // Check to see if the addressee wants a notification
+
+      const addresseeNotificationPrefsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/notifications/preferences/${addresseeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const addresseeNotificationPrefsJson = addresseeNotificationPrefsResponse.ok ? await addresseeNotificationPrefsResponse.json() : null;
+
+      if (!addresseeNotificationPrefsJson) { throw new Error("Could not get notification preferences.") }
+
+      const { data: { userNotificationPrefs }, } = addresseeNotificationPrefsJson;
+
+      const indexNewRequest = userNotificationPrefs.findIndex(item => item.code === notificationType);
+
+      const { email } = userNotificationPrefs[indexNewRequest]; // TODO: add sms to destructuring
+
+      const addresseeUserResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${addresseeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const addresseeUserJson = addresseeUserResponse.ok ? await addresseeUserResponse.json() : null;
+      if (!addresseeUserJson) { throw new Error("Could not get user information for addressee.") }
+
+      const requesterUserResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${requesterId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const requesterUserJson = requesterUserResponse.ok ? await requesterUserResponse.json() : null;
+      if (!requesterUserJson) { throw new Error("Could not get user information for requester.") }
+
+      const { user: { email: addresseeEmail, firstName: addresseeFirstName, lastName: addresseeLastName }, } = addresseeUserJson; // TODO: add phone: addresseePhone to destructuring
+      const { user: { firstName: requesterFirstName, lastName: requesterLastName }, } = requesterUserJson;
+      
+      return ({ 
+        addresseeEmail,
+        addresseeFirstName,
+        addresseeLastName,
+        email,
+        requesterFirstName,
+        requesterLastName
+      });
+  } catch (error) {
+
   }
 }
