@@ -98,6 +98,10 @@ module.exports = (sequelize, DataTypes) => {
     postalCode: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    lastPotentialMatchNotification: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   },
   {
