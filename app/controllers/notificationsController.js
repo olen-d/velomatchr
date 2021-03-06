@@ -134,6 +134,94 @@ exports.send_new_match_accepted = async (req, res) => {
   }
 };
 
+// New Match Potential Notification
+exports.send_new_match_potential = async (req, res) => {
+  const { authorized } = req;
+
+  if (authorized) {
+    try {
+      const token = await tokens.create(-99); // userId of -99 for now, TODO: set up a special "server" user for tokens
+
+      const { params: { userId }, } = req;
+
+      const notificationPrefsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/notifications/preferences/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const notificationPrefsJson = notificationPrefsResponse.ok ? await notificationPrefsResponse.json() : null;
+  
+      if (!notificationPrefsJson) { throw new Error("Could not get notification preferences.") }
+
+      const { data: { userNotificationPrefs }, } = notificationPrefsJson
+
+      const indexNewRequest = userNotificationPrefs.findIndex(item => item.code === "newMatch");
+
+      const { email } = userNotificationPrefs[indexNewRequest]; // TODO: add sms to destructuring
+
+      if (email) {
+        const userResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+  
+        const userJson = userResponse.ok ? await userResponse.json() : null;
+        if (!userJson) { throw new Error("Could not get user information for user.") }
+
+        const { user: { email: userEmail, firstName, lastName, lastPotentialMatchNotification: lastNotification }, } = userJson;
+
+        const notificationInterval = 2; // Minimum number of hours between new potential match notifications
+        const msInHour = 3600000;
+        const lastNotificationTimestamp = lastNotification === null ? 0 : new Date(lastNotification).getTime();
+        const nextNotificationTimestamp = lastNotificationTimestamp + notificationInterval * msInHour;
+        const currentTimestamp = Date.now();
+        const shouldSendNotification = currentTimestamp > nextNotificationTimestamp ? true : false;
+
+        const newPotentialMatchesLink = ""; // ! TODO: Set up a link to directly respond to the match request.
+// ! TODO: update the lastNotificationTimestamp in the DB
+        if (shouldSendNotification) {
+          // Create the email
+          const formData = {
+            fromAddress: "\"VeloMatchr New Potential Matches\" <new-potential-matches@velomatchr.com>", 
+            toAddress: userEmail, 
+            subject: `You Have New Potential Matches.`, 
+            message: `<p>Hi ${firstName} ${lastName},</p><p>You have new potential matches. <a href=${newPotentialMatchesLink}>View Potential Matches</a>. </p>`
+          }
+
+          // Send the email
+          const sendNewMatchRequestResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/mail/send`, {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+              body: JSON.stringify(formData)
+            });
+      
+          const sendNewMatchRequestJson = sendNewMatchRequestResponse.ok ? await sendNewMatchRequestResponse.json() : null;
+      
+          if (sendNewMatchRequestJson && !sendNewMatchRequestJson.error) {
+            res.status(200).json({ status: 200, message: "ok", data: sendNewMatchRequestJson });
+          } else {
+            res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not send email." });
+          }
+        } else {
+          res.sendStatus(200); // TODO: Eliminate this block when SMS is implemented and check for email || sms at the beginning and bail if both false
+        }
+      } else {
+        res.sendStatus(200); // TODO: Eliminate this block when SMS is implemented and check for email || sms at the beginning and bail if both false
+      }
+    } catch (error) {
+      res.status(500).json({ status: 500, message: "Internal Server Error", error: error.message });
+    }
+  } else {
+    res.sendStatus(403);
+  }
+
+};
+
 // New Match Request Notification
 
 exports.send_new_match_request = async (req, res) => {
