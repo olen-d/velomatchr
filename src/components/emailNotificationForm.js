@@ -109,8 +109,6 @@ const EmailNotificationCheckboxes = props => {
 
     const newBuddyResult = await updateNotificationPrefs("newBuddy");
     if (!newBuddyResult) { updateErrors.push("Someone accepts my riding buddy request") }
-    const newMatchResult = await updateNotificationPrefs("newMatch");
-    if (!newMatchResult) { updateErrors.push("I have new potential matches") }
     const newRequestResult = await updateNotificationPrefs("newRequest");
     if (!newRequestResult) { updateErrors.push("I have new riding buddy requests") }
     return(updateErrors);
@@ -118,7 +116,6 @@ const EmailNotificationCheckboxes = props => {
 
   const options = [
     ["newRequest", "I have new riding buddy requests"],
-    ["newMatch", "I have new potential matches"],
     ["newBuddy", "Someone accepts my riding buddy request"]
   ]
 
