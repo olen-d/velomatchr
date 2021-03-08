@@ -30,6 +30,7 @@ const SignupRequiredForm = props => {
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
 
@@ -99,6 +100,7 @@ const SignupRequiredForm = props => {
 
   const handleSubmit = () => {
     if (!isError) {
+      setIsSubmitting(true);
       const { email, password } = values;
 
       const formData = { 
@@ -166,6 +168,7 @@ const SignupRequiredForm = props => {
           />
           <Button
             disabled={!values.email || !values.password}
+            loading={isSubmitting}
             className="fluid"
             type="button"
             color="red"
