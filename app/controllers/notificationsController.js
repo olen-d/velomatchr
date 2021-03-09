@@ -92,7 +92,7 @@ exports.send_new_match_accepted = async (req, res) => {
       
       const requesterLastInitial = requesterLastName ? requesterLastName.slice(0,1) : "N";
 
-      const newMatchLink = ""; // ! TODO: Set up a link to directly respond to the new match.
+      const newMatchLink = `${process.env.REACT_APP_URL}/email/compose/${requesterId}`; // ! TODO: Set up a link to directly respond to the new match.
 
       if (email) {
         // Create the email
