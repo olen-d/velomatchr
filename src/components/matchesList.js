@@ -193,6 +193,7 @@ const MatchesList = props => {
           {matchesFilteredByStatus.map(({ id, addressee: { id: addresseeId, firstName, lastName, isEmailVerified, photoLink, city, stateCode, createdAt}, }) => (
             <div className="match-card" key={id}>
               <MatchCard
+                status={status}
                 requesterId={userId}
                 addresseeId={addresseeId}
                 firstName={firstName}

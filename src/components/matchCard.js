@@ -10,6 +10,7 @@ import {
  import { useAuth } from "../context/authContext";
  import { useMatches } from "../context/matchesContext";
 
+ import AddMatchButton from "./addMatchButton";
  import BlockUserButton from "./blockUserButton";
  import ErrorContainer from "./errorContainer";
 
@@ -17,6 +18,7 @@ import {
 
  const MatchCard = props => {
   const {
+    status,
     requesterId,
     addresseeId,
     firstName,
@@ -126,11 +128,13 @@ import {
         Member Since: {createdAt}
       </div>
       <div className="match-card-actions">
+        { status === 0 && <AddMatchButton status={status} postAction={postAction}/> }
+        { status === 1 && <AddMatchButton status={status} postAction={postAction}/> }
         <Button
           disabled={leftBtnDisabled}
           type="button"
           size="tiny"
-          color="yellow"
+          color="orange"
           icon={leftBtnIcon}
           content={leftBtnContent}
           onClick={() => postAction(leftBtnAction, leftBtnValue)}
@@ -139,7 +143,7 @@ import {
         <Button
           type="button"
           size="tiny"
-          color="yellow"
+          color="orange"
           icon={rightBtnIcon}
           content={rightBtnContent}
           onClick={() => postAction(rightBtnAction, rightBtnValue)}
@@ -154,6 +158,7 @@ import {
  }
 
 MatchCard.defaultProps = {
+  status: 0,
   requesterId: -99,
   addresseeId: -99,
   firstName: "John",
@@ -176,6 +181,7 @@ MatchCard.defaultProps = {
 const { bool, number, string } = PropTypes;
 
 MatchCard.propTypes = {
+  status: number,
   requesterId: number,
   addresseeId: number,
   firstName: string,
