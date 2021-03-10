@@ -26,6 +26,16 @@ const LoginPage = ({ match }) => {
     );
   }
 
+  const LoginAndRedirect = () => {
+    return(
+      <LoginForm 
+        colWidth={6}
+        formTitle="Sign In"
+        loginRedirectURL={`${match.url}`}
+      />
+    );
+  }
+
   const ResetPassword = () => {
     const { id, token } = useParams();
 
@@ -77,7 +87,8 @@ const LoginPage = ({ match }) => {
     <Container>
       <Grid stackable>
         <Switch>
-          <Route exact path={`${match.url}/`} component={Login} />
+          <Route exact path={`/login`} component={Login} />
+          <Route path={`/email/compose/:id`} component={LoginAndRedirect} />
           <Route path={`${match.url}/request-password-reset`} component={RequestPasswordReset} />
           <Route path={`${match.url}/reset-password/:id/:token`} component={ResetPassword} />
         </Switch>

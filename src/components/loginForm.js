@@ -23,7 +23,7 @@ const forgotStyle = {
 }
 
 const LoginForm = props => {
-  const { colWidth, formTitle } = props;
+  const { colWidth, formTitle, loginRedirectURL } = props;
 
   // Set up the State for form error handling
   const [isError, setIsError] = useState(false);
@@ -66,7 +66,11 @@ const LoginForm = props => {
         localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
         setIsAuth(true);
         setAccessToken(accessToken);
-        setRedirectURL("/dashboard");
+        if (loginRedirectURL) {
+          setRedirectURL(loginRedirectURL);
+        } else {
+          setRedirectURL("/dashboard");
+        }
         setDoRedirect(true);
       } else {
         localStorage.removeItem("user_refresh_token");
@@ -169,14 +173,16 @@ const LoginForm = props => {
 
 LoginForm.defaultProps = {
   colWidth: 6,
-  formTitle: "Sign In"
+  formTitle: "Sign In",
+  loginRedirectURL: null
 }
 
 const { number, string } = PropTypes;
 
 LoginForm.propTypes = {
   colWidth: number,
-  formTitle: string
+  formTitle: string,
+  loginRedirectURL: string
 }
 
 export default LoginForm;

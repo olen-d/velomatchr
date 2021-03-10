@@ -29,6 +29,7 @@ const UnAuthApp = () => {
       <LoginBar />
       <Switch>
         <Route exact path="/" component={Home} />
+        <Route exact path="/email/compose/:id" component={LoginPage} />
         <Route exact path="/home" component={Home} />
         <Route path="/login" component={LoginPage} />
         <Route path="/signup" component={Signup} />
