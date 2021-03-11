@@ -3,13 +3,6 @@ import PropTypes from "prop-types";
 
 import * as auth from "./auth";
 
-// import {
-//   Container,
-//   Grid,
-//   Header,
-//   Icon
-//  } from "semantic-ui-react";
-
 import { useMatches } from "../context/matchesContext";
 import { useAuth } from "../context/authContext";
 
@@ -39,48 +32,16 @@ const MatchesList = props => {
   };
 
   // Set up the action buttons
-  let leftBtnIcon = "";
-  let leftBtnContent = "";
-  let leftBtnAction = "";
-  let leftBtnValue = 0;
-  let rightBtnIcon = "";
-  let rightBtnContent = "";
-  let rightBtnAction = "";
-  let rightBtnValue = 0;
   let headline="";
 
   switch(status) {
     case 0:
-      leftBtnIcon = "user plus";
-      leftBtnContent = "Add Buddy";
-      leftBtnAction = "updateStatus";
-      leftBtnValue = status + 1;
-      rightBtnIcon = "ban";
-      rightBtnContent = "Decline";
-      rightBtnAction = "updateStatus";
-      rightBtnValue = 3;
       headline = "Potential Matches";
       break;
     case 1:
-      leftBtnIcon = "user plus";
-      leftBtnContent = "Add Buddy";
-      leftBtnAction = "updateStatus";
-      leftBtnValue = status + 1;
-      rightBtnIcon = "ban";
-      rightBtnContent = "Decline";
-      rightBtnAction = "updateStatus";
-      rightBtnValue = 3;
       headline="New Buddy Requests";
       break;
     case 2:
-      leftBtnIcon = "envelope";
-      leftBtnContent = "Email Buddy";
-      leftBtnAction = "composeEmail"
-      leftBtnValue = 0; // Currently not used
-      rightBtnIcon = "minus circle";
-      rightBtnContent = "Unfriend";
-      rightBtnAction = "updateStatus";
-      rightBtnValue = 3;
       headline="Buddies";
       break;
     default:
@@ -205,15 +166,7 @@ const MatchesList = props => {
                   year: "numeric",
                   month: "long"
                 }).format(new Date(createdAt))}
-                leftBtnDisabled={status === 2 && isEmailVerified === 0 ? true : false}
-                leftBtnIcon={leftBtnIcon}
-                leftBtnContent={leftBtnContent}
-                leftBtnAction={leftBtnAction}
-                leftBtnValue={leftBtnValue}
-                rightBtnIcon={rightBtnIcon}
-                rightBtnContent={rightBtnContent}
-                rightBtnAction={rightBtnAction}
-                rightBtnValue={rightBtnValue}
+                isEmailMatchDisabled={status === 2 && isEmailVerified === 0 ? true : false}
               />
             </div>
           ))}

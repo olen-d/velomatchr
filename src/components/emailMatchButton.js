@@ -4,10 +4,11 @@ import PropTypes from "prop-types";
 import { Button } from "semantic-ui-react";
 
 const EmailMatchButton = props => {
-  const { postAction } = props;
+  const { isEmailMatchDisabled, postAction } = props;
 
   return(
     <Button
+      disabled={isEmailMatchDisabled}
       type="button"
       size="tiny"
       color="yellow"
@@ -19,9 +20,10 @@ const EmailMatchButton = props => {
   )
 }
 
-const { func } = PropTypes;
+const { bool, func } = PropTypes;
 
 EmailMatchButton.propTypes = {
+  isEmailMatchDisabled: bool,
   postAction: func,
 }
 
