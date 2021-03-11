@@ -12,6 +12,7 @@ import {
 
  import AddMatchButton from "./addMatchButton";
  import BlockUserButton from "./blockUserButton";
+ import DeclineMatchButton from "./declineMatchButton";
  import ErrorContainer from "./errorContainer";
 
  import * as auth from "./auth";
@@ -128,8 +129,8 @@ import {
         Member Since: {createdAt}
       </div>
       <div className="match-card-actions">
-        { status === 0 && <AddMatchButton status={status} postAction={postAction}/> }
-        { status === 1 && <AddMatchButton status={status} postAction={postAction}/> }
+        { status === 0 && <><AddMatchButton status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
+        { status === 1 && <><AddMatchButton status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
         <Button
           disabled={leftBtnDisabled}
           type="button"
