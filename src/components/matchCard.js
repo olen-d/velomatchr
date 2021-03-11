@@ -15,6 +15,7 @@ import {
  import DeclineMatchButton from "./declineMatchButton";
  import EmailMatchButton from "./emailMatchButton";
  import ErrorContainer from "./errorContainer";
+ import UnfriendMatchButton from "./unfriendMatchButton";
 
  import * as auth from "./auth";
 
@@ -132,7 +133,7 @@ import {
       <div className="match-card-actions">
         { status === 0 && <><AddMatchButton status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
         { status === 1 && <><AddMatchButton status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
-        { status === 2 && <EmailMatchButton postAction={postAction} />}
+        { status === 2 && <><EmailMatchButton postAction={postAction} /><UnfriendMatchButton postAction={postAction}/></> }
         <Button
           disabled={leftBtnDisabled}
           type="button"
