@@ -3,23 +3,19 @@ import PropTypes from "prop-types";
 
 import { Redirect } from "react-router-dom";
 
-import {
-  Button
- } from "semantic-ui-react";
+import { useAuth } from "../context/authContext";
+import { useMatches } from "../context/matchesContext";
 
- import { useAuth } from "../context/authContext";
- import { useMatches } from "../context/matchesContext";
+import AddMatchButton from "./addMatchButton";
+import BlockUserButton from "./blockUserButton";
+import DeclineMatchButton from "./declineMatchButton";
+import EmailMatchButton from "./emailMatchButton";
+import ErrorContainer from "./errorContainer";
+import UnfriendMatchButton from "./unfriendMatchButton";
 
- import AddMatchButton from "./addMatchButton";
- import BlockUserButton from "./blockUserButton";
- import DeclineMatchButton from "./declineMatchButton";
- import EmailMatchButton from "./emailMatchButton";
- import ErrorContainer from "./errorContainer";
- import UnfriendMatchButton from "./unfriendMatchButton";
+import * as auth from "./auth";
 
- import * as auth from "./auth";
-
- const MatchCard = props => {
+const MatchCard = props => {
   const {
     status,
     requesterId,
@@ -30,17 +26,9 @@ import {
     city,
     stateCode,
     createdAt,
-    leftBtnDisabled,
-    leftBtnIcon,
-    leftBtnContent,
-    leftBtnAction,
-    leftBtnValue,
-    rightBtnIcon,
-    rightBtnContent,
-    rightBtnAction,
-    rightBtnValue
+    isEmailMatchDisabled
   } = props;
-  
+
   const { accessToken, setAccessToken } = useAuth();
 
   const { matches, setMatches } = useMatches();
@@ -133,33 +121,14 @@ import {
       <div className="match-card-actions">
         { status === 0 && <><AddMatchButton status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
         { status === 1 && <><AddMatchButton status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
-        { status === 2 && <><EmailMatchButton postAction={postAction} /><UnfriendMatchButton postAction={postAction}/></> }
-        <Button
-          disabled={leftBtnDisabled}
-          type="button"
-          size="tiny"
-          color="orange"
-          icon={leftBtnIcon}
-          content={leftBtnContent}
-          onClick={() => postAction(leftBtnAction, leftBtnValue)}
-        >
-        </Button>
-        <Button
-          type="button"
-          size="tiny"
-          color="orange"
-          icon={rightBtnIcon}
-          content={rightBtnContent}
-          onClick={() => postAction(rightBtnAction, rightBtnValue)}
-        >
-        </Button>
+        { status === 2 && <><EmailMatchButton isEmailMatchDisabled={isEmailMatchDisabled} postAction={postAction} /><UnfriendMatchButton postAction={postAction}/></> }
         <BlockUserButton
           postAction={postAction}
         />
       </div>
     </>
   )
- }
+}
 
 MatchCard.defaultProps = {
   status: 0,
@@ -171,18 +140,9 @@ MatchCard.defaultProps = {
   city: "New York",
   stateCode: "NY",
   createdAt: "March 2019",
-  leftBtnDisabled: false,
-  leftBtnIcon: "",
-  leftBtnContent: "",
-  leftBtnAction: "",
-  leftBtnValue: 0,
-  rightBtnIcon: "",
-  rightBtnContent: "",
-  rightBtnAction: "",
-  rightBtnValue: 0
 }
 
-const { bool, number, string } = PropTypes;
+const { number, string } = PropTypes;
 
 MatchCard.propTypes = {
   status: number,
@@ -194,14 +154,6 @@ MatchCard.propTypes = {
   city: string,
   stateCode: string,
   createdAt: string,
-  leftBtnDisabled: bool,
-  leftBtnIcon: string,
-  leftBtnContent: string,
-  leftBtnAction: string,
-  leftBtnValue: number,
-  rightBtnIcon: string,
-  rightBtnContent: string,
-  rightBtnAction: string,
-  rightBtnValue: number
 }
- export default MatchCard;
+
+export default MatchCard;
