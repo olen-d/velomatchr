@@ -170,6 +170,38 @@ exports.read_relationship_status_by_id = async (req, res) => {
   }
 };
 
+exports.read_user_relationship_by_ids = (req, res) => {
+  const { authorized } = req;
+
+  if (authorized) {
+    const { query: { addresseeid: addresseeId, requesterid: requesterId }, } = req;
+
+    if (addresseeId === undefined) { throw new Error("The parameter 'addresseeid' is required") }
+    if (requesterId === undefined) { throw new Error("The parameter 'requesterid' is required") }
+
+    Relationship.findAll({
+      where: {
+        addresseeId,
+        requesterId,
+        status: {[Op.not]: [3, 4] }
+      },
+      include: [{ 
+        model: User, 
+        as: "addressee",
+        attributes: { exclude: ["password"]}
+      }]
+    })
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      res.send(err);
+    });
+  } else {
+    res.sendStatus(403)
+  }
+};
+
 exports.read_user_relationships_by_id = (req, res) => {
   const { authorized } = req;
 
