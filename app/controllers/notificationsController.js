@@ -157,7 +157,8 @@ exports.send_new_match_request = async (req, res) => {
       
       const requesterLastInitial = requesterLastName ? requesterLastName.slice(0,1) : "N";
 
-      const matchRequestLink = ""; // ! TODO: Set up a link to directly respond to the match request.
+      // Flip the addressee and requester ids to get the information for the requester to show the addressee
+      const matchRequestLink = `${process.env.REACT_APP_URL}/matches/new-request/ids/?addresseeid=${requesterId}&requesterid=${addresseeId}`;
 
       if (email) {
         // Create the email
