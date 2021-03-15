@@ -136,9 +136,10 @@ exports.token_grant_type_refresh_token = async (req, res) => {
       } catch(error) {
         // Epic fail
         // TODO: Deal with the error
+        res.sendStatus(420);
       }
     } else {
-      // Not authorized, send a 403 forbidden.
+      res.sendStatus(403);
     }
   }
 };
