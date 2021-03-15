@@ -104,7 +104,7 @@ exports.token_grant_type_refresh_token = async (req, res) => {
     res.status(500).json({ status: 500, message: "Internal server error.", error });
   } else {
     const { clientId } = decoded;
-    const refererName = referer.split("://")[1].slice(0, -1); // discard http(s):// and the trailing /
+    const refererName = referer.split("://")[1].split("/")[0]; // discard http(s):// and anything after the top level domain
 
     if (clientId === refererName) {
       // Authorized, issue a new token
