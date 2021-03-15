@@ -48,7 +48,7 @@ const willExpire = token => {
 // If access token is expired, use the refresh token to retrieve a new access token
 const newAccessToken = userId => {
   return new Promise((resolve, reject) => {
-    const refreshToken = localStorage.getItem("user_refresh_token");
+    const refreshToken = JSON.parse(localStorage.getItem("user_refresh_token"));
 
     if (refreshToken) {
       fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/refresh-token`, {

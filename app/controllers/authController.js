@@ -92,18 +92,16 @@ exports.token_grant_type_password = async (req, res) => {
 exports.token_grant_type_refresh_token = async (req, res) => {
   const { body: { userId: id, refreshToken }, headers: { referer }, } = req;
 
-  const refreshTokenParsed = JSON.parse(refreshToken);
   const secret = process.env.SECRET_REFRESH;
 
-  const verifyRefreshTokenResult = jwt.verify(refreshTokenParsed, secret, (error, decoded) => {
+  const verifyRefreshTokenResult = jwt.verify(refreshToken, secret, (error, decoded) => {
     return [error, decoded];
   });
 
   const [error, decoded ] = verifyRefreshTokenResult;
 
   if (error) {
-    // TODO: Deal with the error
-    console.log("authController.js / token_grant_type_refresh_token\nERROR:", error);
+    res.status(500).json({ status: 500, message: "Internal server error.", error });
   } else {
     const { clientId } = decoded;
     const refererName = referer.split("://")[1].slice(0, -1); // discard http(s):// and the trailing /
@@ -116,7 +114,7 @@ exports.token_grant_type_refresh_token = async (req, res) => {
         const refreshTokenData = await RefreshToken.findOne({
           where: {
             userId: id,
-            refreshToken: refreshTokenParsed,
+            refreshToken: refreshToken,
             ipAddress: clientIp
           },
           attributes: ["userId", "refreshToken"]
@@ -138,9 +136,10 @@ exports.token_grant_type_refresh_token = async (req, res) => {
       } catch(error) {
         // Epic fail
         // TODO: Deal with the error
+        res.sendStatus(420);
       }
     } else {
-      // Not authorized, send a 403 forbidden.
+      res.sendStatus(403);
     }
   }
 };
