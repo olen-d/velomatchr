@@ -23,11 +23,11 @@ import { AuthContext } from "./context/authContext";
 import "./AuthApp.css";
 
 const Template = () => {
-  const [doRedirect, setDoRedirect] = useState(false);
+  const [didRedirect, setDidRedirect] = useState(false);
 
   const context = useContext(AuthContext);
 
-  useEffect(() => { context.setDoRedirect(doRedirect)}, [context, doRedirect])
+  useEffect(() => { context.setDoRedirect(!didRedirect)}, [context, didRedirect])
 
   return (
     <>
@@ -36,7 +36,7 @@ const Template = () => {
         {
           ({doRedirect, redirectURL}) => {
             if (doRedirect) {
-              setDoRedirect(false);
+              setDidRedirect(true);
               return <Redirect to={`${redirectURL}`} />
             }
           }

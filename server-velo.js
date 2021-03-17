@@ -9,7 +9,7 @@ const port =  process.env.PORT || 5000;
 // Comment out when syncing not needed.
 const db = require("./app/models");
 
-if (process.env.ENVIRONMENT === "dev") {
+if (process.env.NODE_ENV === "development") {
   const cors = require("cors");
   app.use(cors());
 }

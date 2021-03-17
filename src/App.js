@@ -43,7 +43,7 @@ const App = () => {
         // Delete the refresh token
         localStorage.removeItem("user_refresh_token");
         setIsAuth(false);
-        console.log(error);
+        console.error("App.js ERROR:", error);
       }
     }
   })();
