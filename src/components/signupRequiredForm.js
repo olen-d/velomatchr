@@ -75,7 +75,7 @@ const SignupRequiredForm = props => {
       } else {
         if (data.tokens) {
           const { authenticated, tokens: { access_token: token, refresh_token: refreshToken }, } = data; // token_type: tokenType
-
+          setIsSubmitting(false);
           localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
           
           setIsAuth(authenticated);
