@@ -1,9 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
+
+import { useAuth } from "./context/authContext";
 
 import { 
   Redirect,
   Route,
-  Switch
+  Switch,
+  useHistory
 } from "react-router-dom";
 
 import FourZeroFourAuth from "./components/fourZeroFourAuth";
@@ -18,30 +21,23 @@ import Onboarding from "./pages/onboarding";
 import Settings from "./pages/settings";
 import Survey from "./pages/survey";
 
-import { AuthContext } from "./context/authContext";
-
 import "./AuthApp.css";
 
 const Template = () => {
-  const [didRedirect, setDidRedirect] = useState(false);
+  const { doRedirect, redirectURL, setDoRedirect } = useAuth();
 
-  const context = useContext(AuthContext);
+  const history = useHistory();
 
-  useEffect(() => { context.setDoRedirect(!didRedirect)}, [context, didRedirect])
+  useEffect(() => {
+    if (doRedirect) {
+      setDoRedirect(false);
+      history.push(redirectURL);
+    }
+  }, [doRedirect, history, redirectURL, setDoRedirect])
 
   return (
     <>
       <NavBar />
-      <AuthContext.Consumer>
-        {
-          ({doRedirect, redirectURL}) => {
-            if (doRedirect) {
-              setDidRedirect(true);
-              return <Redirect to={`${redirectURL}`} />
-            }
-          }
-        }
-      </AuthContext.Consumer>
         <div className="auth-app-container">
           <Switch>
             <Route exact path="/" render={ () => <Redirect to="/dashboard" />} />
