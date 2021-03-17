@@ -43,6 +43,7 @@ const Onboarding = ({ match }) => {
               render={(props) => 
                 <MatchesNewUser 
                   {...props}
+                  colWidth={6}
                   submitBtnContent="Finished"
                   submitRedirect={true}
                   submitRedirectURL={"/onboarding/verify-email"}
@@ -56,7 +57,7 @@ const Onboarding = ({ match }) => {
                   {...props}
                   colWidth={6}
                   formInstructions={"Tell us a bit about who you'd like to match with."}
-                  formTitle={"Match Preferences"}
+                  formTitle={"Set Your Match Preferences"}
                   submitBtnContent="Save and Continue"
                   submitRedirect={true}
                   submitRedirectURL={"/onboarding/survey"}
@@ -98,7 +99,7 @@ const Onboarding = ({ match }) => {
                 <VerifyEmail
                   {...props}
                   colWidth={6}
-                  formInstructions={"We sent a six digit code to your email address. Please enter it below to verify you have access to the account."}
+                  formInstructions={"We sent a six digit code to your email address. Please enter it below to verify you have access to the account. You will not be able to contact any buddies until your email is verified."}
                   formTitle={"Verify Your Email Address"}
                   show={true}
                   submitBtnContent={"Verify Email"}

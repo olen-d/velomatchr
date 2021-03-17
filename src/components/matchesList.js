@@ -11,7 +11,7 @@ import MatchCard from "./matchCard";
 import "./matchesList.css";
 
 const MatchesList = props => {
-  const { showNoMatches, status } = props;
+  const { showHeadline, showNoMatches, status } = props;
 
   const [matchesFilteredByStatus, setMatchesFilteredByStatus] = useState([]);
   const [noMatches, setNoMatches] = useState(null);
@@ -148,9 +148,11 @@ const MatchesList = props => {
     } else {
       return(
         <div className="matches-list">
-          <div style={headlineStyle}>
-            {headline}
-          </div>
+          {showHeadline &&
+            <div style={headlineStyle}>
+              {headline}
+            </div>
+          }
           {matchesFilteredByStatus.map(({ id, addressee: { id: addresseeId, firstName, lastName, isEmailVerified, photoLink, city, stateCode, createdAt}, }) => (
             <div className="match-card" key={id}>
               <MatchCard
@@ -177,6 +179,7 @@ const MatchesList = props => {
 }
 
 MatchesList.defaultProps = {
+  showHeadline: true,
   showNoMatches: true,
   status: -99
 };

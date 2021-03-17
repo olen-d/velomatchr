@@ -124,10 +124,10 @@ const Matches = ({ match }) => {
             &nbsp;
           </Grid.Column>
           <Grid.Column width={8}>
-            <MatchesList status={2} />
+            <MatchesList showHeadline={true} status={2} />
           </Grid.Column>
           <Grid.Column width={4}>
-            <MatchesList status={0} />
+            <MatchesList showHeadline={true} status={0} />
           </Grid.Column>
         </Grid.Row>
       </MatchesContext.Provider>

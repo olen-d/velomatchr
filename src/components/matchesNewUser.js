@@ -13,7 +13,7 @@ import { MatchesContext } from "../context/matchesContext";
 import MatchesList from "./../components/matchesList";
 
 const MatchesNewUser = props => {
-  const { submitBtnContent, submitRedirect, submitRedirectURL } = props;
+  const { colWidth, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
   const [matches, setMatches] = useState({ error: null, matchesResult: [], isLoading: false });
   const [matchesUpdated, setMatchesUpdated] = useState(false);
@@ -29,17 +29,15 @@ const MatchesNewUser = props => {
 
   return(
     <MatchesContext.Provider value={{matches, setMatches, matchesUpdated, setMatchesUpdated}}>
-      <Grid.Column width={4}>
-        &nbsp;
-      </Grid.Column>
-      <Grid.Column width={8}>
+      <Grid.Column width={colWidth}>
         <Header
           as="h2"
-          color="orange"
+          textAlign="center"
+          color="grey"
         >
-          Potential Matches
+          Your Potential Matches
         </Header>
-        <MatchesList status={0} />
+        <MatchesList showHeadline={false} status={0} />
         <Button
           className="fluid"
           type="button"
@@ -60,14 +58,16 @@ const MatchesNewUser = props => {
 }
 
 MatchesNewUser.defaultProps = {
+  colWidth: 6,
   submitBtnContent: "Finished",
   submitRedirect: true,
   submitRedirectURL: "/onboarding/verify-email"
 }
 
-const { bool, string } = PropTypes;
+const { bool, number, string } = PropTypes;
 
 MatchesNewUser.propTypes = {
+  colWidth: number,
   submitBtnContent: string,
   submitRedirect: bool,
   submitRedirectURL: string
