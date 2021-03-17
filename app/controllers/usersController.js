@@ -977,7 +977,8 @@ exports.email_send_verification = async (req, res) => {
         if (json.status !== 200) {
           res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to send verification email."});
         } else {
-          res.status(200).json({ status: 200, message: "ok" });
+          const { data } = json;
+          res.status(200).json({ status: 200, message: "ok", data });
         }
       } else {
         res.status(500).json({ status: 500, message: "Internal Server Error "})
