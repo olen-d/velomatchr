@@ -25,13 +25,14 @@ const logout = async accessToken => {
       localStorage.removeItem("user_refresh_token");
 
       if (response.status !== 204) {
-        const json = await response.json();
-        return json;
-      } else {
-        return false;
-      }
+        // const json = await response.json();
+        // TODO: Clean up the DB
+        // TODO: Log the error
+      } 
+      return false;
     } catch(error) {
-      return error;
+      // TODO: Log the error
+      return false;
     }
   }
 }
