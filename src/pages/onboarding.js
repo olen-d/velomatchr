@@ -13,6 +13,7 @@ import {
 
 import MatchesNewUser from "../components/matchesNewUser";
 import MatchPreferencesForm from "../components/matchPreferencesForm";
+import NotificationsRequiredForm from "../components/notificationsRequiredForm";
 import ProfileRequiredForm from "../components/profileRequiredForm";
 import SurveyForm from "../components/surveyForm";
 import VerifyEmail from "../components/verifyEmail";
@@ -65,6 +66,22 @@ const Onboarding = ({ match }) => {
                 />
               }
             />
+            <Route
+              path={`${match.url}/notification-preferences`}
+              render={(props) =>
+                <NotificationsRequiredForm
+                  {...props}
+                  colWidth={6}
+                  emailNotificationsTitle={"Send Me an Email When:"}
+                  firstHeadingAlig={"center"}
+                  formInstructions={"Tell us how you would like to be notified when you have new buddy requests or someone accepts your request. Leave unchecked if you do not wish to be notified."}
+                  formTitle={"Set Your Notification Preferences"}
+                  submitBtnContent={"Save and Continue"}
+                  submitRedirect={true}
+                  submitRedirectURL={"/dashboard"}
+                />
+              }
+            />
             <Route 
               path={`${match.url}/profile`} 
               render={(props) => 
@@ -104,7 +121,7 @@ const Onboarding = ({ match }) => {
                   show={true}
                   submitBtnContent={"Verify Email"}
                   submitRedirect={true}
-                  submitRedirectURL={"/dashboard"}
+                  submitRedirectURL={"/onboarding/notification-preferences"}
                 />
               }
             />

@@ -16,9 +16,9 @@ import useForm from "../hooks/useForm";
 const checkboxStyle = { marginBottom: "1rem" }
 
 const EmailNotificationCheckboxes = props => {
-  const { submitBtnContent } = props;
+  const { submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
-  const { accessToken, setAccessToken } = useAuth(); // setDoRedirect, setRedirectURL 
+  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth(); // setDoRedirect, setRedirectURL 
 
   const { user } = auth.getUserInfo(accessToken);
 
@@ -66,10 +66,15 @@ const EmailNotificationCheckboxes = props => {
         setIsError(true);
       }
     } else {
-      setIsError(false);
-      setIsSuccessHeader("Preferences Updated")
-      setIsSuccessMessage("Your email notification preferences were successfuly updated.");
-      setIsSuccess(true);
+      if(submitRedirect) {
+        setRedirectURL(submitRedirectURL);
+        setDoRedirect(true);
+      } else {
+        setIsError(false);
+        setIsSuccessHeader("Preferences Updated")
+        setIsSuccessMessage("Your email notification preferences were successfuly updated.");
+        setIsSuccess(true);
+      }
     }
   }
 
@@ -230,13 +235,17 @@ const EmailNotificationCheckboxes = props => {
 }
 
 EmailNotificationCheckboxes.defaultProps = {
-  submitBtnContent: "Update Email Notifications"
+  submitBtnContent: "Update Email Notifications",
+  submitRedirect: false,
+  submitRedirectURL: "/dashboard"
 };
 
-const { string } = PropTypes;
+const { bool, string } = PropTypes;
 
 EmailNotificationCheckboxes.propTypes = {
-  submitBtnContent: string
+  submitBtnContent: string,
+  submitRedirect: bool,
+  submitRedirectURL: string
 }
 
 export default EmailNotificationCheckboxes;
