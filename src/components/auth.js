@@ -10,7 +10,8 @@ const logout = async accessToken => {
     const actionData = { id, refreshToken };
 
     try {
-      const { accessToken: token } = await checkAccessTokenExpiration(accessToken, id);
+      const { isNewAccessToken, accessToken: newAccessTokenValue } = await checkAccessTokenExpiration(accessToken, id);
+      const token = isNewAccessToken ? newAccessTokenValue : accessToken;
 
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/refresh-token/`, {
         method: "delete",
@@ -21,11 +22,12 @@ const logout = async accessToken => {
         body: JSON.stringify(actionData)
       });
       
+      localStorage.removeItem("user_refresh_token");
+
       if (response.status !== 204) {
         const json = await response.json();
         return json;
       } else {
-        localStorage.removeItem("user_refresh_token");
         return false;
       }
     } catch(error) {
