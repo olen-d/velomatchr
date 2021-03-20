@@ -1,27 +1,30 @@
-const locator = () => {
-  return new Promise((res, rej) => {
-    try {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          res({
-            status: 200,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
+const getPosition = () => {
+  return new Promise((resolve, reject) => {
+    if ("geolocation" in navigator) {
+      function success (position) {
+        const { coords: { latitude, longitude}, } = position;
+
+        resolve({
+          status: 200,
+          latitude,
+          longitude
         });
-      } else {
-        res({
+      }
+
+      function error () {
+        reject({
           status: 403,
           error: "Forbidden. User did not allow location access."
-        })
+        });
       }
-    } catch (err) {
-      rej({
-        status: 500,
-        error: "Internal server error. Failed to get latitude and longitude of user."
-      });
+      navigator.geolocation.getCurrentPosition(success, error);
+    } else {
+      reject({
+        status: 404,
+        error: "Not Found. Browser does not support location access."
+      })
     }
   });
 };
 
-module.exports = { locator }
+module.exports = { getPosition }
