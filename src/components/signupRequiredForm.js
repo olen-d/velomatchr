@@ -15,7 +15,8 @@ import {
 import EmailInput from "./formFields/emailInput";
 import ErrorContainer from "./errorContainer";
 import MatchesNearMe from "./matchesNearMe";
-import PasswordInput from "./formFields/passwordInput"
+import PasswordInput from "./formFields/passwordInput";
+import WarningContainer from "./warningContainer";
 
 // Helpers
 import locator from "../helpers/locator";
@@ -33,6 +34,9 @@ const SignupRequiredForm = props => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
+  const [isWarning, setIsWarning] = useState(false);
+  const [isWarningHeader, setIsWarningHeader] = useState(null);
+  const [isWarningMessage, setIsWarningMessage] = useState(null);
 
   // Hooks
   const {
@@ -46,15 +50,30 @@ const SignupRequiredForm = props => {
   const { setIsAuth, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
   useEffect(() => {
-    locator.locator().then(locatorRes => {
+    locator.getPosition().then(locatorRes => {
+
       if (locatorRes.status === 200) {
-        setLatitude(locatorRes.latitude);
-        setLongitude(locatorRes.longitude);
-      } else {
-        // TODO: Modal to get user address if they decline geolocation
+        const { latitude, longitude } = locatorRes;
+        setLatitude(latitude);
+        setLongitude(longitude);
+      }
+    })
+    .catch(error => {
+      if (error.status === 403) {
+        setIsWarningHeader("Could Not Get Your Location");
+        setIsWarningMessage("VeloMatchr uses your location to match you with nearby cyclists. It appears you have location services disabled. You can still sign up, but to get matched you will have to set your location later in Settings > Profile.");
+        setIsWarning(true);
+      } else if(error.status === 404) {
+        setIsWarningHeader("Your Browser Does Not Support Location Services");
+        setIsWarningMessage("VeloMatchr uses your location to match you with nearby cyclists. You can still sign up, but to get matched you will have to set your location manually later in Settings > Profile.");
+        setIsWarning(true);
       }
     });
   }, []);
+
+  const handleDismiss = () => {
+    setIsWarning(false);
+  };
 
   const createUser = async formData => {
     try {
@@ -77,7 +96,7 @@ const SignupRequiredForm = props => {
           const { authenticated, tokens: { access_token: token, refresh_token: refreshToken }, } = data; // token_type: tokenType
           setIsSubmitting(false);
           localStorage.setItem("user_refresh_token", JSON.stringify(refreshToken));
-          
+
           setIsAuth(authenticated);
           setAccessToken(token);
           setRedirectURL("/onboarding/profile")
@@ -86,8 +105,8 @@ const SignupRequiredForm = props => {
           setIsAuth(false);
           setAccessToken("");
           console.log("signupRequiredForm.js ~129 - ERROR: Missing Token");
-        }          
-      }    
+        }
+      }
     } catch(error) {
       setIsAuth(false);
       setAccessToken("");
@@ -145,6 +164,12 @@ const SignupRequiredForm = props => {
         header={isErrorHeader}
         message={isErrorMessage}
         show={isError}
+      />
+      <WarningContainer
+        handleDismiss={handleDismiss}
+        header={isWarningHeader}
+        message={isWarningMessage}
+        show={isWarning}
       />
       <Segment>
         <Form
