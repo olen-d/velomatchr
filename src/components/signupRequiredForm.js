@@ -26,7 +26,7 @@ import useForm from "../hooks/useForm";
 
 const SignupRequiredForm = props => {
   const { colWidth, formTitle } = props;
-  
+
   // State
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
@@ -70,6 +70,10 @@ const SignupRequiredForm = props => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (isError) { setIsSubmitting(false)};
+  }, [isError]);
 
   const handleDismiss = () => {
     setIsWarning(false);
