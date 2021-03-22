@@ -170,7 +170,7 @@ const ProfileFullForm = props => {
   }
 
   const getNewLocation = () => {
-    locator.locator().then(locatorRes => {
+    locator.getPosition().then(locatorRes => {
       if (locatorRes.status === 200) {
         setNewLatitude(locatorRes.latitude);
         setNewLongitude(locatorRes.longitude);
