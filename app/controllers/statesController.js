@@ -1,22 +1,21 @@
 // Models
 const { State } = require("../models");
 
-exports.read_one_state_by_code = (req, res) => {
-  const code = req.params.code;
+exports.read_one_state_by_code = async (req, res) => {
+  const { params: { code = "BLANK" }, } = req;
 
-  State.findOne({
-    where: {
-      code
-    }
-  })
-  .then(result => {
+  try {
+    const result = await State.findOne({
+      where: {
+        code
+      }
+    });
     if (result) {
-      res.send({ state: result });
+      res.status(200).json({ status: 200, state: result });
     } else {
-      res.send({ state: { name: "error" } });
+      res.status(404).json({ status: 404, message: "Not Found", error: `No state associated with "${code}" was found.`});
     }
-  })
-  .catch(err => {
-    res.json(err);
-  });
+  } catch(error) {
+    res.status(500).json({ status: 500, message: "Internal Server Error", error: error.message });
+  }
 };
