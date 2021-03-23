@@ -3,6 +3,7 @@ const { State } = require("../models");
 
 exports.read_one_state_by_code = async (req, res) => {
   const { params: { code = "BLANK" }, } = req;
+  const adminAreaType = "state";
 
   try {
     const result = await State.findOne({
@@ -11,11 +12,11 @@ exports.read_one_state_by_code = async (req, res) => {
       }
     });
     if (result) {
-      res.status(200).json({ status: 200, state: result });
+      res.status(200).json({ status: 200, adminAreaType, state: result });
     } else {
-      res.status(404).json({ status: 404, message: "Not Found", error: `No state associated with "${code}" was found.`});
+      res.status(404).json({ status: 404, message: "Not Found", error: `No state associated with "${code}" was found.`, adminAreaType });
     }
   } catch(error) {
-    res.status(500).json({ status: 500, message: "Internal Server Error", error: error.message });
+    res.status(500).json({ status: 500, message: "Internal Server Error", error: error.message, adminAreaType });
   }
 };
