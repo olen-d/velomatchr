@@ -127,9 +127,11 @@ const MatchesList = props => {
     if (showNoMatches) {
       return(
         <div className="matches-list">
-          <div style={headlineStyle}>
-            {headline}
-          </div>
+          {showHeadline &&
+            <div style={headlineStyle}>
+              {headline}
+            </div>
+          }
           <div className="no-matches-found">
             {noMatches}
           </div>
