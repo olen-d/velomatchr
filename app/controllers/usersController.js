@@ -57,100 +57,100 @@ exports.create_user = async (req, res) => {
       const locationResponse = await reverseGeocode(latitude, longitude);
       const location = await locationResponse.json();
 
+      // Check for status
       // Destructure the first location returned
       const { results: [{ locations: [{ adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000" }], }], } = location;
 
       // Get the full names of the state and country based on the codes returned
-      const geographyFullNamesResponse = await Promise.all([
+      const geographyNamesResponse = await Promise.all([
         fetch(`${process.env.REACT_APP_API_URL}/api/states/code/${stateCode}`),
         fetch(`${process.env.REACT_APP_API_URL}/api/countries/alphatwo/${countryCode}`)
-      ]);
+      ])
+      .catch(error => {
+        console.log("ERROR:\n" + error);
+      });
+      // ! TODO: Handle any errors returned
 
-      const geographyFullNames = await Promise.all(geographyFullNamesResponse.map(fullName => { return fullName.json() }));
-      
-      const [{ state: { name: stateName }, }, { country: { name: countryName }, }] = geographyFullNames;
+      const geographyNamesJson = await Promise.all(geographyNamesResponse.map(geographyName => { return geographyName.json() }));
+      const geographyNames = geographyNamesJson.map(geographyName => { const { adminAreaType, name, status } = geographyName; return status === 200 ? { [adminAreaType]: { name } } : { [adminAreaType]: { name: "Not Found" } } });
+      const [{ state: { name: stateName }, }, { country: { name: countryName }, }] = geographyNames;
 
-      // Check to see if the password is valid
-      const isValidPassword = await validatePassword(password);
+      // Encrypt the password
+      const newPassResult = await bcrypt.newPass(password);
 
-      if (isValidPassword) {
-        const newPassResult = await bcrypt.newPass(password);
+      if(newPassResult.status === 200) {
+        const emailParts = email.split("@");
+        const name = emailParts[0];
 
-        if(newPassResult.status === 200) {
-          const emailParts = email.split("@");
-          const name = emailParts[0];
+        // Actually create the user
+        const createUserResult = await User.create({
+          name,
+          password: newPassResult.passwordHash,
+          email,
+          emailIsVerified: 0,
+          latitude,
+          longitude,
+          city,
+          state: stateName,
+          stateCode,
+          country: countryName,
+          countryCode,
+          postalCode
+        });
 
-          // Actually create the user
-          const createUserResult = await User.create({
-            name,
-            password: newPassResult.passwordHash,
-            email,
-            emailIsVerified: 0,
-            latitude,
-            longitude,
-            city,
-            state: stateName,
-            stateCode,
-            country: countryName,
-            countryCode,
-            postalCode
+        const formData = {
+          email,
+          userId: createUserResult.id
+        }
+
+        const sendVerificationEmailReponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${serverToken}`
+          },
+            body: JSON.stringify(formData)
           });
 
-          const formData = {
-            email,
-            userId: createUserResult.id
-          }
+          if (sendVerificationEmailReponse.ok) {
+            const clientId = process.env.CLIENT_ID;
+            const clientSecret = process.env.CLIENT_SECRET;
+            const { id: endUserId } = createUserResult;
+            const endUserIp = requestIp.getClientIp(req);
 
-          const sendVerificationEmailReponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
-            method: "post",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${serverToken}`
-            },
-              body: JSON.stringify(formData)
+            const clientCredentialsData = {
+              clientId, 
+              clientSecret, 
+              endUserId, 
+              endUserIp
+            };
+
+            const tokensResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/client-credentials`, {
+              method: "post",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(clientCredentialsData)
             });
 
-            if (sendVerificationEmailReponse.ok) {
-              const clientId = process.env.CLIENT_ID;
-              const clientSecret = process.env.CLIENT_SECRET;
-              const { id: endUserId } = createUserResult;
-              const endUserIp = requestIp.getClientIp(req);
+            const newTokens = await tokensResponse.json();
 
-              const clientCredentialsData = {
-                clientId, 
-                clientSecret, 
-                endUserId, 
-                endUserIp
-              };
-
-              const tokensResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/client-credentials`, {
-                method: "post",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify(clientCredentialsData)
-              });
-
-              const newTokens = await tokensResponse.json();
-
-              return res.status(200).json({
-                status: 200,
-                authenticated: true,
-                tokens: newTokens
-              })
-            } else {
-              console.log("\n\nusersController.js ~85 ERROR:", sendVerificationEmailReponse);
-              // TODO, parse response.error and provide a more useful error message
-            }
-        } else {
-          // Password was not encrypted
-          // TODO: Deal with the error...
-        }
+            return res.status(200).json({
+              status: 200,
+              authenticated: true,
+              tokens: newTokens
+            })
+          } else {
+            console.log("\n\nusersController.js ~85 ERROR:", sendVerificationEmailReponse);
+            // TODO, parse response.error and provide a more useful error message
+          }
       } else {
-        errors.push({ password: true });
+        // Password was not encrypted
+        // TODO: Deal with the error...
       }
     } catch(error) {
       // TODO: Deal with the errors...
+      console.log("userController / create_user / ERROR:\n", error);
       // Check for unique constraint violation
       if (error.name === "SequelizeUniqueConstraintError") {
         errors.push({ email: true });
