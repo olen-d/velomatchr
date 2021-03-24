@@ -117,9 +117,6 @@ const MatchesList = props => {
         }
         const returnedMatches = filteredMatches.length > 10 && status !== 2 ? filteredMatches.slice(0, 10) : filteredMatches;
         setMatchesFilteredByStatus(returnedMatches);
-console.log(matches);
-console.log(status);
-console.log(userId);
       };
     }
     // return ()=> mounted = false;

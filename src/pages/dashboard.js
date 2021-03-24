@@ -30,7 +30,6 @@ const Dashboard = () => {
       setIsMatchedVisible(false);
       setIsPotentialVisible(true);
     } else if (totalMatched > 0) {
-    } else if (totalPotential > 0 ) {
       setIsRequestedVisible(false);
       setIsMatchedVisible(true);
       setIsPotentialVisible(false);
