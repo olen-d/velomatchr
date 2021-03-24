@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { 
+import {
   Route,
   Switch,
   useLocation
@@ -39,7 +39,7 @@ const Matches = ({ match }) => {
     const requesterId = parameters.get("requesterid");
 
   useEffect(() => { setUserId(user) }, [user]);
-  
+
   // Fetch Matches Hook
   useEffect(() => {
     setMatches({isLoading: true});
@@ -116,9 +116,12 @@ const Matches = ({ match }) => {
 
   const MatchLists = () => {
     const [matches, setMatches] = useState({ error: null, matchesResult: [], isLoading: false });
+    const [totalPotential, setTotalPotential] = useState(0);
+    const [totalRequested, setTotalRequested] = useState(0);
+    const [totalMatched, setTotalMatched] = useState(0);
 
     return(
-      <MatchesContext.Provider value={{matches, setMatches}}>
+      <MatchesContext.Provider value={{matches, setMatches, totalPotential, setTotalPotential, totalRequested, setTotalRequested, totalMatched, setTotalMatched}}>
         <Grid.Row>
           <Grid.Column width={4}>
             &nbsp;
@@ -157,5 +160,5 @@ const Matches = ({ match }) => {
     </Container>
   );
 }
-    
+
 export default Matches;
