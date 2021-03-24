@@ -19,7 +19,7 @@ const MatchesList = props => {
 
   // Get items from context
   const { accessToken, setAccessToken } = useAuth();
-  const { matches, setMatches } = useMatches();
+  const { matches, setMatches, setTotalPotential, setTotalRequested, setTotalMatched } = useMatches();
 
   const { user } = auth.getUserInfo(accessToken);
 
@@ -76,8 +76,6 @@ const MatchesList = props => {
 
   useEffect(() => {
     const { error, matchesResult } = matches;
-    let mounted = true;
-
 
     if (error) {
       // TODO: Do something about the error
@@ -99,28 +97,33 @@ const MatchesList = props => {
             match => match.status === status 
           );
         }
+        const totalFiltered = filteredMatches.length;
         switch(status) {
           case 0:
             setNoMatches("No potential matches were found. ");
+            setTotalPotential(totalFiltered);
             break;
           case 1:
             setNoMatches("No buddy requests were found. ");
+            setTotalRequested(totalFiltered);
             break;
           case 2:
             setNoMatches("No buddies were found. "); 
+            setTotalMatched(totalFiltered);
             break;
           default:
             setNoMatches("No potential matches were found. ")
             break;
         }
         const returnedMatches = filteredMatches.length > 10 && status !== 2 ? filteredMatches.slice(0, 10) : filteredMatches;
-        if (mounted) {
-          setMatchesFilteredByStatus(returnedMatches);
-        }
+        setMatchesFilteredByStatus(returnedMatches);
+console.log(matches);
+console.log(status);
+console.log(userId);
       };
     }
-    return ()=> mounted = false;
-  }, [matches, status, userId]);
+    // return ()=> mounted = false;
+  }, [matches, setTotalMatched, setTotalPotential, setTotalRequested, status, userId]);
 
   if (matchesFilteredByStatus.length === 0)
   {
