@@ -18,6 +18,7 @@ import PhoneInput from "./formFields/phoneInput";
 import PostalCodeInput from "./formFields/postalCodeInput";
 import StateInput from "./formFields/stateInput";
 import UsernameInput from "./formFields/usernameInput";
+import WarningContainer from "./warningContainer";
 
 import useForm from "../hooks/useForm";
 
@@ -39,6 +40,9 @@ const ProfileFullForm = props => {
   const [newLatitude, setNewLatitude] = useState(0.0);
   const [newLongitude, setNewLongitude] = useState(0.0);
   const [userId, setUserId] = useState(null);
+  const [isWarning, setIsWarning] = useState(false);
+  const [isWarningHeader, setIsWarningHeader] = useState(null);
+  const [isWarningMessage, setIsWarningMessage] = useState(null);
 
   const {
     errors,
@@ -177,8 +181,23 @@ const ProfileFullForm = props => {
       } else {
         // TODO: Modal to get user address if they decline geolocation
       }
+    })
+    .catch(error => {
+      if (error.status === 403) {
+        setIsWarningHeader("Could Not Get Your Location");
+        setIsWarningMessage("VeloMatchr uses your location to match you with nearby cyclists. It appears you have location services disabled. To get matched, please set your location manually below by filling in the City, State, Country, and Postal Code Fields.");
+        setIsWarning(true);
+      } else if(error.status === 404) {
+        setIsWarningHeader("Your Browser Does Not Support Location Services");
+        setIsWarningMessage("VeloMatchr uses your location to match you with nearby cyclists. To get matched, please set your location manually below by filling in the City, State, Country, and Postal Code Fields.");
+        setIsWarning(true);
+      }
     });
   }
+
+  const handleDismiss = () => {
+    setIsWarning(false);
+  };
 
   const handleSubmit = () => {
     if (!isError) {
@@ -320,6 +339,12 @@ const ProfileFullForm = props => {
       >
         My Location
       </Header>
+      <WarningContainer
+        handleDismiss={handleDismiss}
+        header={isWarningHeader}
+        message={isWarningMessage}
+        show={isWarning}
+      />
       <Segment>
         <Form size="large">
           <Button
