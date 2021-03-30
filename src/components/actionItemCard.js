@@ -1,12 +1,11 @@
 import React from "react";
-// import PropTypes from "prop-types";
-// TODO: add prop types
+import PropTypes from "prop-types";
 
-import { Redirect } from "react-router-dom";
+// import { Redirect } from "react-router-dom";
 
 import { useAuth } from "../context/authContext";
 
-import * as auth from "./auth";
+// import * as auth from "./auth";
 
 import { Button, Header } from "semantic-ui-react";
 import "./actionItemCard.css";
@@ -49,6 +48,15 @@ ActionItemCard.defaultProps = {
   headline: "No Headline Specified",
   message: "No message was specified",
   submitRedirectURL: "/dashboard"
+}
+
+const { string } = PropTypes;
+
+ActionItemCard.propTypes = {
+  action: string,
+  headline: string,
+  message: string,
+  submitRedirectURL: string
 }
 
 export default ActionItemCard;
