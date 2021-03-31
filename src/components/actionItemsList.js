@@ -9,8 +9,9 @@ import * as auth from "./auth";
 import ActionItemCard from "./actionItemCard";
 
 const ActionItemsList = props => {
-  const [hasMatchPreferences, setHasMatchPreferences] = useState(null);
-  // Survey
+  const [hasMatchPreferences, setHasMatchPreferences] = useState(true);
+  const [hasSurveyAnswers, setHasSurveyAnswers] = useState(true);
+  const [hasVerifiedEmail, setHasVerifiedEmail] = useState(true);
   // Email Verification
   // Profile
   // Notification Preferences
@@ -36,7 +37,7 @@ const ActionItemsList = props => {
               Authorization: `Bearer ${token}`
             }
           }),
-          fetch(`${process.env.REACT_APP_API_URL}/api//users/id/${userId}`, {
+          fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -46,13 +47,19 @@ const ActionItemsList = props => {
           // TODO: Deal with the error
           console.log("ERROR:\nAction Items List / Action Items\n", + error);
         });
-
+// console.log(actionItemsResponse);
         const actionItemsJson = await Promise.all(actionItemsResponse.map(actionItem => { return actionItem.status === "fulfilled" ? actionItem.value.json() : null }));
 
         // console.log(actionItemsJson);
         // Check to see if match preferences have been set
-        const [{ user: { userMatchPrefs } , }] = actionItemsJson;
-        if (userMatchPrefs) { setHasMatchPreferences(true) }
+        const [{ user: { userMatchPrefs } , }, answersJson, { user: { isEmailVerified }, }] = actionItemsJson;
+        // console.log("CHEESE:\n" + cheese);
+        if (userMatchPrefs) { setHasMatchPreferences(true) } else { setHasMatchPreferences(false) };
+        // Check for survey answers
+        answersJson && answersJson.answers ? setHasSurveyAnswers(true) : setHasSurveyAnswers(false);
+
+        // Check for verified email
+        if (isEmailVerified) { setHasVerifiedEmail(true) } else { setHasVerifiedEmail(false) };
       })();
     }
   }, [accessToken, setAccessToken, userId]);
@@ -61,7 +68,9 @@ const ActionItemsList = props => {
 
   return(
      <div className="action-items-list">
-      { !hasMatchPreferences && <ActionItemCard action="Set My Match Preferences" headline="Please Set Your Match Preferences" message="We need to know about who you'd like to match with to find your potential matches." submitRedirectURL="/matches/preferences" /> }
+      { !hasMatchPreferences && <ActionItemCard action="Set My Match Preferences" headline="Please Set Your Match Preferences" message="We need to know about who you'd like to match with to find your potential matches. " submitRedirectURL="/matches/preferences" /> }
+      { !hasSurveyAnswers && <ActionItemCard action="Take Me To The Survey" headline="Please Complete the Survey" message="To find your matches, we need to know a few things about your riding style. Please answer the survey questions so we can find your potential matches. " submitRedirectURL="/survey" /> }
+      { !hasVerifiedEmail && <ActionItemCard action="Verify My Email Address" headline="Please Verify Your Email Address" message="To send email to your matches, we need to verify that you have control of the email address you signed up with. " submitRedirectURL="/verify/email" /> }
      </div>
   );
 };

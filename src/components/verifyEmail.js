@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 import * as auth from "./auth";
@@ -28,7 +28,17 @@ const resendStyle = {
 }
 
 const VerifyEmail = props => {
-  const { colWidth, formInstructions, formTitle, handleVerifyEmailFormVisibility, show, submitBtnContent, submitRedirect, submitRedirectURL } = props;
+  const {
+    colWidth,
+    formInstructions,
+    formTitle,
+    handleVerifyEmailFormVisibility,
+    sendVerificationMessage,
+    show,
+    submitBtnContent,
+    submitRedirect,
+    submitRedirectURL
+  } = props;
 
   const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
   const { user } = auth.getUserInfo(accessToken);
@@ -111,7 +121,7 @@ const VerifyEmail = props => {
           default:
             setIsErrorMessage(tryAgainMessage);
             break;
-        }        
+        }
       } else {
         const formData = {
           id: userId,
@@ -155,7 +165,7 @@ const VerifyEmail = props => {
     });
   }
 
-  const resendEmail = async () => {
+  const resendEmail = useCallback(async () => {
     const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, user);
     if (isNewAccessToken) { setAccessToken(token); }
 
@@ -206,14 +216,16 @@ const VerifyEmail = props => {
             response.json().then(jsonSendMail => {
               const {data: { rejected }, } = jsonSendMail;
               if (rejected.length === 0) {
-                setIsSuccessHeader("Verification Code Sent");
-                setIsSuccessMessage("A new verification code was successfully sent to the your email address.");
-                setIsSuccess(true);
+                if (!sendVerificationMessage) { // Don't send a message since it's redundant if the user came here through a route that sends a verification message
+                  setIsSuccessHeader("Verification Code Sent");
+                  setIsSuccessMessage("A new verification code was successfully sent to the your email address. ");
+                  setIsSuccess(true);
+                }
               } else {
                 // Mail was rejected by the receiving server
                 // TODO: Log the error
-                setIsErrorHeader("Email Rejected");
-                setIsErrorMessage("The message containing the verification code was rejected by the email server.");
+                setIsErrorHeader("Verification Code Not Sent");
+                setIsErrorMessage("The message containing the verification code could not be delivered. Please wait a few moments and try again. ");
                 setIsError(true);
               }
             })
@@ -229,9 +241,16 @@ const VerifyEmail = props => {
       .catch(error => {
         console.log(error);
       })
-    }
+    }, [accessToken, sendVerificationMessage, setAccessToken, user, userId]);
 
   useEffect(() => { setUserId(user) }, [user]);
+
+  useEffect(() => {
+    if (userId && sendVerificationMessage) {
+      resendEmail();
+      // TODO: Deal with errors and whatnot
+    }
+  }, [resendEmail, sendVerificationMessage, userId]);
 
   if (show) {
     return(
@@ -295,7 +314,7 @@ const VerifyEmail = props => {
           </Button>
         </Segment>
       </Grid.Column>
-    );     
+    );
   } else {
     return (null);
   }
@@ -305,6 +324,7 @@ VerifyEmail.defaultProps = {
   colWidth: 6,
   formInstructions: "We sent a six digit code to your email address. Please enter it below to verify you have access to the account.",
   formTitle: "Verify Your Email Address",
+  sendVerificationMessage: false,
   show: true,
   submitBtnContent: "Verify Email",
   submitRedirect: true,
@@ -318,6 +338,7 @@ VerifyEmail.propTypes = {
   formInstructions: string,
   formTitle: string,
   handleVerifyEmailFormVisibility: func,
+  sendVerificationMessage: bool,
   show: bool,
   submitBtnContent: string,
   submitRedirect: bool,
