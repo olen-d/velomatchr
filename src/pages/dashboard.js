@@ -5,6 +5,7 @@ import {
   Grid
  } from "semantic-ui-react";
 
+import ActionItemsList from "../components/actionItemsList";
 import MatchesList from "../components/matchesList";
 import ProfileCard from "../components/profileCard";
 
@@ -48,6 +49,7 @@ const Dashboard = () => {
             <ProfileCard marginTop="0rem" />
           </Grid.Column>
           <Grid.Column width="8">
+            <ActionItemsList></ActionItemsList>
             { isPotentialVisible && <MatchesList showHeadline={true} showMatches={false} status={0} /> }
             { isRequestedVisible && <MatchesList showHeadline={true} showNoMatches={false} status={1} /> }
             { isMatchedVisible && <MatchesList showHeadline={true} showNoMatches={false} status={2} /> }
