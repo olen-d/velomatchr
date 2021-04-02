@@ -9,6 +9,8 @@ import * as auth from "./auth";
 import ActionItemCard from "./actionItemCard";
 
 const ActionItemsList = props => {
+  const [hasCompletePersonalInfo, setHasCompletePersonalInfo] = useState(true);
+  const [hasGeographicCoordinates, setHasGeographicCoordinates] = useState(true);
   const [hasMatchPreferences, setHasMatchPreferences] = useState(true);
   const [hasSurveyAnswers, setHasSurveyAnswers] = useState(true);
   const [hasVerifiedEmail, setHasVerifiedEmail] = useState(true);
@@ -52,7 +54,7 @@ const ActionItemsList = props => {
 
         // console.log(actionItemsJson);
         // Check to see if match preferences have been set
-        const [{ user: { userMatchPrefs } , }, answersJson, { user: { isEmailVerified }, }] = actionItemsJson;
+        const [{ user: { userMatchPrefs } , }, answersJson, { user: { firstName, gender, isEmailVerified, lastName, latitude, longitude }, }] = actionItemsJson;
         // console.log("CHEESE:\n" + cheese);
         if (userMatchPrefs) { setHasMatchPreferences(true) } else { setHasMatchPreferences(false) };
         // Check for survey answers
@@ -60,6 +62,12 @@ const ActionItemsList = props => {
 
         // Check for verified email
         if (isEmailVerified) { setHasVerifiedEmail(true) } else { setHasVerifiedEmail(false) };
+
+        // check for missing lat/long
+        console.log("Lat/Long", latitude, longitude);
+        if (latitude == 0 && longitude == 0) { setHasGeographicCoordinates(false) } else { setHasGeographicCoordinates (true) };
+
+        // Check for missing personal information
       })();
     }
   }, [accessToken, setAccessToken, userId]);
@@ -71,6 +79,7 @@ const ActionItemsList = props => {
       { !hasMatchPreferences && <ActionItemCard action="Set My Match Preferences" headline="Please Set Your Match Preferences" message="We need to know about who you'd like to match with to find your potential matches. " submitRedirectURL="/matches/preferences" /> }
       { !hasSurveyAnswers && <ActionItemCard action="Take Me To The Survey" headline="Please Complete the Survey" message="To find your matches, we need to know a few things about your riding style. Please answer the survey questions so we can find your potential matches. " submitRedirectURL="/survey" /> }
       { !hasVerifiedEmail && <ActionItemCard action="Verify My Email Address" headline="Please Verify Your Email Address" message="To send email to your matches, we need to verify that you have control of the email address you signed up with. " submitRedirectURL="/verify/email" /> }
+      { !hasGeographicCoordinates && <ActionItemCard action="Set My Location" headline="Please Set Your Location" message="We need to know where you are to match you with nearby cyclists" submitRedirectURL="/settings/profile" /> }
      </div>
   );
 };
