@@ -64,10 +64,10 @@ const ActionItemsList = props => {
         if (isEmailVerified) { setHasVerifiedEmail(true) } else { setHasVerifiedEmail(false) };
 
         // check for missing lat/long
-        console.log("Lat/Long", latitude, longitude);
-        if (latitude == 0 && longitude == 0) { setHasGeographicCoordinates(false) } else { setHasGeographicCoordinates (true) };
+        if (Math.round(latitude) === 0 && Math.round(longitude) === 0) { setHasGeographicCoordinates(false) } else { setHasGeographicCoordinates (true) };
 
         // Check for missing personal information
+        if (firstName && gender && lastName) { setHasCompletePersonalInfo(true) } else { setHasCompletePersonalInfo(false) };
       })();
     }
   }, [accessToken, setAccessToken, userId]);
@@ -79,7 +79,8 @@ const ActionItemsList = props => {
       { !hasMatchPreferences && <ActionItemCard action="Set My Match Preferences" headline="Please Set Your Match Preferences" message="We need to know about who you'd like to match with to find your potential matches. " submitRedirectURL="/matches/preferences" /> }
       { !hasSurveyAnswers && <ActionItemCard action="Take Me To The Survey" headline="Please Complete the Survey" message="To find your matches, we need to know a few things about your riding style. Please answer the survey questions so we can find your potential matches. " submitRedirectURL="/survey" /> }
       { !hasVerifiedEmail && <ActionItemCard action="Verify My Email Address" headline="Please Verify Your Email Address" message="To send email to your matches, we need to verify that you have control of the email address you signed up with. " submitRedirectURL="/verify/email" /> }
-      { !hasGeographicCoordinates && <ActionItemCard action="Set My Location" headline="Please Set Your Location" message="We need to know where you are to match you with nearby cyclists" submitRedirectURL="/settings/profile" /> }
+      { !hasGeographicCoordinates && <ActionItemCard action="Set My Location" headline="Please Set Your Location" message="We need to know where you are to match you with nearby cyclists. " submitRedirectURL="/settings/profile" /> }
+      { !hasCompletePersonalInfo && <ActionItemCard action="Complete My Profile" headline="Please Complete Your Profile" message="Some of your profile information has not been filled out. " submitRedirectURL="/settings/profile" /> }
      </div>
   );
 };
