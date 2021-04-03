@@ -13,7 +13,7 @@ import "./actionItemCard.css";
 const ActionItemCard = props => {
   const { action, headline, message, submitRedirectURL } = props;
 
-  const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth(); 
+  const { setDoRedirect, setRedirectURL } = useAuth(); 
 
   const handleSubmit = () => {
     setRedirectURL(submitRedirectURL);
@@ -32,6 +32,7 @@ const ActionItemCard = props => {
       </div>
       <div className="action-item-action">
         <Button
+          basic
           color="red"
           size="large"
           onClick={handleSubmit}
