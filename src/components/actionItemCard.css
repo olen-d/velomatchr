@@ -2,3 +2,19 @@
 .action-item-message {
   margin-bottom: 1rem;
 }
+
+.action-item-card {
+  margin-bottom: 4rem;
+}
+
+@media screen and (min-width: 320px) {
+  .action-item-card button {
+    width: 100%
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .action-item-card button {
+    width: 50%;
+  }
+}
