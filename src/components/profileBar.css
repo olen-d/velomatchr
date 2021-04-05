@@ -1,0 +1,10 @@
+.profile-bar {
+  width: 100%;
+  text-align: right;
+}
+
+.profile-bar-full-name {
+  margin-right: 1rem;
+  margin-left: 0.5rem;
+  font-size: 130%;
+}
