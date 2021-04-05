@@ -18,9 +18,10 @@ import * as auth from "./../components/auth";
 import { useAuth } from "./../context/authContext";
 
 import BlockedList from "./../components/blockedList";
-import MatchesList from "./../components/matchesList";
+import MatchLists from "./../components/matchLists";
 import MatchPreferences from "./../components/matchPreferences";
 import MatchCard from "./../components/matchCard";
+import ProfileBar from "./../components/profileBar";
 
 const Matches = ({ match }) => {
   const OneMatch = props => {
@@ -114,32 +115,14 @@ const Matches = ({ match }) => {
     )
   };
 
-  const MatchLists = () => {
-    const [matches, setMatches] = useState({ error: null, matchesResult: [], isLoading: false });
-    const [totalPotential, setTotalPotential] = useState(0);
-    const [totalRequested, setTotalRequested] = useState(0);
-    const [totalMatched, setTotalMatched] = useState(0);
-
-    return(
-      <MatchesContext.Provider value={{matches, setMatches, totalPotential, setTotalPotential, totalRequested, setTotalRequested, totalMatched, setTotalMatched}}>
-        <Grid.Row>
-          <Grid.Column width={4}>
-            &nbsp;
-          </Grid.Column>
-          <Grid.Column width={8}>
-            <MatchesList showHeadline={true} status={2} />
-          </Grid.Column>
-          <Grid.Column width={4}>
-            <MatchesList showHeadline={true} status={0} />
-          </Grid.Column>
-        </Grid.Row>
-      </MatchesContext.Provider>
-    );
-  }
-
   return(
     <Container>
       <Grid stackable>
+      <Grid.Row>
+          <Grid.Column width={16}>
+            <ProfileBar></ProfileBar>
+          </Grid.Column>
+        </Grid.Row>
         <Grid.Row>
           <Grid.Column width={16}>
             <Header 
