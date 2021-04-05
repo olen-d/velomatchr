@@ -11,6 +11,8 @@ import ProfileCard from "../components/profileCard";
 
 import { MatchesContext } from "../context/matchesContext";
 
+import "./dashboard.css";
+
 const Dashboard = () => {
   const [matches, setMatches] = useState([]);
   const [matchesUpdated, setMatchesUpdated] = useState(false);
@@ -42,24 +44,26 @@ const Dashboard = () => {
   // Else if matches, show matches
 
   return(
-    <Container>
-      <Grid stackable>
-        <MatchesContext.Provider value={{matches, setMatches, matchesUpdated, setMatchesUpdated, totalMatched, setTotalMatched, totalPotential, setTotalPotential, totalRequested, setTotalRequested }}>
-          <Grid.Column width="4">
-            <ProfileCard marginTop="0rem" />
-          </Grid.Column>
-          <Grid.Column width="8">
-            <ActionItemsList></ActionItemsList>
-            { isPotentialVisible && <MatchesList showHeadline={true} showMatches={false} status={0} /> }
-            { isRequestedVisible && <MatchesList showHeadline={true} showNoMatches={false} status={1} /> }
-            { isMatchedVisible && <MatchesList showHeadline={true} showNoMatches={false} status={2} /> }
-          </Grid.Column>
-          <Grid.Column width={4}>
-            &nbsp;
-          </Grid.Column>
-        </MatchesContext.Provider>
-      </Grid>
-    </Container>
+    <div className="dashboard">
+      <Container>
+        <Grid stackable>
+          <MatchesContext.Provider value={{matches, setMatches, matchesUpdated, setMatchesUpdated, totalMatched, setTotalMatched, totalPotential, setTotalPotential, totalRequested, setTotalRequested }}>
+            <Grid.Column width="4">
+              <ProfileCard marginTop="0rem" />
+            </Grid.Column>
+            <Grid.Column width="8">
+              <ActionItemsList></ActionItemsList>
+              { isPotentialVisible && <MatchesList showHeadline={true} showMatches={false} status={0} /> }
+              { isRequestedVisible && <MatchesList showHeadline={true} showNoMatches={false} status={1} /> }
+              { isMatchedVisible && <MatchesList showHeadline={true} showNoMatches={false} status={2} /> }
+            </Grid.Column>
+            <Grid.Column width={4}>
+              &nbsp;
+            </Grid.Column>
+          </MatchesContext.Provider>
+        </Grid>
+      </Container>
+    </div>
   );
 }
 
