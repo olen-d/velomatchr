@@ -9,8 +9,8 @@ const UnfriendMatchButton = props => {
   return(
     <Button
       type="button"
-      size="tiny"
-      color="yellow"
+      size="medium"
+      color="grey"
       icon="minus circle"
       content="Unfriend"
       onClick={() => postAction("updateStatus", 3)}

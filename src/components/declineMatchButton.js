@@ -9,8 +9,8 @@ const DeclineMatchButton = props => {
   return(
     <Button
       type="button"
-      size="tiny"
-      color="yellow"
+      size="medium"
+      color="grey"
       icon="user delete"
       content="Decline"
       onClick={() => postAction("updateStatus", 3)}

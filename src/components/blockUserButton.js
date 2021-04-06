@@ -9,8 +9,8 @@ const BlockUserButton = props => {
   return(
     <Button
       type="button"
-      size="tiny"
-      color="yellow"
+      size="medium"
+      color="grey"
       icon="ban"
       content="Block"
       onClick={() => postAction("updateStatus", 4)}

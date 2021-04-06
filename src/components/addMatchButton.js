@@ -9,8 +9,8 @@ const AddMatchButton = props => {
   return(
     <Button
       type="button"
-      size="tiny"
-      color="yellow"
+      size="medium"
+      color="red"
       icon="user plus"
       content="Add Buddy"
       onClick={() => postAction("updateStatus", status + 1)}
