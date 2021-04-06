@@ -15,6 +15,8 @@ import UnfriendMatchButton from "./unfriendMatchButton";
 
 import * as auth from "./auth";
 
+import "./matchCard.css";
+
 const MatchCard = props => {
   const {
     status,

@@ -10,8 +10,8 @@ const EmailMatchButton = props => {
     <Button
       disabled={isEmailMatchDisabled}
       type="button"
-      size="tiny"
-      color="yellow"
+      size="medium"
+      color="red"
       icon="envelope"
       content="Email Buddy"
       onClick={() => postAction("composeEmail", 0)}
