@@ -4,15 +4,15 @@ import PropTypes from "prop-types";
 import { Button } from "semantic-ui-react";
 
 const AddMatchButton = props => {
-  const { postAction, status } = props;
+  const { content, postAction, status } = props;
 
   return(
     <Button
       type="button"
-      size="medium"
+      size="large"
       color="red"
       icon="user plus"
-      content="Add Buddy"
+      content={content}
       onClick={() => postAction("updateStatus", status + 1)}
     >
     </Button>

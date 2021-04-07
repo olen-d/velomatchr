@@ -1,6 +1,19 @@
-@media screen and (max-width: 768px) {
-  .match-card-actions button {
-    margin-bottom: 0.5rem !important;
-    width: 100%;
-  }
+.match-card-actions {
+  margin-top: 2rem;
+}
+
+.match-card {
+  border: 1px solid #ddd;
+  width: 320px;
+  margin-bottom: 5rem;
+  padding: 1rem;
+  border-radius: 0.45rem;
+}
+
+.match-card-button-row {
+  margin-bottom: 0.5rem;
+}
+
+.match-card-profile-photo {
+  float: right;
 }

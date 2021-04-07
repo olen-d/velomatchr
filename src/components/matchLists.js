@@ -15,12 +15,12 @@ const MatchLists = () => {
   return(
     <MatchesContext.Provider value={{matches, setMatches, totalPotential, setTotalPotential, totalRequested, setTotalRequested, totalMatched, setTotalMatched}}>
       <Grid.Row>
+        <Grid.Column width={6}>
+          <MatchesList showHeadline={true} status={2} />
+        </Grid.Column>
         <Grid.Column width={10}>
           <MatchesList showHeadline={true} status={1} />
           <MatchesList showHeadline={true} status={0} />
-        </Grid.Column>
-        <Grid.Column width={6}>
-          <MatchesList showHeadline={true} status={2} />
         </Grid.Column>
       </Grid.Row>
     </MatchesContext.Provider>

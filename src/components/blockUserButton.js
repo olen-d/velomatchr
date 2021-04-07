@@ -9,7 +9,9 @@ const BlockUserButton = props => {
   return(
     <Button
       type="button"
-      size="medium"
+      size="large"
+      basic={true}
+      fluid={true}
       color="grey"
       icon="ban"
       content="Block"

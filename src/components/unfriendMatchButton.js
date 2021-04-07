@@ -9,7 +9,7 @@ const UnfriendMatchButton = props => {
   return(
     <Button
       type="button"
-      size="medium"
+      size="large"
       color="grey"
       icon="minus circle"
       content="Unfriend"
