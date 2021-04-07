@@ -9,7 +9,7 @@ const DeclineMatchButton = props => {
   return(
     <Button
       type="button"
-      size="medium"
+      size="large"
       color="grey"
       icon="user delete"
       content="Decline"

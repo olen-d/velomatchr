@@ -155,9 +155,10 @@ const MatchesList = props => {
               {headline}
             </div>
           }
-          {matchesFilteredByStatus.map(({ id, addressee: { id: addresseeId, firstName, lastName, isEmailVerified, photoLink, city, stateCode, createdAt}, }) => (
-            <div className="match-card" key={id}>
+          <div className="match-cards-container">
+            {matchesFilteredByStatus.map(({ id, addressee: { id: addresseeId, firstName, lastName, isEmailVerified, photoLink, city, stateCode, createdAt}, }) => (
               <MatchCard
+                key={id}
                 status={status}
                 requesterId={userId}
                 addresseeId={addresseeId}
@@ -172,8 +173,8 @@ const MatchesList = props => {
                 }).format(new Date(createdAt))}
                 isEmailMatchDisabled={status === 2 && isEmailVerified === 0 ? true : false}
               />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )
     }

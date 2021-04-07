@@ -6,6 +6,8 @@ import { Redirect } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { useMatches } from "../context/matchesContext";
 
+import { Icon, Header, Button } from "semantic-ui-react";
+
 import AddMatchButton from "./addMatchButton";
 import BlockUserButton from "./blockUserButton";
 import DeclineMatchButton from "./declineMatchButton";
@@ -101,19 +103,21 @@ const MatchCard = props => {
   }
 
   return(
-    <>
+    <div className="match-card">
       { executeRedirect ? <Redirect to={`${redirectURI}`} /> : null }
       <ErrorContainer
         header={isErrorHeader}
         message={isErrorMessage}
         show={isError}
       />
-      <div className="match-card-profile photo">
-        { photoLink ? ( <img src={pl} width="100px" height="auto" alt={firstName} /> ) : ( <i className="fas fa-user-circle"></i> ) }
+      <div className="match-card-profile-photo">
+        { photoLink ? ( <img src={pl} width="100px" height="auto" alt={firstName} /> ) : ( <Icon color="grey" name="user circle" size="big" /> ) }
       </div>
       <div className="match-card-full-name">
-        {firstName} {lastName}
+        <Header as="h3" color="black">{firstName} {lastName}</Header>
       </div>
+
+
       <div className="match-card-address">
         {city}, {stateCode}
       </div>
@@ -121,14 +125,20 @@ const MatchCard = props => {
         Member Since: {createdAt}
       </div>
       <div className="match-card-actions">
-        { status === 0 && <><AddMatchButton status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
-        { status === 1 && <><AddMatchButton status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
-        { status === 2 && <><EmailMatchButton isEmailMatchDisabled={isEmailMatchDisabled} postAction={postAction} /><UnfriendMatchButton postAction={postAction}/></> }
-        <BlockUserButton
-          postAction={postAction}
-        />
+        <div className="match-card-button-row">
+          <Button.Group widths={2}>
+            { status === 0 && <><AddMatchButton content="Request" status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
+            { status === 1 && <><AddMatchButton content="Approve" status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
+            { status === 2 && <><EmailMatchButton isEmailMatchDisabled={isEmailMatchDisabled} postAction={postAction} /><UnfriendMatchButton postAction={postAction}/></> }
+          </Button.Group>
+        </div>
+        { status === 2 &&
+          <BlockUserButton
+            postAction={postAction}
+          />
+        }
       </div>
-    </>
+    </div>
   )
 }
 
