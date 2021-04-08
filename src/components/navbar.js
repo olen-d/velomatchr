@@ -73,6 +73,11 @@ const NavBar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const { innerWidth } = getWindowDimensions();
+    innerWidth < 768 ? setHamburgerIsVisible(true) : setNavbarIsVisible(true);
+  }, []);
+
   return(
     <Container>
       { hamburgerIsVisible &&
