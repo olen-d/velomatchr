@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as auth from "./auth";
 
 import {
@@ -10,6 +10,8 @@ import { useAuth } from "../context/authContext";
 
 import {
   Container,
+  Grid,
+  Icon,
   Menu, 
 } from 'semantic-ui-react';
 
@@ -28,7 +30,20 @@ const settingsItems = [
 ];
 
 const NavBar = () => {
+
+  const [ hamburgerIsVisible, setHamburgerIsVisible ] = useState(false);
+  const [ navbarIsVisible, setNavbarIsVisible ] = useState(false);
+
   const { accessToken, setIsAuth, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
+
+  const getWindowDimensions = () => {
+    const { innerWidth, innerHeight } = window;
+    return { innerWidth, innerHeight };
+  }
+
+  const handleToggleNavbarVisibility = () => {
+    setNavbarIsVisible(!navbarIsVisible);
+  }
 
   const logout = async () => {
     const newAuthStatus = await auth.logout(accessToken);
@@ -46,27 +61,47 @@ const NavBar = () => {
     return null;
   }
 
+  useEffect(() => {
+    const handleResize = () => {
+      const { innerWidth } = getWindowDimensions(); // Ignore innerHeight, may be useful in the future for detecting portrait or landscape orientation
+      const isMobileTablet = innerWidth < 768 ? true : false;
+      setHamburgerIsVisible(isMobileTablet);
+      setNavbarIsVisible(!isMobileTablet);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return(
     <Container>
-      <Menu inverted color="red">
-        <Menu.Item as={ Link } to="/dashboard">
-          <i className="fas fa-bicycle"></i>
-        </Menu.Item>
-        <Menu.Menu position="right">
-          <Menu.Item as={ NavLink } to="/survey">
-            Survey
-          </Menu.Item>
-          <NavDropdown title="Matches" items={ matchesItems } />
-          <Menu.Item as={ NavLink } to="/messages">
-            Messages
-          </Menu.Item>
-          <NavDropdown title="Settings" items={ settingsItems } />
-          <Menu.Item onClick={logout}>
-            Sign Out
-          </Menu.Item>
-        </Menu.Menu>
-      </Menu>
-
+      { hamburgerIsVisible &&
+        <Grid.Row columns={16}>
+          <Icon name="bars" onClick={handleToggleNavbarVisibility} />
+        </Grid.Row>
+      }
+      { navbarIsVisible &&
+        <Grid.Row columns={16}>
+          <Menu color="red" inverted stackable>
+            <Menu.Item as={ Link } to="/dashboard">
+              <i className="fas fa-bicycle"></i>
+            </Menu.Item>
+            <Menu.Menu position="right">
+              <Menu.Item as={ NavLink } to="/survey">
+                Survey
+              </Menu.Item>
+              <NavDropdown title="Matches" items={ matchesItems } />
+              <Menu.Item as={ NavLink } to="/messages">
+                Messages
+              </Menu.Item>
+              <NavDropdown title="Settings" items={ settingsItems } />
+              <Menu.Item onClick={logout}>
+                Sign Out
+              </Menu.Item>
+            </Menu.Menu>
+          </Menu>
+        </Grid.Row>
+      }
     </Container>
   );
 }
