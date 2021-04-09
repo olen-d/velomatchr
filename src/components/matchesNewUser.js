@@ -17,6 +17,9 @@ const MatchesNewUser = props => {
 
   const [matches, setMatches] = useState({ error: null, matchesResult: [], isLoading: false });
   const [matchesUpdated, setMatchesUpdated] = useState(false);
+  const [totalPotential, setTotalPotential] = useState(0);
+  const [totalRequested, setTotalRequested] = useState(0);
+  const [totalMatched, setTotalMatched] = useState(0);
 
   const { setDoRedirect, setRedirectURL } = useAuth();
 
@@ -28,7 +31,7 @@ const MatchesNewUser = props => {
   }
 
   return(
-    <MatchesContext.Provider value={{matches, setMatches, matchesUpdated, setMatchesUpdated}}>
+    <MatchesContext.Provider value={{matches, setMatches, totalPotential, setTotalPotential, totalRequested, setTotalRequested, totalMatched, setTotalMatched,  matchesUpdated, setMatchesUpdated}}>
       <Grid.Column width={colWidth}>
         <Header
           as="h2"
