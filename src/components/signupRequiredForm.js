@@ -95,6 +95,7 @@ const SignupRequiredForm = props => {
         serverErrors.forEach(error => {
           handleServerErrors(...[error]);
         });
+        throw new Error("Unable to Create New Account");
       } else {
         if (data.tokens) {
           const { authenticated, tokens: { access_token: token, refresh_token: refreshToken }, } = data; // token_type: tokenType
