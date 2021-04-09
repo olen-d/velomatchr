@@ -56,11 +56,12 @@ exports.create_user = async (req, res) => {
     try {
       const locationResponse = await reverseGeocode(latitude, longitude);
       const location = await locationResponse.json();
-
+// console.log("\n\nLOC:\n" + JSON.stringify(location , null, 2) + "\n\n");
       // Check for status
       // Destructure the first location returned
+// console.log("\nRES:\n" + JSON.stringify(location.results[0].locations[0].adminArea3 , null, 2) + "\n\n");
       const { results: [{ locations: [{ adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000" }], }], } = location;
-
+// console.log ("\n\nDESTRUCT:\nSTATE CODE:" + stateCode + "\nCountry CODE:\n" + countryCode +"\n\n");
       // Get the full names of the state and country based on the codes returned
       const geographyNamesResponse = await Promise.all([
         fetch(`${process.env.REACT_APP_API_URL}/api/states/code/${stateCode}`),
@@ -72,7 +73,10 @@ exports.create_user = async (req, res) => {
       // ! TODO: Handle any errors returned
 
       const geographyNamesJson = await Promise.all(geographyNamesResponse.map(geographyName => { return geographyName.json() }));
-      const geographyNames = geographyNamesJson.map(geographyName => { const { adminAreaType, name, status } = geographyName; return status === 200 ? { [adminAreaType]: { name } } : { [adminAreaType]: { name: "Not Found" } } });
+      const geographyNames = geographyNamesJson.map(geographyName => { const { adminAreaType, [adminAreaType]: { name } , status } = geographyName; return status === 200 ? { [adminAreaType]: { name } } : { [adminAreaType]: { name: "Not Found" } } });
+// const adminAreaType = "state"
+// const {adminAreaType, [adminAreaType]: { name }, } = geographyNamesJson[0]; 
+// console.log("\nGEO NAMES:\n" + JSON.stringify(name, null, 2));
       const [{ state: { name: stateName }, }, { country: { name: countryName }, }] = geographyNames;
 
       // Encrypt the password
@@ -154,6 +158,9 @@ exports.create_user = async (req, res) => {
       // Check for unique constraint violation
       if (error.name === "SequelizeUniqueConstraintError") {
         errors.push({ email: true });
+        res.status(400).json({ status: 400, message: "Bad Request", errors })
+      } else if (error.name === "SequelizeValidationError") {
+        // TODO: integrrate with the error system
         res.status(400).json({ status: 400, message: "Bad Request", errors })
       }
     }
