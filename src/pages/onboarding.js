@@ -9,7 +9,7 @@ import {
   Container,
   Grid,
   Header
- } from "semantic-ui-react";
+} from "semantic-ui-react";
 
 import MatchesNewUser from "../components/matchesNewUser";
 import MatchPreferencesForm from "../components/matchPreferencesForm";
