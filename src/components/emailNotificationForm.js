@@ -53,7 +53,7 @@ const EmailNotificationCheckboxes = props => {
 
         const updateResultString = buildUpdateErrorString(updateResult);
         const wasWere = updateResult.length > 1 ? "were" : "was";
-        
+
         setIsErrorHeader("Unable to Update Email Notification Preferences");
         setIsErrorMessage(`The server appears to be down or unavailable. Please wait a few minutes and try again. ${updateResultString} ${wasWere} not updated.`);
         setIsError(true);
@@ -125,16 +125,16 @@ const EmailNotificationCheckboxes = props => {
   ]
 
   useEffect(() => { setUserId(user) }, [user]);
-  
+
   // Get notification settings from the database
   useEffect(() => {
     const createNotificationPrefs = async () => {
       const formData = { userId };
-  
+
       try {
         const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
         if (isNewAccessToken) { setAccessToken(token); }
-  
+
         const createResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/notifications/preferences`, {
           method: "post",
           headers: {
@@ -143,9 +143,9 @@ const EmailNotificationCheckboxes = props => {
           },
           body: JSON.stringify(formData)
         });
-  
+
         const createData = createResponse.ok ? await createResponse.json() : false;
-  
+
         return (createData && createData.status === 201 ? true : false); 
       } catch(error) {
         return (false);
@@ -156,7 +156,7 @@ const EmailNotificationCheckboxes = props => {
       try {
         const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
         if (isNewAccessToken) { setAccessToken(token); }
-        
+
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/notifications/preferences/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -171,6 +171,10 @@ const EmailNotificationCheckboxes = props => {
           if (response.status === 404) {
             // No preferences were found, we will need to create them
             const createResult = await createNotificationPrefs();
+            const emailNotificationPrefs = {};
+            emailNotificationPrefs["newRequest"] = false;
+            emailNotificationPrefs["newBuddy"] = false;
+            setInitialValues(emailNotificationPrefs);
             if (!createResult) {
               // TODO: Failed to create. Deal with the error.
             }
