@@ -9,15 +9,25 @@ import { useMatches } from "../context/matchesContext";
 import { Icon, Header, Button } from "semantic-ui-react";
 
 import AddMatchButton from "./addMatchButton";
-import BlockUserButton from "./blockUserButton";
 import DeclineMatchButton from "./declineMatchButton";
 import EmailMatchButton from "./emailMatchButton";
 import ErrorContainer from "./errorContainer";
-import UnfriendMatchButton from "./unfriendMatchButton";
+import MatchActions from "./MatchActions";
 
 import * as auth from "./auth";
 
 import "./matchCard.css";
+
+const ActionButtons = props => {
+  const { status, postAction } = props;
+
+  return(
+    <Button.Group widths={2}>
+      { status === 0 && <><AddMatchButton content="Request" status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
+      { status === 1 && <><AddMatchButton content="Approve" status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
+    </Button.Group>
+  );
+}
 
 const MatchCard = props => {
   const {
@@ -126,17 +136,9 @@ const MatchCard = props => {
       </div>
       <div className="match-card-actions">
         <div className="match-card-button-row">
-          <Button.Group widths={2}>
-            { status === 0 && <><AddMatchButton content="Request" status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
-            { status === 1 && <><AddMatchButton content="Approve" status={status} postAction={postAction}/><DeclineMatchButton postAction={postAction}/></> }
-            { status === 2 && <><EmailMatchButton isEmailMatchDisabled={isEmailMatchDisabled} postAction={postAction} /><UnfriendMatchButton postAction={postAction}/></> }
-          </Button.Group>
+          { (status === 0 || status === 1)  && <ActionButtons status={status} postAction={postAction}></ActionButtons> }
+          { status === 2 && <><EmailMatchButton isEmailMatchDisabled={isEmailMatchDisabled} postAction={postAction} /><MatchActions postAction={postAction}></MatchActions></> }
         </div>
-        { status === 2 &&
-          <BlockUserButton
-            postAction={postAction}
-          />
-        }
       </div>
     </div>
   )
