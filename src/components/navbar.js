@@ -4,6 +4,7 @@ import * as auth from "./auth";
 import {
   Link, 
   NavLink,
+  useLocation
 } from "react-router-dom";
 
 import { useAuth } from "../context/authContext";
@@ -35,6 +36,8 @@ const NavBar = () => {
   const [ navbarIsVisible, setNavbarIsVisible ] = useState(false);
 
   const { accessToken, setIsAuth, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
+
+  const location = useLocation();
 
   const getWindowDimensions = () => {
     const { innerWidth, innerHeight } = window;
@@ -78,6 +81,11 @@ const NavBar = () => {
     innerWidth < 768 ? setHamburgerIsVisible(true) : setNavbarIsVisible(true);
   }, []);
 
+  // Close the responsive navbar when the hamburger menu icon is visible and the user has navigated to a new route
+  useEffect(() => {
+    hamburgerIsVisible && setNavbarIsVisible(false);
+  }, [hamburgerIsVisible, location]);
+
   return(
     <Container>
       { hamburgerIsVisible &&
@@ -110,6 +118,5 @@ const NavBar = () => {
     </Container>
   );
 }
-  
+
 export default NavBar;
-  
