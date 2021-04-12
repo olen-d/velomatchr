@@ -16,6 +16,7 @@ import {
   Form,
   Grid,
   Icon,
+  Message,
   Modal,
   Header
 } from "semantic-ui-react"
@@ -118,7 +119,7 @@ const SurveyForm = props => {
             onClick={handleOpen}
           >
           </Button>
-        }     
+        }
         open={isOpen}
         onClose={handleClose}
         closeIcon
@@ -314,58 +315,48 @@ const SurveyForm = props => {
 
   return(
     <>
-      <Grid.Row>
-        <Grid.Column width={colWidth}>
-          <Header
-            as="h2"
-            color="orange"
-          >
-            {formTitle}
-          </Header>
-        </Grid.Column>
-      </Grid.Row>
-      <Grid.Row>
-        <Grid.Column width={colWidth}>
-          <p>
-            {formInstructions}
-          </p>
-        </Grid.Column>
-      </Grid.Row>
-      <Grid.Row>
-        <Grid.Column width={colWidth}>
-          <Form
-            size="large"
-          >
-            {questions.map(question => (
-              <SurveyQuestion
-                key={question.id}
-                id={question.id}
-                number={question.number}
-                text={question.text}
-                answer={answers}
-                validate={validate}
-                onChange={setAnswerState.bind(this)}
-              >
-                {likertItems.map(likertItem => (
-                  <LikertItem 
-                    key={likertItem.id}
-                    id={likertItem.id}
-                    number={likertItem.number}
-                    text={likertItem.text}
-                  />
-                  ))}  
-              </SurveyQuestion>
-            ))}
-            <ConfirmUpdateModal />
-            <MatchPrefsModal isOpen = { hasMatchPrefs ? false : true }/>
-          </Form>
-          <ErrorContainer
-            header={isErrorHeader}
-            message={isErrorMessage}
-            show={isError}
-          />
-        </Grid.Column>
-      </Grid.Row>
+      <Grid.Column width={colWidth}>
+        <Header
+          as="h2"
+          color="grey"
+        >
+          {formTitle}
+        </Header>
+        <Message>
+          {formInstructions}
+        </Message>
+        <Form
+          size="large"
+        >
+          {questions.map(question => (
+            <SurveyQuestion
+              key={question.id}
+              id={question.id}
+              number={question.number}
+              text={question.text}
+              answer={answers}
+              validate={validate}
+              onChange={setAnswerState.bind(this)}
+            >
+              {likertItems.map(likertItem => (
+                <LikertItem 
+                  key={likertItem.id}
+                  id={likertItem.id}
+                  number={likertItem.number}
+                  text={likertItem.text}
+                />
+                ))}  
+            </SurveyQuestion>
+          ))}
+          <ConfirmUpdateModal />
+          <MatchPrefsModal isOpen = { hasMatchPrefs ? false : true }/>
+        </Form>
+        <ErrorContainer
+          header={isErrorHeader}
+          message={isErrorMessage}
+          show={isError}
+        />
+      </Grid.Column>
     </>
   );
 }
