@@ -18,6 +18,8 @@ import {
 
 import NavDropdown from "./navDropdown";
 
+import "./navbar.css";
+
 const matchesItems = [
   { key: "matches", text: "All Matches", value: "/matches"},
   { key: "manage-blocked", text: "Manage Blocking", value: "/matches/manage-blocked"},
@@ -89,8 +91,15 @@ const NavBar = () => {
   return(
     <Container>
       { hamburgerIsVisible &&
-        <Grid.Row columns={16}>
-          <Icon name="bars" onClick={handleToggleNavbarVisibility} />
+        <Grid.Row>
+          <div className="navbar-mobile">
+            <div className="navbar-identity">
+              VELOMATCHR
+            </div>
+            <div className="navbar-hamburger">
+              <Icon name="bars" onClick={handleToggleNavbarVisibility} size="big" />
+            </div>
+          </div>
         </Grid.Row>
       }
       { navbarIsVisible &&
