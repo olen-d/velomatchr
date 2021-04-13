@@ -246,7 +246,6 @@ const MatchPreferencesForm = props => {
     <Grid.Column width={colWidth}>
       <Header 
         as="h2" 
-        textAlign="center"
         color="grey"
       >
         {formTitle}

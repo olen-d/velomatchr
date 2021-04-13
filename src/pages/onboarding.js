@@ -73,7 +73,6 @@ const Onboarding = ({ match }) => {
                   {...props}
                   colWidth={6}
                   emailNotificationsTitle={"Send Me an Email When:"}
-                  firstHeadingAlig={"center"}
                   formInstructions={"Tell us how you would like to be notified when you have new buddy requests or someone accepts your request. Leave unchecked if you do not wish to be notified."}
                   formTitle={"Set Your Notification Preferences"}
                   submitBtnContent={"Save and Continue"}
@@ -103,7 +102,7 @@ const Onboarding = ({ match }) => {
                   {...props}
                   colWidth={8}
                   formInstructions={"Rate the following statements on a scale of one to five, with one indicating you strongly agree, three indicating neither agreement or disagreement, and five indicating strong disagreement."}
-                  formTitle={"Your Cycling Preferences"}
+                  formTitle={"Take the Survey"}
                   submitBtnContent={"Find My Buddies"}
                   submitRedirect={true}
                   submitRedirectURL={"/onboarding/matches"}

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import * as auth from "./auth";
 
-import { Button } from "semantic-ui-react";
+import { Button, Segment } from "semantic-ui-react";
 
 import { useAuth } from "../context/authContext";
 
@@ -16,7 +16,7 @@ import useForm from "../hooks/useForm";
 const checkboxStyle = { marginBottom: "1rem" }
 
 const EmailNotificationCheckboxes = props => {
-  const { submitBtnContent, submitRedirect, submitRedirectURL } = props;
+  const { formTitle, submitBtnContent, submitRedirect, submitRedirectURL } = props;
 
   const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth(); // setDoRedirect, setRedirectURL 
 
@@ -217,28 +217,34 @@ const EmailNotificationCheckboxes = props => {
           message={isSuccessMessage}
           show={isSuccess}
         />
-        {
-          options.map(([name, label], index) => (
-            <CheckboxToggle label={label} style={checkboxStyle} name={name} handleChange={handleCheckboxChange} checked={values[name]} key={`checkbox${index}`} />
-          ))
-        }
-        <Button
-          disabled={Object.entries(values).length < 1}
-          className="fluid"
-          type="button"
-          color="red"
-          size="large"
-          icon="check circle"
-          labelPosition="left"
-          content={submitBtnContent}
-          onClick={handleSubmit}
-        >
-        </Button>
+        <Segment>
+          <p>
+            <b>{formTitle}</b>
+          </p>
+          {
+            options.map(([name, label], index) => (
+              <CheckboxToggle label={label} style={checkboxStyle} name={name} handleChange={handleCheckboxChange} checked={values[name]} key={`checkbox${index}`} />
+            ))
+          }
+          <Button
+            disabled={Object.entries(values).length < 1}
+            className="fluid"
+            type="button"
+            color="red"
+            size="large"
+            icon="check circle"
+            labelPosition="left"
+            content={submitBtnContent}
+            onClick={handleSubmit}
+          >
+          </Button>
+        </Segment>
       </div>
   );
 }
 
 EmailNotificationCheckboxes.defaultProps = {
+  formTitle: "Send me an Email When:",
   submitBtnContent: "Update Email Notifications",
   submitRedirect: false,
   submitRedirectURL: "/dashboard"
@@ -247,6 +253,7 @@ EmailNotificationCheckboxes.defaultProps = {
 const { bool, string } = PropTypes;
 
 EmailNotificationCheckboxes.propTypes = {
+  formTitle: string,
   submitBtnContent: string,
   submitRedirect: bool,
   submitRedirectURL: string

@@ -127,8 +127,7 @@ const ProfileRequiredForm = props => {
   return(
     <Grid.Column width={colWidth}>
       <Header 
-        as="h2" 
-        textAlign="center"
+        as="h2"
         color="grey"
       >
         {formTitle}

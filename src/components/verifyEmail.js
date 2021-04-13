@@ -1,3 +1,5 @@
+// ! TODO: Check to see if the email address is verified and DON'T send a code if it's already verified
+
 import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
@@ -256,8 +258,7 @@ const VerifyEmail = props => {
     return(
       <Grid.Column width={colWidth}>
         <Header 
-          as="h2" 
-          textAlign="center"
+          as="h2"
           color="grey"
         >
           {formTitle}
