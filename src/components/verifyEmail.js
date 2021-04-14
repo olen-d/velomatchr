@@ -1,5 +1,3 @@
-// ! TODO: Check to see if the email address is verified and DON'T send a code if it's already verified
-
 import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
@@ -17,6 +15,7 @@ import {
 } from "semantic-ui-react";
 
 import ErrorContainer from "./errorContainer";
+import InfoContainer from "./InfoContainer";
 import SuccessContainer from "./successContainer";
 
 const resendStyle = {
@@ -54,6 +53,10 @@ const VerifyEmail = props => {
   const [isSuccessMessage, setIsSuccessMessage] = useState(null);
   const [isVerificationCodeError, setIsVerificationCodeError] = useState(false);
   // ...Rest of the State
+  const [isInfo, setIsInfo] = useState(false);
+  const [isInfoHeader, setIsInfoHeader] = useState(null);
+  const [isInfoMessage, setIsInfoMessage] = useState(null);
+
   const [userId, setUserId] = useState(user);
   const [verificationCode, setVerificationCode] = useState(""); // React gets grumpy if the default is null
 
@@ -199,7 +202,15 @@ const VerifyEmail = props => {
         return response.ok ? response.json() : setIsErrorMessage({ error: response.statusText }); 
       })
       .then(json => {
-        const { user: { email }, } = json;
+        const { user: { email, isEmailVerified }, } = json;
+        // Check to see if the email address is verified and DON'T send a code if it's already verified
+        if (isEmailVerified !== 0) {
+          setIsInfoHeader("Verification Code Not Sent");
+          setIsInfoMessage("Your email address has already been verified, so there is no need to enter a verification coede. ");
+          setIsInfo(true);
+          return false;
+        }
+
         const formData = ({ email, userId });
 
         fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
@@ -270,6 +281,11 @@ const VerifyEmail = props => {
           header={isErrorHeader}
           message={isErrorMessage}
           show={isError}
+        />
+        <InfoContainer
+          header={isInfoHeader}
+          message={isInfoMessage}
+          show={isInfo}
         />
         <SuccessContainer
           header={isSuccessHeader}
