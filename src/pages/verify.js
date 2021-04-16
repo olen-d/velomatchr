@@ -29,7 +29,7 @@ const Verify = ({ match }) => {
                   show={true}
                   submitBtnContent={"Verify Email"}
                   submitRedirect={true}
-                  submitRedirectURL={"/onboarding/notification-preferences"}
+                  submitRedirectURL={"/dashboard"}
                 />
               }
             />
