@@ -4,6 +4,7 @@ import { Route, Switch } from "react-router-dom";
 
 import { Container, Grid } from "semantic-ui-react";
 
+import ProfileBar from "../components/profileBar";
 import VerifyEmail from "../components/verifyEmail";
 
 const Placeholder = () => {
@@ -14,6 +15,11 @@ const Verify = ({ match }) => {
   return(
     <Container>
       <Grid stackable>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <ProfileBar></ProfileBar>
+          </Grid.Column>
+        </Grid.Row>
         <Grid.Row>
           <Switch>
             <Route exact path={`${match.url}/`} component={Placeholder} />
