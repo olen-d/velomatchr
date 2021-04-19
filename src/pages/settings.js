@@ -13,7 +13,6 @@ import {
 
 import FourZeroFour from "./fourZeroFour";
 import FourZeroFourAuth from "../components/fourZeroFourAuth";
-import ProfileBar from "../components/profileBar";
 import SettingsAccount from "../components/settingsAccount";
 import SettingsNotifications from "../components/settingsNotifications";
 import SettingsProfile from "../components/settingsProfile";
@@ -22,11 +21,6 @@ const Settings = ({ match }) => {
   return(
     <Container>
       <Grid stackable>
-        <Grid.Row>
-          <Grid.Column width={16}>
-            <ProfileBar></ProfileBar>
-          </Grid.Column>
-        </Grid.Row>
         <Grid.Column width={4}>
           &nbsp;
         </Grid.Column>
