@@ -1,5 +1,5 @@
 import React from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 
 import { Dropdown } from "semantic-ui-react";
 
@@ -20,5 +20,11 @@ const MatchActions = props => {
     </Dropdown>
   );
 };
+
+const { func } = PropTypes;
+
+MatchActions.propTypes = {
+  postAction: func
+}
 
 export default MatchActions;
