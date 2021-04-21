@@ -14,7 +14,7 @@ const FourZeroFourAuth = props => {
     <>
       <Grid.Row columns={4}>
         <Grid.Column>
-        <Button
+          <Button
             as={Link}
             to="/dashboard"
             compact
