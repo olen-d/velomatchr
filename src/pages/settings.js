@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { 
+import {
+  Link,
   Route,
   Switch
 } from "react-router-dom";
@@ -8,7 +9,9 @@ import {
 import {
   Container,
   Grid,
-  Header
+  Header,
+  Menu,
+  Message
  } from "semantic-ui-react";
 
 import FourZeroFour from "./fourZeroFour";
@@ -18,7 +21,40 @@ import SettingsAccount from "../components/settingsAccount";
 import SettingsNotifications from "../components/settingsNotifications";
 import SettingsProfile from "../components/settingsProfile";
 
-const Settings = ({ match }) => {
+const SettingsRoot = () => {
+  return(
+    <div className="settings-root">
+      <Message>
+        Please use the menu to review and update your profile, notifications, or account settings.
+      </Message>
+    </div>
+  )
+}
+
+const Settings = ({location, match }) => {
+  const [isFluid, setIsFluid] = useState(null);
+
+  const getWindowDimensions = () => {
+    const { innerWidth, innerHeight } = window;
+    return { innerWidth, innerHeight };
+  }
+
+  useEffect(() => {
+    const handleResize = () => {
+      const { innerWidth } = getWindowDimensions(); // Ignore innerHeight, may be useful in the future for detecting portrait or landscape orientation
+      const isMobileTablet = innerWidth < 768 ? true : false;
+      setIsFluid(isMobileTablet);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const { innerWidth } = getWindowDimensions();
+    innerWidth < 768 ? setIsFluid(true) : setIsFluid(false);
+  }, []);
+
   return(
     <Container>
       <Grid stackable>
@@ -28,7 +64,29 @@ const Settings = ({ match }) => {
           </Grid.Column>
         </Grid.Row>
         <Grid.Column width={4}>
-          &nbsp;
+          <Menu fluid={isFluid} vertical>
+            <Menu.Item
+              as={Link}
+              to="/settings/profile"
+              active={location.pathname === "/settings/profile"}
+            >
+              Profile
+            </Menu.Item>
+            <Menu.Item
+              as={Link}
+              to="/settings/notifications"
+              active={location.pathname === "/settings/notifications"}
+            >
+              Notifications
+            </Menu.Item>
+            <Menu.Item
+              as={Link}
+              to="/settings/account"
+              active={location.pathname === "/settings/account"}
+            >
+              Account
+            </Menu.Item>
+          </Menu>
         </Grid.Column>
         <Grid.Column width={8}>
           <Header 
@@ -38,6 +96,7 @@ const Settings = ({ match }) => {
             Settings
           </Header>
         <Switch>
+            <Route exact path={`${match.url}/`} component={SettingsRoot} />
             <Route exact path={`${match.url}/profile`} component={SettingsProfile} />
             <Route exact path={`${match.url}/notifications`} component={SettingsNotifications} />
             <Route path={`${match.url}/account`} component={SettingsAccount} />
