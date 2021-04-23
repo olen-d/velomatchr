@@ -16,6 +16,9 @@ const { validatePassword} = require("../helpers/password-validate");
 const { reverseGeocode } = require("../helpers/reverse-geocode");
 const tokens = require("../helpers/tokens");
 
+// Utilities
+const logger = require("../utilities/logger");
+
 // Create and Create/Update Modules
 exports.create_user = async (req, res) => {
   const serverToken = await tokens.create(-99);
@@ -150,12 +153,17 @@ exports.create_user = async (req, res) => {
       }
     } catch(error) {
       // TODO: Deal with the errors...
+      logger.error(`server.controller.users.create.user ${error}`)
       console.log("userController / create_user / ERROR:\n", error);
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+
       // Check for unique constraint violation
       if (error.name === "SequelizeUniqueConstraintError") {
+        logger.error("server.controller.users.create.user.sequelize.constraint")
         errors.push({ email: true });
         res.status(400).json({ status: 400, message: "Bad Request", errors })
       } else if (error.name === "SequelizeValidationError") {
+        logger.error("server.controller.users.create.user.sequelize.validation")
         // TODO: integrrate with the error system
         res.status(400).json({ status: 400, message: "Bad Request", errors })
       }
