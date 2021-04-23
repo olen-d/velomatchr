@@ -152,10 +152,9 @@ exports.create_user = async (req, res) => {
         // TODO: Deal with the error...
       }
     } catch(error) {
-      // TODO: Deal with the errors...
-      logger.error(`server.controller.users.create.user ${error}`)
-      console.log("userController / create_user / ERROR:\n", error);
-      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+      // TODO: integrate with serverErrors - SequelizeUnique should throw email...
+      logger.error(`server.controller.users.create.user ${error}`);
+      res.status(500).json({ status: 500, message: "Internal Server Error", error, errors });
 
       // Check for unique constraint violation
       if (error.name === "SequelizeUniqueConstraintError") {
@@ -164,7 +163,6 @@ exports.create_user = async (req, res) => {
         res.status(400).json({ status: 400, message: "Bad Request", errors })
       } else if (error.name === "SequelizeValidationError") {
         logger.error("server.controller.users.create.user.sequelize.validation")
-        // TODO: integrrate with the error system
         res.status(400).json({ status: 400, message: "Bad Request", errors })
       }
     }

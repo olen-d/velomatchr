@@ -2,6 +2,7 @@
 .env
 config.js
 /public/images-profiles/
+/logs
 
 # dependencies
 /node_modules
