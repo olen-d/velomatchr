@@ -9,6 +9,9 @@ const requestIp = require("request-ip");
 const bcrypt = require("../helpers/bcrypt-module");
 const tokens = require("../helpers/tokens");
 
+// Utilities
+const logger = require("../utilities/logger");
+
 exports.token_grant_type_client_credentials = async (req, res) => {
   const { body: { clientId, clientSecret, endUserId, endUserIp }, } = req;
 
@@ -102,6 +105,7 @@ exports.token_grant_type_refresh_token = async (req, res) => {
 
   if (error) {
     res.status(500).json({ status: 500, message: "Internal server error.", error });
+    logger.error(`server.controller.auth.token.grant.type.refresh.token Could not verify refresh token. ${error}`);
   } else {
     const { clientId } = decoded;
     const refererName = referer.split("://")[1].split("/")[0]; // discard http(s):// and anything after the top level domain
@@ -132,14 +136,17 @@ exports.token_grant_type_refresh_token = async (req, res) => {
           });
         } else {
           res.status(500).json({ status: 500, message: "Internal server error.", error: `Either the user ${id} does not exist or a refresh token was not found. ` });
+          logger.error("server.controller.auth.token.grant.type.refresh.token Either the user does not exist or a refresh token was not found.");
         }
       } catch(error) {
         // Epic fail
         // TODO: Deal with the error
         res.sendStatus(420);
+        logger.error(`server.controller.auth.token.grant.type.refresh.token Internal server error. ${error}`);
       }
     } else {
       res.sendStatus(403);
+      logger.error("server.controller.auth.token.grant.type.refresh.token Client id did not match referrer id.");
     }
   }
 };
