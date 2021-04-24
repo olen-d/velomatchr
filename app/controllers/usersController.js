@@ -70,12 +70,17 @@ exports.create_user = async (req, res) => {
         fetch(`${process.env.REACT_APP_API_URL}/api/countries/alphatwo/${countryCode}`)
       ])
       .catch(error => {
-        console.log("ERROR:\n" + error);
+        logger.error(`server.controller.users.create.user Fetch State and Country Names ${error}`);
       });
       // ! TODO: Handle any errors returned
 
       const geographyNamesJson = await Promise.all(geographyNamesResponse.map(geographyName => { return geographyName.json() }));
-      const geographyNames = geographyNamesJson.map(geographyName => { const { adminAreaType, [adminAreaType]: { name } , status } = geographyName; return status === 200 ? { [adminAreaType]: { name } } : { [adminAreaType]: { name: "Not Found" } } });
+
+      // Get the status of the state and country lookup
+      const [{ status: statusState }, { status: statusCountry }] = geographyNamesJson;
+
+      // If the status is anything but 200, set the state and country names to "Not Found", otherwise 
+      const geographyNames = statusState === 200 && statusCountry === 200 ? geographyNamesJson.map(geographyName => { const { adminAreaType, [adminAreaType]: { name } , status } = geographyName; return status === 200 ? { [adminAreaType]: { name } } : { [adminAreaType]: { name: "Not Found" } } }) : [{ state: { name: "Not Found" } }, { country: { name: "Not Found" } }];
       const [{ state: { name: stateName }, }, { country: { name: countryName }, }] = geographyNames;
 
       // Encrypt the password
