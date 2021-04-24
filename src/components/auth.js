@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import jwt from "jsonwebtoken";
 
 const logout = async accessToken => {
-  const refreshToken = getRefreshToken().slice(1, -1); // Slice off the spuious ""
+  const refreshToken = getRefreshToken() ? getRefreshToken().slice(1, -1) : false; // Slice off the spuious ""
   const userInfo = getUserInfo(accessToken);
 
   if (userInfo && refreshToken) {
@@ -34,6 +34,10 @@ const logout = async accessToken => {
       // TODO: Log the error
       return false;
     }
+  } else {
+    // Either the access or refresh token was missing. Clean up local storage and return false.
+    localStorage.removeItem("user_refresh_token");
+    return false;
   }
 }
 
