@@ -60,7 +60,7 @@ exports.create_user = async (req, res) => {
       const locationResponse = await reverseGeocode(latitude, longitude);
       const location = await locationResponse.json();
 
-      // Check for status
+      // TODO: Check for status
       // Destructure the first location returned
       const { results: [{ locations: [{ adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000" }], }], } = location;
 
@@ -79,14 +79,16 @@ exports.create_user = async (req, res) => {
       // Get the status of the state and country lookup
       const [{ status: statusState }, { status: statusCountry }] = geographyNamesJson;
 
-      // If the status is anything but 200, set the state and country names to "Not Found", otherwise 
+      // If the status is anything but 200, set the state and country names to "Not Found", otherwise map & destructure the response
       const geographyNames = statusState === 200 && statusCountry === 200 ? geographyNamesJson.map(geographyName => { const { adminAreaType, [adminAreaType]: { name } , status } = geographyName; return status === 200 ? { [adminAreaType]: { name } } : { [adminAreaType]: { name: "Not Found" } } }) : [{ state: { name: "Not Found" } }, { country: { name: "Not Found" } }];
+
       const [{ state: { name: stateName }, }, { country: { name: countryName }, }] = geographyNames;
 
       // Encrypt the password
       const newPassResult = await bcrypt.newPass(password);
 
       if(newPassResult.status === 200) {
+        // - TODO: Fix this to deal with an invalid email (i.e. no @)
         const emailParts = email.split("@");
         const name = emailParts[0];
 
@@ -154,21 +156,21 @@ exports.create_user = async (req, res) => {
           }
       } else {
         // Password was not encrypted
-        // TODO: Deal with the error...
+        res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password.", errors });
+        logger.error("server.controller.users.create Failed to encrypt password.");
       }
     } catch(error) {
-      // TODO: integrate with serverErrors - SequelizeUnique should throw email...
-      logger.error(`server.controller.users.create.user ${error}`);
       res.status(500).json({ status: 500, message: "Internal Server Error", error, errors });
+      logger.error(`server.controller.users.create.user ${error}`);
 
       // Check for unique constraint violation
       if (error.name === "SequelizeUniqueConstraintError") {
-        logger.error("server.controller.users.create.user.sequelize.constraint")
         errors.push({ email: true });
-        res.status(400).json({ status: 400, message: "Bad Request", errors })
+        res.status(400).json({ status: 400, message: "Bad Request", errors });
+        logger.error("server.controller.users.create.user.sequelize.constraint");
       } else if (error.name === "SequelizeValidationError") {
+        res.status(400).json({ status: 400, message: "Bad Request", errors });
         logger.error("server.controller.users.create.user.sequelize.validation")
-        res.status(400).json({ status: 400, message: "Bad Request", errors })
       }
     }
   }
