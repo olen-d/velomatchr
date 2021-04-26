@@ -38,6 +38,7 @@ exports.create_user = async (req, res) => {
   if (isAvailableStatus === 200 && !isAvailable ) {
     errors.push({ email: true });
     res.status(400).json({ status: 400, message: "Bad Request", errors });
+    logger.error("server.controller.users.create Email address already exists.");
     return false;
   }
 
@@ -54,6 +55,7 @@ exports.create_user = async (req, res) => {
       if (!validation) { errors.push({ [keys[i]]: true }) }
     });
     res.status(500).json({ status: 500, errors });
+    logger.error("server.controller.users.create Invalid email or password.");
     return;
   } else {
     try {
@@ -70,7 +72,7 @@ exports.create_user = async (req, res) => {
         fetch(`${process.env.REACT_APP_API_URL}/api/countries/alphatwo/${countryCode}`)
       ])
       .catch(error => {
-        logger.error(`server.controller.users.create.user Fetch State and Country Names ${error}`);
+        logger.error(`server.controller.users.create.user Failed to fetch state and country names ${error}`);
       });
       // ! TODO: Handle any errors returned
 
@@ -107,7 +109,7 @@ exports.create_user = async (req, res) => {
           countryCode,
           postalCode
         });
-
+        // TODO: Deal with an error if the user is not created
         const formData = {
           email,
           userId: createUserResult.id
@@ -151,8 +153,8 @@ exports.create_user = async (req, res) => {
               tokens: newTokens
             })
           } else {
-            console.log("\n\nusersController.js ~85 ERROR:", sendVerificationEmailReponse);
-            // TODO, parse response.error and provide a more useful error message
+            logger.error(`server.controller.users.create.user ${sendVerificationEmailReponse}`);
+            return false;
           }
       } else {
         // Password was not encrypted
