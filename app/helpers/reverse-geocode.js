@@ -6,23 +6,27 @@ const mapquestApiKey = process.env.MAPQUEST_API_KEY;
 const mapquestApiURL = process.env.MAPQUEST_API_URL;
 
 const reverseGeocode = (lat, lng) => {
-  return new Promise((res, rej) => {
+  return new Promise((resolve, reject) => {
     try {
       fetch(`${mapquestApiURL}/reverse?key=${mapquestApiKey}&location=${lat},${lng}&thumbMaps=false&includeRoadMetadata=false&includeNearestIntersection=false`)
         .then(response => {
           logger.info("server.helper.reverse-geocode Success");
-          res(response);
+          resolve(response);
         })
-        .catch(err =>{
-          res.status(500).json({error: err});
-          logger.error(`server.helper.reverse-geocode ${err}`);
+        .catch(error =>{
+          logger.error(`server.helper.reverse-geocode ${error}`);
+          resolve({
+            status: 500,
+            message: "Internal Server Error",
+            error
+          });
         });
-    } catch (err) {
-      logger.error(`server.helper.reverse.geocode ${err}`);
-      rej({
+    } catch (error) {
+      logger.error(`server.helper.reverse.geocode ${error}`);
+      reject({
         status: 500,
-        login: false,
-        error: "Internal server error. Failed to reverse geocode. " + err
+        message: "Internal Server Error",
+        error
       });
     }
   });
