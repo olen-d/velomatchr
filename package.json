@@ -32,7 +32,11 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "env": {
+      "jest/globals": true
+    },
+    "extends": ["react-app", "plugin:jest/recommended", "plugin:jest/style"],
+    "plugins": ["jest"]
   },
   "browserslist": {
     "production": [
@@ -45,5 +49,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-plugin-jest": "^24.3.6",
+    "nock": "^13.0.11"
   }
 }
