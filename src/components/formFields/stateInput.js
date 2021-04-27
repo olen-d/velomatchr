@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { Form } from "semantic-ui-react";
+import { Form, Popup } from "semantic-ui-react";
 
 const StateInput = props => {
   const { errors, handleBlur, handleChange, placeholder, values } = props;
@@ -13,16 +13,22 @@ const StateInput = props => {
   }
 
   return(
-    <Form.Input
-      className="fluid"
-      icon="map pin"
-      iconPosition="left"
-      name="state"
-      value={values.state || ""}
-      placeholder={placeholder}
-      error={errors.state}
-      onBlur={(event) => handleBlur(validate(event), event)}
-      onChange={handleChange}
+    <Popup
+      trigger={
+        <Form.Input
+          className="fluid"
+          icon="map pin"
+          iconPosition="left"
+          name="state"
+          value={values.state || ""}
+          placeholder={placeholder}
+          error={errors.state}
+          onBlur={(event) => handleBlur(validate(event), event)}
+          onChange={handleChange}
+        />
+      }
+      content="Please enter the name of your state."
+      on="focus"
     />
   );
 }

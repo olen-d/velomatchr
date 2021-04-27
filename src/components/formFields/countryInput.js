@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { Form } from "semantic-ui-react";
+import { Form, Popup } from "semantic-ui-react";
 
 const CountryInput = props => {
   const { errors, handleBlur, handleChange, placeholder, values } = props;
@@ -13,16 +13,22 @@ const CountryInput = props => {
   }
 
   return(
-    <Form.Input
-      className="fluid"
-      icon="flag"
-      iconPosition="left"
-      name="country"
-      value={values.country || ""}
-      placeholder={placeholder}
-      error={errors.country}
-      onBlur={(event) => handleBlur(validate(event), event)}
-      onChange={handleChange}
+    <Popup
+      trigger={
+        <Form.Input
+          className="fluid"
+          icon="flag"
+          iconPosition="left"
+          name="country"
+          value={values.country || ""}
+          placeholder={placeholder}
+          error={errors.country}
+          onBlur={(event) => handleBlur(validate(event), event)}
+          onChange={handleChange}
+        />
+        }
+      content="Please enter the name of your country."
+      on="focus"
     />
   );
 }

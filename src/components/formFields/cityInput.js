@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { Form } from "semantic-ui-react";
+import { Form, Popup } from "semantic-ui-react";
 
 const CityInput = props => {
   const { errors, handleBlur, handleChange, placeholder, values } = props;
@@ -13,16 +13,22 @@ const CityInput = props => {
   }
 
   return(
-    <Form.Input
-      className="fluid"
-      icon="building"
-      iconPosition="left"
-      name="city"
-      value={values.city || ""}
-      placeholder={placeholder}
-      error={errors.city}
-      onBlur={(event) => handleBlur(validate(event), event)}
-      onChange={handleChange}
+    <Popup
+      trigger={
+        <Form.Input
+          className="fluid"
+          icon="building"
+          iconPosition="left"
+          name="city"
+          value={values.city || ""}
+          placeholder={placeholder}
+          error={errors.city}
+          onBlur={(event) => handleBlur(validate(event), event)}
+          onChange={handleChange}
+        />
+      }
+      content="Please enter the name of your city."
+      on="focus"
     />
   );
 }

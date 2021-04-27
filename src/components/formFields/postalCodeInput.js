@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { Form } from "semantic-ui-react";
+import { Form, Popup } from "semantic-ui-react";
 
 const PostalCodeInput = props => {
   const { errors, handleBlur, handleChange, placeholder, values } = props;
@@ -13,16 +13,22 @@ const PostalCodeInput = props => {
   }
 
   return(
-    <Form.Input
-      className="fluid"
-      icon="map pin"
-      iconPosition="left"
-      name="postalCode"
-      value={values.postalCode || ""}
-      placeholder={placeholder}
-      error={errors.postalCode}
-      onBlur={(event) => handleBlur(validate(event), event)}
-      onChange={handleChange}
+    <Popup
+      trigger={
+        <Form.Input
+          className="fluid"
+          icon="map pin"
+          iconPosition="left"
+          name="postalCode"
+          value={values.postalCode || ""}
+          placeholder={placeholder}
+          error={errors.postalCode}
+          onBlur={(event) => handleBlur(validate(event), event)}
+          onChange={handleChange}
+        />
+      }
+      content="Please enter your post code."
+      on="focus"
     />
   );
 }
