@@ -9,7 +9,6 @@ const useForm = () => {
 
     try {
       const isErrorResult = await isError;
-    
       setErrors({
         ...errors,
         [name]: isErrorResult

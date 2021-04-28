@@ -369,7 +369,7 @@ const ProfileFullForm = props => {
           <StateInput
             errors={errors}
             initialValue={values.state}
-            placeholder="State"
+            placeholder="Choose your state..."
             handleBlur={handleBlur}
             handleChange={handleChange}
             values={values}
