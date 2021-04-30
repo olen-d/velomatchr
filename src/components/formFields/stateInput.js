@@ -10,8 +10,7 @@ const StateInput = props => {
 
   const validate = event => {
     const { target: { name }, } = event;
-
-    return values[name] && values[name].length > 1 ? false : true;  // Short circuit to avoid error when attempting to read length of undefined
+    return values[name] && states.findIndex(state => state.name === values[name]) === -1 ? true : false; // Short circuit to avoid error if the field has an undefined or null value
   }
 
   useEffect(()=> {
