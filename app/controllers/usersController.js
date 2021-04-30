@@ -4,6 +4,9 @@ const Sequelize = require("sequelize");
 // Models
 const { EmailVerification, MatchPref, NotificationPref, User } = require("../models");
 
+// Services
+const userServices = require("../services/userServices");
+
 // Packages
 const jwt = require("jsonwebtoken");
 const requestIp = require("request-ip");
@@ -90,26 +93,27 @@ exports.create_user = async (req, res) => {
       const newPassResult = await bcrypt.newPass(password);
 
       if(newPassResult.status === 200) {
+        const emailIsVerified = 0;
         // - TODO: Fix this to deal with an invalid email (i.e. no @)
         const emailParts = email.split("@");
         const name = emailParts[0];
-
+        // TODO: Get the state code and country code if manually entered
         // Actually create the user
-        const createUserResult = await User.create({
-          name,
-          password: newPassResult.passwordHash,
+        const createUserResult = await userServices.create_user(
+          city,
+          countryName,
+          countryCode,
           email,
-          emailIsVerified: 0,
+          emailIsVerified,
           latitude,
           longitude,
-          city,
-          state: stateName,
-          stateCode,
-          country: countryName,
-          countryCode,
-          postalCode
-        });
-        // TODO: Deal with an error if the user is not created
+          name,
+          newPassResult.passwordHash,
+          postalCode,
+          stateName,
+          stateCode
+        );
+
         const formData = {
           email,
           userId: createUserResult.id
@@ -153,7 +157,9 @@ exports.create_user = async (req, res) => {
               tokens: newTokens
             })
           } else {
-            logger.error(`server.controller.users.create.user ${sendVerificationEmailReponse}`);
+            res.status(500).json({status: 500, message: "Internal Server Error", error: "Failed to send verification email"});
+            const sendVerificationEmailResposeString = JSON.stringify(sendVerificationEmailReponse);
+            logger.error(`server.controller.users.create.user ${sendVerificationEmailResposeString}`);
             return false;
           }
       } else {
