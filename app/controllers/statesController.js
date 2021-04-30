@@ -1,6 +1,6 @@
 // Models
 const { State } = require("../models");
-
+// ! TODO: Order by name ASC
 exports.read_all_states = async (req, res) => {
   try {
     const data = await State.findAll({
