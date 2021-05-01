@@ -4,7 +4,8 @@ const { State } = require("../models");
 exports.read_all_states = async (req, res) => {
   try {
     const data = await State.findAll({
-      attributes: ["code", "name"]
+      attributes: ["code", "name"],
+      order: [["name", "ASC"]]
     });
   
     if (data) {
