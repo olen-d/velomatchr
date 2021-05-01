@@ -200,6 +200,11 @@ const ProfileFullForm = props => {
   };
 
   const handleSubmit = () => {
+    // Check for state and country codes
+    // if values.countryCode
+    // get countryCode by Country
+    // if values.stateCode
+    // get stateCode by state
     if (!isError) {
       postProfileUpdate();
     } else {
@@ -372,6 +377,7 @@ const ProfileFullForm = props => {
             placeholder="Choose your state..."
             handleBlur={handleBlur}
             handleChange={handleChange}
+            handleUpdateValues={handleUpdateValues}
             values={values}
           />
           <CountryInput

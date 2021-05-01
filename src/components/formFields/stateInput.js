@@ -4,13 +4,22 @@ import PropTypes from "prop-types";
 import { Form } from "semantic-ui-react";
 
 const StateInput = props => {
-  const { errors, handleBlur, handleChange, placeholder, values } = props;
+  const { errors, handleBlur, handleChange, handleUpdateValues, placeholder, values } = props;
 
   const [states, setStates] = useState([]);
 
   const validate = event => {
     const { target: { name }, } = event;
-    return values[name] && states.findIndex(state => state.name === values[name]) === -1 ? true : false; // Short circuit to avoid error if the field has an undefined or null value
+    const stateIndex = states.findIndex(state => state.name === values[name]);
+    const isError = stateIndex === -1 ? true : false;
+
+    if (!isError) {
+      const stateCode = states[stateIndex].code;
+      handleUpdateValues({ stateCode })
+    } else {
+      handleUpdateValues({ stateCode: null });
+    }
+    return isError;
   }
 
   useEffect(()=> {
