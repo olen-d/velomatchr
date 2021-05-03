@@ -383,7 +383,7 @@ const ProfileFullForm = props => {
           <CountryInput
             errors={errors}
             initialValue={values.country}
-            placeholder="Country"
+            placeholder="Choose your country..."
             handleBlur={handleBlur}
             handleChange={handleChange}
             values={values}
