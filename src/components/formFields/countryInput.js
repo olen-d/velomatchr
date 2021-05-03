@@ -4,14 +4,23 @@ import PropTypes from "prop-types";
 import { Form } from "semantic-ui-react";
 
 const CountryInput = props => {
-  const { errors, handleBlur, handleChange, placeholder, values } = props;
+  const { errors, handleBlur, handleChange, handleUpdateValues, placeholder, values } = props;
 
   const [countries, setCountries] = useState([]);
 
   const validate = event => {
     const { target: { name }, } = event;
+    const countryIndex = countries.findIndex(country => country.name === values[name]);
+    const isError = countryIndex === -1 ? true : false;
 
-    return values[name] && values[name].length > 1 ? false : true;  // Short circuit to avoid error when attempting to read length of undefined
+    if (!isError) {
+      const countryCode = countries[countryIndex].alpha2;
+      handleUpdateValues({ countryCode })
+    } else {
+      handleUpdateValues({ countryCode: null });
+    }
+
+    return isError;
   }
 
   useEffect(() => {

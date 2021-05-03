@@ -386,6 +386,7 @@ const ProfileFullForm = props => {
             placeholder="Choose your country..."
             handleBlur={handleBlur}
             handleChange={handleChange}
+            handleUpdateValues={handleUpdateValues}
             values={values}
           />
           <PostalCodeInput
