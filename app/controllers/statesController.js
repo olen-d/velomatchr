@@ -1,13 +1,9 @@
-// Models
-const { State } = require("../models");
-// ! TODO: Order by name ASC
+// Services
+const stateServices = require("../services/stateServices");
+
 exports.read_all_states = async (req, res) => {
   try {
-    const data = await State.findAll({
-      attributes: ["code", "name"],
-      order: [["name", "ASC"]]
-    });
-  
+    const data = await stateServices.read_all_states();
     if (data) {
       res.status(200).json({ status: 200, data });
     } else {
@@ -23,13 +19,9 @@ exports.read_one_state_by_code = async (req, res) => {
   const adminAreaType = "state";
 
   try {
-    const result = await State.findOne({
-      where: {
-        code
-      }
-    });
-    if (result) {
-      res.status(200).json({ status: 200, adminAreaType, state: result });
+    const data = await stateServices.read_one_state_by_code(code)
+    if (data) {
+      res.status(200).json({ status: 200, adminAreaType, state: data });
     } else {
       res.status(404).json({ status: 404, message: "Not Found", error: `No state associated with "${code}" was found.`, adminAreaType });
     }
