@@ -1,6 +1,3 @@
-// Models
-const { Country } = require("../models");
-
 // Services
 const countryServices = require("../services/countryServices");
 
@@ -22,13 +19,9 @@ exports.read_one_country_by_alpha_two = async (req, res) => {
   const adminAreaType = "country";
 
   try {
-    const result = await Country.findOne({
-      where: {
-        "alpha2": alphatwo
-      }
-    });
-    if (result) {
-      res.status(200).json({ status: 200, adminAreaType, country: result });
+    const data = await countryServices.read_one_country_by_alpha_two(alphatwo);
+    if (data) {
+      res.status(200).json({ status: 200, adminAreaType, country: data});
     } else {
       res.status(404).json({ status: 404, message: "Not Found", error: `No country associated with "${alphatwo}" was found.`, adminAreaType });
     }
