@@ -23,6 +23,7 @@ import WarningContainer from "./warningContainer";
 import useForm from "../hooks/useForm";
 
 import locator from "../helpers/locator";
+import forwardGeocode from "../helpers/forward-geocode";
 import reverseGeocode from "../helpers/reverse-geocode";
 
 const ProfileFullForm = props => {
@@ -199,12 +200,33 @@ const ProfileFullForm = props => {
     setIsWarning(false);
   };
 
-  const handleSubmit = () => {
-    // Check for state and country codes
-    // if values.countryCode
-    // get countryCode by Country
-    // if values.stateCode
-    // get stateCode by state
+  const handleSubmit = async () => {
+    // Check to see if City, State, Postalcode, or Country have changed using initial value
+    // console.log(`${initialValues.latitude}\n${values.latitude}\n${initialValues.longitude}\n${values.longitude}`)
+    const addressValues = ({ city, country, postalCode, state}) => [city, country, postalCode, state];
+
+    const initialAddressValues = addressValues(initialValues);
+    const currentAddressValues = addressValues(values);
+
+    const uniqueAddressValues = new Set([...initialAddressValues, ...currentAddressValues]);
+
+    if (initialAddressValues.length !== uniqueAddressValues.size) {
+      // Something changed, check to see if the lat/long have been updated
+      if (Math.round(newLatitude) === 0 && Math.round(newLongitude) === 0) {
+        const address = false;
+        const street = false;
+        const unit = false;
+        const { city, country, postalCode, stateCode } = values;
+        const response = await forwardGeocode.forwardGeocode(address, city, country, postalCode, stateCode, street, unit);
+        const responseJson = response.ok ? await response.json() : "Error";
+
+        const { results: [{ locations: [{ latLng: { lat, lng }, }] }] } = responseJson; 
+
+        values.latitude = lat;
+        values.longitude = lng;
+      }
+    }
+
     if (!isError) {
       postProfileUpdate();
     } else {
