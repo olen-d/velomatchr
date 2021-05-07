@@ -59,127 +59,127 @@ exports.create_user = async (req, res) => {
     });
     res.status(500).json({ status: 500, errors });
     logger.error("server.controller.users.create Invalid email or password.");
-    return;
-  } else {
-    try {
-      const locationResponse = await reverseGeocode(latitude, longitude);
-      const location = await locationResponse.json();
+    return false;
+  }
 
-      // TODO: Check for status
-      // Destructure the first location returned
-      const { results: [{ locations: [{ adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000" }], }], } = location;
+  // Encrypt the password
+  const newPassResult = await bcrypt.newPass(password);
+  if (newPassResult.status !== 200) {
+    errors.push({ password: true });
+    res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password.", errors });
+    logger.error("server.controler.users.create Failed to encrypt password.");
+    return false;
+  }
 
-      // Get the full names of the state and country based on the codes returned
-      const geographyNamesResponse = await Promise.all([
-        fetch(`${process.env.REACT_APP_API_URL}/api/states/code/${stateCode}`),
-        fetch(`${process.env.REACT_APP_API_URL}/api/countries/alphatwo/${countryCode}`)
-      ])
-      .catch(error => {
-        logger.error(`server.controller.users.create.user Failed to fetch state and country names ${error}`);
+  try {
+    const locationResponse = await reverseGeocode(latitude, longitude);
+    const location = await locationResponse.json();
+
+    // TODO: Check for status
+    // Destructure the first location returned
+    const { results: [{ locations: [{ adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000" }], }], } = location;
+console.log(JSON.stringify(location, null, 2));
+console.log("\n\nState Code:", stateCode + "\n\n");
+    // Get the full names of the state and country based on the codes returned
+    const geographyNamesResponse = await Promise.all([
+      fetch(`${process.env.REACT_APP_API_URL}/api/states/code/${stateCode}`),
+      fetch(`${process.env.REACT_APP_API_URL}/api/countries/alphatwo/${countryCode}`)
+    ])
+    .catch(error => {
+      logger.error(`server.controller.users.create.user Failed to fetch state and country names ${error}`);
+    });
+    // ! TODO: Handle any errors returned
+
+    const geographyNamesJson = await Promise.all(geographyNamesResponse.map(geographyName => { return geographyName.json() }));
+
+    // Get the status of the state and country lookup
+    const [{ status: statusState }, { status: statusCountry }] = geographyNamesJson;
+
+    // If the status is anything but 200, set the state and country names to "Not Found", otherwise map & destructure the response
+    const geographyNames = statusState === 200 && statusCountry === 200 ? geographyNamesJson.map(geographyName => { const { adminAreaType, [adminAreaType]: { name } , status } = geographyName; return status === 200 ? { [adminAreaType]: { name } } : { [adminAreaType]: { name: "Not Found" } } }) : [{ state: { name: "Not Found" } }, { country: { name: "Not Found" } }];
+
+    const [{ state: { name: stateName }, }, { country: { name: countryName }, }] = geographyNames;
+
+    const emailIsVerified = 0;
+    const emailParts = email.split("@");
+    const name = emailParts[0];
+
+    // Actually create the user
+    const createUserResult = await userServices.create_user(
+      city,
+      countryName,
+      countryCode,
+      email,
+      emailIsVerified,
+      latitude,
+      longitude,
+      name,
+      newPassResult.passwordHash,
+      postalCode,
+      stateName,
+      stateCode
+    );
+
+    const formData = {
+      email,
+      userId: createUserResult.id
+    }
+
+    const sendVerificationEmailReponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${serverToken}`
+      },
+        body: JSON.stringify(formData)
       });
-      // ! TODO: Handle any errors returned
 
-      const geographyNamesJson = await Promise.all(geographyNamesResponse.map(geographyName => { return geographyName.json() }));
+      if (sendVerificationEmailReponse.ok) {
+        const clientId = process.env.CLIENT_ID;
+        const clientSecret = process.env.CLIENT_SECRET;
+        const { id: endUserId } = createUserResult;
+        const endUserIp = requestIp.getClientIp(req);
 
-      // Get the status of the state and country lookup
-      const [{ status: statusState }, { status: statusCountry }] = geographyNamesJson;
+        const clientCredentialsData = {
+          clientId, 
+          clientSecret, 
+          endUserId, 
+          endUserIp
+        };
 
-      // If the status is anything but 200, set the state and country names to "Not Found", otherwise map & destructure the response
-      const geographyNames = statusState === 200 && statusCountry === 200 ? geographyNamesJson.map(geographyName => { const { adminAreaType, [adminAreaType]: { name } , status } = geographyName; return status === 200 ? { [adminAreaType]: { name } } : { [adminAreaType]: { name: "Not Found" } } }) : [{ state: { name: "Not Found" } }, { country: { name: "Not Found" } }];
-
-      const [{ state: { name: stateName }, }, { country: { name: countryName }, }] = geographyNames;
-
-      // Encrypt the password
-      const newPassResult = await bcrypt.newPass(password);
-
-      if(newPassResult.status === 200) {
-        const emailIsVerified = 0;
-        // - TODO: Fix this to deal with an invalid email (i.e. no @)
-        const emailParts = email.split("@");
-        const name = emailParts[0];
-        // TODO: Get the state code and country code if manually entered
-        // Actually create the user
-        const createUserResult = await userServices.create_user(
-          city,
-          countryName,
-          countryCode,
-          email,
-          emailIsVerified,
-          latitude,
-          longitude,
-          name,
-          newPassResult.passwordHash,
-          postalCode,
-          stateName,
-          stateCode
-        );
-
-        const formData = {
-          email,
-          userId: createUserResult.id
-        }
-
-        const sendVerificationEmailReponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/send/verification`, {
+        const tokensResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/client-credentials`, {
           method: "post",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${serverToken}`
+            "Content-Type": "application/json"
           },
-            body: JSON.stringify(formData)
-          });
+          body: JSON.stringify(clientCredentialsData)
+        });
 
-          if (sendVerificationEmailReponse.ok) {
-            const clientId = process.env.CLIENT_ID;
-            const clientSecret = process.env.CLIENT_SECRET;
-            const { id: endUserId } = createUserResult;
-            const endUserIp = requestIp.getClientIp(req);
+        const newTokens = await tokensResponse.json();
 
-            const clientCredentialsData = {
-              clientId, 
-              clientSecret, 
-              endUserId, 
-              endUserIp
-            };
-
-            const tokensResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/token/grant-type/client-credentials`, {
-              method: "post",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(clientCredentialsData)
-            });
-
-            const newTokens = await tokensResponse.json();
-
-            return res.status(200).json({
-              status: 200,
-              authenticated: true,
-              tokens: newTokens
-            })
-          } else {
-            res.status(500).json({status: 500, message: "Internal Server Error", error: "Failed to send verification email"});
-            const sendVerificationEmailResposeString = JSON.stringify(sendVerificationEmailReponse);
-            logger.error(`server.controller.users.create.user ${sendVerificationEmailResposeString}`);
-            return false;
-          }
+        return res.status(200).json({
+          status: 200,
+          authenticated: true,
+          tokens: newTokens
+        })
       } else {
-        // Password was not encrypted
-        res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password.", errors });
-        logger.error("server.controller.users.create Failed to encrypt password.");
+        res.status(500).json({status: 500, message: "Internal Server Error", error: "Failed to send verification email"});
+        const sendVerificationEmailResposeString = JSON.stringify(sendVerificationEmailReponse);
+        logger.error(`server.controller.users.create.user ${sendVerificationEmailResposeString}`);
+        return false;
       }
-    } catch(error) {
-      res.status(500).json({ status: 500, message: "Internal Server Error", error, errors });
-      logger.error(`server.controller.users.create.user ${error}`);
+  } catch (error) {
+    res.status(500).json({ status: 500, message: "Internal Server Error", error, errors });
+    logger.error(`server.controller.users.create.user ${error}`);
 
-      // Check for unique constraint violation
-      if (error.name === "SequelizeUniqueConstraintError") {
-        errors.push({ email: true });
-        res.status(400).json({ status: 400, message: "Bad Request", errors });
-        logger.error("server.controller.users.create.user.sequelize.constraint");
-      } else if (error.name === "SequelizeValidationError") {
-        res.status(400).json({ status: 400, message: "Bad Request", errors });
-        logger.error("server.controller.users.create.user.sequelize.validation")
-      }
+    // Check for unique constraint violation
+    if (error.name === "SequelizeUniqueConstraintError") {
+      errors.push({ email: true });
+      res.status(400).json({ status: 400, message: "Bad Request", errors });
+      logger.error("server.controller.users.create.user.sequelize.constraint");
+    } else if (error.name === "SequelizeValidationError") {
+      res.status(400).json({ status: 400, message: "Bad Request", errors });
+      logger.error("server.controller.users.create.user.sequelize.validation")
     }
   }
 };

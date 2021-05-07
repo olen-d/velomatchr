@@ -4,7 +4,7 @@ const mapquestApiKey = process.env.REACT_APP_MAPQUEST_API_KEY;
 const mapquestApiURL = process.env.REACT_APP_MAPQUEST_API_URL;
 
 const forwardGeocode = (address, city, country, postalCode, stateCode, street, unit) => {
-  const unitProcessed = unit ? `UNIT ${unit}` : "";
+  // const unitProcessed = unit ? `UNIT ${unit}` : "";
   // const location = `${address}+${street}${unitProcessed}+${city},${state}+${country}+${postalCode}`
   const location = `${city},${stateCode}+${country}+${postalCode}`
 
