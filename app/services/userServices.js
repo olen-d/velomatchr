@@ -38,9 +38,8 @@ exports.create_user = async (city, country, countryCode, email, emailIsVerified,
       countryCode,
       postalCode
     });
-  console.log("\n\n" + JSON.stringify(createUserResult, null, 2) + "\n\n");
     return createUserResult;
-  
+
   } catch (error) {
       // Check for sequelize errors
       if (error.name === "SequelizeUniqueConstraintError") {
