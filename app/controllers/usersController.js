@@ -78,8 +78,7 @@ exports.create_user = async (req, res) => {
     // TODO: Check for status
     // Destructure the first location returned
     const { results: [{ locations: [{ adminArea1: countryCode = "BLANK", adminArea3: stateCode = "BLANK", adminArea5: city = "BLANK", postalCode = "000000" }], }], } = location;
-console.log(JSON.stringify(location, null, 2));
-console.log("\n\nState Code:", stateCode + "\n\n");
+
     // Get the full names of the state and country based on the codes returned
     const geographyNamesResponse = await Promise.all([
       fetch(`${process.env.REACT_APP_API_URL}/api/states/code/${stateCode}`),
