@@ -17,6 +17,7 @@ import GenderInput from "./formFields/genderInput";
 import PhoneInput from "./formFields/phoneInput";
 import PostalCodeInput from "./formFields/postalCodeInput";
 import StateInput from "./formFields/stateInput";
+import StreetAddressInput from "./formFields/streetAddressInput";
 import UsernameInput from "./formFields/usernameInput";
 import WarningContainer from "./warningContainer";
 
@@ -385,6 +386,14 @@ const ProfileFullForm = props => {
             onClick={getNewLocation}
           >
           </Button>
+          <StreetAddressInput
+            errors={errors}
+            initialValue=""
+            placeholder="Street Address"
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+          />
           <CityInput
             errors={errors}
             initialValue={values.city}
