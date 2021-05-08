@@ -28,50 +28,50 @@ exports.create_user = async (req, res) => {
   const { email, password, latitude, longitude } = req.body;
   const errors = [];
 
-  const isAvailableResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/is-available/${email}`, {
-    headers: {
-      Authorization: `Bearer ${serverToken}`
-    }
-  });
-
-  const isAvailableJson = isAvailableResponse.ok ? await isAvailableResponse.json() : null;
-
-  const { status: isAvailableStatus, data: { isAvailable }, } = isAvailableJson;
-
-  if (isAvailableStatus === 200 && !isAvailable ) {
-    errors.push({ email: true });
-    res.status(400).json({ status: 400, message: "Bad Request", errors });
-    logger.error("server.controller.users.create Email address already exists.");
-    return false;
-  }
-
-  const validations = await Promise.all([
-    checkEmail(email),
-    validatePassword(password)
-  ]);
-
-  const isValid = validations.every(validation => validation === true);
-
-  if (!isValid) {
-    const keys = [ "email", "password" ];
-    validations.forEach((validation, i) => {
-      if (!validation) { errors.push({ [keys[i]]: true }) }
-    });
-    res.status(500).json({ status: 500, errors });
-    logger.error("server.controller.users.create Invalid email or password.");
-    return false;
-  }
-
-  // Encrypt the password
-  const newPassResult = await bcrypt.newPass(password);
-  if (newPassResult.status !== 200) {
-    errors.push({ password: true });
-    res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password.", errors });
-    logger.error("server.controler.users.create Failed to encrypt password.");
-    return false;
-  }
-
   try {
+    const isAvailableResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/users/email/is-available/${email}`, {
+      headers: {
+        Authorization: `Bearer ${serverToken}`
+      }
+    });
+
+    const isAvailableJson = isAvailableResponse.ok ? await isAvailableResponse.json() : null;
+
+    const { status: isAvailableStatus, data: { isAvailable }, } = isAvailableJson;
+
+    if (isAvailableStatus === 200 && !isAvailable ) {
+      errors.push({ email: true });
+      res.status(400).json({ status: 400, message: "Bad Request", errors });
+      logger.error("server.controller.users.create Email address already exists.");
+      return false;
+    }
+
+    const validations = await Promise.all([
+      checkEmail(email),
+      validatePassword(password)
+    ]);
+
+    const isValid = validations.every(validation => validation === true);
+
+    if (!isValid) {
+      const keys = [ "email", "password" ];
+      validations.forEach((validation, i) => {
+        if (!validation) { errors.push({ [keys[i]]: true }) }
+      });
+      res.status(500).json({ status: 500, errors });
+      logger.error("server.controller.users.create Invalid email or password.");
+      return false;
+    }
+
+    // Encrypt the password
+    const newPassResult = await bcrypt.newPass(password);
+    if (newPassResult.status !== 200) {
+      errors.push({ password: true });
+      res.status(500).json({ status: 500, message: "Internal Server Error", error: "Unable to encrypt password.", errors });
+      logger.error("server.controler.users.create Failed to encrypt password.");
+      return false;
+    }
+
     const locationResponse = await reverseGeocode(latitude, longitude);
     const location = await locationResponse.json();
 
