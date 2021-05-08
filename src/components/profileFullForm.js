@@ -67,15 +67,15 @@ const ProfileFullForm = props => {
       const getUserProfile = async () => {
         const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
         if (isNewAccessToken) { setAccessToken(token); }
-        
+
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-  
+
         const data = response.status === 200 ? await response.json() : false;
-  
+
         if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
           const {
             user: {
@@ -95,9 +95,9 @@ const ProfileFullForm = props => {
               stateCode
             },
           } = data;
-  
+
           const fullname = firstName || lastName ? `${firstName} ${lastName}` : "";
-  
+
           setInitialValues({
             city,
             country,
@@ -112,7 +112,7 @@ const ProfileFullForm = props => {
             stateCode,
             username
           });
-  
+
           setPhotoLink(initialPhotoLink);
           setIsUserProfileError(false);
         } else {
@@ -126,7 +126,7 @@ const ProfileFullForm = props => {
   useEffect(() => {
     Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
   }, [errors]);
-  
+
   useEffect(() => {
     if (newLatitude !== 0 && newLongitude !== 0) {
       reverseGeocode.reverseGeocode(newLatitude, newLongitude).then(locationRes => {
@@ -203,8 +203,7 @@ const ProfileFullForm = props => {
 
   const handleSubmit = async () => {
     // Check to see if City, State, Postalcode, or Country have changed using initial value
-    // console.log(`${initialValues.latitude}\n${values.latitude}\n${initialValues.longitude}\n${values.longitude}`)
-    const addressValues = ({ city, country, postalCode, state}) => [city, country, postalCode, state];
+    const addressValues = ({ city, country, postalCode, state }) => [city, country, postalCode, state];
 
     const initialAddressValues = addressValues(initialValues);
     const currentAddressValues = addressValues(values);
@@ -214,11 +213,8 @@ const ProfileFullForm = props => {
     if (initialAddressValues.length !== uniqueAddressValues.size) {
       // Something changed, check to see if the lat/long have been updated
       if (Math.round(newLatitude) === 0 && Math.round(newLongitude) === 0) {
-        const address = false;
-        const street = false;
-        const unit = false;
-        const { city, country, postalCode, stateCode } = values;
-        const response = await forwardGeocode.forwardGeocode(address, city, country, postalCode, stateCode, street, unit);
+        const { city, country, postalCode, stateCode, streetAddress } = values;
+        const response = await forwardGeocode.forwardGeocode(city, country, postalCode, stateCode, streetAddress);
         const responseJson = response.ok ? await response.json() : "Error";
 
         const { results: [{ locations: [{ latLng: { lat, lng }, }] }] } = responseJson; 
