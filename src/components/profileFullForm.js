@@ -60,6 +60,12 @@ const ProfileFullForm = props => {
 
   const { user } = auth.getUserInfo(accessToken);
 
+  // Style
+
+  const extraMarginBottom = {
+    marginBottom: "1.25rem"
+  };
+
   useEffect(() => { setUserId(user) }, [user]);
 
   useEffect(() => {
@@ -380,6 +386,7 @@ const ProfileFullForm = props => {
             labelPosition="left"
             content="Use My Current Location"
             onClick={getNewLocation}
+            style={extraMarginBottom}
           >
           </Button>
           <StreetAddressInput
