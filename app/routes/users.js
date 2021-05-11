@@ -27,6 +27,7 @@ router.put("/users/email/verified/update", authorizeJWT, users_controller.email_
 router.put("/users/password/change", authorizeJWT, users_controller.password_change);
 router.put("/users/password/update", users_controller.password_update); // Temporary token provided TODO: Require API Key
 router.put("/users/profile/update/full", authorizeJWT, users_controller.profile_update_full);
+router.put("/users/location/all", authorizeJWT, users_controller.update_user_location_all);
 router.put("/users/profile/update/required/", authorizeJWT, users_controller.profile_update_required);
 
 router.delete("/users/email/verification/codes/id/:userId", authorizeJWT, users_controller.email_verified_code_delete_by_id);

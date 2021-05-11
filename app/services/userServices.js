@@ -41,16 +41,64 @@ exports.create_user = async (city, country, countryCode, email, emailIsVerified,
     return createUserResult;
 
   } catch (error) {
-      // Check for sequelize errors
-      if (error.name === "SequelizeUniqueConstraintError") {
-        logger.error("server.controller.users.create.user.sequelize.constraint");
-        throw new Error("Sequelize unique constraint error");
-      } else if (error.name === "SequelizeValidationError") {
-        logger.error("server.service.users.create.user.sequelize.validation")
-        throw new Error("Sequelize validation error");
-      } else {
-        logger.error(`server.service.users.create.user ${error}`);
-        throw new Error("Could not create user.");
-      }
+    // Check for sequelize errors
+    if (error.name === "SequelizeUniqueConstraintError") {
+      logger.error("server.service.users.create.user.sequelize.constraint");
+      throw new Error("Sequelize unique constraint error");
+    } else if (error.name === "SequelizeValidationError") {
+      logger.error("server.service.users.create.user.sequelize.validation")
+      throw new Error("Sequelize validation error");
+    } else {
+      logger.error(`server.service.users.create.user ${error}`);
+      throw new Error("Could not create user.");
+    }
+  }
+};
+
+// Update Services
+
+/**
+ * 
+ * @param {string} city - Name of the user's home city
+ * @param {string} country - Name of the user's home country
+ * @param {string} countryCode - ISO two letter code for the user's home country
+ * @param {string} id - User Id
+ * @param {number} latitude - Latitude of the user's location
+ * @param {number} longitude - Longitude of the user's location
+ * @param {string} postalCode - Home postal code of the user
+ * @param {string} state - Home state of the user
+ * @param {string} stateCode - Two letter code for the user's home state
+ * @returns {array} - The number of records updated. 0 if no update occurred and 1 if the update was successful. 
+ */
+
+exports.update_user_location_all = async (city, country, countryCode, id, latitude, longitude, postalCode, state, stateCode) => {
+  try {
+    const updateResult = await User.update(
+      {
+        latitude,
+        longitude,
+        city,
+        state,
+        stateCode,
+        country,
+        countryCode,
+        postalCode
+      },
+      { where: { id } }
+    );
+    return updateResult;
+
+  } catch (error) {
+    // Check for sequelize errors
+    if (error.name === "SequelizeUniqueConstraintError") {
+      logger.error("server.service.users.update.user.location.all.sequelize.constraint");
+      throw new Error("Sequelize unique constraint error");
+    } else if (error.name === "SequelizeValidationError") {
+      logger.error("server.service.users.update.user.location.all.sequelize.validation")
+      throw new Error("Sequelize validation error");
+    } else {
+      logger.error(`server.service.users.update.user.location.all ${error}`);
+      throw new Error("Could not update user location.");
+    }
   }
 };

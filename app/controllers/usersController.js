@@ -920,6 +920,50 @@ exports.profile_update_required = (req, res) => {
   }
 };
 
+exports.update_user_location_all = async (req, res) => {
+  const { authorized } = req;
+
+  if (authorized) {
+    const {
+      body: {
+        userId: id,
+        city,
+        country,
+        countryCode,
+        latitude,
+        longitude,
+        postalCode,
+        state,
+        stateCode
+      },
+    } = req;
+
+    // TODO: Validate country, country code, latitude, longitude, postalCode, state, and stateCode
+    try {
+      const updateUserResult = await userServices.update_user_location_all(
+        city,
+        country,
+        countryCode,
+        id,
+        latitude,
+        longitude,
+        postalCode,
+        state,
+        stateCode
+      );
+      if (updateUserResult && updateUserResult[0] > 0) {
+        res.status(200).json({ status: 200, message: "User location successfully updated. "});
+      } else {
+        res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not update user location."  });
+      }
+    } catch (error) {
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    }
+  } else {
+    res.sendStatus(403);
+  }
+};
+
 // Delete requests
 
 exports.email_verified_code_delete_by_id = (req, res) => {
