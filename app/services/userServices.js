@@ -19,7 +19,7 @@ const logger = require("../utilities/logger");
  * @param {string} postalCode - Home postal code of the user
  * @param {string} state - Home state of the user
  * @param {string} stateCode - Two letter code for the user's home state
- * @returns {object} - The user record inserted into the database, keys are field names and values are what was inserted. Includes id, createdAt, and updatedAt in addition to the parameters
+ * @returns {Promise<object>} - The user record inserted into the database, keys are field names and values are what was inserted. Includes id, createdAt, and updatedAt in addition to the parameters
  */
 
 exports.create_user = async (city, country, countryCode, email, emailIsVerified, latitude, longitude, name, password, postalCode, state, stateCode) => {
@@ -68,7 +68,7 @@ exports.create_user = async (city, country, countryCode, email, emailIsVerified,
  * @param {string} postalCode - Home postal code of the user
  * @param {string} state - Home state of the user
  * @param {string} stateCode - Two letter code for the user's home state
- * @returns {array} - The number of records updated. 0 if no update occurred and 1 if the update was successful. 
+ * @returns {Promise<array>} - The number of records updated. 0 if no update occurred and 1 if the update was successful. 
  */
 
 exports.update_user_location_all = async (city, country, countryCode, id, latitude, longitude, postalCode, state, stateCode) => {
