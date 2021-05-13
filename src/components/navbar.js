@@ -28,6 +28,7 @@ const matchesItems = [
 
 const settingsItems = [
   { key: "profile", text: "Profile", value: "/settings/profile"},
+  { key: "location", text: "Location", value: "/settings/location"},
   { key: "notifications", text: "Notifications", value: "/settings/notifications"},
   { key: "account", text: "Account", value: "/settings/account"}
 ];

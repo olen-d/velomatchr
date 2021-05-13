@@ -18,6 +18,7 @@ import FourZeroFour from "./fourZeroFour";
 import FourZeroFourAuth from "../components/fourZeroFourAuth";
 import ProfileBar from "../components/profileBar";
 import SettingsAccount from "../components/settingsAccount";
+import SettingsLocation from "../components/SettingsLocation";
 import SettingsNotifications from "../components/settingsNotifications";
 import SettingsProfile from "../components/settingsProfile";
 
@@ -25,7 +26,7 @@ const SettingsRoot = () => {
   return(
     <div className="settings-root">
       <Message>
-        Please use the menu to review and update your profile, notifications, or account settings.
+        Please use the menu to review and update your profile, notifications, location, or account settings.
       </Message>
     </div>
   )
@@ -74,6 +75,13 @@ const Settings = ({location, match }) => {
             </Menu.Item>
             <Menu.Item
               as={Link}
+              to="/settings/location"
+              active={location.pathname === "/settings/location"}
+            >
+              Location
+            </Menu.Item>
+            <Menu.Item
+              as={Link}
               to="/settings/notifications"
               active={location.pathname === "/settings/notifications"}
             >
@@ -97,9 +105,10 @@ const Settings = ({location, match }) => {
           </Header>
         <Switch>
             <Route exact path={`${match.url}/`} component={SettingsRoot} />
-            <Route exact path={`${match.url}/profile`} component={SettingsProfile} />
-            <Route exact path={`${match.url}/notifications`} component={SettingsNotifications} />
             <Route path={`${match.url}/account`} component={SettingsAccount} />
+            <Route exact path={`${match.url}/location`} component={SettingsLocation} />
+            <Route exact path={`${match.url}/notifications`} component={SettingsNotifications} />
+            <Route exact path={`${match.url}/profile`} component={SettingsProfile} />
             <Route path="*" render={() => (<FourZeroFour><FourZeroFourAuth /></FourZeroFour>)} />
           </Switch>
         </Grid.Column>
