@@ -364,20 +364,20 @@ const LocationForm = props => {
             handleChange={handleChange}
             values={values}
           />
+          <Button
+            disabled={isError}
+            className="fluid"
+            type="button"
+            color="red"
+            size="large"
+            icon="check circle"
+            labelPosition="left"
+            content={submitBtnContent}
+            onClick={handleSubmit}
+          >
+          </Button>
         </Form>
       </Segment>
-      <Button
-          disabled={isError}
-          className="fluid"
-          type="button"
-          color="red"
-          size="large"
-          icon="check circle"
-          labelPosition="left"
-          content={submitBtnContent}
-          onClick={handleSubmit}
-      >
-      </Button>
     </div>
   );
 };
