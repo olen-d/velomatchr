@@ -61,11 +61,11 @@ const SignupRequiredForm = props => {
     .catch(error => {
       if (error.status === 403) {
         setIsWarningHeader("Could Not Get Your Location");
-        setIsWarningMessage("VeloMatchr uses your location to match you with nearby cyclists. It appears you have location services disabled. You can still sign up, but to get matched you will have to set your location later in Settings > Profile.");
+        setIsWarningMessage("VeloMatchr uses your location to match you with nearby cyclists. It appears you have location services disabled. You can still sign up, but to get matched you will have to set your location later in Settings > Location.");
         setIsWarning(true);
       } else if(error.status === 404) {
         setIsWarningHeader("Your Browser Does Not Support Location Services");
-        setIsWarningMessage("VeloMatchr uses your location to match you with nearby cyclists. You can still sign up, but to get matched you will have to set your location manually later in Settings > Profile.");
+        setIsWarningMessage("VeloMatchr uses your location to match you with nearby cyclists. You can still sign up, but to get matched you will have to set your location manually later in Settings > Location.");
         setIsWarning(true);
       }
     });
