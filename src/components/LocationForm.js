@@ -383,8 +383,8 @@ const LocationForm = props => {
 };
 
 LocationForm.defaultProps = {
-  formTitle: "My Profile",
-  submitBtnContent: "Update Profile",
+  formTitle: "My Location",
+  submitBtnContent: "Update Location",
   submitRedirect: true,
   submitRedirectURL: "/dashboard"
 };
