@@ -58,7 +58,8 @@ exports.create_user = async (city, country, countryCode, email, emailIsVerified,
 // Update Services
 
 /**
- * 
+ * Update user location in the database
+ * @author Olen Daelhousen <hello@olen.dev>
  * @param {string} city - Name of the user's home city
  * @param {string} country - Name of the user's home country
  * @param {string} countryCode - ISO two letter code for the user's home country
@@ -102,3 +103,45 @@ exports.update_user_location_all = async (city, country, countryCode, id, latitu
     }
   }
 };
+
+
+/**
+ * Update user personal information in the database
+ * @author Olen Daelhousen <hello@olen.dev>
+ * @param {string} firstName - First name of the user
+ * @param {string} gender - Gender of the user
+ * @param {string} id - User Id
+ * @param {string} lastName - Last name of the user
+ * @param {string} name - Unique user name
+ * @param {string} phone - Phone number of the user
+ * @returns {Promise<array>} - The number of records updated. 0 if no update occurred and 1 if the update was successful. 
+ */
+
+exports.update_user_personal_information = async (firstName, gender, id, lastName, name, phone) => {
+  try {
+    const updateResult = await User.update(
+      {
+        name,
+        firstName,
+        lastName,
+        phone,
+        gender
+      },
+      { where: { id } }
+    );
+    return updateResult;
+
+  } catch (error) {
+    // Check for sequelize errors
+    if (error.name === "SequelizeUniqueConstraintError") {
+      logger.error("server.service.users.update.user.personal.information.sequelize.constraint");
+      throw new Error("Sequelize unique constraint error");
+    } else if (error.name === "SequelizeValidationError") {
+      logger.error("server.service.users.update.user.personal.information.sequelize.validation")
+      throw new Error("Sequelize validation error");
+    } else {
+      logger.error(`server.service.users.update.user.personal.information ${error}`);
+      throw new Error("Could not update personal information for the user.");
+    }
+  }
+}

@@ -939,6 +939,7 @@ exports.update_user_location_all = async (req, res) => {
     } = req;
 
     // TODO: Validate country, country code, latitude, longitude, postalCode, state, and stateCode
+    // TODO: Update this to use errors array if any of the aforementioned are invalid
     try {
       const updateUserResult = await userServices.update_user_location_all(
         city,
@@ -954,7 +955,7 @@ exports.update_user_location_all = async (req, res) => {
       if (updateUserResult && updateUserResult[0] > 0) {
         res.status(200).json({ status: 200, message: "User location successfully updated. "});
       } else {
-        res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not update user location."  });
+        res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not update user location." });
       }
     } catch (error) {
       res.status(500).json({ status: 500, message: "Internal Server Error", error });
@@ -963,6 +964,46 @@ exports.update_user_location_all = async (req, res) => {
     res.sendStatus(403);
   }
 };
+
+exports.update_user_personal_information = async (req, res) => {
+  const { authorized } = req;
+  if (authorized) {
+    const {
+      body: {
+        fullname,
+        gender,
+        name,
+        phone,
+        userId: id,
+      },
+    } = req;
+    const [ firstName, ...remainingNames ] = fullname.split(" ");
+    const lastName = remainingNames.join(" ");
+    // const errors = [];
+
+    // TODO: Validate fullname, gender, name, phone
+    // TODO: Update this to use errors array if any of the aforementioned are invalid
+    try {
+      const updateUserResult = await userServices.update_user_personal_information(
+        firstName,
+        gender,
+        id,
+        lastName,
+        name,
+        phone
+      )
+      if (updateUserResult && updateUserResult[0] > 0) {
+        res.status(200).json({ status: 200, message: "User personal information successfully updated. "});
+      } else {
+        res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not update personal information for the user." });
+      }
+    } catch (error) {
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    }
+  } else {
+    res.sendStatus(403);
+  }
+}
 
 // Delete requests
 
