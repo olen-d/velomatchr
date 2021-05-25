@@ -43,15 +43,38 @@ exports.create_user = async (city, country, countryCode, email, emailIsVerified,
   } catch (error) {
     // Check for sequelize errors
     if (error.name === "SequelizeUniqueConstraintError") {
-      logger.error("server.service.users.create.user.sequelize.constraint");
+      logger.error("server.service.user.create.user.sequelize.constraint");
       throw new Error("Sequelize unique constraint error");
     } else if (error.name === "SequelizeValidationError") {
-      logger.error("server.service.users.create.user.sequelize.validation")
+      logger.error("server.service.uses.create.user.sequelize.validation")
       throw new Error("Sequelize validation error");
     } else {
-      logger.error(`server.service.users.create.user ${error}`);
+      logger.error(`server.service.user.create.user ${error}`);
       throw new Error("Could not create user.");
     }
+  }
+};
+
+// Read Services
+
+/**
+ * Read user personal information from the database
+ * @author Olen Daelhousen <hello@olen.dev>
+ * @param {string} id = User Id
+ * @returns {Promise<object>} - Fields from the user record in the database including firstName, gender, lastName, name, and phone
+ */
+
+exports.read_user_personal_information = async id => {
+  try {
+    const readResult = await User.findOne({
+      where: { id },
+      attributes: ["firstName", "gender", "lastName", "name", "phone"]
+    });
+    return readResult;
+
+  } catch (error) {
+    logger.error(`server.service.user.read.user.personal.information ${error}`);
+    throw new Error("Could not read user personal information.");
   }
 };
 
@@ -92,13 +115,13 @@ exports.update_user_location_all = async (city, country, countryCode, id, latitu
   } catch (error) {
     // Check for sequelize errors
     if (error.name === "SequelizeUniqueConstraintError") {
-      logger.error("server.service.users.update.user.location.all.sequelize.constraint");
+      logger.error("server.service.user.update.user.location.all.sequelize.constraint");
       throw new Error("Sequelize unique constraint error");
     } else if (error.name === "SequelizeValidationError") {
-      logger.error("server.service.users.update.user.location.all.sequelize.validation")
+      logger.error("server.service.user.update.user.location.all.sequelize.validation")
       throw new Error("Sequelize validation error");
     } else {
-      logger.error(`server.service.users.update.user.location.all ${error}`);
+      logger.error(`server.service.user.update.user.location.all ${error}`);
       throw new Error("Could not update user location.");
     }
   }
@@ -134,13 +157,13 @@ exports.update_user_personal_information = async (firstName, gender, id, lastNam
   } catch (error) {
     // Check for sequelize errors
     if (error.name === "SequelizeUniqueConstraintError") {
-      logger.error("server.service.users.update.user.personal.information.sequelize.constraint");
+      logger.error("server.service.user.update.user.personal.information.sequelize.constraint");
       throw new Error("Sequelize unique constraint error");
     } else if (error.name === "SequelizeValidationError") {
-      logger.error("server.service.users.update.user.personal.information.sequelize.validation")
+      logger.error("server.service.user.update.user.personal.information.sequelize.validation")
       throw new Error("Sequelize validation error");
     } else {
-      logger.error(`server.service.users.update.user.personal.information ${error}`);
+      logger.error(`server.service.user.update.user.personal.information ${error}`);
       throw new Error("Could not update personal information for the user.");
     }
   }
