@@ -171,9 +171,9 @@ const LocationForm = props => {
         },
         body: JSON.stringify(formData)
       });
-  
+
       const data = response.ok ? await response.json() : false;
-  
+
       if (data.errors) {
         const { errors } = data;
         // TODO: fix profileRequiredForm.js 
