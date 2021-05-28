@@ -142,6 +142,10 @@ const ProfilePersonalForm = props => {
     }
   }, [accessToken, setAccessToken, userId]);
 
+  useEffect(() => {
+    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+  }, [errors]);
+
   return(
     <div className="profilePersonalForm">
       <Header 
