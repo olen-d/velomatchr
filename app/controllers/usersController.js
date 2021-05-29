@@ -489,6 +489,31 @@ exports.read_user_personal_information = async (req, res) => {
   }
 }
 
+exports.read_user_photo_link = async (req, res) => {
+  const { authorized } = req;
+  if (authorized) {
+    const {
+      params: {
+        userId: id,
+      },
+    } = req;
+
+    // TODO: Validate id
+    try {
+      const readResult = await userServices.read_user_photo_link(id);
+      if (readResult) {
+        res.status(200).json({ status: 200, data: readResult });
+      } else {
+        res.status(500).json({ status: 500, message: "Internal Server Error", error: "Could not retrieve link to user profile photo." });
+      }
+    } catch (error) {
+      res.status(500).json({ status: 500, message: "Internal Server Error", error });
+    }
+  } else {
+    res.sendStatus(403);
+  }
+}
+
 // Get the user's information and match preferences
 // Only return information needed to calculate the matches and show preferences 
 exports.read_one_user_and_matches_preferences = (req, res) => {

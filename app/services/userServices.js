@@ -60,7 +60,7 @@ exports.create_user = async (city, country, countryCode, email, emailIsVerified,
 /**
  * Read user personal information from the database
  * @author Olen Daelhousen <hello@olen.dev>
- * @param {string} id = User Id
+ * @param {string} id - User Id
  * @returns {Promise<object>} - Fields from the user record in the database including firstName, gender, lastName, name, and phone
  */
 
@@ -77,6 +77,27 @@ exports.read_user_personal_information = async id => {
     throw new Error("Could not read user personal information.");
   }
 };
+
+/**
+ * Read user personal information from the database
+ * @author Olen Daelhousen <hello@olen.dev>
+ * @param {string} id - User Id
+ * @returns {Promise<object>} = Field from the user record in the database containing the link to the user's profile photo
+ */
+
+exports.read_user_photo_link = async id => {
+  try {
+    const readResult = await User.findOne({
+      where: { id },
+      attributes: ["photoLink"]
+    });
+    return readResult;
+
+  } catch (error) {
+    logger.error(`server.service.user.read.user.photo.link ${error}`);
+    throw new Error("Could not read user photo link.");
+  }
+}
 
 // Update Services
 
