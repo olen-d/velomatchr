@@ -17,7 +17,7 @@ import ErrorContainer from "./errorContainer";
 import SuccessContainer from "./successContainer";
 
 const ProfilePhotoForm = props => {
-  const { formTitle, photoLink, profilePhotoBtnContent } = props;
+  const { formTitle, profilePhotoBtnContent } = props;
 
   // Error container items
   const [isError, setIsError] = useState(false);
@@ -28,7 +28,7 @@ const ProfilePhotoForm = props => {
   const [isSuccessHeader, setIsSuccessHeader] = useState(null);
   const [isSuccessMessage, setIsSuccessMessage] = useState(null);
   // Rest of the state
-  const [photoLinkImage, setPhotoLinkImage] = useState(null);
+  const [photoLink, setPhotoLink] = useState(null);
   const [profilePhotographFile, setProfilePhotographFile] = useState(null);
   const [showUserIcon, setShowUserIcon] = useState(true);
   const [userId, setUserId] = useState(null);
@@ -42,6 +42,31 @@ const ProfilePhotoForm = props => {
   }
 
   useEffect(() => { setUserId(user); }, [user]);
+
+  useEffect(() => {
+    if (userId) {
+      (async () => {
+        const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
+        if (isNewAccessToken) { setAccessToken(token); }
+
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/profile/photo-link/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = response.status === 200 ? await response.json() : false;
+
+        if ( data && data.status === 200) {
+
+          const { data: { photoLink: initialPhotoLink }, } = data;
+
+          setPhotoLink(`${process.env.REACT_APP_API_URL}/${initialPhotoLink}`);
+          setShowUserIcon(false);
+        }
+      })();
+    }
+  }, [accessToken, setAccessToken, userId]);
 
   useEffect (() => {
     if (profilePhotographFile && userId) {
@@ -71,7 +96,7 @@ const ProfilePhotoForm = props => {
             const { originalname, path } = data;
   
             setShowUserIcon(false);
-            setPhotoLinkImage(`${process.env.REACT_APP_API_URL}/${path}`);
+            setPhotoLink(`${process.env.REACT_APP_API_URL}/${path}`);
             setIsSuccessHeader("Profile Photograph Uploaded");
             setIsSuccessMessage("\"" + originalname + "\" was successfully uploaded. ");
             setIsSuccess(true);
@@ -89,13 +114,6 @@ const ProfilePhotoForm = props => {
     }
   }, [accessToken, profilePhotographFile, setAccessToken, userId]);
 
-  useEffect (() => {
-    if (photoLink) {
-      setShowUserIcon(false);
-      setPhotoLinkImage(`${process.env.REACT_APP_API_URL}/${photoLink}`);
-    }
-  }, [photoLink]);
-  
   return(
     <>
       <Header 
@@ -105,7 +123,7 @@ const ProfilePhotoForm = props => {
       >
         {formTitle}
       </Header>
-      { showUserIcon ? <Icon color="grey" name="user circle" size="massive" /> : <Image src={photoLinkImage} size="small" rounded /> }
+      { showUserIcon ? <Icon color="grey" name="user circle" size="massive" /> : <Image src={photoLink} size="small" rounded /> }
       <ErrorContainer
         header={isErrorHeader}
         message={isErrorMessage}
@@ -144,7 +162,6 @@ const ProfilePhotoForm = props => {
 ProfilePhotoForm.defaultProps = {
   colWidth: 6,
   formTitle: "Current Photograph",
-  photoLink: null,
   profilePhotoBtnContent: "Upload Profile Photo",
 }
 
@@ -153,7 +170,6 @@ const { number, string } = PropTypes;
 ProfilePhotoForm.propTypes = {
   colWidth: number,
   formTitle: string,
-  photoLink: string,
   profilePhotoBtnContent: string,
 }
 
