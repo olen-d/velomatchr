@@ -61,12 +61,16 @@ const ProfilePhotoForm = props => {
 
           const { data: { photoLink: initialPhotoLink }, } = data;
 
-          setPhotoLink(`${process.env.REACT_APP_API_URL}/${initialPhotoLink}`);
-          setShowUserIcon(false);
+          if (initialPhotoLink) {
+            setPhotoLink(`${process.env.REACT_APP_API_URL}/${initialPhotoLink}`);
+            setShowUserIcon(false);
+          } else {
+            setShowUserIcon(true);
+          }
         }
       })();
     }
-  }, [accessToken, setAccessToken, userId]);
+  }, [accessToken, photoLink, setAccessToken, userId]);
 
   useEffect (() => {
     if (profilePhotographFile && userId) {
