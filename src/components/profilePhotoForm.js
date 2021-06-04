@@ -8,7 +8,8 @@ import {
   Form,
   Header,
   Icon,
-  Image
+  Image,
+  Segment
 } from "semantic-ui-react";
 
 import { useAuth } from "../context/authContext";
@@ -36,6 +37,12 @@ const ProfilePhotoForm = props => {
   const { accessToken, setAccessToken } = useAuth();
   
   const { user } = auth.getUserInfo(accessToken);
+
+    // Style
+
+    const extraMarginBottom = {
+      marginBottom: "1.25rem"
+    };
 
   const uploadFile = e => {
     setProfilePhotographFile(e.target.files[0]);
@@ -119,15 +126,14 @@ const ProfilePhotoForm = props => {
   }, [accessToken, profilePhotographFile, setAccessToken, userId]);
 
   return(
-    <>
+    <div className="profile-photo-form">
       <Header 
-        as="h3" 
+        as="h2" 
         textAlign="left"
         color="grey"
       >
         {formTitle}
       </Header>
-      { showUserIcon ? <Icon color="grey" name="user circle" size="massive" /> : <Image src={photoLink} size="small" rounded /> }
       <ErrorContainer
         header={isErrorHeader}
         message={isErrorMessage}
@@ -138,28 +144,31 @@ const ProfilePhotoForm = props => {
         message={isSuccessMessage}
         show={isSuccess}
       />
-      <Form >
-        <Button
-          as="label"
-          htmlFor="profilePhotographFile"
-          className="fluid"
-          type="button"
-          color="red"
-          size="large"
-          icon="upload"
-          labelPosition="left"
-          content={profilePhotoBtnContent}
-        >
-        </Button>
-        <input
-          type="file"
-          id="profilePhotographFile"
-          name="profilePhotographFile"
-          style={{ display: "none" }}
-          onChange={uploadFile}
-        />
-      </Form>
-    </>
+      <Segment>
+        { showUserIcon ? <Icon color="grey" name="user circle" size="massive" style={extraMarginBottom} /> : <Image src={photoLink} size="small" rounded style={extraMarginBottom} /> }
+        <Form >
+          <Button
+            as="label"
+            htmlFor="profilePhotographFile"
+            className="fluid"
+            type="button"
+            color="red"
+            size="large"
+            icon="upload"
+            labelPosition="left"
+            content={profilePhotoBtnContent}
+          >
+          </Button>
+          <input
+            type="file"
+            id="profilePhotographFile"
+            name="profilePhotographFile"
+            style={{ display: "none" }}
+            onChange={uploadFile}
+          />
+        </Form>
+      </Segment>
+    </div>
   );
 }
 
