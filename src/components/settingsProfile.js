@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Grid } from "semantic-ui-react";
+import { Divider, Grid } from "semantic-ui-react";
 
 import ProfilePersonalForm from "./ProfilePersonalForm";
 import ProfilePhotoForm from "./profilePhotoForm";
@@ -12,6 +12,7 @@ const SettingsProfile = () => {
         formTitle={"My Profile Photograph"}
         profilePhotoBtnContent={"Upload Profile Photo"}
       />
+      <Divider hidden></Divider>
       <ProfilePersonalForm
         formTitle={"My Personal Information"}
         submitBtnContent={"Update Personal Information"}
