@@ -23,6 +23,8 @@ const ProfilePersonalForm = props => {
   const [flag, setFlag] = useState(true);
   const [initialValues, setInitialValues] = useState({});
   const [isError, setIsError] = useState(false);
+  const [isErrorHeader, setIsErrorHeader] = useState(null);
+  const [isErrorMessage, setIsErrorMessage] = useState(null);
   const [isFetchError, setIsFetchError] = useState(false);
   const [isFetchErrorHeader, setIsFetchErrorHeader] = useState(null);
   const [isFetchErrorMessage, setIsFetchErrorMessage] = useState(null);
@@ -32,6 +34,10 @@ const ProfilePersonalForm = props => {
   const { accessToken, setAccessToken, setDoRedirect, setRedirectURL } = useAuth();
 
   const { user } = auth.getUserInfo(accessToken);
+
+  // TODO: Consider pulling these out into the useForm hook...
+  const errorMsgFullname = "Please enter a name with at least two characters.";
+  const errorMsgUsername = "Please enter a valid username.";
 
   if(Object.keys(initialValues).length > 0 && flag) {
     initializeFields(initialValues);
@@ -143,7 +149,29 @@ const ProfilePersonalForm = props => {
   }, [accessToken, setAccessToken, userId]);
 
   useEffect(() => {
-    Object.values(errors).indexOf(true) > -1 ? setIsError(true) : setIsError(false);
+    if (Object.values(errors).indexOf(true) > -1) {
+      const headers = { fullname: "Full Name", username: "Username"};
+      const messages = { fullname: errorMsgFullname, username: errorMsgUsername };
+      const areErrors = Object.entries(errors).filter(([, value]) => value === true);
+      const errorNames = areErrors.flat().filter(error => error !== true);
+
+      // Loop through the object and add to the header and message
+      let errorHeaders = "Invalid ";
+      let errorMessages = "";
+
+      errorNames.forEach(element => {
+        errorHeaders += headers[element] + " and ";
+        errorMessages += messages[element] + " ";
+      })
+
+      // Figure out the error fullname, username
+      // Correctly set the header
+      setIsErrorHeader(errorHeaders.slice(0, -5));
+      setIsErrorMessage(errorMessages.slice(0, -1));
+      setIsError(true)
+    } else {
+      setIsError(false);
+    }
   }, [errors]);
 
   return(
@@ -156,8 +184,8 @@ const ProfilePersonalForm = props => {
         {formTitle}
       </Header>
       <ErrorContainer
-        header="Unable to Retrieve Your Profile"
-        message="Please reload the page to try again."
+        header={isErrorHeader}
+        message={isErrorMessage}
         show={isError}
       >
       </ErrorContainer>
