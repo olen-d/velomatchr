@@ -3,7 +3,10 @@ const imaps = require("imap-simple");
 const mailBodyParser = require("mail-body-parser");
 
 // Helpers
-const tokens = require ("../helpers/tokens");
+const tokens = require("../helpers/tokens");
+
+// Utilities
+const logger = require("./logger");
 
 const processNewMail = async numNewMail => {
   if (numNewMail > 0) {
@@ -29,9 +32,9 @@ const initialize = (async () => {
   try {
     const connection = await imaps.connect(config);
     return connection;
-  } catch(error) {
-    // TODO: Deal with the error
-    console.log("match-mail // connect / ERROR: ", error);
+  } catch (error) {
+    logger.error(`server.utilities.match-mail.initialize ${error}`);
+    throw new Error("Could not connect to IMAP server.");
   }
 })();
 
