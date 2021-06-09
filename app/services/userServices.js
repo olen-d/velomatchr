@@ -58,6 +58,27 @@ exports.create_user = async (city, country, countryCode, email, emailIsVerified,
 // Read Services
 
 /**
+ * Read user location information from the database
+ * @author Olen Daelhousen <hello@olen.dev>
+ * @param {string} id - User Id
+ * @returns {Promise<object>} - Fields from the user record in the database including city, country, countryCode, latitude, longitude, postalCode, state, and stateCode
+ */
+
+exports.read_user_location = async id => {
+  try {
+    const readResult = await User.findOne({
+      where: { id },
+      attributes: ["city", "country", "countryCode", "latitude", "longitude", "postalCode", "state", "stateCode"]
+    });
+    return readResult;
+
+  } catch (error) {
+    logger.error(`server.service.user.read.user.location ${error}`);
+    throw new Error(`Could not read user location information.`);
+  }
+};
+
+/**
  * Read user personal information from the database
  * @author Olen Daelhousen <hello@olen.dev>
  * @param {string} id - User Id

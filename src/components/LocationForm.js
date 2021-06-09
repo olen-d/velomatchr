@@ -200,7 +200,7 @@ const LocationForm = props => {
         const { isNewAccessToken, accessToken: token } = await auth.checkAccessTokenExpiration(accessToken, userId);
         if (isNewAccessToken) { setAccessToken(token); }
 
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/id/${userId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/location/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -208,10 +208,10 @@ const LocationForm = props => {
 
         const data = response.status === 200 ? await response.json() : false;
 
-        if (data && data.user) { // Skips the destructuring if any of these are null, which would throw a type error
+        if (data && data.status === 200) { // Skips the destructuring if there was an error
           const streetAddress = null; // This is a special case because the street address is not stored in the database
           const {
-            user: {
+            data: {
               city,
               country,
               countryCode,
@@ -223,14 +223,19 @@ const LocationForm = props => {
             },
           } = data;
 
+          // Replace "Not Found" country or state with an empty string
+          // The form will then display the placeholder text instead of "Not Found"
+          const countryName = country === "Not Found" ? "" : country;
+          const stateName = state === "Not Found" ? "" : state;
+
           setInitialValues({
             city,
-            country,
+            country: countryName,
             countryCode,
             latitude,
             longitude,
             postalCode,
-            state,
+            state: stateName,
             stateCode,
             streetAddress
           });
