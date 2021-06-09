@@ -10,6 +10,7 @@ const users_controller = require("../controllers/usersController");
 router.get("/users/email/is-available/:email", authorizeJWT, users_controller.read_email_is_available);
 router.get("/users/email/:email", users_controller.read_one_user_id_by_email); // Meant to be used with password reset, authorization not required
 router.get("/users/id/:userId", authorizeJWT, users_controller.read_one_user_by_id);
+router.get("/users/location/:userId", authorizeJWT, users_controller.read_user_location);
 router.get("/users/matches/preferences/:userId", authorizeJWT, users_controller.read_one_user_and_matches_preferences);
 router.get("/users/notifications/preferences/:userId", authorizeJWT, users_controller.read_one_user_and_notifications_preferences);
 router.get("/users/password/reset/:id/:token", users_controller.read_one_user_password_reset_by_id); // Meant to be used with password reset, authentication not required
