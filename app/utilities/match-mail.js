@@ -61,6 +61,7 @@ const getNewMail = async () => {
         ({ contentTransferEncoding } = { parts: [{ body: { "content-transfer-encoding": [contentTransferEncoding] }, }], } = result);
       } catch {
         contentTransferEncoding = null
+        logger.info("server.utilities.match-mail.get.new.mail Message did not have content transfer encoding specified.");
       }
 
       const { attributes: { uid }, parts: [{ body: { "content-type": [contentType], from: [from], subject: [subject], to: [to] }, }, {body: message}], } = result;
@@ -76,9 +77,9 @@ const getNewMail = async () => {
       };
     });
     return newEmails;
-  } catch(error) {
-    // TODO: Deal with the error
-    console.log("matchMail.getNewMail // ERROR:\n" + error);
+  } catch (error) {
+      logger.error(`server.utilities.match-mail.get.new.mail ${error}`);
+      throw new Error("Could not get new mail.");
   }
 }
 
