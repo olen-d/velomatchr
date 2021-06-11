@@ -271,8 +271,8 @@ const processMail = async emails => {
       }
     } 
   } catch (error) {
-    // TODO: deal with the error
-    console.log("match-mail // processMail / ERROR:\n" + JSON.stringify(error));
+    logger.error(`server.utilities.match-mail.process.mail ${error}`);
+    throw new Error("Could not process all mail messages.");
   }
 }
 
