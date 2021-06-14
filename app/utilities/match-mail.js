@@ -117,9 +117,12 @@ const processMail = async emails => {
         });
 
         const json = response.ok ? await response.json() : null
-        //This returns null if match status is not 2 (matched) or 4 (blocked)
+        // This returns null if match status is not 2 (matched) or 4 (blocked)
 
         if (!json) {
+          // TODO: Update this to log the sender proxy as well. However, the sender proxy would need to be looked up.
+          logger.info(`server.utilities.match-mail.process.mail Attempt to send email to ${addresseeProxy} failed due to addressee not found or unfriended.`);
+
           // Send a bounce email letting the sender know the email could not be sent
           const subject = "[VELOMATCHR] Undeliverable Email";
           const text = "Your buddy seems to have abandoned the race. This is likely because they have deleted their account or unfriended you.";
@@ -146,10 +149,11 @@ const processMail = async emails => {
           const jsonSendMail = responseSendMail.ok? await responseSendMail.json() : null;
 
           if (jsonSendMail.status !== 200) {
-            // Send an error
-            // ! TODO: Log the error
+            const { error, message } = jsonSendMail;
+
+            logger.error(`server.utilities.match-mail.process.mail Attempt to send undeliverable email notification failed. ${message} ${error}`);
           } else { 
-            // ! TODO: Log success
+            logger.info("server.utilities.match-mail.process.mail Undeliverable email due to address not found or unfriended notification was sent.");
           }
 
           await connection.deleteMessage([uid]);
