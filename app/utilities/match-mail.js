@@ -193,6 +193,7 @@ const processMail = async emails => {
           // Couldn't get status, log the error, remove the \Seen flag and try again
           // ! TODO Deal with the no status error
           // Log the error
+          logger.error(`server.utilities.match-mail.process.mail Failed to get relationship status for sender ${senderId} and addressee ${addresseeId}`);
           await connection.delFlags(uid, "\\Seen");
           continue;
         }
