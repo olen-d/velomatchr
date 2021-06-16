@@ -258,6 +258,9 @@ const processMail = async emails => {
 
         if (jsonSendMail.status !== 200) {
           // Send an error
+          const { error, message } = jsonSendMail;
+
+          logger.error(`server.utilities.match-mail.process.mail Attempt to send email failed. ${message} ${error}`);
           // ! TODO: Deal with the error - try and resend and/or send a bounce to the sender
         } else { 
           // On successful send, delete the original using the uid
@@ -268,10 +271,9 @@ const processMail = async emails => {
           } else {
             // Mail was rejected by the receiving server
             // Log the error
+            logger.error(`server.utilities.match-mail.process.mail Attempt to send email failed. ${rejected}`);
             // Return a failure notice
           }
-          // console.log("REJECTED:\n" + rejected, rejected.length +"\n");
-          // console.log(jsonSendMail.success + "\n" + JSON.stringify(jsonSendMail) + "\nUID:", uid);
         }
       }
     } 
