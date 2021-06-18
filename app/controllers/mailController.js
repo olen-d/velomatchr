@@ -51,8 +51,9 @@ exports.mail_match = async (req, res) => {
   
       // TODO: Add something to the subject, or not
       // TODO: Filter the message
+      const emailProxyStart = process.env.NODE_ENV === "development" ? "buddy-dev-" : "buddy-";
       const formData = {
-        fromAddress: `"${senderFirstName} ${senderLastInitial} (VeloMatchr Buddy)" <buddy-${requesterProxy}@velomatchr.com>`, 
+        fromAddress: `"${senderFirstName} ${senderLastInitial} (VeloMatchr Buddy)" <${emailProxyStart}${requesterProxy}@velomatchr.com>`, 
         toAddress: email, 
         subject, 
         text,

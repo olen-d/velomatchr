@@ -14,7 +14,7 @@ const processNewMail = async numNewMail => {
     processMail(newEmails);
   }
 };
-
+console.log("USER:", process.env.REL_SMTP_USER);
 const config = {
   imap: {
     user: process.env.REL_SMTP_USER,
@@ -86,7 +86,7 @@ const getNewMail = async () => {
 const processMail = async emails => {
   const connection = await initialize;
   const token = await tokens.create(-99);
-  const emailProxyStart = "buddy-";
+  const emailProxyStart = process.env.NODE_ENV === "development" ? "buddy-dev-" : "buddy-";
 
   try {
     for (const email of emails) {
@@ -237,7 +237,7 @@ const processMail = async emails => {
         // ! TODO: if text and html are both false, bail and send an error back
         // Data to pass to send endpoint
         const formData = {
-          fromAddress: `"${firstName} ${lastInitial} (VeloMatchr Buddy)" <buddy-${senderProxy}@velomatchr.com>`,
+          fromAddress: `"${firstName} ${lastInitial} (VeloMatchr Buddy)" <${emailProxyStart}${senderProxy}@velomatchr.com>`,
           toAddress: addresseeEmail,
           subject,
           text,
