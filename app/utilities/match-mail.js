@@ -86,7 +86,7 @@ const getNewMail = async () => {
 const processMail = async emails => {
   const connection = await initialize;
   const token = await tokens.create(-99);
-  const emailProxyStart = process.env.NODE_ENV === "development" ? "buddy-dev-" : "buddy-";
+  const emailProxyStart = process.env.NODE_ENV === "development" ? "dev-buddy-" : "buddy-";
 
   try {
     for (const email of emails) {
