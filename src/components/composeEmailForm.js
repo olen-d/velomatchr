@@ -86,7 +86,7 @@ const ComposeEmailForm = props => {
 
   const initialValues = { body: "", subject: "Let's Ride Together" }
 
-  const { errors, handleBlur, handleChange, handleServerErrors, initializeFields, values } = useForm();
+  const { errors, handleBlur, handleClearInput, handleChange, handleServerErrors, initializeFields, values } = useForm();
 
   const history = useHistory();
   
@@ -115,6 +115,7 @@ const ComposeEmailForm = props => {
         // Check for blocked user
         if (status === 4) {
           // Fake success
+          handleClearInput("body");
           setIsTransportError(false);
           setIsSuccessHeader("Email Sent");
           setIsSuccessMessage(`Your message was successfully sent to ${addresseeFirstName} ${addresseeLastInitial}.`);
@@ -185,6 +186,7 @@ const ComposeEmailForm = props => {
             setIsTransportError(true);
           } else {
             // Great success!
+            handleClearInput("body");
             setIsTransportError(false);
             setIsSuccessHeader("Email Sent");
             setIsSuccessMessage(`Your message was successfully sent to ${addresseeFirstName} ${addresseeLastInitial}.`);
