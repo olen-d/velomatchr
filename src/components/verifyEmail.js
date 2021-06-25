@@ -48,6 +48,7 @@ const VerifyEmail = props => {
   const [isError, setIsError] = useState(false);
   const [isErrorHeader, setIsErrorHeader] = useState(null);
   const [isErrorMessage, setIsErrorMessage] = useState(null);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessHeader, setIsSuccessHeader] = useState(null);
   const [isSuccessMessage, setIsSuccessMessage] = useState(null);
@@ -230,6 +231,9 @@ const VerifyEmail = props => {
               const {data: { rejected }, } = jsonSendMail;
               if (rejected.length === 0) {
                 if (!sendVerificationMessage) { // Don't send a message since it's redundant if the user came here through a route that sends a verification message
+                  setIsError(false);
+                  setIsResendDisabled(true);
+                  setVerificationCode("");
                   setIsSuccessHeader("Verification Code Sent");
                   setIsSuccessMessage("A new verification code was successfully sent to the your email address. ");
                   setIsSuccess(true);
@@ -237,6 +241,7 @@ const VerifyEmail = props => {
               } else {
                 // Mail was rejected by the receiving server
                 // TODO: Log the error
+                setIsResendDisabled(false);
                 setIsErrorHeader("Verification Code Not Sent");
                 setIsErrorMessage("The message containing the verification code could not be delivered. Please wait a few moments and try again. ");
                 setIsError(true);
@@ -323,6 +328,7 @@ const VerifyEmail = props => {
             </Button>
           </Form>
           <Button
+            disabled={isResendDisabled}
             style={resendStyle}
             as="a"
             content="Resend verification code"
