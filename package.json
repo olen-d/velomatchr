@@ -11,7 +11,7 @@
     "kind-of": "^6.0.3",
     "multer": "^1.4.1",
     "mysql2": "^1.6.5",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "nodemailer": "^6.4.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
